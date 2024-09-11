@@ -14,6 +14,11 @@ class WelcomeController {
 
     @GetMapping("/{name}")
     public String welcome(@PathVariable String name) {
-        return "Hello, testing boop boop - kaiq: " + name;
+        return "Hello, testing boop boop: " + name;
+    }
+
+    @GetMapping("/dog")
+    public String dog(){
+        return "dog dog dog";
     }
 }

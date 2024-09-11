@@ -15,7 +15,7 @@ import java.util.HashMap;
 /**
  * Controller used to showcase Create and Read from a LIST
  *
- * @author Vivek Bengre
+ * @author Kai Quach
  */
 
 @RestController

@@ -3,7 +3,7 @@ package coms309;
 /**
  * Controller used to showcase what happens when an exception is thrown
  *
- * @author Vivek Bengre
+ * @author Kai Quach
  */
 
 import org.springframework.web.bind.annotation.RequestMapping;
