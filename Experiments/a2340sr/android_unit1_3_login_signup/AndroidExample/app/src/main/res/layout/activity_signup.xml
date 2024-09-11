@@ -10,13 +10,12 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Signup Example"
         android:layout_gravity="center"
         android:layout_marginTop="100dp"
         android:layout_marginBottom="80dp"
-        android:textSize="30dp"
-        android:textColor="#fc0303">
-    </TextView>
+        android:text="Registration"
+        android:textColor="#673AB7"
+        android:textSize="30dp"></TextView>
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -28,17 +27,15 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="username: "
-            android:textSize="20dp"
-            android:textColor="#000000">
-        </TextView>
+            android:text="ID:"
+            android:textColor="#000000"
+            android:textSize="20dp"></TextView>
 
         <EditText
             android:id="@+id/signup_username_edt"
             android:layout_width="wrap_content"
             android:layout_height="50dp"
-            android:hint="Enter Username Here">
-        </EditText>
+            android:hint="|ID HERE|"></EditText>
 
     </LinearLayout>
 
@@ -51,18 +48,16 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="password: "
-            android:textSize="20dp"
-            android:textColor="#000000">
-        </TextView>
+            android:text="TOKEN:"
+            android:textColor="#000000"
+            android:textSize="20dp"></TextView>
 
         <EditText
             android:id="@+id/signup_password_edt"
             android:layout_width="wrap_content"
-            android:inputType="textPassword"
             android:layout_height="50dp"
-            android:hint="Enter Password Here">
-        </EditText>
+            android:hint="|TOKEN HERE|"
+            android:inputType="textPassword"></EditText>
 
     </LinearLayout>
 
@@ -75,18 +70,16 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="70sp"
-            android:text="confirm\npassword: "
-            android:textSize="20dp"
-            android:textColor="#000000">
-        </TextView>
+            android:text="confirm\nTOKEN: "
+            android:textColor="#000000"
+            android:textSize="20dp"></TextView>
 
         <EditText
             android:id="@+id/signup_confirm_edt"
             android:layout_width="wrap_content"
-            android:inputType="textPassword"
             android:layout_height="70dp"
-            android:hint="Enter Password Here">
-        </EditText>
+            android:hint="|TOKEN HERE|"
+            android:inputType="textPassword"></EditText>
 
     </LinearLayout>
 
@@ -102,20 +95,18 @@
             android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:layout_marginRight="10dp"
-            android:text="Login"
-            android:textSize="20sp"
-            android:textColor="#ffffff">
-        </Button>
+            android:text="ENTER"
+            android:textColor="#ffffff"
+            android:textSize="20sp"></Button>
 
         <Button
             android:id="@+id/signup_signup_btn"
             android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:text="Signup"
-            android:textSize="20sp"
-            android:textColor="#ffffff">
-        </Button>
+            android:text="RECORD"
+            android:textColor="#ffffff"
+            android:textSize="20sp"></Button>
 
     </LinearLayout>
 
