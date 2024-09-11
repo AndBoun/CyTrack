@@ -11,13 +11,13 @@
         android:id="@+id/main_msg_txt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Home Page"
         android:layout_gravity="center"
         android:layout_marginTop="100dp"
         android:layout_marginBottom="50dp"
-        android:textSize="30dp"
-        android:textColor="#fc0303">
-    </TextView>
+        android:rotation="180"
+        android:text="Landing Page"
+        android:textColor="#9C27B0"
+        android:textSize="30dp"></TextView>
 
     <TextView
         android:id="@+id/main_username_txt"
@@ -37,20 +37,18 @@
         android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="Login"
-        android:textSize="20sp"
-        android:textColor="#ffffff">
-    </Button>
+        android:text="Enter"
+        android:textColor="#ffffff"
+        android:textSize="20sp"></Button>
 
     <Button
         android:id="@+id/main_signup_btn"
         android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="Signup"
-        android:textSize="20sp"
-        android:textColor="#ffffff">
-    </Button>
+        android:text="Record"
+        android:textColor="#ffffff"
+        android:textSize="20sp"></Button>
 
 
 </androidx.appcompat.widget.LinearLayoutCompat>
