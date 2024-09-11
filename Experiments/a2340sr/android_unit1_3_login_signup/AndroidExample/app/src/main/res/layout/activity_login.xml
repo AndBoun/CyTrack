@@ -12,10 +12,11 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="100dp"
-        android:layout_marginBottom="150dp"
+        android:layout_marginBottom="100dp"
+        android:fontFamily="serif-monospace"
         android:text="LOG-IN"
-        android:textColor="#673AB7"
-        android:textSize="30dp"></TextView>
+        android:textColor="#2196F3"
+        android:textSize="96sp"></TextView>
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -35,7 +36,7 @@
             android:id="@+id/login_username_edt"
             android:layout_width="wrap_content"
             android:layout_height="50dp"
-            android:hint="| ID HERE|"></EditText>
+            android:hint="|ID HERE|"></EditText>
 
     </LinearLayout>
 
@@ -65,28 +66,50 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="100dp"
-        android:orientation="horizontal">
+        android:orientation="vertical">
 
-        <Button
-            android:id="@+id/login_login_btn"
-            android:layout_width="150dp"
+        <LinearLayout
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="10dp"
-            android:text="ENTER"
-            android:textColor="#ffffff"
-            android:textSize="20sp"></Button>
+            android:layout_gravity="center"
+            android:layout_marginTop="100dp"
+            android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/login_signup_btn"
-            android:layout_width="150dp"
+            <Button
+                android:id="@+id/login_login_btn"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="10dp"
+                android:backgroundTint="#4CAF50"
+                android:text="ENTER"
+                android:textColor="#ffffff"
+                android:textSize="20sp"></Button>
+
+            <Button
+                android:id="@+id/login_signup_btn"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:backgroundTint="#00BCD4"
+                android:text="RECORD"
+                android:textColor="#ffffff"
+                android:textSize="20sp"></Button>
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:text="RECORD"
-            android:textColor="#ffffff"
-            android:textSize="20sp"></Button>
+            android:layout_gravity="center"
+            android:layout_marginTop="40dp"
+            android:fontFamily="sans-serif-condensed-medium"
+            android:text="*We may not recognize every login"
+            android:textColor="#000000"
+            android:textSize="20dp"
+            android:textStyle="italic"></TextView>
 
     </LinearLayout>
+
 
 
 </androidx.appcompat.widget.LinearLayoutCompat>

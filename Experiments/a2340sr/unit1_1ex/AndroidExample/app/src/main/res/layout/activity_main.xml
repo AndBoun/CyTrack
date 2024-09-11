@@ -5,7 +5,8 @@
     tools:context=".MainActivity"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="#EDE7B0">
 
     <TextView
         android:id="@+id/main_msg_txt"
@@ -14,8 +15,16 @@
         android:layout_gravity="center"
         android:layout_marginTop="100dp"
         android:layout_marginBottom="50dp"
-        android:textSize="50dp"
-        android:textColor="#000000" >
+        android:textSize="80dp"
+        android:fontFamily="monospace"
+        android:textColor="#FF9800" >
     </TextView>
+
+    <ImageView
+        android:id="@+id/main_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:src="@drawable/cat_croc" />
 
 </androidx.appcompat.widget.LinearLayoutCompat>

@@ -27,10 +27,10 @@ public class MainActivity extends AppCompatActivity {
         /* extract data passed into this activity from another activity */
         Bundle extras = getIntent().getExtras();
         if(extras == null) {
-            messageText.setText("Intent Example");
+            messageText.setText("Counting Sheeps");
         } else {
             String number = extras.getString("NUM");  // this will come from LoginActivity
-            messageText.setText("The number was " + number);
+            messageText.setText("There were " + number + " sheeps");
         }
 
         /* click listener on counter button pressed */
