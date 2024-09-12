@@ -2,51 +2,54 @@ package com.example.androidexample;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
-
-import com.google.android.material.textfield.TextInputEditText;
-import com.google.android.material.textfield.TextInputLayout;
-
-import org.w3c.dom.Text;
 
 import java.util.Random;
 
 public class MathActivity extends AppCompatActivity {
 
     private TextView numberTxt; // define number textview variable
-    private TextView prompt;
-    private EditText answer;
+
     private Button Restart; // define increase button variable
-    private Button Configs; // define decrease button variable
+    private Button Submit; // define decrease button variable
+
     private Button backBtn;     // define back button variable
+
+    private TextView prompt;
+    private TextView answer;
 
     // Difficulty Modes
     private boolean gameon = true;
-    private int difficulty = 0;
+    private int difficulty = 2;
 
     // Score
     private int counter = 0;    // counter variable
 
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mathtime);
 
-        /* initialize UI elements */
+        // Game Trackers
         numberTxt = findViewById(R.id.number);
         Restart = findViewById(R.id.restart);
 
-        Configs = findViewById(R.id.configs);
+        // Config Btn for Difficulty Settings
+        Submit = findViewById(R.id.submit);
+
+        // Main Menu Button
         backBtn = findViewById(R.id.counter_back_btn);
 
         // Prompt and Answer
         prompt = findViewById(R.id.equation); // Random Prompt
-        answer = findViewById(R.id.equationtext); // Input
+        answer = findViewById(R.id.equationtext); // Input - Password
+
 
         // Random Sign
         Random rand = new Random();
@@ -56,44 +59,45 @@ public class MathActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 numberTxt.setText(String.valueOf(0));
+                counter = 0;
+                /* when config btn is pressed, switch to ConfigActivity */
 
-                // Game
-                int sign = rand.nextInt(difficulty);
-                String operand = "";
-                int first = rand.nextInt(2000);
-                int last = rand.nextInt(2000);
-                int answer = 0;
-
-                String prompttext = String.valueOf(first) + operand + String.valueOf(last);
-                prompt.setText(prompttext);
-
-                if (sign == 0) {
-                    operand = "+";
-                    answer = first + last;
-                } else if (sign == 1) {
-                    operand = "*";
-                    answer = first * last;
-                } else if (sign == 2) {
-                    operand = "/";
-                    answer = first / last;
-                }
             }
         });
 
-        /* when config btn is pressed, switch to ConfigActivity */
-        Configs.setOnClickListener(new View.OnClickListener() {
+        Submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (difficulty == 0) {
-                    Configs.setText("Easy");
-                } else if (difficulty == 1) {
-                    Configs.setText("Medium");
-                } else if (difficulty == 2) {
-                    Configs.setText("Hard");
-                } else if (difficulty + 1 > 2) {
-                    difficulty = 0;
+                int solution = 0;
+                // Game
+                int sign = rand.nextInt(difficulty);
+
+                // Operand Decider
+                String operand = "";
+                int first = rand.nextInt(100);
+                int last = rand.nextInt(100);
+
+                if (sign == 0) {
+                    operand = "+";
+                    solution = first + last;
                 }
-                difficulty += 1;
+                else if (sign == 1) {
+                    operand = "*";
+                    solution = first * last;
+                }
+
+                // Prompt Change
+                String prompttext = String.valueOf(first) + operand + String.valueOf(last);
+                prompt.setText(prompttext);
+
+                // Solution Change
+                String userinput = answer.getText().toString();
+
+                if (String.valueOf(solution).contentEquals(userinput)){
+                    counter+=1;
+                    numberTxt.setText(String.valueOf(counter));
+                }
+
 
             }
         });
