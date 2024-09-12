@@ -8,8 +8,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
-
 public class MainActivity extends AppCompatActivity {
 
     private TextView messageText;     // define message textview variable
@@ -39,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 /* when counter button is pressed, use intent to switch to Counter Activity */
-                Intent intent = new Intent(MainActivity.this, CounterActivity.class);
+                Intent intent = new Intent(MainActivity.this, MathActivity.class);
                 startActivity(intent);
             }
         });
