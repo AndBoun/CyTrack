@@ -12,18 +12,19 @@ public class Person {
     private String address;
     private String telephone;
     private Movie favoriteMovie; // Now using Movie object instead of String
-
+    private Game favoriteGame;
     // Default constructor
     public Person() {
     }
 
     // Parameterized constructor
-    public Person(String firstName, String lastName, String address, String telephone, Movie favoriteMovie) {
+    public Person(String firstName, String lastName, String address, String telephone, Movie favoriteMovie, Game favoriteGame) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.address = address;
         this.telephone = telephone;
         this.favoriteMovie = favoriteMovie;
+        this.favoriteGame = favoriteGame;
     }
 
     // Getters and setters for Person attributes
@@ -68,6 +69,9 @@ public class Person {
         this.favoriteMovie = favoriteMovie;
     }
 
+    public Game getFavoriteGame(){return this.favoriteGame;}
+    public void setFavoriteGame(Game favoriteGame){this.favoriteGame = favoriteGame;}
+
     // Override toString method to display person information
     @Override
     public String toString() {
@@ -75,6 +79,8 @@ public class Person {
                 + lastName + " "
                 + address + " "
                 + telephone + " "
-                + "Favorite Movie: " + favoriteMovie.toString();
+                + "Favorite Movie: " + favoriteMovie.toString()
+                + "Favorite Game: " + favoriteGame.toString();
+
     }
 }

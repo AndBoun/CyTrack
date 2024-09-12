@@ -14,6 +14,6 @@ class WelcomeController {
 
     @GetMapping("/")
     public String welcome() {
-        return "Hello and welcome to COMS 309. Testing postman and mapping";
+        return "Hello and welcome to COMS 309 exp2. Testing postman and mapping";
     }
 }
