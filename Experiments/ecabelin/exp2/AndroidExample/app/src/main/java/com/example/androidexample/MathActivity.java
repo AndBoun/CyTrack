@@ -61,18 +61,17 @@ public class MathActivity extends AppCompatActivity {
                 numberTxt.setText(String.valueOf(0));
                 counter = 0;
                 /* when config btn is pressed, switch to ConfigActivity */
-
             }
         });
 
         Submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int solution = 0;
                 // Game
                 int sign = rand.nextInt(difficulty);
 
                 // Operand Decider
+                int solution = 0;
                 String operand = "";
                 int first = rand.nextInt(100);
                 int last = rand.nextInt(100);
@@ -90,14 +89,15 @@ public class MathActivity extends AppCompatActivity {
                 String prompttext = String.valueOf(first) + operand + String.valueOf(last);
                 prompt.setText(prompttext);
 
-                // Solution Change
+                // Solution Change - (Problem with code Here)
                 String userinput = answer.getText().toString();
-
-                if (String.valueOf(solution).contentEquals(userinput)){
+                //Test: numberTxt.setText(String.valueOf(solution));
+                //Test: prompt.setText(userinput);
+                if (String.valueOf(solution).equals(userinput)){
                     counter+=1;
                     numberTxt.setText(String.valueOf(counter));
+                    //Test: numberTxt.setText(counter);
                 }
-
 
             }
         });
