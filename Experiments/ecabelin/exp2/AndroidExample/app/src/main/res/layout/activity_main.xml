@@ -11,12 +11,10 @@
         android:id="@+id/main_msg_txt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Intent Example"
         android:layout_gravity="center"
         android:layout_marginTop="200dp"
-        android:textSize="30dp"
-        android:textColor="#3F51B5">
-    </TextView>
+        android:textColor="#3F51B5"
+        android:textSize="30dp"></TextView>
 
     <Button
         android:id="@+id/main_counter_btn"
