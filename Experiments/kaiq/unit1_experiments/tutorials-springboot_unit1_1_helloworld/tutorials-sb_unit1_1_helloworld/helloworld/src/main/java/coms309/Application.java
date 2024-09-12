@@ -3,10 +3,11 @@ package coms309;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+
 /**
- * PetClinic Spring Boot Application.
+ * HelloWorld Spring Boot Application.
  * 
- * @author Vivek Bengre
+ * @author Kai Quach
  */
 
 @SpringBootApplication
