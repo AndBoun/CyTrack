@@ -19,7 +19,7 @@ import java.util.Random;
 public class MathActivity extends AppCompatActivity {
 
     private TextView numberTxt; // define number textview variable
-    private TextInputLayout prompt;
+    private TextView prompt;
     private EditText answer;
     private Button Restart; // define increase button variable
     private Button Configs; // define decrease button variable
@@ -51,34 +51,32 @@ public class MathActivity extends AppCompatActivity {
         // Random Sign
         Random rand = new Random();
 
-        // Game
-        while (gameon){
-            String userinput = String.valueOf(answer.getText());
-            int sign = rand.nextInt(difficulty);
-            String operand = "";
-            int first = rand.nextInt(2000);
-            int last = rand.nextInt(2000);
-            int answer = 0;
-
-            if (sign == 0){
-                operand = "+";
-                answer = first + last;
-            }
-            else if (sign == 1){
-                operand = "*";
-                answer = first * last;
-            }
-            else if (sign == 2){
-                operand = "/";
-                answer = first / last;
-            }
-
-        }
         /* when restart btn is pressed, reset number textview */
         Restart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 numberTxt.setText(String.valueOf(0));
+
+                // Game
+                int sign = rand.nextInt(difficulty);
+                String operand = "";
+                int first = rand.nextInt(2000);
+                int last = rand.nextInt(2000);
+                int answer = 0;
+
+                String prompttext = String.valueOf(first) + operand + String.valueOf(last);
+                prompt.setText(prompttext);
+
+                if (sign == 0) {
+                    operand = "+";
+                    answer = first + last;
+                } else if (sign == 1) {
+                    operand = "*";
+                    answer = first * last;
+                } else if (sign == 2) {
+                    operand = "/";
+                    answer = first / last;
+                }
             }
         });
 
@@ -86,16 +84,13 @@ public class MathActivity extends AppCompatActivity {
         Configs.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (difficulty == 0){
+                if (difficulty == 0) {
                     Configs.setText("Easy");
-                }
-                else if (difficulty == 1){
+                } else if (difficulty == 1) {
                     Configs.setText("Medium");
-                }
-                else if (difficulty == 2){
+                } else if (difficulty == 2) {
                     Configs.setText("Hard");
-                }
-                else if (difficulty + 1 > 2){
+                } else if (difficulty + 1 > 2) {
                     difficulty = 0;
                 }
                 difficulty += 1;
@@ -113,6 +108,5 @@ public class MathActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
     }
 }
