@@ -4,7 +4,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestParam;
 /**
- * Simple Hello World Controller to display the string returned
+ * Simple Hello People Controller to display the string returned
  *
  * @author Kai Quach
  */
