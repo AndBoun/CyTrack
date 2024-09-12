@@ -15,6 +15,7 @@ public class CounterActivity extends AppCompatActivity {
     private Button increaseBtn; // define increase button variable
     private Button decreaseBtn; // define decrease button variable
     private Button backBtn;     // define back button variable
+    private Button bonusSheepBtn; // define bonus sheep button variable
 
     private int counter = 0;    // counter variable
 
@@ -28,6 +29,7 @@ public class CounterActivity extends AppCompatActivity {
         increaseBtn = findViewById(R.id.counter_increase_btn);
         decreaseBtn = findViewById(R.id.counter_decrease_btn);
         backBtn = findViewById(R.id.counter_back_btn);
+        bonusSheepBtn = findViewById(R.id.bonus_sheep_btn);
 
         /* when increase btn is pressed, counter++, reset number textview */
         increaseBtn.setOnClickListener(new View.OnClickListener() {
@@ -50,6 +52,17 @@ public class CounterActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(CounterActivity.this, MainActivity.class);
+                intent.putExtra("NUM", String.valueOf(counter));  // key-value to pass to the MainActivity
+                startActivity(intent);
+            }
+        });
+
+        bonusSheepBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                /* when counter button is pressed, use intent to switch to Counter Activity */
+                Intent intent = new Intent(CounterActivity.this, BonusSheep.class);
                 intent.putExtra("NUM", String.valueOf(counter));  // key-value to pass to the MainActivity
                 startActivity(intent);
             }

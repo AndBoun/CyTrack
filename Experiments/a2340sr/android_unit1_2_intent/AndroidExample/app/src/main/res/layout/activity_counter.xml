@@ -47,4 +47,14 @@
         app:strokeColor="#C7EDF2">
 
     </Button>
+
+    <Button
+        android:id="@+id/bonus_sheep_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/bonus_sheep"
+        android:text="BONUS SHEEP" />
+
 </androidx.appcompat.widget.LinearLayoutCompat>
