@@ -88,5 +88,12 @@ public class PeopleController {
         peopleList.remove(firstName);
         return peopleList;
     }
+
+    @GetMapping("/people/{firstName}/movie")
+    public String interests(@PathVariable String firstName){
+        Person p = peopleList.get(firstName);
+
+        return p.getFirstName() + "'s favorite movie is: " + p.getFavoriteMovie().toString();
+    }
 }
 

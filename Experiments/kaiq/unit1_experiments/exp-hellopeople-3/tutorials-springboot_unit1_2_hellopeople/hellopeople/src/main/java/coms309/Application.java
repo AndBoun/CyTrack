@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 /**
  * Sample Spring Boot Application.
  * 
- * @author Vivek Bengre
+ * @author Kai Quach
  */
 
 @SpringBootApplication
