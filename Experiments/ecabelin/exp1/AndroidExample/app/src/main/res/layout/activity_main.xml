@@ -27,4 +27,27 @@
         android:rotationX="0"
         android:visibility="visible" />
 
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:maxWidth="100dip"
+        android:maxHeight="100dip"
+        android:minWidth="100dip"
+        android:minHeight="100dip"
+        android:scaleX="2"
+        android:scaleY="10" />
+
+    <Button
+        android:id="@+id/Storage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/Passive"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
 </androidx.appcompat.widget.LinearLayoutCompat>
