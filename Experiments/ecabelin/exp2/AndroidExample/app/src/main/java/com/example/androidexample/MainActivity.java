@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                /* when counter button is pressed, use intent to switch to Counter Activity */
+                /* when counter button is pressed, use intent to switch to Math Activity */
                 Intent intent = new Intent(MainActivity.this, MathActivity.class);
                 startActivity(intent);
             }

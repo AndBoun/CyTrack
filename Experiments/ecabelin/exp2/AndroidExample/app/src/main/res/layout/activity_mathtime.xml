@@ -28,20 +28,19 @@
         android:text="0" >
     </TextView>
 
+    <EditText
+        android:id="@+id/equationtext"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="Answer"
+        android:inputType="numberPassword" />
+
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/equation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:helperText="Hi">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/equationtext"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:shadowColor="#1D1616"
-            android:text="Input Here:" />
-
-    </com.google.android.material.textfield.TextInputLayout>
+        app:helperText="Hi"/>
 
     <Button
         android:id="@+id/restart"
