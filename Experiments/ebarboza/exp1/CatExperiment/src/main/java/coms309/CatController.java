@@ -8,7 +8,9 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 
-
+/**
+ * controls behavior for our cat outputs
+ */
 @RestController
 class CatController {
 
@@ -41,7 +43,7 @@ class CatController {
      * outputs ":3" for each cat in our catlist.
      * if we have 3 cats, we'll have three ":3"s, so our output would be:
      * :3 :3 :3
-     * @return
+     * @return string of ':3', one for each cat
      */
     @GetMapping("/cats")
     public String printCats() {
