@@ -85,9 +85,9 @@ public class DinoController {
     // UPDATE OPERATION
     // Decreases hp of defending dino by the atk of the attacking dino
     @PutMapping("/atk/{attacker}/{defender}")
-    public HashMap<String, Dino> attack (@PathVariable String attacker, @PathVariable String defender){
+    public String attack (@PathVariable String attacker, @PathVariable String defender){
         dinoList.get(defender).decreaseHp(dinoList.get(attacker).getAtk());
-        return dinoList;
+        return attacker + " attacks " + defender + "for " + dinoList.get(attacker).getAtk() + " damage! " + defender + " is now left with " + dinoList.get(defender).getHp() + "hp";
     }
 
     //UPDATE OPERATION
