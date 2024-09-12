@@ -2,7 +2,7 @@ package coms309.dinos;
 
 
 /**
- * Provides the Definition/Structure for the people row
+ * Class representing a Dino
  *
  * @author Eduardo Barboza-Campos
  */
