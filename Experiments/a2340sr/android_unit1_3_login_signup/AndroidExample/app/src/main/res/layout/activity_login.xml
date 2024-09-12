@@ -54,9 +54,11 @@
             android:textSize="20dp"></TextView>
 
         <EditText
+            android:id="@+id/login_password_edt"
             android:layout_width="wrap_content"
             android:layout_height="50dp"
-            android:hint="|TOKEN HERE|"></EditText>
+            android:hint="|TOKEN HERE|"
+            android:inputType="textPassword"></EditText>
 
     </LinearLayout>
 
@@ -75,11 +77,10 @@
             android:textSize="20dp"></TextView>
 
         <EditText
-            android:id="@+id/login_password_edt"
+            android:id="@+id/login_info_edt"
             android:layout_width="wrap_content"
             android:layout_height="50dp"
-            android:hint="|INFO HERE|"
-            android:inputType="textPassword"></EditText>
+            android:hint="|INFO HERE|"></EditText>
 
     </LinearLayout>
 
