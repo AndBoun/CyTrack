@@ -19,7 +19,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView messageText;   // define message textview variable
     private TextView buttonText;
     private Button button1;
-
+    private int counter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,53 +29,20 @@ public class MainActivity extends AppCompatActivity {
 
         // Title Message
         messageText = findViewById(R.id.main_msg_txt);      // link to message textview in the Main activity XML
-        messageText.setText("Don't let the counter go down to 0!");
+        messageText.setText("Press The Button!");
 
         // Button Message
         buttonText = findViewById(R.id.main_button_txt);
         button1 = findViewById(R.id.main_button_txt);
 
-        class TimeTracker extends CountDownTimer{
-            private boolean add;
-
-            public TimeTracker(long millisInFuture, long countDownInterval){
-                super(millisInFuture, countDownInterval);
-            }
-            public void onTick(long millisUntilFinished) {
-                if (add) {
-                    try {
-
-                        this.wait(10000);
-                    }
-                    catch(Exception e){
-                        return;
-                    }
-
-                    add = false;
-                }
-                buttonText.setText("seconds remaining: " + millisUntilFinished / 1000);
-            }
-            public void onFinish() {
-                buttonText.setText("done!");
-                this.cancel();
-            }
-
-            public void Switch() {
-                add = true;
-            }
-
-
-        }
-
-        TimeTracker counter = new TimeTracker(30000, 1000);
+        buttonText.setText(String.valueOf(counter));
 
         button1.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v){
-                counter.Switch();
+                counter += 1;
+                buttonText.setText(String.valueOf(counter));
             }
         });
-
-        counter.start();
 
 
 
