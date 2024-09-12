@@ -5,28 +5,40 @@
     tools:context=".MainActivity"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="#C8E6E9">
 
     <TextView
         android:id="@+id/main_msg_txt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Intent Example"
         android:layout_gravity="center"
-        android:layout_marginTop="200dp"
-        android:textSize="30dp"
-        android:textColor="#3F51B5">
+        android:layout_marginTop="110dp"
+        android:text="@string/sheep_counter"
+        android:textStyle="bold"
+        android:textColor="#EFB09C"
+        android:textSize="45dp"
+        android:gravity="center">
     </TextView>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="300dp"
+        android:layout_marginTop="50dp"
+        android:layout_gravity="center"
+        android:src="@drawable/sheep" />
 
     <Button
         android:id="@+id/main_counter_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="100dp"
         android:layout_gravity="center"
-        android:text="To the Counter Activity"
-        android:textSize="20sp"
-        android:textColor="#ffffff">
-    </Button>
+        android:layout_marginTop="50dp"
+        android:backgroundTint="#5ECDDB"
+        android:text="Starting Counting Sheep"
+        android:textColor="#ffffff"
+        android:textSize="20sp"></Button>
+
+
 
 </androidx.appcompat.widget.LinearLayoutCompat>

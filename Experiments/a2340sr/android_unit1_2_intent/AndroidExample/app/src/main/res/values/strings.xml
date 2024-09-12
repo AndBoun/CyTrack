@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">AndroidExample</string>
+    <string name="sheep_counter"><u>Sheep Counter</u></string>
 </resources>
