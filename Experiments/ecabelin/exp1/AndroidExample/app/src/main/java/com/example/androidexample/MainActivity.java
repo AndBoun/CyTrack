@@ -13,6 +13,7 @@ import org.w3c.dom.Text;
 public class MainActivity extends AppCompatActivity {
 
     private TextView messageText;   // define message textview variable
+    private TextView buttonText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,6 +22,10 @@ public class MainActivity extends AppCompatActivity {
 
         /* initialize UI elements */
         messageText = findViewById(R.id.main_msg_txt);      // link to message textview in the Main activity XML
-        messageText.setText("Hello World");
+        messageText.setText("Welcome Back Chat");
+
+        buttonText = findViewById(R.id.main_button_txt);
+        buttonText.setText("Don't Press This");
+
     }
 }
