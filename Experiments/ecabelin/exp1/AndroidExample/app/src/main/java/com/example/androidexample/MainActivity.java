@@ -8,6 +8,8 @@ import android.os.CountDownTimer;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+
+import java.sql.Time;
 import java.util.Random;
 
 import org.w3c.dom.Text;
@@ -33,11 +35,15 @@ public class MainActivity extends AppCompatActivity {
         buttonText = findViewById(R.id.main_button_txt);
         button1 = findViewById(R.id.main_button_txt);
 
-        CountDownTimer counter = new CountDownTimer(30000, 1000){
-            public long count;
-
+        class TimeTracker extends CountDownTimer{
+            private long count;
+            private final long iter;
+            public TimeTracker(long millisInFuture, long countDownInterval){
+                super(millisInFuture, countDownInterval);
+                count = millisInFuture;
+                iter = countDownInterval;
+            }
             public void onTick(long millisUntilFinished) {
-                count = millisUntilFinished;
                 buttonText.setText("seconds remaining: " + millisUntilFinished / 1000);
             }
 
@@ -53,13 +59,19 @@ public class MainActivity extends AppCompatActivity {
             public void setCount(long count) {
                 this.count = count;
             }
-        };
+
+            public long getIter(){
+                return iter;
+            }
+        }
+
+        TimeTracker counter = new TimeTracker(30000, 1000);
 
         counter.start();
 
         button1.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v){
-                counter
+                counter.setCount(counter.getCount() + counter.iter);
             }
         });
 
