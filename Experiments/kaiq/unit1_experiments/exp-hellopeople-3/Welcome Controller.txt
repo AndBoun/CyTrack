@@ -1,0 +1,4 @@
+Welcome Controller:
+
+localhost:8080/welcome?name=Kai
+localhost:8080/welcome
