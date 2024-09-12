@@ -18,6 +18,7 @@ public class MainActivity extends AppCompatActivity {
     private Button loginButton;     // define login button variable
     private Button signupButton;    // define signup button variable
     private ImageView crocImage;
+    private TextView extraInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
         loginButton = findViewById(R.id.main_login_btn);    // link to login button in the Main activity XML
         signupButton = findViewById(R.id.main_signup_btn);  // link to signup button in the Main activity XML
         crocImage = findViewById(R.id.croc_image);       // link to croc image in the Main activity XML
+        extraInfo = findViewById(R.id.extra_info_txt);       // link to extra info textview in the Main activity XML
 
         /* extract data passed into this activity from another activity */
         Bundle extras = getIntent().getExtras();
@@ -40,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             messageText.setText("Hello");
             usernameText.setText("#" + extras.getString("USERNAME")); // this will come from LoginActivity
+            extraInfo.setText(extras.getString("EXTRA_INFO")); // this will come from LoginActivity
             crocImage.setVisibility(View.VISIBLE);                // set croc image invisible initially
             loginButton.setVisibility(View.INVISIBLE);              // set login button invisible
             signupButton.setVisibility(View.INVISIBLE);             // set signup button invisible

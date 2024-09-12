@@ -34,6 +34,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:gravity="center"
         android:layout_marginTop="30dp"
         android:layout_marginBottom="0dp"
         android:fontFamily="sans-serif-black"
@@ -41,6 +42,13 @@
         android:textColor="#000000"
         android:textSize="48sp"></TextView>
 
+    <TextView
+        android:id="@+id/extra_info_txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textSize="20dp"
+        android:gravity="center"/>
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -69,6 +77,8 @@
             android:textSize="20sp"></Button>
 
     </LinearLayout>
+
+
 
 
 </androidx.appcompat.widget.LinearLayoutCompat>
