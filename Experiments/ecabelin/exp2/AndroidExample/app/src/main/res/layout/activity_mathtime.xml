@@ -17,16 +17,17 @@
 
     </Button>
 
-    <TextView
+    <Button
         android:id="@+id/number"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="100dp"
         android:layout_gravity="center"
-        android:textSize="150sp"
+        android:layout_marginTop="100dp"
+        android:backgroundTint="#E4DBDB"
+        android:scaleY="0.90"
+        android:text="0"
         android:textColor="#E91E63"
-        android:text="0" >
-    </TextView>
+        android:textSize="130sp"></Button>
 
     <EditText
         android:id="@+id/equationtext"

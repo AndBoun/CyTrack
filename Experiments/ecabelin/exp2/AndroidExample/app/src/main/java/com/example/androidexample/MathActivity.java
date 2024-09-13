@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-
 import java.util.Random;
 
 public class MathActivity extends AppCompatActivity {
@@ -17,6 +16,7 @@ public class MathActivity extends AppCompatActivity {
 
     private Button Restart; // define increase button variable
     private Button Submit; // define decrease button variable
+    private Button Number;
 
     private Button backBtn;     // define back button variable
 
@@ -24,12 +24,13 @@ public class MathActivity extends AppCompatActivity {
     private TextView answer;
 
     // Difficulty Modes
-    private boolean gameon = true;
+    // private boolean gameon = true;
     private int difficulty = 2;
 
     // Score
     private int counter = 0;    // counter variable
-
+    // Solution
+    private int solution = 0;
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,10 +43,9 @@ public class MathActivity extends AppCompatActivity {
 
         // Config Btn for Difficulty Settings
         Submit = findViewById(R.id.submit);
-
         // Main Menu Button
         backBtn = findViewById(R.id.counter_back_btn);
-
+        Number = findViewById(R.id.number);
         // Prompt and Answer
         prompt = findViewById(R.id.equation); // Random Prompt
         answer = findViewById(R.id.equationtext); // Input - Password
@@ -64,24 +64,21 @@ public class MathActivity extends AppCompatActivity {
             }
         });
 
-        Submit.setOnClickListener(new View.OnClickListener() {
+        Number.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Game
                 int sign = rand.nextInt(difficulty);
-
                 // Operand Decider
-                int solution = 0;
                 String operand = "";
                 int first = rand.nextInt(100);
                 int last = rand.nextInt(100);
 
                 if (sign == 0) {
-                    operand = "+";
+                    operand = " + ";
                     solution = first + last;
                 }
                 else if (sign == 1) {
-                    operand = "*";
+                    operand = " * ";
                     solution = first * last;
                 }
 
@@ -89,14 +86,34 @@ public class MathActivity extends AppCompatActivity {
                 String prompttext = String.valueOf(first) + operand + String.valueOf(last);
                 prompt.setText(prompttext);
 
+            }
+        });
+
+        Submit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
                 // Solution Change - (Problem with code Here)
-                String userinput = answer.getText().toString();
-                //Test: numberTxt.setText(String.valueOf(solution));
-                //Test: prompt.setText(userinput);
-                if (String.valueOf(solution).equals(userinput)){
-                    counter+=1;
+                Integer UI = new Integer(0);
+                try {
+                    String userinput = answer.getText().toString();
+                    if (!(userinput.isEmpty())){
+                        UI = Integer.valueOf(userinput);
+                    }
+                    /* TEST
+                    Restart.setText(String.valueOf(solution));
+                    Submit.setText(String.valueOf(UI));
+                    */
+                    if (UI.intValue() == solution){
+                        counter++;
+                    }
+                    else {
+                        counter--;
+                    }
                     numberTxt.setText(String.valueOf(counter));
-                    //Test: numberTxt.setText(counter);
+                    Number.performClick();
+                }
+                catch (Exception e){
+                    prompt.setText("Try Again!");
                 }
 
             }
@@ -106,7 +123,6 @@ public class MathActivity extends AppCompatActivity {
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                gameon = false;
                 Intent intent = new Intent(MathActivity.this, MainActivity.class);
                 intent.putExtra("NUM", String.valueOf(counter));  // key-value to pass to the MainActivity
                 startActivity(intent);
