@@ -10,13 +10,12 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Signup Example"
         android:layout_gravity="center"
         android:layout_marginTop="100dp"
         android:layout_marginBottom="80dp"
-        android:textSize="30dp"
-        android:textColor="#fc0303">
-    </TextView>
+        android:text="Signup Example"
+        android:textColor="#2A2727"
+        android:textSize="30dp"></TextView>
 
     <LinearLayout
         android:layout_width="wrap_content"

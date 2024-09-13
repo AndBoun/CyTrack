@@ -3,17 +3,19 @@ package com.example.androidexample;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Switch;
 
 public class LoginActivity extends AppCompatActivity {
-
     private EditText usernameEditText;  // define username edittext variable
     private EditText passwordEditText;  // define password edittext variable
     private Button loginButton;         // define login button variable
     private Button signupButton;        // define signup button variable
+    private boolean swit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +28,20 @@ public class LoginActivity extends AppCompatActivity {
         loginButton = findViewById(R.id.login_login_btn);    // link to login button in the Login activity XML
         signupButton = findViewById(R.id.login_signup_btn);  // link to signup button in the Login activity XML
 
+        Bundle extras = getIntent().getExtras();
+        if(extras != null) {
+            swit = extras.getBoolean("Dark mode");
+            if (swit) {
+                //back.setVisibility(View.INVISIBLE);
+                loginButton.setTextColor(Color.BLACK);    // link to login button in the Main activity XML
+                signupButton.setTextColor(Color.BLACK);
+            }
+            else {
+                //back.setVisibility(View.VISIBLE);
+                loginButton.setTextColor(Color.GREEN);    // link to login button in the Main activity XML
+                signupButton.setTextColor(Color.GREEN);
+            }
+        }
         /* click listener on login button pressed */
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
