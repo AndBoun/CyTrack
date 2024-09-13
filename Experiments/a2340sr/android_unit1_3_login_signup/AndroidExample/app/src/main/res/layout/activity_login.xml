@@ -117,6 +117,14 @@
                 android:textColor="#ffffff"
                 android:textSize="20sp"></Button>
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="\?\?">
+
+            </TextView>
+
         </LinearLayout>
 
         <TextView

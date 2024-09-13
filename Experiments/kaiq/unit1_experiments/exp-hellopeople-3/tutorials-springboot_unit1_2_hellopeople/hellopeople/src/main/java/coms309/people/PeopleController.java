@@ -90,10 +90,23 @@ public class PeopleController {
     }
 
     @GetMapping("/people/{firstName}/movie")
-    public String interests(@PathVariable String firstName){
+    public String movie(@PathVariable String firstName){
         Person p = peopleList.get(firstName);
 
         return p.getFirstName() + "'s favorite movie is: " + p.getFavoriteMovie().toString();
+    }
+
+    @GetMapping("/people/{firstName}/game")
+    public String Game(@PathVariable String firstName){
+        Person p = peopleList.get(firstName);
+
+        return p.getFirstName() +"'s favorite game is: " + p.getFavoriteGame().toString();
+    }
+
+    @GetMapping("/people/{firstName}/interests")
+    public String interests(@PathVariable String firstName){
+        Person p = peopleList.get(firstName);
+        return p.getFirstName() +" likes to play " + p.getFavoriteGame().toString() + " and loves to watch " + p.getFavoriteMovie().toString();
     }
 }
 

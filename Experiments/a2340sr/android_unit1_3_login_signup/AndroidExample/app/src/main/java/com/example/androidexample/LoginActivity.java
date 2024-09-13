@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -42,7 +43,9 @@ public class LoginActivity extends AppCompatActivity {
                 intent.putExtra("USERNAME", username);  // key-value to pass to the MainActivity
                 intent.putExtra("PASSWORD", password);  // key-value to pass to the MainActivity
                 intent.putExtra("EXTRA_INFO", extraInfo.getText().toString());  // key-value to pass to the MainActivity
+                Toast.makeText(getApplicationContext(), "Login", Toast.LENGTH_LONG).show();
                 startActivity(intent);  // go to MainActivity with the key-value data
+
             }
         });
 
