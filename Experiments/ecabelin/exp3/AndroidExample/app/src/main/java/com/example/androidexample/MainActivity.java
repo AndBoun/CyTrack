@@ -20,6 +20,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView usernameText;  // define username textview variable
     private Button loginButton;     // define login button variable
     private Button signupButton;    // define signup button variable
+    // Dark Mode Switcher
     private Switch togg;
     private boolean swit;
     @Override
@@ -89,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
 
                 /* when signup button is pressed, use intent to switch to Signup Activity */
                 Intent intent = new Intent(MainActivity.this, SignupActivity.class);
+                intent.putExtra("Dark mode", swit);
                 startActivity(intent);
             }
         });
