@@ -1,4 +1,4 @@
-package onetoone.Persons;
+package onetoone.Users;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -17,11 +17,11 @@ import onetoone.Laptops.Laptop;
  */ 
 
 @Entity
-public class Person {
+public class User {
 
      /* 
      * The annotation @ID marks the field below as the primary key for the table created by springboot
-     * The @GeneratedValue generates a value if not already present, The strategy in this case is to START FROM 1 and increment for each table
+     * The @GeneratedValue generates a value if not already present, The strategy in this case is to start from 1 and increment for each table
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,22 +31,22 @@ public class Person {
     private boolean ifActive;
 
     /*
-     * @OneToOne creates a relation between the current entity/table(Laptop) with the entity/table defined below it(Person)
-     * cascade is responsible propagating all changes, even to children of the class Eg: changes made to laptop within a Person object will be reflected
+     * @OneToOne creates a relation between the current entity/table(Laptop) with the entity/table defined below it(User)
+     * cascade is responsible propagating all changes, even to children of the class Eg: changes made to laptop within a user object will be reflected
      * in the database (more info : https://www.baeldung.com/jpa-cascade-types)
-     * @JoinColumn defines the ownership of the foreign key i.e. the Person table will have a field called laptop_id
+     * @JoinColumn defines the ownership of the foreign key i.e. the user table will have a field called laptop_id
      */
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "laptop_id")
     private Laptop laptop;
 
-    public Person(String name, String emailId) {
+    public User(String name, String emailId) {
         this.name = name;
         this.emailId = emailId;
         this.ifActive = true;
     }
 
-    public Person() {
+    public User() {
     }
 
     // =============================== Getters and Setters for each field ================================== //
