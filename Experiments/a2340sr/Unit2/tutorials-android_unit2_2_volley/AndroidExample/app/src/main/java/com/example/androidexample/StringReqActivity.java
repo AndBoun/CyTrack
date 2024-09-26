@@ -36,7 +36,7 @@ public class StringReqActivity extends AppCompatActivity {
 
     /** Uncomment to use: if sending a [GET] StringRequest */
     /** Use API created with POSTMAN-mockserver */
-//    public static final String URL_STRING_REQ = "https://2aa87adf-ff7c-45c8-89bc-f3fbfaa16d15.mock.pstmn.io/users/1";
+//    public static final String URL_STRING_REQ = "https://f4344d81-63ed-4399-bb8d-9e065b9b9154.mock.pstmn.io//StringRequest";
 
 
     /** Uncomment to use: if sending a [GET] StringRequest */
@@ -45,7 +45,7 @@ public class StringReqActivity extends AppCompatActivity {
 
     /** Uncomment to use: if sending a [POST] StringRequest */
     /** Use backend: https://git.las.iastate.edu/cs309/tutorials/-/tree/springboot_unit2_1_onetoone */
-    public static final String URL_STRING_REQ = "http://10.0.2.2:8080/users";
+    public static final String URL_STRING_REQ = "https://f4344d81-63ed-4399-bb8d-9e065b9b9154.mock.pstmn.io//StringPost";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
