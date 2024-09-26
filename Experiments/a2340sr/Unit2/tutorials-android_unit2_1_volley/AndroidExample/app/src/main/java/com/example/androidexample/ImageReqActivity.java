@@ -19,7 +19,9 @@ public class ImageReqActivity extends AppCompatActivity {
     private Button btnImageReq;
     private ImageView imageView;
 
-    public static final String URL_IMAGE = "http://sharding.org/outgoing/temp/testimg3.jpg";
+//    public static final String URL_IMAGE = "http://sharding.org/outgoing/temp/testimg3.jpg";
+    public static final String URL_IMAGE = "https://f4344d81-63ed-4399-bb8d-9e065b9b9154.mock.pstmn.io//ImageRequest";
+//    public static final String URL_IMAGE = "https://www.alleycat.org/wp-content/uploads/2019/03/FELV-cat.jpg";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

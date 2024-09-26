@@ -32,7 +32,7 @@ POST request:
     {
         "name" : "John",
         "email"  : "johndoe@somemail.com",
-        laptop   : {
+        "laptop"   : {
             "cpuClock" : "2.3",
             "cpuCores"  : "4",
             "ram"   : "8",
@@ -60,11 +60,11 @@ PUT request :
         "manufacturer" : "apple",
         "cost" : "2000000"
     }
-    2. /users/{id} - Update User and optionally a lptop associated with him/her for id provided in the url
+    2. /users/{id} - Update User and optionally a laptop associated with him/her for id provided in the url
     {
         "name" : "John",
         "email"  : "johndoe@newmail.com",
-        laptop   : {
+        "laptop"   : {
             "id" : "5"
             "cpuClock" : "3.3",
             "cpuCores"  : "8",
