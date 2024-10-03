@@ -1,13 +1,13 @@
-package coms309.Meals;
+package Meals;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class MealsApplication {
+public class MealsController {
 
 	public static void main(String[] args) {
-		SpringApplication.run(MealsApplication.class, args);
+		SpringApplication.run(MealsController.class, args);
 	}
 
 }
