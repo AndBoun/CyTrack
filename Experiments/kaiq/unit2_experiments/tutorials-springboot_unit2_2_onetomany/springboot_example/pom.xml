@@ -33,13 +33,19 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
     </dependency>
-    
+
     <!-- The H2 database dependency -->
     <dependency>
         <groupId>com.h2database</groupId>
         <artifactId>h2</artifactId>
         <version>1.4.200</version>
         <scope>runtime</scope>
+    </dependency>
+
+    <!-- MYSQL DEPENDENCIES -->
+    <dependency>
+      <groupId>com.mysql</groupId>
+      <artifactId>mysql-connector-j</artifactId>
     </dependency>
 
     <!-- The ORM JPA specs/hibernate impl -->
@@ -58,6 +64,6 @@
       </plugin>
     </plugins>
   </build>
-  
+
 
 </project>
