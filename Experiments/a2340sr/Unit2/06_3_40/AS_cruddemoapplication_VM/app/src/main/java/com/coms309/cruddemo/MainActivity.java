@@ -45,50 +45,42 @@ public class MainActivity extends AppCompatActivity {
         executorService = Executors.newSingleThreadExecutor();
 
         // Button to send GET request
-        buttonGet.setOnClickListener(new View.OnClickListener() {
+        buttonGet.setOnClickListener(v -> executorService.execute(new Runnable() {
             @Override
-            public void onClick(View v) {
-                executorService.execute(new Runnable() {
-                    @Override
-                    public void run() {
+            public void run() {
 //                        sendGetRequest("http://coms-3090-000.class.las.iastate.edu:8080/mytestapi");
 //                        sendGetRequest("http://b47ca2e2-53b9-4bc0-9ee7-82cd4859c4ee.mock.pstmn.io/mytestapi");
-                        sendGetRequest("https://299bd559-c933-4117-94f5-64bf37935b18.mock.pstmn.io/mytestapi");
+                sendGetRequest("https://299bd559-c933-4117-94f5-64bf37935b18.mock.pstmn.io/mytestapi");
 
-                    }
-                });
             }
-        });
+        }));
 
 
 
         // Button to send POST request
-        buttonPost.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String firstName = inputFirstName.getText().toString();
-                String lastName = inputLastName.getText().toString();
-                String email = inputEmail.getText().toString();
+        buttonPost.setOnClickListener(v -> {
+            String firstName = inputFirstName.getText().toString();
+            String lastName = inputLastName.getText().toString();
+            String email = inputEmail.getText().toString();
 
-                // Create JSON object for POST request
-                JSONObject json = new JSONObject();
-                try {
-                    json.put("id", 13); // Example static ID
-                    json.put("firstName", firstName);
-                    json.put("lastName", lastName);
-                    json.put("email", email);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-                executorService.execute(new Runnable() {
-                    @Override
-                    public void run() {
-//                        sendPostRequest("http://coms-3090-000.class.las.iastate.edu:8080/students", json.toString());
-                        sendPostRequest("http://10.0.2.2:8080/students", json.toString());
-                    }
-                });
+            // Create JSON object for POST request
+            JSONObject json = new JSONObject();
+            try {
+                json.put("id", 13); // Example static ID
+                json.put("firstName", firstName);
+                json.put("lastName", lastName);
+                json.put("email", email);
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
+
+            executorService.execute(new Runnable() {
+                @Override
+                public void run() {
+//                        sendPostRequest("http://coms-3090-000.class.las.iastate.edu:8080/students", json.toString());
+                    sendPostRequest("http://10.0.2.2:8080/students", json.toString());
+                }
+            });
         });
     }
 

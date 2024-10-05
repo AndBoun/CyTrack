@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        String username = getIntent().getStringExtra("USERNAME");
-        String password = getIntent().getStringExtra("PASSWORD");
+        String username = usernameEditText.getText().toString();
+        String password = passwordEditText.getText().toString();
     }
 }
