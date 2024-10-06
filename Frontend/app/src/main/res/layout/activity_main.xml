@@ -117,4 +117,16 @@
         app:layout_constraintTop_toBottomOf="@+id/Password_field"
         app:strokeColor="#000000" />
 
+    <TextView
+        android:id="@+id/text_get_response"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="51dp"
+        android:text="TextView"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
