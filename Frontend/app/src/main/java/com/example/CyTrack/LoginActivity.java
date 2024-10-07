@@ -33,6 +33,8 @@ public class LoginActivity extends AppCompatActivity {
     private Button signUpButton, loginButton;
     private TextView textGetResponse;
 
+    private int id;
+
     private final String URL = "https://7e68d300-a3cb-4835-bf2f-66cab084d974.mock.pstmn.io/login/";
 //    private final String URL = "http://10.90.72.246:8080/laptops";
 
@@ -59,8 +61,8 @@ public class LoginActivity extends AppCompatActivity {
             String password = passwordEditText.getText().toString();
 
 
-            //postUserData(username, password);
-            fetchUserData(URL + 22); //TODO add ID to url
+            postUserData(username, password);
+            if (id != 0) fetchUserData(URL + id);
         });
 
         signUpButton.setOnClickListener(v -> {
@@ -87,6 +89,39 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
+    private void postUserData(String username, String password) {
+        Map<String, String> params = new HashMap<>();
+        params.put("username", username);
+        params.put("password", password);
+
+        JSONObject jsonObject = new JSONObject(params);
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, URL, jsonObject,
+                response -> {
+                    // Handle response
+                    try {
+                        id = response.getInt("id");
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                    Toast.makeText(getApplicationContext(), "Signing In", Toast.LENGTH_LONG).show();
+                },
+                error -> {
+                    // Handle error
+                    Toast.makeText(getApplicationContext(), "Failed to Sign In", Toast.LENGTH_LONG).show();
+                }) {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Content-Type", "application/json");
+                return headers;
+            }
+        };
+
+        VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(jsonObjectRequest);
+    }
+
     private void fetchUserData(String url) {
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
                 response -> {
@@ -102,7 +137,7 @@ public class LoginActivity extends AppCompatActivity {
                         // Display the values in the TextView
                         textGetResponse.setText(user.toString());
 
-                        Toast.makeText(getApplicationContext(), "Signing in", Toast.LENGTH_LONG).show();
+                        //Toast.makeText(getApplicationContext(), "Fetching User Data", Toast.LENGTH_LONG).show();
                     } catch (JSONException e) {
                         e.printStackTrace();
                         textGetResponse.setText("JSON Parsing Error");
@@ -110,8 +145,15 @@ public class LoginActivity extends AppCompatActivity {
                 },
                 error -> {
                     textGetResponse.setText("ERROR");
-                    Toast.makeText(getApplicationContext(), "Failed to Sign in", Toast.LENGTH_LONG).show();
-                });
+                    Toast.makeText(getApplicationContext(), "Failed to Fetch Data", Toast.LENGTH_LONG).show();
+                }){
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Content-Type", "application/json");
+                return headers;
+            }
+        };
 
         VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(jsonObjectRequest);
     }
