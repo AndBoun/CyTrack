@@ -1,4 +1,4 @@
-package com.example.firstscreen;
+package com.example.CyTrack;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,7 +13,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 
-public class MainActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity {
 
     private EditText usernameEditText, passwordEditText;
     private Button signUpButton, loginButton;
@@ -60,8 +60,8 @@ public class MainActivity extends AppCompatActivity {
         loginButton.setOnClickListener(v -> {
             String response;
 
-//            response = NetworkHelper.sendGetRequest("https://f4344d81-63ed-4399-bb8d-9e065b9b9154.mock.pstmn.io//JSONOBJRequest");
-            response = NetworkHelper.sendGetRequest("http://10.90.72.246:8080/laptops");
+            response = NetworkHelper.sendGetRequest("https://f4344d81-63ed-4399-bb8d-9e065b9b9154.mock.pstmn.io//JSONOBJRequest");
+//            response = NetworkHelper.sendGetRequest("http://10.90.72.246:8080/laptops");
 
             textGetResponse.setText(response);
 
@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         signUpButton.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, SignUpActivity.class);
+            Intent intent = new Intent(LoginActivity.this, SignUpActivity.class);
             startActivity(intent);
         });
 

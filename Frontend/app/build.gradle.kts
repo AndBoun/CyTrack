@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.firstscreen"
+    namespace = "com.example.CyTrack"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.firstscreen"
+        applicationId = "com.example.CyTrack"
         minSdk = 30
         targetSdk = 34
         versionCode = 1

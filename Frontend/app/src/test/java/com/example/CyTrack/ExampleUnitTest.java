@@ -1,4 +1,4 @@
-package com.example.firstscreen;
+package com.example.CyTrack;
 
 import org.junit.Test;
 
