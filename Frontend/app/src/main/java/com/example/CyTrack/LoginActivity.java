@@ -33,7 +33,7 @@ public class LoginActivity extends AppCompatActivity {
     private Button signUpButton, loginButton;
     private TextView textGetResponse;
 
-    private final String URL = "https://f4344d81-63ed-4399-bb8d-9e065b9b9154.mock.pstmn.io//JSONOBJRequest";
+    private final String URL = "https://7e68d300-a3cb-4835-bf2f-66cab084d974.mock.pstmn.io/login/";
 //    private final String URL = "http://10.90.72.246:8080/laptops";
 
     @Override
@@ -54,6 +54,20 @@ public class LoginActivity extends AppCompatActivity {
         textGetResponse = findViewById(R.id.text_get_response);
 
 
+        loginButton.setOnClickListener(v -> {
+            String username = usernameEditText.getText().toString();
+            String password = passwordEditText.getText().toString();
+
+
+            //postUserData(username, password);
+            fetchUserData(URL + 22); //TODO add ID to url
+        });
+
+        signUpButton.setOnClickListener(v -> {
+            Intent intent = new Intent(LoginActivity.this, SignUpActivity.class);
+            startActivity(intent);
+        });
+
         usernameEditText.setOnFocusChangeListener((v, hasFocus) -> {
             if (hasFocus) {
                 usernameEditText.setHint("");
@@ -70,26 +84,35 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        String username = usernameEditText.getText().toString();
-        String password = passwordEditText.getText().toString();
 
-        loginButton.setOnClickListener(v -> {
-            StringRequest stringRequest = new StringRequest(Request.Method.GET, URL,
-                    response -> {
-                        textGetResponse.setText(response);
+    }
+
+    private void fetchUserData(String url) {
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
+                response -> {
+                    try {
+                        User user = new User(
+                                response.getInt("id"),
+                                response.getString("name"),
+                                response.getInt("age"),
+                                response.getString("gender"),
+                                response.getInt("streak")
+                        );
+
+                        // Display the values in the TextView
+                        textGetResponse.setText(user.toString());
+
                         Toast.makeText(getApplicationContext(), "Signing in", Toast.LENGTH_LONG).show();
-                    },
-                    error -> {
-                        textGetResponse.setText("ERROR");
-                        Toast.makeText(getApplicationContext(), "Failed to Sign in", Toast.LENGTH_LONG).show();
-                    });
-            VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
-        });
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        textGetResponse.setText("JSON Parsing Error");
+                    }
+                },
+                error -> {
+                    textGetResponse.setText("ERROR");
+                    Toast.makeText(getApplicationContext(), "Failed to Sign in", Toast.LENGTH_LONG).show();
+                });
 
-        signUpButton.setOnClickListener(v -> {
-            Intent intent = new Intent(LoginActivity.this, SignUpActivity.class);
-            startActivity(intent);
-        });
-
+        VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(jsonObjectRequest);
     }
 }
