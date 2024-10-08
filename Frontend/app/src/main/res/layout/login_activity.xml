@@ -129,4 +129,18 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
+    <Button
+        android:id="@+id/forgotPassword_button"
+        android:layout_width="183dp"
+        android:layout_height="41dp"
+        android:layout_marginTop="13dp"
+        android:backgroundTint="#00FFFFFF"
+        android:text="Forgot Password"
+        android:textColor="#2196F3"
+        android:textSize="10sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/signUp_button" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -13,10 +13,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
 
 import android.widget.Toast;
 
@@ -30,7 +27,7 @@ import java.util.Map;
 public class LoginActivity extends AppCompatActivity {
 
     private EditText usernameEditText, passwordEditText;
-    private Button signUpButton, loginButton;
+    private Button signUpButton, loginButton, forgotPasswordButton;
     private TextView textGetResponse;
 
     private int id;
@@ -42,7 +39,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.login_activity);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -53,6 +50,7 @@ public class LoginActivity extends AppCompatActivity {
         passwordEditText = findViewById(R.id.Password_field);
         signUpButton = findViewById(R.id.signUp_button);
         loginButton = findViewById(R.id.login_button);
+        forgotPasswordButton = findViewById(R.id.forgotPassword_button);
         textGetResponse = findViewById(R.id.text_get_response);
 
 
@@ -60,6 +58,10 @@ public class LoginActivity extends AppCompatActivity {
             String username = usernameEditText.getText().toString();
             String password = passwordEditText.getText().toString();
 
+            if (username.isEmpty() || password.isEmpty()) {
+                Toast.makeText(getApplicationContext(), "Please fill in all fields", Toast.LENGTH_LONG).show();
+                return;
+            }
 
             postUserData(username, password);
             if (id != 0) fetchUserData(URL + id);
@@ -67,6 +69,11 @@ public class LoginActivity extends AppCompatActivity {
 
         signUpButton.setOnClickListener(v -> {
             Intent intent = new Intent(LoginActivity.this, SignUpActivity.class);
+            startActivity(intent);
+        });
+
+        forgotPasswordButton.setOnClickListener(v -> {
+            Intent intent = new Intent(LoginActivity.this, ForgotPasswordActivity.class);
             startActivity(intent);
         });
 
