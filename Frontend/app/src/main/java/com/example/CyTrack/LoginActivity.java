@@ -30,6 +30,8 @@ public class LoginActivity extends AppCompatActivity {
     private Button signUpButton, loginButton, forgotPasswordButton;
     private TextView textGetResponse;
 
+    private User user;
+
     private int id;
 
     private final String URL = "https://7e68d300-a3cb-4835-bf2f-66cab084d974.mock.pstmn.io/login/";
@@ -133,7 +135,7 @@ public class LoginActivity extends AppCompatActivity {
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
                 response -> {
                     try {
-                        User user = new User(
+                        user = new User(
                                 response.getInt("id"),
                                 response.getString("name"),
                                 response.getInt("age"),
