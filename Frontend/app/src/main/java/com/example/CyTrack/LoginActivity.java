@@ -13,13 +13,9 @@ import androidx.core.splashscreen.SplashScreen;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.android.volley.Request;
-import com.android.volley.toolbox.JsonObjectRequest;
-
 import android.widget.Toast;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,8 +28,6 @@ public class LoginActivity extends AppCompatActivity {
     private TextView textGetResponse;
 
     private User user;
-
-    private int id;
 
     private final String URL = "https://7e68d300-a3cb-4835-bf2f-66cab084d974.mock.pstmn.io/login/";
 //    private final String URL = "http://10.90.72.246:8080/laptops";
@@ -67,8 +61,7 @@ public class LoginActivity extends AppCompatActivity {
                 return;
             }
 
-            postUserData(username, password);
-//            if (id != 0) fetchUserData(URL + id);
+            login(username, password);
         });
 
         signUpButton.setOnClickListener(v -> {
@@ -81,96 +74,54 @@ public class LoginActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        usernameEditText.setOnFocusChangeListener((v, hasFocus) -> {
-            if (hasFocus) {
-                usernameEditText.setHint("");
-            } else {
-                usernameEditText.setHint("Username");
-            }
-        });
-
-        passwordEditText.setOnFocusChangeListener((v, hasFocus) -> {
-            if (hasFocus) {
-                passwordEditText.setHint("");
-            } else {
-                passwordEditText.setHint("Password");
-            }
-        });
-
-
+       clearHintOnFocus();
     }
 
-    private void postUserData(String username, String password) {
+    private void login(String username, String password) {
         Map<String, String> params = new HashMap<>();
         params.put("username", username);
         params.put("password", password);
 
-        JSONObject jsonObject = new JSONObject(params);
-
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, URL, jsonObject,
-                response -> {
-                    // Handle response
-                    try {
-                        id = response.getInt("id");
-                        if (id != 0) fetchUserData(URL + id);
-                    } catch (JSONException e) {
-                        throw new RuntimeException(e);
-                    }
-
-                    Toast.makeText(getApplicationContext(), "Signing In", Toast.LENGTH_LONG).show();
-                },
-                error -> {
-                    // Handle error
-                    Toast.makeText(getApplicationContext(), "Failed to Sign In", Toast.LENGTH_LONG).show();
-                }) {
+        NetworkUtils.postUserAndGetID(getApplicationContext(), URL, params, new NetworkUtils.postUserAndGetIDCallback() {
             @Override
-            public Map<String, String> getHeaders() {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Content-Type", "application/json");
-                return headers;
+            public void onSuccess(int id) {
+                if (id != 0) fetchUserData(URL + id);
+                Toast.makeText(getApplicationContext(), "Signing In", Toast.LENGTH_LONG).show();
             }
-        };
 
-        VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(jsonObjectRequest);
+            @Override
+            public void onError(Exception e) {
+                Toast.makeText(getApplicationContext(), "Failed to Sign In", Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     private void fetchUserData(String url) {
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
-                response -> {
-                    try {
-                        user = new User(
-                                response.getInt("id"),
-                                response.getString("name"),
-                                response.getInt("age"),
-                                response.getString("gender"),
-                                response.getInt("streak")
-                        );
-
-                        // Display the values in the TextView
-                        textGetResponse.setText(user.toString());
-
-                        Intent intent = new Intent(LoginActivity.this, MainDashboardActivity.class);
-                        intent.putExtra("user", user);
-                        startActivity(intent);
-
-                        //Toast.makeText(getApplicationContext(), "Fetching User Data", Toast.LENGTH_LONG).show();
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                        textGetResponse.setText("JSON Parsing Error");
-                    }
-                },
-                error -> {
-                    textGetResponse.setText("ERROR");
-                    Toast.makeText(getApplicationContext(), "Failed to Fetch Data", Toast.LENGTH_LONG).show();
-                }){
+        NetworkUtils.fetchUserData(this, url, new NetworkUtils.fetchUserDataCallback() {
             @Override
-            public Map<String, String> getHeaders() {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Content-Type", "application/json");
-                return headers;
+            public void onSuccess(User user) {
+                LoginActivity.this.user = user;
+                textGetResponse.setText(user.toString());
+                navigateToMainDashboard();
             }
-        };
 
-        VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(jsonObjectRequest);
+            @Override
+            public void onError(Exception e) {
+                textGetResponse.setText("ERROR");
+                Toast.makeText(getApplicationContext(), "Failed to Fetch Data", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private void navigateToMainDashboard(){
+        Intent intent = new Intent(LoginActivity.this, MainDashboardActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.putExtra("user", user);
+        startActivity(intent);
+    }
+
+    private void clearHintOnFocus(){
+        FocusUtils.clearHintOnFocus(usernameEditText, "Username");
+        FocusUtils.clearHintOnFocus(passwordEditText, "Password");
     }
 }

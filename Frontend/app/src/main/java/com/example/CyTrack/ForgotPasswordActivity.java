@@ -28,8 +28,6 @@ public class ForgotPasswordActivity extends AppCompatActivity {
 
     private Button resetButton, backButton;
 
-    private int id;
-
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,56 +65,49 @@ public class ForgotPasswordActivity extends AppCompatActivity {
 
         backButton.setOnClickListener(v -> finish());
 
+
+        clearHintOnFocus();
     }
+
 
     private void checkUsernameAndPassword(String username, String password) { //  username must already exist, password must not be the same as old password
         Map<String, String> params = new HashMap<>();
         params.put("username", username);
+        params.put("password", password);
 
-        JSONObject jsonObject = new JSONObject(params);
-
-        JsonObjectRequest checkRequest = new JsonObjectRequest(Request.Method.POST, URL, jsonObject,
-                response -> {
-                    try {
-                        id = response.getInt("id");
-                        if (id != 0) resetPassword(URL + id, password);
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
-                    //Toast.makeText(getApplicationContext(), "Password Reset in Progress", Toast.LENGTH_LONG).show();
-                },
-                error -> Toast.makeText(getApplicationContext(), "Failed to Reset Password", Toast.LENGTH_LONG).show()) {
+        NetworkUtils.postUserAndGetID(getApplicationContext(), URL, params, new NetworkUtils.postUserAndGetIDCallback() {
             @Override
-            public Map<String, String> getHeaders() {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Content-Type", "application/json");
-                return headers;
+            public void onSuccess(int id) {
+                if (id != 0) resetPassword(URL + id, password);
             }
-        };
 
-        VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(checkRequest);
+            @Override
+            public void onError(Exception e) {
+                Toast.makeText(getApplicationContext(), "Failed to Reset Password", Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     private void resetPassword(String URLid, String password) {
         Map<String, String> params = new HashMap<>();
         params.put("password", password);
 
-        JSONObject jsonObject = new JSONObject(params);
+        NetworkUtils.modifyUserData(getApplicationContext(), URLid, params, response -> {
+            Toast.makeText(getApplicationContext(), "Password Reset", Toast.LENGTH_LONG).show();
+            switchToLogin();
+        }, error -> {
+            // Handle error
+            Toast.makeText(getApplicationContext(), "Failed to Reset Password", Toast.LENGTH_LONG).show();
+        });
+    }
 
-        JsonObjectRequest resetRequest = new JsonObjectRequest(Request.Method.PUT, URLid, jsonObject,
-                response -> {
-                    Toast.makeText(getApplicationContext(), "Password Reset", Toast.LENGTH_LONG).show();
-                },
-                error -> Toast.makeText(getApplicationContext(), "Failed to Reset Password", Toast.LENGTH_LONG).show()) {
-            @Override
-            public Map<String, String> getHeaders() {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Content-Type", "application/json");
-                return headers;
-            }
-        };
-        VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(resetRequest);
+    private void clearHintOnFocus(){
+        FocusUtils.clearHintOnFocus(usernameEditText, "Username");
+        FocusUtils.clearHintOnFocus(passwordEditText, "Password");
+        FocusUtils.clearHintOnFocus(passwordAgainEditText, "Password Again");
+    }
+
+    private void switchToLogin(){
+        finish();
     }
 }

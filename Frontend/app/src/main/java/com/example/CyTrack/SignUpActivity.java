@@ -3,6 +3,7 @@ package com.example.CyTrack;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -57,42 +58,42 @@ public class SignUpActivity extends AppCompatActivity {
                 return;
             }
 
-            postUserData(username, password);
+            signUpUser(username, password);
         });
 
         backButton.setOnClickListener(v -> {
             Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
             startActivity(intent);
         });
+
+
+        clearHintOnFocus();
     }
 
-    private void postUserData(String username, String password) {
+    private void signUpUser(String username, String password) {
         Map<String, String> params = new HashMap<>();
         params.put("username", username);
         params.put("password", password);
 
-        JSONObject jsonObject = new JSONObject(params);
-
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, URL, jsonObject,
-                response -> {
-                    Toast.makeText(getApplicationContext(), "Signed Up", Toast.LENGTH_LONG).show();
-                    Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
-                    startActivity(intent);
-                    finish();
-                },
-                error -> {
-                    // Handle error
-                    Toast.makeText(getApplicationContext(), "Failed to Sign Up", Toast.LENGTH_LONG).show();
-                }) {
-            @Override
-            public Map<String, String> getHeaders() {
-                Map<String, String> headers = new HashMap<>();
-                headers.put("Content-Type", "application/json");
-                return headers;
-            }
-        };
-
-        VolleySingleton.getInstance(getApplicationContext()).addToRequestQueue(jsonObjectRequest);
+        NetworkUtils.postUserData(getApplicationContext(), URL, params, response -> {
+            Toast.makeText(getApplicationContext(), "Signed Up", Toast.LENGTH_LONG).show();
+            navigateToLogin();
+        }, error -> {
+            // Handle error
+            Toast.makeText(getApplicationContext(), "Failed to Sign In", Toast.LENGTH_LONG).show();
+        });
         Log.d("SignUpActivity", "Request added to queue");
+    }
+
+    private void clearHintOnFocus(){
+        FocusUtils.clearHintOnFocus(usernameEditText, "Username");
+        FocusUtils.clearHintOnFocus(passwordEditText, "Password");
+        FocusUtils.clearHintOnFocus(passwordAgainEditText, "Password Again");
+    }
+
+    private void navigateToLogin(){
+        Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
+        startActivity(intent);
+        finish();
     }
 }

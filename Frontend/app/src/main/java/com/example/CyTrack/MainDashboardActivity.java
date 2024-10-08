@@ -5,6 +5,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -54,5 +55,15 @@ public class MainDashboardActivity extends AppCompatActivity {
         workOutTrackingButton.setOnClickListener(v -> {
             // Open Workout Tracking Activity
         });
+
+        // Handle back press
+        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                // Do nothing to disable back press
+            }
+        };
+        getOnBackPressedDispatcher().addCallback(this, callback);
     }
+
 }
