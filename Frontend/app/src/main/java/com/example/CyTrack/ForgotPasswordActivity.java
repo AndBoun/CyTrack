@@ -60,9 +60,6 @@ public class ForgotPasswordActivity extends AppCompatActivity {
 
             if (password.equals(passwordAgain)) {
                 checkUsernameAndPassword(username, password);
-                if (id != 0) {
-                    resetPassword(URL + id, password);
-                }
             } else {
                 Toast.makeText(getApplicationContext(), "Passwords do not match", Toast.LENGTH_LONG).show();
             }
@@ -82,6 +79,8 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                 response -> {
                     try {
                         id = response.getInt("id");
+                        if (id != 0) resetPassword(URL + id, password);
+
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }

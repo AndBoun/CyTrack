@@ -2,7 +2,9 @@ package com.example.CyTrack;
 
 import androidx.annotation.NonNull;
 
-class User {
+import java.io.Serializable;
+
+class User implements Serializable {
     private final int ID;
 
     private String name;

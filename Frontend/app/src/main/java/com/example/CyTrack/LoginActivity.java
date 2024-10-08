@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.core.splashscreen.SplashScreen;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -39,6 +40,7 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        SplashScreen splashScreen = SplashScreen.installSplashScreen(this);
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.login_activity);
@@ -66,7 +68,7 @@ public class LoginActivity extends AppCompatActivity {
             }
 
             postUserData(username, password);
-            if (id != 0) fetchUserData(URL + id);
+//            if (id != 0) fetchUserData(URL + id);
         });
 
         signUpButton.setOnClickListener(v -> {
@@ -110,6 +112,7 @@ public class LoginActivity extends AppCompatActivity {
                     // Handle response
                     try {
                         id = response.getInt("id");
+                        if (id != 0) fetchUserData(URL + id);
                     } catch (JSONException e) {
                         throw new RuntimeException(e);
                     }
@@ -145,6 +148,10 @@ public class LoginActivity extends AppCompatActivity {
 
                         // Display the values in the TextView
                         textGetResponse.setText(user.toString());
+
+                        Intent intent = new Intent(LoginActivity.this, MainDashboardActivity.class);
+                        intent.putExtra("user", user);
+                        startActivity(intent);
 
                         //Toast.makeText(getApplicationContext(), "Fetching User Data", Toast.LENGTH_LONG).show();
                     } catch (JSONException e) {
