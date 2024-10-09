@@ -27,7 +27,7 @@ public class UserController {
 
     // Register user
     @PostMapping("")
-    public ResponseEntity<User> registerUser(@RequestBody User user) {
+    public ResponseEntity<String> registerUser(@RequestBody User user) {
         LOGGER.log(Level.INFO, "Received registration request for user: {0}", user.getUsername());
         try {
             if (user.getUsername() == null || user.getPassword() == null) {
@@ -35,7 +35,7 @@ public class UserController {
             }
             User registeredUser = userService.registerUser(user);
             LOGGER.log(Level.INFO, "User registered with username: {0}", user.getUsername());
-            return ResponseEntity.ok(registeredUser);
+            return ResponseEntity.ok("User registered");
         } catch (NoSuchAlgorithmException e) {
             LOGGER.log(Level.SEVERE, "Error during user registration", e);
             return ResponseEntity.status(500).body(null);
