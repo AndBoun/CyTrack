@@ -23,6 +23,8 @@ public class UserController {
     public UserController(UserService userService) {
         this.userService = userService;
     }
+
+
     // Register user
     @PostMapping("")
     public ResponseEntity<User> registerUser(@RequestBody User user) {
@@ -39,6 +41,7 @@ public class UserController {
             return ResponseEntity.status(500).body(null);
         }
     }
+
     // Login user
     @PostMapping("/{username}")
     public ResponseEntity<String> loginUser(@PathVariable String username, @RequestBody User user) {
@@ -60,7 +63,9 @@ public class UserController {
         List<User> users = userService.getAllUsers();
         return ResponseEntity.ok(users);
     }
+
     // Get user by username
+    /*
     @GetMapping("/{username}")
     public ResponseEntity<User> getUserByUsername(@PathVariable String username) {
         Optional<User> user = userService.findByUserName(username);
@@ -70,10 +75,25 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
     }
+     */
+
+
+    //Get user by userID
+    @GetMapping("/{userID}")
+    public ResponseEntity<User> getUserByUserID(@PathVariable Long userID){
+        Optional<User> user = userService.findByUserID(userID);
+        if(user.isPresent()){
+            return ResponseEntity.ok(user.get());
+        }
+        else{
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     // Update user information
-    @PutMapping("/{username}")
-    public ResponseEntity<User> updateUser(@PathVariable String username, @RequestBody User updatedUser) {
-        Optional<User> user = userService.findByUserName(username);
+    @PutMapping("/{userID}")
+    public ResponseEntity<User> updateUser(@PathVariable Long userID, @RequestBody User updatedUser) {
+        Optional<User> user = userService.findByUserID(userID);
         if (user.isPresent()) {
             User existingUser = user.get();
             if (updatedUser.getFirstName() != null) {
@@ -96,9 +116,9 @@ public class UserController {
         }
     }
     // Delete user by username
-    @DeleteMapping("/{username}")
-    public ResponseEntity<String> deleteUserByUsername(@PathVariable String username) {
-        Optional<User> user = userService.findByUserName(username);
+    @DeleteMapping("/{userID}")
+    public ResponseEntity<String> deleteUserByUsername(@PathVariable Long userID) {
+        Optional<User> user = userService.findByUserID(userID);
         if (user.isPresent()) {
             userService.deleteUser(user.get());
             return ResponseEntity.ok("User deleted");

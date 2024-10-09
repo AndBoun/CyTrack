@@ -31,23 +31,29 @@ public class UserService {
         user.setPassword(hashPassword(user.getPassword()));
         return userRepository.save(user);
     }
-    public void deleteUser(User user) {
-        userRepository.delete(user);
-    }
-    public User updateUser(User user) {
-        return userRepository.save(user);
-    }
+
+
+
 
     public Optional<User> findByUserName(String username) {
         return userRepository.findByUsername(username);
     }
+    public Optional<User> findByUserID(Long userID){ return userRepository.findByUserID(userID);}
+
+    public User updateUser(User user) {
+        return userRepository.save(user);
+    }
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
+    public void deleteUser(User user) {
+        userRepository.delete(user);
+    }
+
+
     public boolean checkPassword(User user, String rawPassword) throws NoSuchAlgorithmException {
         return user.getPassword().equals(hashPassword(rawPassword));
     }
-
     private String hashPassword(String password) throws NoSuchAlgorithmException {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
