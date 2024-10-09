@@ -13,7 +13,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/user")
 public class UserController {
 
     private static final Logger LOGGER = Logger.getLogger(UserController.class.getName());
@@ -23,16 +23,8 @@ public class UserController {
     public UserController(UserService userService) {
         this.userService = userService;
     }
-
-
-
-    @GetMapping("/all")
-    public ResponseEntity<List<User>> getAllUsers() {
-        List<User> users = userService.getAllUsers();
-        return ResponseEntity.ok(users);
-    }
-
-    @PostMapping("/register")
+    // Register user
+    @PostMapping("")
     public ResponseEntity<User> registerUser(@RequestBody User user) {
         LOGGER.log(Level.INFO, "Received registration request for user: {0}", user.getUsername());
         try {
@@ -47,11 +39,11 @@ public class UserController {
             return ResponseEntity.status(500).body(null);
         }
     }
-
-    @PostMapping("/login")
-    public ResponseEntity<String> loginUser(@RequestBody User user) {
+    // Login user
+    @PostMapping("/{username}")
+    public ResponseEntity<String> loginUser(@PathVariable String username, @RequestBody User user) {
         try {
-            Optional<User> foundUser = userService.findByUserName(user.getUsername());
+            Optional<User> foundUser = userService.findByUserName(username);
             if (foundUser.isPresent() && userService.checkPassword(foundUser.get(), user.getPassword())) {
                 return ResponseEntity.ok("Login successful");
             } else {
@@ -62,7 +54,13 @@ public class UserController {
             return ResponseEntity.status(500).body("Internal server error");
         }
     }
-
+    // Get all users
+    @GetMapping("")
+    public ResponseEntity<List<User>> getAllUsers() {
+        List<User> users = userService.getAllUsers();
+        return ResponseEntity.ok(users);
+    }
+    // Get user by username
     @GetMapping("/{username}")
     public ResponseEntity<User> getUserByUsername(@PathVariable String username) {
         Optional<User> user = userService.findByUserName(username);
@@ -72,7 +70,32 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
     }
-
+    // Update user information
+    @PutMapping("/{username}")
+    public ResponseEntity<User> updateUser(@PathVariable String username, @RequestBody User updatedUser) {
+        Optional<User> user = userService.findByUserName(username);
+        if (user.isPresent()) {
+            User existingUser = user.get();
+            if (updatedUser.getFirstName() != null) {
+                existingUser.setFirstName(updatedUser.getFirstName());
+            }
+            if (updatedUser.getLastName() != null) {
+                existingUser.setLastName(updatedUser.getLastName());
+            }
+            if (updatedUser.getPassword() != null) {
+                existingUser.setPassword(updatedUser.getPassword());
+            }
+            if (updatedUser.getUsername() != null) {
+                existingUser.setUsername(updatedUser.getUsername());
+            }
+            User updated = userService.updateUser(existingUser);
+            return ResponseEntity.ok(updated);
+        }
+        else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+    // Delete user by username
     @DeleteMapping("/{username}")
     public ResponseEntity<String> deleteUserByUsername(@PathVariable String username) {
         Optional<User> user = userService.findByUserName(username);
@@ -83,5 +106,4 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
     }
-
 }

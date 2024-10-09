@@ -6,7 +6,7 @@ import jakarta.persistence.*;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private Long userID;
     @Column(nullable = false, unique = true)
     private String username;
     private String firstName;
@@ -23,11 +23,11 @@ public class User {
     }
 
     public Long getId() {
-        return id;
+        return userID;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setId(Long userID) {
+        this.userID = userID;
     }
 
     public String getUsername() {
