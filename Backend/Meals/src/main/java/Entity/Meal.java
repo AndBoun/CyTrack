@@ -1,5 +1,6 @@
 package Entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 /**
@@ -13,36 +14,17 @@ import jakarta.persistence.*;
 @Table(name ="Meal")
 public class Meal {
 
-    /**
-     * Primary key -- id
+    /*
+     * The annotation @ID marks the field below as the primary key for the table created by springboot
+     * The @GeneratedValue generates a value if not already present, The strategy in this case is to start from 1 and increment for each table
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column
-    private int id;
+    private int mealID;
 
-    /**
-     *Attribute -- meal name
-     */
-    @Column(name = "meal_name")
     private String mealName;
-
-    /**
-     *Attribute -- calories
-     */
-    @Column(name = "calories")
     private int calories;
-
-    /**
-     *Attribute -- protein
-     */
-    @Column(name = "protein")
     private int protein;
-
-    /**
-     *Attribute -- carbs
-     */
-    @Column(name = "carbs")
     private int carbs;
 
     //TODO--figure out best way to store timestamp
@@ -60,11 +42,11 @@ public class Meal {
 
 
     public int getId() {
-        return id;
+        return mealID;
     }
 
     public void setId(int id) {
-        this.id = id;
+        this.mealID = id;
     }
 
     public String getMealName() {
@@ -102,7 +84,7 @@ public class Meal {
     @Override
     public String toString() {
         return "Meal{" +
-                "id=" + id +
+                "mealID= " + mealID + '\'' +
                 ", meal name='" + mealName + '\'' +
                 ", calories='" + calories + '\'' +
                 ", protein='" + protein + '\'' +
