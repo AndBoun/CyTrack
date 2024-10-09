@@ -18,7 +18,7 @@ public class MealController {
 
     /**
      * LIST of all meals in DB
-     * @return
+     * @return list of all meals in DB
      */
     @GetMapping("/meals")
     List<Meal> getAllMeals() { return mealRepo.findAll(); }
@@ -77,6 +77,32 @@ public class MealController {
 
             response.put("message", "New Meal posted correctly");
             response.put("status", "200"); // 200 OK HTTP status
+        }
+
+        return response;
+    }
+
+    /**
+     * DELETE a meal row based on a given input
+     */
+    @DeleteMapping("/meal{id}")
+    public Map<String, String> deleteMeal(@PathVariable Integer id) {
+
+        Map<String, String> response = new HashMap<>();
+
+        //check if Meal with given id exists
+        Optional<Meal> existingMealOptional = mealRepo.findById(id);
+
+        if (existingMealOptional.isPresent()) {
+            //meal exists --delete meal
+            mealRepo.deleteById(id);
+
+            response.put("message", "Meal deleted successfully");
+            response.put("status", "200");
+        } else {
+            //meal DNE -- return 404 response
+            response.put("message", "Meal not found with id: " + id);
+            response.put("status", "404");
         }
 
         return response;
