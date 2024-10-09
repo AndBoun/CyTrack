@@ -25,7 +25,6 @@ public class LoginActivity extends AppCompatActivity {
 
     private EditText usernameEditText, passwordEditText;
     private Button signUpButton, loginButton, forgotPasswordButton;
-    private TextView textGetResponse;
 
     private User user;
 
@@ -49,7 +48,6 @@ public class LoginActivity extends AppCompatActivity {
         signUpButton = findViewById(R.id.signUp_button);
         loginButton = findViewById(R.id.login_button);
         forgotPasswordButton = findViewById(R.id.forgotPassword_button);
-        textGetResponse = findViewById(R.id.text_get_response);
 
 
         loginButton.setOnClickListener(v -> {
@@ -101,13 +99,11 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onSuccess(User user) {
                 LoginActivity.this.user = user;
-                textGetResponse.setText(user.toString());
                 navigateToMainDashboard();
             }
 
             @Override
             public void onError(Exception e) {
-                textGetResponse.setText("ERROR");
                 Toast.makeText(getApplicationContext(), "Failed to Fetch Data", Toast.LENGTH_LONG).show();
             }
         });
