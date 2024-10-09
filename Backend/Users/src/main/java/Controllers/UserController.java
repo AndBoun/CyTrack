@@ -1,24 +1,18 @@
 package Controllers;
-import java.util.*;
-import Repositories.UserRepository;
-import Entities.User;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
-@RestController
-public class UserController {
-
-    @Autowired
-    UserRepository userRepository;
 
 
-    @GetMapping(path = "/user")
-    public List<User> getAllUsers(){
-        return userRepository.findAll();
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+
+@Controller
+public class UserController{
+    @GetMapping("/login")
+    public String login(){
+        return "login";
     }
 
-
-
-
-
+    @GetMapping("/registration")
+    public String registration(){
+        return "registration";
+    }
 }
