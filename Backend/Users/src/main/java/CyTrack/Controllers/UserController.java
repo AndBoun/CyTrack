@@ -115,6 +115,7 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
     }
+
     // Delete user by username
     @DeleteMapping("/{userID}")
     public ResponseEntity<String> deleteUserByUsername(@PathVariable Long userID) {
