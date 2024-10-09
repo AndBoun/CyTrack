@@ -14,7 +14,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 public class MainDashboardActivity extends AppCompatActivity {
 
-    private ImageButton profileSettingsButton, notificationButton, mealTrackingButton, workOutTrackingButton;
+    private ImageButton profileSettingsButton, notificationButton, mealTrackingButton, workOutTrackingButton, exerciseTrackingButton;
     private TextView userNameTextView, userStreakTextView;
 
     private User user;
@@ -35,6 +35,7 @@ public class MainDashboardActivity extends AppCompatActivity {
         notificationButton = findViewById(R.id.notificationButton);
         mealTrackingButton = findViewById(R.id.mealTrackingButton);
         workOutTrackingButton = findViewById(R.id.workOutTrackingButton);
+        exerciseTrackingButton = findViewById(R.id.exerciseTrackingButton);
         userNameTextView = findViewById(R.id.helloTextView);
         userStreakTextView = findViewById(R.id.streakTextView);
 
