@@ -29,7 +29,7 @@ public class LoginActivity extends AppCompatActivity {
     private User user;
 
     private final String URL = "https://7e68d300-a3cb-4835-bf2f-66cab084d974.mock.pstmn.io/login/";
-//    private final String URL = "http://10.90.72.246:8080/laptops";
+//    private final String URL = "http://10.90.72.246:8080/users/login";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

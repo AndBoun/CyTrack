@@ -23,6 +23,7 @@ import java.util.Map;
 public class ForgotPasswordActivity extends AppCompatActivity {
 
     private final String URL = "https://7e68d300-a3cb-4835-bf2f-66cab084d974.mock.pstmn.io/login/"; //TODO should be a different signup URL
+//    private final String URL = "http://10.90.72.246:8080/users/";
 
     private EditText usernameEditText, passwordEditText, passwordAgainEditText;
 
@@ -77,8 +78,8 @@ public class ForgotPasswordActivity extends AppCompatActivity {
 
         NetworkUtils.postUserAndGetID(getApplicationContext(), URL, params, new NetworkUtils.postUserAndGetIDCallback() {
             @Override
-            public void onSuccess(int id) {
-                if (id != 0) resetPassword(URL + id, password);
+            public void onSuccess(int userID) {
+                if (userID != 0) resetPassword(URL + userID, password);
             }
 
             @Override
@@ -88,11 +89,11 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         });
     }
 
-    private void resetPassword(String URLid, String password) {
+    private void resetPassword(String url, String password) {
         Map<String, String> params = new HashMap<>();
         params.put("password", password);
 
-        NetworkUtils.modifyUserData(getApplicationContext(), URLid, params, response -> {
+        NetworkUtils.modifyUserData(getApplicationContext(), url, params, response -> {
             Toast.makeText(getApplicationContext(), "Password Reset", Toast.LENGTH_LONG).show();
             switchToLogin();
         }, error -> {

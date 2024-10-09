@@ -47,8 +47,8 @@ class NetworkUtils {
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, jsonObject, response -> {
             try {
-                int id = response.getInt("id");
-                callback.onSuccess(id);
+                int userID = response.getInt("userID");
+                callback.onSuccess(userID);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -81,7 +81,7 @@ class NetworkUtils {
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, response -> {
             try {
                 User user =new User(
-                        response.getInt("id"),
+                        response.getInt("userID"),
                         response.getString("name"),
                         response.getInt("age"),
                         response.getString("gender"),

@@ -31,7 +31,7 @@ public class MainDashboardActivity extends AppCompatActivity {
 
         user = (User) getIntent().getSerializableExtra("user");
 
-        profileSettingsButton = findViewById(R.id.profileSettingsButton);
+        profileSettingsButton = findViewById(R.id.profilePictureButton);
         notificationButton = findViewById(R.id.notificationButton);
         mealTrackingButton = findViewById(R.id.mealTrackingButton);
         workOutTrackingButton = findViewById(R.id.workOutTrackingButton);
