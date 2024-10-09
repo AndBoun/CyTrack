@@ -7,6 +7,54 @@
     android:layout_height="match_parent"
     tools:context=".MainDashboardActivity">
 
+    <ScrollView
+        android:layout_width="412dp"
+        android:layout_height="492dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/top_card">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <ImageButton
+                android:id="@+id/workOutTrackingButton"
+                android:layout_width="334dp"
+                android:layout_height="85dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="32dp"
+                android:backgroundTint="#00FFFFFF"
+                app:srcCompat="@drawable/workouttrackingbutton" />
+
+            <ImageButton
+                android:id="@+id/mealTrackingButton"
+                android:layout_width="334dp"
+                android:layout_height="85dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="32dp"
+                android:backgroundTint="#00FFFFFF"
+                app:srcCompat="@drawable/mealtrackingbutton" />
+
+            <ImageButton
+                android:id="@+id/exerciseTrackingButton"
+                android:layout_width="334dp"
+                android:layout_height="85dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="32dp"
+                android:backgroundTint="#00FFFFFF"
+                app:srcCompat="@drawable/exercisetrackingbutton" />
+
+            <ImageView
+                android:id="@+id/imageView3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/cy_clone" />
+        </LinearLayout>
+    </ScrollView>
+
     <ImageView
         android:id="@+id/top_card"
         android:layout_width="0dp"
@@ -67,30 +115,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/generic_avatar" />
-
-    <ImageButton
-        android:id="@+id/workOutTrackingButton"
-        android:layout_width="334dp"
-        android:layout_height="92dp"
-        android:layout_marginTop="32dp"
-        android:backgroundTint="#00FFFFFF"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.513"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/mealTrackingButton"
-        app:srcCompat="@drawable/workouttrackingbutton" />
-
-    <ImageButton
-        android:id="@+id/mealTrackingButton"
-        android:layout_width="334dp"
-        android:layout_height="85dp"
-        android:layout_marginTop="64dp"
-        android:backgroundTint="#00FFFFFF"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.493"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/top_card"
-        app:srcCompat="@drawable/mealtrackingbutton" />
 
     <TextView
         android:id="@+id/streakTextView"
