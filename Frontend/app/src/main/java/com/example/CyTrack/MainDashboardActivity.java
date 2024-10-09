@@ -1,5 +1,6 @@
 package com.example.CyTrack;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -42,6 +43,9 @@ public class MainDashboardActivity extends AppCompatActivity {
 
         profileSettingsButton.setOnClickListener(v -> {
             // Open Profile Settings Activity
+            Intent intent = new Intent(this, ProfileSettingsActivity.class);
+            intent.putExtra("user", user);
+            startActivity(intent);
         });
 
         notificationButton.setOnClickListener(v -> {

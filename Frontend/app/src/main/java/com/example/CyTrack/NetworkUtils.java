@@ -123,4 +123,16 @@ class NetworkUtils {
         };
         VolleySingleton.getInstance(context).addToRequestQueue(jsonObjectRequest);
     }
+
+    static void deleteRequest(Context context, String url, Response.Listener<JSONObject> responseListener, Response.ErrorListener errorListener) {
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.DELETE, url, null, responseListener, errorListener) {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Content-Type", "application/json");
+                return headers;
+            }
+        };
+        VolleySingleton.getInstance(context).addToRequestQueue(jsonObjectRequest);
+    }
 }
