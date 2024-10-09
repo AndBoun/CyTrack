@@ -17,7 +17,7 @@ public class ProfileSettingsActivity extends AppCompatActivity {
 
     private TextView nameTextView;
 
-    private ImageButton deleteButton;
+    private ImageButton deleteButton, backButton;
 
     private User user;
 
@@ -38,11 +38,16 @@ public class ProfileSettingsActivity extends AppCompatActivity {
 
         nameTextView = findViewById(R.id.nameTextView);
         deleteButton = findViewById(R.id.deleteButton);
+        backButton = findViewById(R.id.backButton);
 
         nameTextView.setText(user.getName());
 
         deleteButton.setOnClickListener(v -> {
             deleteUser();
+        });
+
+        backButton.setOnClickListener(v -> {
+            finish();
         });
     }
 

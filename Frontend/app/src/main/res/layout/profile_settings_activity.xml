@@ -53,6 +53,15 @@
         app:layout_constraintTop_toBottomOf="@+id/topCardImageView"
         app:srcCompat="@drawable/deleteaccountbutton" />
 
+    <ImageButton
+        android:id="@+id/backButton"
+        android:layout_width="33dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="36dp"
+        android:backgroundTint="#00FFFFFF"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/arrow_back" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
