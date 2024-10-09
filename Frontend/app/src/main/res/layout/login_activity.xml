@@ -117,16 +117,20 @@
         app:layout_constraintTop_toBottomOf="@+id/Password_field"
         app:strokeColor="#000000" />
 
-    <TextView
-        android:id="@+id/text_get_response"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginBottom="51dp"
-        android:text="TextView"
-        app:layout_constraintBottom_toBottomOf="parent"
+    <Button
+        android:id="@+id/forgotPassword_button"
+        style="@style/Widget.Material3.Button.TextButton"
+        android:layout_width="102dp"
+        android:layout_height="32dp"
+        android:layout_marginTop="24dp"
+        android:backgroundTint="#00FFFFFF"
+        android:text="Forgot Password"
+        android:textColor="#2196F3"
+        android:textSize="10sp"
+        android:textStyle="bold"
+        app:iconPadding="0dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/signUp_button" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
