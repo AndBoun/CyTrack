@@ -20,20 +20,13 @@ public class Meal {
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="meal_id")
     private int mealID;
 
-    @Column(name="meal_name")
     private String mealName;
-
-    @Column(name="calories")
     private int calories;
-
-    @Column(name="protein")
     private int protein;
-
-    @Column(name="carbs")
     private int carbs;
+
 
     //TODO--figure out best way to store timestamp
     //TODO--timestamp methods
