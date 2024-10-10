@@ -37,7 +37,7 @@ public class MealLogActivity extends AppCompatActivity {
     private ScrollView MealTable;
     private LinearLayout MealTableDisplay;
     private ArrayList<Meal> meals = new ArrayList<Meal>();
-
+    private String url = "http://10.90.72.246:8080/meal/";
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
@@ -78,39 +78,40 @@ public class MealLogActivity extends AppCompatActivity {
         meals.add(new Meal("joe", "24", "23","120"));
         // APPENDING MEALS
         int id = 1;
+
         while(true){
             Meal input = null;
             try {
-                fetchMealData("http://10.90.72.246:8080/meal/" + id);
+                fetchMealData(url + id);
                 input = meals.get(id);
+                TableLayout tableLayout = new TableLayout(this);
+                tableLayout.setLayoutParams(new TableLayout.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT));
+
+                if (id == 1){
+                    addTableRow(tableLayout, 0, "|Meal ID|", "|Calories|", "|Carbs|", "|Meal Name|", "|Protein|");
+                }
+                else {
+                    String id1 = String.valueOf(input.getID());
+                    id1 = String.format("MID:  %s    ", id1);
+                    String name = input.getName();
+                    name = String.format("   %s,", name);
+                    String calories = input.getCalories();
+                    calories = String.format("   %s cals,", calories);
+                    String carbs = input.getCarbs();
+                    carbs = String.format("   %s g,", carbs);
+                    String protein = input.getProtein();
+                    protein = String.format("   %s g", protein);
+                    addTableRow(tableLayout, id, id1, calories, carbs, name, protein);
+                }
+                MealTableDisplay.addView(tableLayout);
                 id += 1;
             }
             catch (Exception e){
                 System.out.println(e.toString());
                 break;
             }
-
-            TableLayout tableLayout = new TableLayout(this);
-            tableLayout.setLayoutParams(new TableLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT));
-            if (id == 0){
-                addTableRow(tableLayout, 0, "|Meal ID|", "|Calories|", "|Carbs|", "|Meal Name|", "|Protein|");
-            }
-            else {
-                String id1 = String.valueOf(input.getID());
-                id1 = String.format("MID:  %s    ", id1);
-                String name = input.getName();
-                name = String.format("   %s,", name);
-                String calories = input.getCalories();
-                calories = String.format("   %s cals,", calories);
-                String carbs = input.getCarbs();
-                carbs = String.format("   %s g,", carbs);
-                String protein = input.getProtein();
-                protein = String.format("   %s g", protein);
-                addTableRow(tableLayout, id, id1, calories, carbs, name, protein);
-            }
-            MealTableDisplay.addView(tableLayout);
         }
 
 
