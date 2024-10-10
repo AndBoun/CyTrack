@@ -23,6 +23,8 @@
             android:exported="false"/>
         <activity android:name=".MealLogActivity"
             android:exported="true"/>
+        <activity android:name=".MealSubmitActivity"
+            android:exported="true"/>
         <activity android:name=".MealTrackingMain"
             android:exported="true"/>
         <activity
