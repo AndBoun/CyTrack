@@ -7,6 +7,31 @@
     android:layout_height="match_parent"
     tools:context=".MealTrackingMain">
 
+    <ImageView
+        android:id="@+id/imageView5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/latest_meal"
+        tools:layout_editor_absoluteX="120dp"
+        tools:layout_editor_absoluteY="339dp" />
+
+    <ImageButton
+        android:id="@+id/MealsPageButton"
+        android:layout_width="80dp"
+        android:layout_height="83dp"
+        android:background="@android:color/transparent"
+        android:src="@drawable/group_16"
+        tools:layout_editor_absoluteX="309dp"
+        tools:layout_editor_absoluteY="136dp" />
+
+    <ImageView
+        android:id="@+id/FavoritesBackground"
+        android:layout_width="245dp"
+        android:layout_height="73dp"
+        android:src="@drawable/group_12"
+        tools:layout_editor_absoluteX="16dp"
+        tools:layout_editor_absoluteY="239dp" />
+
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/HeaderCard"
         android:layout_width="412dp"
@@ -48,40 +73,13 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/notifications" />
 
-    <ImageButton
-        android:id="@+id/LogPageButton"
-        android:layout_width="80dp"
-        android:layout_height="83dp"
-        android:background="@android:color/transparent"
-        app:srcCompat="@drawable/group_18"
-        tools:layout_editor_absoluteX="309dp"
-        tools:layout_editor_absoluteY="229dp" />
-
-    <ImageButton
-        android:id="@+id/MealsPageButton"
-        android:layout_width="80dp"
-        android:layout_height="83dp"
-        android:background="@android:color/transparent"
-        android:src="@drawable/group_16"
-        tools:layout_editor_absoluteX="309dp"
-        tools:layout_editor_absoluteY="136dp" />
-
     <ImageView
-        android:id="@+id/FavoritesBackground"
-        android:layout_width="245dp"
-        android:layout_height="73dp"
-        android:src="@drawable/group_12"
-        tools:layout_editor_absoluteX="16dp"
-        tools:layout_editor_absoluteY="239dp" />
-
-    <ImageButton
-        android:id="@+id/AddMealButton"
-        android:layout_width="175dp"
-        android:layout_height="37dp"
-        android:background="@android:color/transparent"
-        android:src="@drawable/content"
-        tools:layout_editor_absoluteX="49dp"
-        tools:layout_editor_absoluteY="247dp" />
+        android:id="@+id/MealTrackingHeader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/meal_tracking"
+        tools:layout_editor_absoluteX="102dp"
+        tools:layout_editor_absoluteY="69dp" />
 
     <ImageView
         android:id="@+id/CreateBackground"
@@ -92,15 +90,6 @@
         tools:layout_editor_absoluteX="16dp"
         tools:layout_editor_absoluteY="146dp" />
 
-    <ImageButton
-        android:id="@+id/CreateMealButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        android:src="@drawable/content"
-        tools:layout_editor_absoluteX="49dp"
-        tools:layout_editor_absoluteY="156dp" />
-
     <ImageView
         android:id="@+id/LatestMealTable"
         android:layout_width="365dp"
@@ -109,21 +98,50 @@
         tools:layout_editor_absoluteX="23dp"
         tools:layout_editor_absoluteY="328dp" />
 
-    <ImageView
-        android:id="@+id/LatestMealHeader"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/latest_meal"
-        tools:layout_editor_absoluteX="120dp"
-        tools:layout_editor_absoluteY="339dp" />
+    <ImageButton
+        android:id="@+id/LogPageButton"
+        android:layout_width="80dp"
+        android:layout_height="83dp"
+        android:background="@android:color/transparent"
+        app:srcCompat="@drawable/group_18"
+        tools:layout_editor_absoluteX="309dp"
+        tools:layout_editor_absoluteY="229dp" />
 
-    <ImageView
-        android:id="@+id/MealTrackingHeader"
+    <TextView
+        android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/meal_tracking"
-        tools:layout_editor_absoluteX="102dp"
-        tools:layout_editor_absoluteY="69dp" />
+        android:text="MEALS"
+        android:textColor="@color/CyRed"
+        tools:layout_editor_absoluteX="326dp"
+        tools:layout_editor_absoluteY="210dp" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="27dp"
+        android:layout_height="17dp"
+        android:text="LOG"
+        android:textColor="@color/CyRed"
+        tools:layout_editor_absoluteX="344dp"
+        tools:layout_editor_absoluteY="302dp" />
+
+    <ImageButton
+        android:id="@+id/AddMealButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:src="@drawable/content"
+        tools:layout_editor_absoluteX="49dp"
+        tools:layout_editor_absoluteY="247dp" />
+
+    <ImageButton
+        android:id="@+id/CreateMealButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:src="@drawable/content"
+        tools:layout_editor_absoluteX="49dp"
+        tools:layout_editor_absoluteY="156dp" />
 
     <TextView
         android:id="@+id/textView4"
@@ -143,22 +161,12 @@
         tools:layout_editor_absoluteX="102dp"
         tools:layout_editor_absoluteY="253dp" />
 
-    <TextView
-        android:id="@+id/textView2"
+    <ImageView
+        android:id="@+id/LatestMealHeader"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="MEALS"
-        android:textColor="@color/CyRed"
-        tools:layout_editor_absoluteX="326dp"
-        tools:layout_editor_absoluteY="210dp" />
-
-    <TextView
-        android:id="@+id/textView3"
-        android:layout_width="27dp"
-        android:layout_height="17dp"
-        android:text="LOG"
-        android:textColor="@color/CyRed"
-        tools:layout_editor_absoluteX="344dp"
-        tools:layout_editor_absoluteY="302dp" />
+        android:src="@drawable/latest_meal"
+        tools:layout_editor_absoluteX="120dp"
+        tools:layout_editor_absoluteY="339dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
