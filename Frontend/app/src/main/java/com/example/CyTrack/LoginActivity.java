@@ -28,8 +28,12 @@ public class LoginActivity extends AppCompatActivity {
 
     private User user;
 
-    private final String URL = "https://7e68d300-a3cb-4835-bf2f-66cab084d974.mock.pstmn.io/login/";
-//    private final String URL = "http://10.90.72.246:8080/users/login";
+//    private final String URL_LOGIN = "https://e8d89384-93d7-4dee-b704-f1103033e07d.mock.pstmn.io/login";
+//    private final String URL_GET_USER = "https://7e68d300-a3cb-4835-bf2f-66cab084d974.mock.pstmn.io/login/";
+
+    private final String URL_LOGIN = "http://10.90.72.246:8080/user/login";
+    private final String URL_GET_USER = "http://10.90.72.246:8080/user/";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,16 +84,16 @@ public class LoginActivity extends AppCompatActivity {
         params.put("username", username);
         params.put("password", password);
 
-        NetworkUtils.postUserAndGetID(getApplicationContext(), URL, params, new NetworkUtils.postUserAndGetIDCallback() {
+        NetworkUtils.postUserAndGetID(getApplicationContext(), URL_LOGIN, params, new NetworkUtils.postUserAndGetIDCallback() {
             @Override
-            public void onSuccess(int id) {
-                if (id != 0) fetchUserData(URL + id);
-                Toast.makeText(getApplicationContext(), "Signing In", Toast.LENGTH_LONG).show();
+            public void onSuccess(int id, String message) {
+                if (id != 0) fetchUserData(URL_GET_USER + id);
+
             }
 
             @Override
-            public void onError(Exception e) {
-                Toast.makeText(getApplicationContext(), "Failed to Sign In", Toast.LENGTH_LONG).show();
+            public void onError(String error) {
+                Toast.makeText(getApplicationContext(), error, Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -97,14 +101,15 @@ public class LoginActivity extends AppCompatActivity {
     private void fetchUserData(String url) {
         NetworkUtils.fetchUserData(this, url, new NetworkUtils.fetchUserDataCallback() {
             @Override
-            public void onSuccess(User user) {
+            public void onSuccess(User user, String message) {
                 LoginActivity.this.user = user;
+                Toast.makeText(getApplicationContext(), "Signing In", Toast.LENGTH_LONG).show();
                 navigateToMainDashboard();
             }
 
             @Override
-            public void onError(Exception e) {
-                Toast.makeText(getApplicationContext(), "Failed to Fetch Data", Toast.LENGTH_LONG).show();
+            public void onError(String error) {
+                Toast.makeText(getApplicationContext(), error, Toast.LENGTH_LONG).show();
             }
         });
     }

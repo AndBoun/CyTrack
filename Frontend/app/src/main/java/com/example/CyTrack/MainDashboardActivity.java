@@ -39,7 +39,7 @@ public class MainDashboardActivity extends AppCompatActivity {
         userNameTextView = findViewById(R.id.helloTextView);
         userStreakTextView = findViewById(R.id.streakTextView);
 
-        userNameTextView.setText("Hi, " + user.getName());
+        userNameTextView.setText("Hi, " + user.getFirstName());
         userStreakTextView.setText("Streak: " + user.getStreak());
 
         profileSettingsButton.setOnClickListener(v -> {

@@ -25,14 +25,25 @@
                 android:id="@+id/deleteButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
-                android:backgroundTint="#00FFFFFF"
                 android:layout_gravity="center"
+                android:layout_marginTop="32dp"
+                android:background="#2FFFFFFF"
+                android:backgroundTint="#00FFFFFF"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.491"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/topCardImageView"
                 app:srcCompat="@drawable/deleteaccountbutton" />
+
+            <ImageButton
+                android:id="@+id/logOutButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#00FFFFFF"
+                android:layout_gravity="center"
+                android:layout_marginTop="32dp"
+
+                app:srcCompat="@drawable/logoutbutton" />
 
         </LinearLayout>
     </ScrollView>
@@ -51,7 +62,7 @@
         android:id="@+id/profilePicture"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="40dp"
         android:layout_marginTop="80dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -60,7 +71,8 @@
     <ImageButton
         android:id="@+id/backButton"
         android:layout_width="33dp"
-        android:layout_height="30dp"
+        android:layout_height="33dp"
+        android:layout_marginStart="4dp"
         android:layout_marginTop="36dp"
         android:backgroundTint="#00FFFFFF"
         app:layout_constraintStart_toStartOf="parent"
@@ -69,8 +81,8 @@
 
     <TextView
         android:id="@+id/nameTextView"
-        android:layout_width="220dp"
-        android:layout_height="46dp"
+        android:layout_width="219dp"
+        android:layout_height="76dp"
         android:layout_marginTop="116dp"
         android:text="{name}"
         android:textAlignment="center"

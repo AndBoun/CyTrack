@@ -11,19 +11,14 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.android.volley.Request;
-import com.android.volley.toolbox.JsonObjectRequest;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.HashMap;
 import java.util.Map;
 
 public class ForgotPasswordActivity extends AppCompatActivity {
 
-    private final String URL = "https://7e68d300-a3cb-4835-bf2f-66cab084d974.mock.pstmn.io/login/"; //TODO should be a different signup URL
-//    private final String URL = "http://10.90.72.246:8080/users/";
+//    private final String URL = "https://7e68d300-a3cb-4835-bf2f-66cab084d974.mock.pstmn.io/login/";
+
+    private final String URL_RESET_PASSWORD = "http://10.90.72.246:8080/user/resetPassword";
 
     private EditText usernameEditText, passwordEditText, passwordAgainEditText;
 
@@ -76,15 +71,15 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         params.put("username", username);
         params.put("password", password);
 
-        NetworkUtils.postUserAndGetID(getApplicationContext(), URL, params, new NetworkUtils.postUserAndGetIDCallback() {
+        NetworkUtils.postUserAndGetID(getApplicationContext(), URL_RESET_PASSWORD, params, new NetworkUtils.postUserAndGetIDCallback() {
             @Override
-            public void onSuccess(int userID) {
-                if (userID != 0) resetPassword(URL + userID, password);
+            public void onSuccess(int userID, String message) {
+                if (userID != 0) resetPassword(URL_RESET_PASSWORD +  "/" + userID, password);
             }
 
             @Override
-            public void onError(Exception e) {
-                Toast.makeText(getApplicationContext(), "Failed to Reset Password", Toast.LENGTH_LONG).show();
+            public void onError(String error) {
+                Toast.makeText(getApplicationContext(), error, Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -93,12 +88,17 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         Map<String, String> params = new HashMap<>();
         params.put("password", password);
 
-        NetworkUtils.modifyUserData(getApplicationContext(), url, params, response -> {
-            Toast.makeText(getApplicationContext(), "Password Reset", Toast.LENGTH_LONG).show();
-            switchToLogin();
-        }, error -> {
-            // Handle error
-            Toast.makeText(getApplicationContext(), "Failed to Reset Password", Toast.LENGTH_LONG).show();
+        NetworkUtils.modifyData(getApplicationContext(), url, params, new NetworkUtils.callbackMessage() {
+
+            @Override
+            public void onSuccess(String response) {
+                Toast.makeText(getApplicationContext(), "Password Reset", Toast.LENGTH_LONG).show();
+                switchToLogin();
+            }
+            @Override
+            public void onError(String error) {
+                Toast.makeText(getApplicationContext(), error, Toast.LENGTH_LONG).show();
+            }
         });
     }
 
