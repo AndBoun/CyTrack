@@ -33,8 +33,9 @@ public class WorkoutActivity extends AppCompatActivity implements WorkoutRecycle
 
     private ArrayList<WorkoutObject> workoutList = new ArrayList<>();
 
-//    private static final String URL = "http://10.90.72.246:8080/workouts";
     private static final String URL = "https://7e68d300-a3cb-4835-bf2f-66cab084d974.mock.pstmn.io/workouts";
+
+//    private static final String URL = "http://10.90.72.246:8080/workouts";
 
     ImageButton addWorkoutButton, backButton;
 
@@ -152,7 +153,7 @@ public class WorkoutActivity extends AppCompatActivity implements WorkoutRecycle
         params.put("calories", calories);
         params.put("time", time);
 
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, URL, new JSONObject(params), response -> {
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, URL + "/" + user.getID(), new JSONObject(params), response -> {
             try {
                 JSONObject data = response.getJSONObject("data");
                 int workoutID = data.getInt("workoutID");
