@@ -50,6 +50,9 @@ public class MealTrackingMain extends AppCompatActivity {
         CreateMealButton.setOnClickListener(v -> {
             //TODO: Display Pop-Up Window
             //TODO: Submit User Data
+            Intent Navigate = new Intent(MealTrackingMain.this, MealSubmitActivity.class);
+            startActivity(Navigate);
+
         });
 
         AddMealButton.setOnClickListener(v -> {
