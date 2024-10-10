@@ -1,6 +1,5 @@
-package Entity;
+package CyTrack.Entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 /**
@@ -11,7 +10,6 @@ import jakarta.persistence.*;
  * We will worry about this later lmao.
  */
 @Entity
-@Table(name ="Meal")
 public class Meal {
 
     /*
@@ -20,17 +18,12 @@ public class Meal {
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int mealID;
+    private int mealId;
 
     private String mealName;
-    private int calories;
-    private int protein;
-    private int carbs;
-
-
-    //TODO--figure out best way to store timestamp
-    //TODO--timestamp methods
-
+    private Integer calories;
+    private Integer protein;
+    private Integer carbs;
 
     // =============================== Constructors ================================== //
 
@@ -48,12 +41,12 @@ public class Meal {
     // =============================== Getters and Setters for each field ================================== //
 
 
-    public int getId() {
-        return mealID;
+    public Integer getId() {
+        return mealId;
     }
 
     public void setId(int id) {
-        this.mealID = id;
+        this.mealId = id;
     }
 
     public String getMealName() {
@@ -64,7 +57,7 @@ public class Meal {
         this.mealName = mealName;
     }
 
-    public int getCalories() {
+    public Integer getCalories() {
         return calories;
     }
 
@@ -72,7 +65,7 @@ public class Meal {
         this.calories = calories;
     }
 
-    public int getProtein() {
+    public Integer getProtein() {
         return protein;
     }
 
@@ -80,7 +73,7 @@ public class Meal {
         this.protein = protein;
     }
 
-    public int getCarbs() {
+    public Integer getCarbs() {
         return carbs;
     }
 
@@ -88,16 +81,6 @@ public class Meal {
         this.carbs = carbs;
     }
 
-    @Override
-    public String toString() {
-        return "Meal{" +
-                "mealID= " + mealID + '\'' +
-                ", meal name='" + mealName + '\'' +
-                ", calories='" + calories + '\'' +
-                ", protein='" + protein + '\'' +
-                ", carbs='" + carbs + '\'' +
-                '}';
-    }
 
 
 

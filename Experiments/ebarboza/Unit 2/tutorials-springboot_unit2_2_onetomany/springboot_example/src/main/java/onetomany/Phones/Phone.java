@@ -28,7 +28,7 @@ public class Phone {
     private int price;
 
     /*
-     * @ManyToOne tells springboot that multiple instances of Phone can map to one instance of OR multiple rows of the phone table can map to one user row
+     * @ManyToOne tells springboot that multiple instances of Phone can map to one instance of User OR multiple rows of the phone table can map to one user row
      * @JoinColumn specifies the ownership of the key i.e. The Phone table will contain a foreign key from the User table and the column name will be user_id
      * @JsonIgnore is to assure that there is no infinite loop while returning either user/phone objects (phone->user->[phones]->...)
      */
