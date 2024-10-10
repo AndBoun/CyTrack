@@ -2,6 +2,9 @@ package CyTrack.Entities;
 
 import jakarta.persistence.*;
 
+/**
+ * Author for all User Kai Quach
+ */
 @Entity
 public class User {
     @Id
