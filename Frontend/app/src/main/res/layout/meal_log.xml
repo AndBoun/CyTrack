@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/MealLogActivity"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MealLogActivity">
+
+    <ImageView
+        android:id="@+id/MealTableBackground"
+        android:layout_width="268dp"
+        android:layout_height="633dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginEnd="135dp"
+        android:layout_marginBottom="128dp"
+        android:src="@drawable/group_11"
+        app:layout_constraintBottom_toTopOf="@+id/headerCard"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/HeaderCard"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/HeaderCard"
+        android:layout_width="412dp"
+        android:layout_height="128dp"
+        android:layout_marginBottom="603dp"
+        android:background="@color/ic_launcher_background"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/headerCard"
+        android:layout_width="412dp"
+        android:layout_height="128dp"
+        android:layout_marginTop="767dp"
+        android:background="@color/ic_launcher_background"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <ImageButton
+        android:id="@+id/notificationButton"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="331dp"
+        android:layout_marginTop="56dp"
+        android:layout_marginEnd="40dp"
+        android:layout_marginBottom="635dp"
+        android:backgroundTint="#00FFFFFF"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@drawable/notifications" />
+
+    <ImageButton
+        android:id="@+id/LogPageButton"
+        android:layout_width="80dp"
+        android:layout_height="83dp"
+        android:layout_marginStart="33dp"
+        android:layout_marginTop="229dp"
+        android:layout_marginEnd="22dp"
+        android:layout_marginBottom="455dp"
+        android:background="@android:color/transparent"
+        app:layout_constraintBottom_toTopOf="@+id/headerCard"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/MealTableBackground"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@drawable/group_18" />
+
+    <ImageButton
+        android:id="@+id/MealsPageButton"
+        android:layout_width="80dp"
+        android:layout_height="83dp"
+        android:layout_marginStart="309dp"
+        android:layout_marginTop="136dp"
+        android:layout_marginEnd="22dp"
+        android:layout_marginBottom="519dp"
+        android:background="@android:color/transparent"
+        android:src="@drawable/group_16"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <ImageView
+        android:id="@+id/MealTrackingHeader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="102dp"
+        android:layout_marginTop="69dp"
+        android:layout_marginEnd="102dp"
+        android:layout_marginBottom="635dp"
+        android:src="@drawable/meal_tracking"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="326dp"
+        android:layout_marginTop="210dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="502dp"
+        android:text="MEALS"
+        android:textColor="@color/CyRed"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.437"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="27dp"
+        android:layout_height="17dp"
+        android:layout_marginStart="344dp"
+        android:layout_marginTop="73dp"
+        android:layout_marginEnd="24dp"
+        android:text="LOG"
+        android:textColor="@color/CyRed"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.437"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/LogPageButton" />
+
+    <ImageButton
+        android:id="@+id/profileSettingsButton"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="56dp"
+        android:layout_marginEnd="339dp"
+        android:layout_marginBottom="635dp"
+        android:backgroundTint="#00FFFFFF"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@drawable/generic_avatar" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

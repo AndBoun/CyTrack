@@ -8,13 +8,10 @@ import android.widget.TextView;
 import androidx.activity.EdgeToEdge;
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
-public class MealTrackingMain extends AppCompatActivity {
+public class MealLogActivity extends AppCompatActivity {
 
-    private ImageButton profileSettingsButton, notificationButton, backbutton, MealsPageButton, LogPageButton, CreateMealButton, AddMealButton;
+    private ImageButton profileSettingsButton, notificationButton, MealsPageButton, LogPageButton;
     private TextView userNameTextView, userStreakTextView;
 
     private User user;
@@ -22,13 +19,12 @@ public class MealTrackingMain extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.meal_tracking_main);
+        setContentView(R.layout.meal_log);
 
         // Initialize Buttons
         // TOP BUTTONS
         profileSettingsButton = findViewById(R.id.profileSettingsButton);
         notificationButton = findViewById(R.id.notificationButton);
-        backbutton = findViewById(R.id.backbutton);
 
         // Button Input Listeners
         profileSettingsButton.setOnClickListener(v -> {
@@ -39,23 +35,6 @@ public class MealTrackingMain extends AppCompatActivity {
             // Open Notification Activity
         });
 
-        backbutton.setOnClickListener(v -> {
-
-        });
-        // LEFT MAIN FUNCTION BUTTONS
-        CreateMealButton = findViewById(R.id.CreateMealButton);
-        AddMealButton = findViewById(R.id.AddMealButton);
-
-        // Button Input Listeners
-        CreateMealButton.setOnClickListener(v -> {
-            //TODO: Display Pop-Up Window
-            //TODO: Submit User Data
-        });
-
-        AddMealButton.setOnClickListener(v -> {
-            //TODO: Display Pop-Up Window
-        });
-
         // RIGHT MAIN FUNCTION BUTTONS
         MealsPageButton = findViewById(R.id.MealsPageButton);
         LogPageButton = findViewById(R.id.LogPageButton);
@@ -63,14 +42,13 @@ public class MealTrackingMain extends AppCompatActivity {
         // Button Input Listeners
         MealsPageButton.setOnClickListener(v -> {
             //TODO: Send to MealPage
-            // UNNEEDED
+            Intent Navigate = new Intent(MealLogActivity.this, MealTrackingMain.class);
+            startActivity(Navigate);
 
         });
 
         LogPageButton.setOnClickListener(v -> {
             //TODO: Send to LogPage
-            Intent Navigate = new Intent(MealTrackingMain.this, MealLogActivity.class);
-            startActivity(Navigate);
         });
 
 

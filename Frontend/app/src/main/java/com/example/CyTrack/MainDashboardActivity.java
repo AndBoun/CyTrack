@@ -1,5 +1,6 @@
 package com.example.CyTrack;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -50,6 +51,8 @@ public class MainDashboardActivity extends AppCompatActivity {
 
         mealTrackingButton.setOnClickListener(v -> {
             // Open Meal Tracking Activity
+            Intent Navigate = new Intent(MainDashboardActivity.this, MealTrackingMain.class);
+            startActivity(Navigate);
         });
 
         workOutTrackingButton.setOnClickListener(v -> {

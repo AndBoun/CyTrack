@@ -2,7 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/mainDashboardScreen"
+    android:id="@+id/MealTrackingMain"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MealTrackingMain">
@@ -11,20 +11,279 @@
         android:id="@+id/HeaderCard"
         android:layout_width="412dp"
         android:layout_height="128dp"
+        android:layout_marginBottom="603dp"
         android:background="@color/ic_launcher_background"
         android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="-1dp" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/headerCard"
+        android:layout_width="412dp"
+        android:layout_height="128dp"
+        android:layout_marginTop="767dp"
+        android:background="@color/ic_launcher_background"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <ImageButton
+        android:id="@+id/notificationButton"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="331dp"
+        android:layout_marginTop="56dp"
+        android:layout_marginEnd="40dp"
+        android:layout_marginBottom="635dp"
+        android:backgroundTint="#00FFFFFF"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@drawable/notifications" />
+
+    <ImageButton
+        android:id="@+id/LogPageButton"
+        android:layout_width="80dp"
+        android:layout_height="83dp"
+        android:layout_marginTop="229dp"
+        android:layout_marginEnd="22dp"
+        android:layout_marginBottom="16dp"
+        android:background="@android:color/transparent"
+        app:layout_constraintBottom_toTopOf="@+id/LatestMealTable"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/FavoritesBackground"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@drawable/group_18" />
+
+    <ImageButton
+        android:id="@+id/MealsPageButton"
+        android:layout_width="80dp"
+        android:layout_height="83dp"
+        android:layout_marginStart="309dp"
+        android:layout_marginTop="136dp"
+        android:layout_marginEnd="22dp"
+        android:layout_marginBottom="519dp"
+        android:background="@android:color/transparent"
+        android:src="@drawable/group_16"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <ImageView
+        android:id="@+id/FavoritesBackground"
+        android:layout_width="245dp"
+        android:layout_height="73dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="239dp"
+        android:layout_marginEnd="150dp"
+        android:layout_marginBottom="419dp"
+        android:src="@drawable/group_12"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <ImageButton
+        android:id="@+id/AddMealButton"
+        android:layout_width="175dp"
+        android:layout_height="37dp"
+        android:layout_marginStart="49dp"
+        android:layout_marginTop="247dp"
+        android:layout_marginEnd="187dp"
+        android:layout_marginBottom="447dp"
+        android:background="@android:color/transparent"
+        android:src="@drawable/content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <ImageView
+        android:id="@+id/CreateBackground"
+        android:layout_width="245dp"
+        android:layout_height="73dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="146dp"
+        android:layout_marginEnd="150dp"
+        android:layout_marginBottom="512dp"
+        android:background="@android:color/transparent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@drawable/frame_2" />
+
+    <ImageButton
+        android:id="@+id/CreateMealButton"
+        android:layout_width="175dp"
+        android:layout_height="35dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="156dp"
+        android:layout_marginEnd="186dp"
+        android:layout_marginBottom="540dp"
+        android:background="@android:color/transparent"
+        android:src="@drawable/content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <ImageView
+        android:id="@+id/LatestMealTable"
+        android:layout_width="365dp"
+        android:layout_height="397dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="328dp"
+        android:layout_marginEnd="22dp"
+        android:layout_marginBottom="166dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/group_14" />
+
+    <ImageView
+        android:id="@+id/LatestMealHeader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="120dp"
+        android:layout_marginTop="339dp"
+        android:layout_marginEnd="121dp"
+        android:layout_marginBottom="365dp"
+        android:src="@drawable/latest_meal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.056" />
+
+    <ImageView
+        android:id="@+id/MealTrackingHeader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="102dp"
+        android:layout_marginTop="69dp"
+        android:layout_marginEnd="102dp"
+        android:layout_marginBottom="635dp"
+        android:src="@drawable/meal_tracking"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="92dp"
+        android:layout_height="22dp"
+        android:layout_marginStart="93dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="230dp"
+        android:layout_marginBottom="20dp"
+        android:text="Create A Meal"
+        android:textColor="@android:color/white"
+        app:layout_constraintBottom_toBottomOf="@+id/CreateMealButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/CreateBackground"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="102dp"
+        android:layout_marginTop="253dp"
+        android:layout_marginEnd="237dp"
+        android:layout_marginBottom="459dp"
+        android:text="Add A Meal"
+        android:textColor="@android:color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="326dp"
+        android:layout_marginTop="210dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="502dp"
+        android:text="MEALS"
+        android:textColor="@color/CyRed"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.437"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="27dp"
+        android:layout_height="17dp"
+        android:layout_marginStart="344dp"
+        android:layout_marginTop="73dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="9dp"
+        android:text="LOG"
+        android:textColor="@color/CyRed"
+        app:layout_constraintBottom_toTopOf="@+id/LatestMealTable"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.437"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/LogPageButton"
+        app:layout_constraintVertical_bias="0.0" />
 
     <ImageButton
         android:id="@+id/backbutton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="379dp"
+        android:layout_marginBottom="691dp"
         android:background="@android:color/transparent"
         android:src="@drawable/arrow_back"
-        tools:layout_editor_absoluteX="8dp"
-        tools:layout_editor_absoluteY="16dp" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
 
     <ImageButton
         android:id="@+id/profileSettingsButton"
@@ -32,133 +291,15 @@
         android:layout_height="40dp"
         android:layout_marginStart="32dp"
         android:layout_marginTop="56dp"
+        android:layout_marginEnd="339dp"
+        android:layout_marginBottom="635dp"
         android:backgroundTint="#00FFFFFF"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
         app:srcCompat="@drawable/generic_avatar" />
-
-    <ImageButton
-        android:id="@+id/notificationButton"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginTop="56dp"
-        android:layout_marginEnd="40dp"
-        android:backgroundTint="#00FFFFFF"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/notifications" />
-
-    <ImageButton
-        android:id="@+id/LogPageButton"
-        android:layout_width="80dp"
-        android:layout_height="83dp"
-        android:background="@android:color/transparent"
-        app:srcCompat="@drawable/group_18"
-        tools:layout_editor_absoluteX="309dp"
-        tools:layout_editor_absoluteY="229dp" />
-
-    <ImageButton
-        android:id="@+id/MealsPageButton"
-        android:layout_width="80dp"
-        android:layout_height="83dp"
-        android:background="@android:color/transparent"
-        android:src="@drawable/group_16"
-        tools:layout_editor_absoluteX="309dp"
-        tools:layout_editor_absoluteY="136dp" />
-
-    <ImageView
-        android:id="@+id/FavoritesBackground"
-        android:layout_width="245dp"
-        android:layout_height="73dp"
-        android:src="@drawable/group_12"
-        tools:layout_editor_absoluteX="16dp"
-        tools:layout_editor_absoluteY="239dp" />
-
-    <ImageButton
-        android:id="@+id/AddMealButton"
-        android:layout_width="175dp"
-        android:layout_height="37dp"
-        android:background="@android:color/transparent"
-        android:src="@drawable/content"
-        tools:layout_editor_absoluteX="49dp"
-        tools:layout_editor_absoluteY="247dp" />
-
-    <ImageView
-        android:id="@+id/CreateBackground"
-        android:layout_width="245dp"
-        android:layout_height="73dp"
-        android:background="@android:color/transparent"
-        app:srcCompat="@drawable/frame_2"
-        tools:layout_editor_absoluteX="16dp"
-        tools:layout_editor_absoluteY="146dp" />
-
-    <ImageButton
-        android:id="@+id/CreateMealButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        android:src="@drawable/content"
-        tools:layout_editor_absoluteX="49dp"
-        tools:layout_editor_absoluteY="156dp" />
-
-    <ImageView
-        android:id="@+id/LatestMealTable"
-        android:layout_width="365dp"
-        android:layout_height="397dp"
-        app:srcCompat="@drawable/group_14"
-        tools:layout_editor_absoluteX="23dp"
-        tools:layout_editor_absoluteY="328dp" />
-
-    <ImageView
-        android:id="@+id/LatestMealHeader"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/latest_meal"
-        tools:layout_editor_absoluteX="120dp"
-        tools:layout_editor_absoluteY="339dp" />
-
-    <ImageView
-        android:id="@+id/MealTrackingHeader"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/meal_tracking"
-        tools:layout_editor_absoluteX="102dp"
-        tools:layout_editor_absoluteY="69dp" />
-
-    <TextView
-        android:id="@+id/textView4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Create A Meal"
-        android:textColor="@android:color/white"
-        tools:layout_editor_absoluteX="95dp"
-        tools:layout_editor_absoluteY="164dp" />
-
-    <TextView
-        android:id="@+id/textView5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Add A Meal"
-        android:textColor="@android:color/white"
-        tools:layout_editor_absoluteX="102dp"
-        tools:layout_editor_absoluteY="253dp" />
-
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="MEALS"
-        android:textColor="@color/CyRed"
-        tools:layout_editor_absoluteX="326dp"
-        tools:layout_editor_absoluteY="210dp" />
-
-    <TextView
-        android:id="@+id/textView3"
-        android:layout_width="27dp"
-        android:layout_height="17dp"
-        android:text="LOG"
-        android:textColor="@color/CyRed"
-        tools:layout_editor_absoluteX="344dp"
-        tools:layout_editor_absoluteY="302dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
