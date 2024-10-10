@@ -1,6 +1,6 @@
-package CyTrack.Repositiories;
+package CyTrack.Repositories;
 
-import CyTrack.Entity.Meal;
+import CyTrack.Entities.Meal;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

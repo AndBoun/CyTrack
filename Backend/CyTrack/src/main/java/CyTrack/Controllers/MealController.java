@@ -1,7 +1,7 @@
 package CyTrack.Controllers;
 
-import CyTrack.Entity.Meal;
-import CyTrack.Repositiories.MealRepository;
+import CyTrack.Entities.Meal;
+import CyTrack.Repositories.MealRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

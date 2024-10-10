@@ -16,7 +16,7 @@ import java.util.logging.Logger;
 @RequestMapping("/user")
 public class UserController {
 
-    private static final Logger LOGGER = Logger.getLogger(UserController.class.getName());
+
     private final UserService userService;
 
     @Autowired
@@ -28,7 +28,6 @@ public class UserController {
     // Register user
     @PostMapping("")
     public ResponseEntity<?> registerUser(@RequestBody User user) {
-        LOGGER.log(Level.INFO, "Received registration request for user: {0}", user.getUsername());
         try {
             if (user.getUsername() == null || user.getPassword() == null) {
                 return ResponseEntity.badRequest().body(null);
@@ -39,12 +38,10 @@ public class UserController {
             }
             else {
                 User registeredUser = userService.registerUser(user);
-                LOGGER.log(Level.INFO, "User registered with username: {0}", user.getUsername());
                 LoginResponse response = new LoginResponse("success", registeredUser.getUserID(), "User registered" );
                 return ResponseEntity.status(201).body(response);
             }
         } catch (NoSuchAlgorithmException e) {
-            LOGGER.log(Level.SEVERE, "Error during user registration", e);
             ErrorResponse response = new ErrorResponse("error", 500, "Internal server error", "Internal server error");
             return ResponseEntity.status(500).body(response);
         }
@@ -63,7 +60,6 @@ public class UserController {
                 return ResponseEntity.status(401).body(response);
             }
         } catch (NoSuchAlgorithmException e) {
-            LOGGER.log(Level.SEVERE, "Error during user login", e);
             ErrorResponse response = new ErrorResponse("error", 500, "Internal server error", "Internal server error");
             return ResponseEntity.status(500).body(response);
         }
@@ -150,7 +146,6 @@ public class UserController {
                     return ResponseEntity.status(400).body(new passwordResponse("error", "New password cannot be the same as the current password", null));
                 }
             } catch (NoSuchAlgorithmException e) {
-                LOGGER.log(Level.SEVERE, "Error during password reset", e);
                 ErrorResponse response = new ErrorResponse("error", 500, "Internal server error", "Internal server error");
                 return ResponseEntity.status(500).body(response);
             }
@@ -169,7 +164,6 @@ public class UserController {
                 passwordResponse response = new passwordResponse("success", "Password reset", updatedUser.getUserID());
                 return ResponseEntity.ok(response);
             } catch (NoSuchAlgorithmException e) {
-                LOGGER.log(Level.SEVERE, "Error during password reset", e);
                 ErrorResponse response = new ErrorResponse("error", 500, "Internal server error", "Internal server error");
                 return ResponseEntity.status(500).body(response);
             }

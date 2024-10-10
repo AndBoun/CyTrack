@@ -1,4 +1,4 @@
-package CyTrack.Entity;
+package CyTrack.Entities;
 
 import jakarta.persistence.*;
 

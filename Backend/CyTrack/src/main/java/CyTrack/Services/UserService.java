@@ -16,7 +16,6 @@ import java.util.logging.Logger;
 @Service
 public class UserService {
 
-    private static final Logger LOGGER = Logger.getLogger(UserService.class.getName());
     private final UserRepository userRepository;
 
     @Autowired
