@@ -3,14 +3,17 @@ package com.example.CyTrack;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.widget.ImageButton;
+import android.widget.TextView;
+import android.widget.Toast;
+
+
+import org.json.JSONException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,9 +21,8 @@ public class MealSubmitActivity extends AppCompatActivity {
 
     private EditText MealName, MealCalories, MealProtein, MealCarbs;
     private ImageButton profileSettingsButton, notificationButton, MealsPageButton, LogPageButton, SubmitMeal;
-    private TextView userNameTextView, userStreakTextView;
 
-    private User user;
+    private Meal meal;
 
     // TODO: Find proper URL to submit hashmap over
     private final String URL = "http://coms-3090-040.class.las.iastate.edu:8082/";
@@ -82,54 +84,53 @@ public class MealSubmitActivity extends AppCompatActivity {
             mealsubmit(mealname, mealcalories, mealprotein, mealcarbs);
         });
 
-
-
-        // Handle back press
-        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
-            @Override
-            public void handleOnBackPressed() {
-                // Do nothing to disable back press
-            }
-        };
-        getOnBackPressedDispatcher().addCallback(this, callback);
     }
 
     // MEAL SUBMISSION
     private void mealsubmit(String mealnm, String mealcals, String mealprotein, String mealcarbs) {
         // TODO: Verify if input is done properly
-        Integer cals = 0;
-        Integer protein = 0;
-        Integer carbs = 0;
-        try {
-            cals = Integer.parseInt(mealcals);
-            protein = Integer.parseInt(mealprotein);
-            carbs = Integer.parseInt(mealcarbs);
-        }
-        catch (NumberFormatException e) {
-            cals = 0;
-            protein = 0;
-            carbs = 0;
-        }
-
-
-        Map<String, Integer> params = new HashMap<>();
-        params.put("calories", cals);
-        params.put("protein", protein);
-        params.put("carbs", carbs);
+        Map<String, String> params = new HashMap<>();
+        params.put("name", mealnm);
+        params.put("calories", mealcals);
+        params.put("protein", mealprotein);
+        params.put("carbs", mealcarbs);
 
         //POST
-        MealUtils.postMealData(getApplicationContext(), URL, params, new MealUtils.postMealAndGetIDCallback() {
+        MealUtils.postMealAndGetID(getApplicationContext(), URL, params, new MealUtils.postMealAndGetIDCallback() {
             @Override
-            public void onSuccess(int id) {
-                //if (id != 0) fetchUserData(URL + id);
-                Toast.makeText(getApplicationContext(), "Meal Logged!", Toast.LENGTH_LONG).show();
+            public void onSuccess(int id, String message) {
+                if (id != 0) fetchMealData(URL + id); // TODO: VERIFY IF URL CORRECT
             }
 
             @Override
-            public void onError(Exception e) {
-                Toast.makeText(getApplicationContext(), "Failed to log Meal!", Toast.LENGTH_LONG).show();
+            public void onError(String error) {
+                Toast.makeText(getApplicationContext(), error, Toast.LENGTH_LONG).show();
+            }
+        });
+
+    }
+
+    private void fetchMealData(String url) {
+        MealUtils.fetchMealData(this, url, new MealUtils.fetchMealDataCallback() {
+            @Override
+            public void onSuccess(Meal meal, String message) {
+                MealSubmitActivity.this.meal = meal;
+                Toast.makeText(getApplicationContext(), "Submitting Meal", Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onError(String error) {
+                Toast.makeText(getApplicationContext(), error, Toast.LENGTH_LONG).show();
             }
         });
     }
+
+    private void clearHintOnFocus(){
+        FocusUtils.clearHintOnFocus(MealName, "Meal Name");
+        FocusUtils.clearHintOnFocus(MealCalories, "Meal Calories");
+        FocusUtils.clearHintOnFocus(MealProtein, "Meal Protein");
+        FocusUtils.clearHintOnFocus(MealCarbs, "Meal Carbs");
+    }
+
 }
 

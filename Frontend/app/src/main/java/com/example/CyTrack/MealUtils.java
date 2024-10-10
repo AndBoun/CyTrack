@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 
 import org.json.JSONException;
@@ -19,13 +20,21 @@ class MealUtils {
      * @param context the context
      * @param url the URL to post the user data to
      * @param params the parameters to post the user data with
-     * @param responseListener the response listener
-     * @param errorListener the error listener
      */
-    static void postMealData(Context context, String url, Map<String, Integer> params, Response.Listener<JSONObject> responseListener, Response.ErrorListener errorListener) {
+    static void postMeal(Context context, String url, Map<String, String> params, callbackMessage callBack) {
         JSONObject jsonObject = new JSONObject(params);
 
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, jsonObject, responseListener, errorListener) {
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, jsonObject, response ->{
+            try {
+                String message = response.getString("message");
+                callBack.onSuccess(message);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }, error -> {
+            String errorMessage = errorResponse(error);
+            callBack.onError(errorMessage);
+        }) {
             @Override
             public Map<String, String> getHeaders() {
                 Map<String, String> headers = new HashMap<>();
@@ -38,8 +47,8 @@ class MealUtils {
     }
 
     interface postMealAndGetIDCallback {
-        void onSuccess(int id);
-        void onError(Exception e);
+        void onSuccess(int id, String message);
+        void onError(String message);
     }
 
     static void postMealAndGetID(Context context, String url, Map<String, String> params, postMealAndGetIDCallback callback) {
@@ -47,12 +56,17 @@ class MealUtils {
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, jsonObject, response -> {
             try {
-                int id = response.getInt("id");
-                callback.onSuccess(id);
+                String message = response.getString("message");
+                JSONObject data = response.getJSONObject("data");
+                //TODO: Integrate MealIDS
+                int userID = data.getInt("userID");
+                callback.onSuccess(userID, message);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-        }, error -> callback.onError(new Exception(error.getMessage()))) {
+        }, error -> {
+            callback.onError(errorResponse(error));
+        }) {
             @Override
             public Map<String, String> getHeaders() {
                 Map<String, String> headers = new HashMap<>();
@@ -67,8 +81,8 @@ class MealUtils {
      * Callback interface for fetching user data, to be used with {@link MealUtils#fetchMealData(Context, String, fetchMealDataCallback)}
      */
     interface fetchMealDataCallback {
-        void onSuccess(User user);
-        void onError(Exception e);
+        void onSuccess(Meal meal, String message);
+        void onError(String message);
     }
 
     /**
@@ -77,20 +91,25 @@ class MealUtils {
      * @param url the URL to fetch the user data from
      * @param callback the callback to call when the data is fetched
      */
-    static void fetchMealData(Context context, String url, fetchMealDataCallback callback) {
+    public static void fetchMealData(Context context, String url, fetchMealDataCallback callback) {
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, response -> {
             try {
-                User user =new User(
-                        response.getInt("meal_id"),
-                        response.getInt("calories"),
-                        response.getInt("carbs"),
-                        response.getString("meal_name"),
-                        response.getInt("protein"));
-                callback.onSuccess(user);
+                String message = response.getString("message");
+                JSONObject data = response.getJSONObject("data");
+
+                Meal meal = new Meal(
+                        data.getInt("ID"),
+                        data.getString("name"),
+                        data.getString("calories"),
+                        data.getString("carbs"),
+                        data.getString("protein"));
+                callback.onSuccess(meal, message);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-        }, error -> callback.onError(new Exception(error.getMessage()))) {
+        }, error -> {
+            callback.onError(errorResponse(error));
+        }) {
             @Override
             public Map<String, String> getHeaders() {
                 Map<String, String> headers = new HashMap<>();
@@ -107,13 +126,21 @@ class MealUtils {
      * @param context the context
      * @param url the URL to modify the user data on
      * @param params the parameters to modify the user data with
-     * @param responseListener the response listener
-     * @param errorListener the error listener
      */
-    static void modifyMealData(Context context, String url, Map<String, Integer> params, Response.Listener<JSONObject> responseListener, Response.ErrorListener errorListener) {
+    static void modifyData(Context context, String url, Map<String, String> params, callbackMessage callbackMessage) {
         JSONObject jsonObject = new JSONObject(params);
 
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.PUT, url, jsonObject, responseListener, errorListener) {
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.PUT, url, jsonObject, response ->{
+            try {
+                String message = response.getString("message");
+                callbackMessage.onSuccess(message);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }, error -> {
+            String errorMessage = errorResponse(error);
+            callbackMessage.onError(errorMessage);
+        }) {
             @Override
             public Map<String, String> getHeaders() {
                 Map<String, String> headers = new HashMap<>();
@@ -123,4 +150,67 @@ class MealUtils {
         };
         VolleySingleton.getInstance(context).addToRequestQueue(jsonObjectRequest);
     }
+
+    interface callbackMessage {
+        void onSuccess(String message);
+        void onError(String message);
+    }
+
+    static void deleteRequest(Context context, String url, callbackMessage callback) {
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.DELETE, url, null, response -> {
+            try {
+                String message = response.getString("message");
+                callback.onSuccess(message);
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
+        }, error -> {
+            String errorMessage = errorResponse(error);
+            callback.onError(errorMessage);
+        }) {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Content-Type", "application/json");
+                return headers;
+            }
+        };
+        VolleySingleton.getInstance(context).addToRequestQueue(jsonObjectRequest);
+    }
+
+    private static String errorResponse(VolleyError error) {
+        int statusCode = error.networkResponse != null ? error.networkResponse.statusCode : -1;
+        String errorMessage = "";
+
+        // Check if the server has returned error details in JSON
+        if (error.networkResponse != null && error.networkResponse.data != null) {
+            try {
+                // Convert the response data (bytes) to a JSON object
+                String jsonResponse = new String(error.networkResponse.data);
+                JSONObject jsonObject = new JSONObject(jsonResponse);
+
+                // Extract error details from JSON
+                String status = jsonObject.getString("status");
+                JSONObject errorObject = jsonObject.getJSONObject("error");
+                int errorCode = errorObject.getInt("code");
+                String message = errorObject.getString("message");
+                String details = errorObject.getString("details");
+
+                // Handle the error based on this JSON
+//                errorMessage += "Error Status: " + status + "\n";
+//                errorMessage += "Error Code: " + errorCode + "\n";
+//                errorMessage += "Message: " + message + "\n";
+//                errorMessage += "Details: " + details + "\n";
+                return message;
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return "Error Code: " + statusCode;
+
+
+    }
+
+
 }

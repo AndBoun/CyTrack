@@ -9,13 +9,13 @@ class Meal implements Serializable {
 
     private String name;
 
-    private int calories;
+    private String calories;
 
-    private int carbs;
+    private String carbs;
 
-    private int protein;
+    private String protein;
 
-    Meal(int ID, String name, int calories, int carbs, int protein) {
+    Meal(int ID, String name, String calories, String carbs, String protein) {
         this.ID = ID;
         this.calories = calories;
         this.carbs = carbs;
@@ -36,21 +36,21 @@ class Meal implements Serializable {
         this.name = name;
     }
 
-    int getCalories() {return calories;}
+    String getCalories() {return calories;}
 
-    void setCalories(int calories) {
+    void setCalories(String calories) {
         this.calories = calories;
     }
 
-    int getCarbs() {return carbs;}
+    String getCarbs() {return carbs;}
 
-    void setCarbs(int carbs) {
+    void setCarbs(String carbs) {
         this.carbs = carbs;
     }
 
-    int getProtein() {return protein;}
+    String getProtein() {return protein;}
 
-    void setProtein(int protein) {
+    void setProtein(String protein) {
         this.protein = protein;
     }
 

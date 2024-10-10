@@ -12,9 +12,6 @@ import androidx.appcompat.app.AppCompatActivity;
 public class MealLogActivity extends AppCompatActivity {
 
     private ImageButton profileSettingsButton, notificationButton, MealsPageButton, LogPageButton;
-    private TextView userNameTextView, userStreakTextView;
-
-    private User user;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -15,9 +15,6 @@ import androidx.core.view.WindowInsetsCompat;
 public class MealTrackingMain extends AppCompatActivity {
 
     private ImageButton profileSettingsButton, notificationButton, backbutton, MealsPageButton, LogPageButton, CreateMealButton, AddMealButton;
-    private TextView userNameTextView, userStreakTextView;
-
-    private User user;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
