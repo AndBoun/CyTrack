@@ -2,21 +2,21 @@ package CyTrack.Controllers;
 
 public class LoginResponse {
     private String status;
-    private String message;
     private Data data;
+    private String message;
 
     // Constructor for login response
-    public LoginResponse(String status, String message, Long userID) {
+    public LoginResponse(String status, Long userID, String message) {
         this.status = status;
-        this.message = message;
         this.data = new Data(userID);
+        this.message = message;
     }
 
     // Constructor for GET response
-    public LoginResponse(String status, String message, Long userID, String firstName, String lastName, int age, String gender, int streak) {
+    public LoginResponse(String status, Long userID, String firstName, String lastName, int age, String gender, int streak, String message) {
         this.status = status;
-        this.message = message;
         this.data = new Data(userID, firstName, lastName, age, gender, streak);
+        this.message = message;
     }
 
     public String getStatus() {
