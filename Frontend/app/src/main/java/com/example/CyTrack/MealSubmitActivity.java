@@ -22,6 +22,9 @@ public class MealSubmitActivity extends AppCompatActivity {
 
     private User user;
 
+    // TODO: Find proper URL to submit hashmap over
+    private final String URL = "http://coms-3090-040.class.las.iastate.edu:8082/";
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
@@ -94,14 +97,28 @@ public class MealSubmitActivity extends AppCompatActivity {
     // MEAL SUBMISSION
     private void mealsubmit(String mealnm, String mealcals, String mealprotein, String mealcarbs) {
         // TODO: Verify if input is done properly
-        Map<String, String> params = new HashMap<>();
-        params.put("mealName", mealnm);
-        params.put("calories", mealcals);
-        params.put("protein", mealprotein);
-        params.put("carbs", mealcarbs);
+        Integer cals = 0;
+        Integer protein = 0;
+        Integer carbs = 0;
+        try {
+            cals = Integer.parseInt(mealcals);
+            protein = Integer.parseInt(mealprotein);
+            carbs = Integer.parseInt(mealcarbs);
+        }
+        catch (NumberFormatException e) {
+            cals = 0;
+            protein = 0;
+            carbs = 0;
+        }
 
 
-        NetworkUtils.postUserAndGetID(getApplicationContext(), URL, params, new NetworkUtils.postUserAndGetIDCallback() {
+        Map<String, Integer> params = new HashMap<>();
+        params.put("calories", cals);
+        params.put("protein", protein);
+        params.put("carbs", carbs);
+
+        //POST
+        MealUtils.postMealData(getApplicationContext(), URL, params, new MealUtils.postMealAndGetIDCallback() {
             @Override
             public void onSuccess(int id) {
                 //if (id != 0) fetchUserData(URL + id);
