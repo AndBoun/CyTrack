@@ -152,6 +152,40 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/LogPageButton" />
 
+    <ScrollView
+        android:id="@+id/MealScroll"
+        style="@android:style/Widget.Material.ScrollView"
+        android:layout_width="224dp"
+        android:layout_height="551dp"
+        android:background="#F5D0C39B"
+        android:fadeScrollbars="false"
+        android:fillViewport="true"
+        android:outlineAmbientShadowColor="#070707"
+        android:scrollIndicators="right"
+        android:scrollbarSize="10dp"
+        android:scrollbarStyle="insideOverlay"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="@+id/MealTableBackground"
+        app:layout_constraintEnd_toEndOf="@+id/MealTableBackground"
+        app:layout_constraintHorizontal_bias="0.516"
+        app:layout_constraintStart_toStartOf="@+id/MealTableBackground"
+        app:layout_constraintTop_toTopOf="@+id/MealTableBackground"
+        app:layout_constraintVertical_bias="0.571"
+        tools:visibility="visible">
+
+        <LinearLayout
+            android:id="@+id/MealScrollDisplay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:outlineAmbientShadowColor="#000000"
+            android:outlineProvider="bounds"
+            android:outlineSpotShadowColor="#000000"
+            android:paddingHorizontal="@dimen/cardview_compat_inset_shadow"
+            android:scrollbarSize="10dp"
+            android:scrollbarStyle="insideOverlay" />
+    </ScrollView>
+
     <ImageButton
         android:id="@+id/profileSettingsButton"
         android:layout_width="40dp"

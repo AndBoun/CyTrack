@@ -16,7 +16,7 @@ import java.util.Map;
 class MealUtils {
 
     /**
-     * Posts user data to the given URL with the given parameters
+     * Posts meal data to the given URL with the given parameters
      * @param context the context
      * @param url the URL to post the user data to
      * @param params the parameters to post the user data with
@@ -59,7 +59,7 @@ class MealUtils {
                 String message = response.getString("message");
                 JSONObject data = response.getJSONObject("data");
                 //TODO: Integrate MealIDS
-                int userID = data.getInt("userID");
+                int userID = data.getInt("ID");
                 callback.onSuccess(userID, message);
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -78,7 +78,7 @@ class MealUtils {
     }
 
     /**
-     * Callback interface for fetching user data, to be used with {@link MealUtils#fetchMealData(Context, String, fetchMealDataCallback)}
+     * Callback interface for fetching meal data, to be used with {@link MealUtils#fetchMealData(Context, String, fetchMealDataCallback)}
      */
     interface fetchMealDataCallback {
         void onSuccess(Meal meal, String message);
@@ -86,9 +86,9 @@ class MealUtils {
     }
 
     /**
-     * Fetches user data from the given URL and calls the appropriate callback method
+     * Fetches meal data from the given URL and calls the appropriate callback method
      * @param context the context
-     * @param url the URL to fetch the user data from
+     * @param url the URL to fetch the meal data from
      * @param callback the callback to call when the data is fetched
      */
     public static void fetchMealData(Context context, String url, fetchMealDataCallback callback) {
@@ -122,10 +122,10 @@ class MealUtils {
     }
 
     /**
-     * Modifies user data on the given URL with the given parameters
+     * Modifies meal data on the given URL with the given parameters
      * @param context the context
-     * @param url the URL to modify the user data on
-     * @param params the parameters to modify the user data with
+     * @param url the URL to modify the meal data on
+     * @param params the parameters to modify the meal data with
      */
     static void modifyData(Context context, String url, Map<String, String> params, callbackMessage callbackMessage) {
         JSONObject jsonObject = new JSONObject(params);

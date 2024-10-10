@@ -40,6 +40,7 @@ dependencies {
 //    implementation("androidx.constraintlayout:constraintlayout:2.2.0-beta01")
 //    implementation("androidx.constraintlayout:constraintlayout-compose:1.1.0-beta01")
     implementation(libs.core.splashscreen)
+    implementation(libs.legacy.support.v4)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)

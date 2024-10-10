@@ -1,17 +1,40 @@
 package com.example.CyTrack;
 
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
+
+import com.android.volley.Request;
+import com.android.volley.toolbox.JsonObjectRequest;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MealLogActivity extends AppCompatActivity {
 
     private ImageButton profileSettingsButton, notificationButton, MealsPageButton, LogPageButton;
+    private ScrollView MealTable;
+    private LinearLayout MealTableDisplay;
+    private ArrayList<Meal> meals = new ArrayList<Meal>();
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -22,6 +45,12 @@ public class MealLogActivity extends AppCompatActivity {
         // TOP BUTTONS
         profileSettingsButton = findViewById(R.id.profileSettingsButton);
         notificationButton = findViewById(R.id.notificationButton);
+        // RIGHT MAIN FUNCTION BUTTONS
+        MealsPageButton = findViewById(R.id.MealsPageButton);
+        LogPageButton = findViewById(R.id.LogPageButton);
+        // Initialize Meal Table
+        MealTable = findViewById(R.id.MealScroll);
+        MealTableDisplay = findViewById(R.id.MealScrollDisplay);
 
         // Button Input Listeners
         profileSettingsButton.setOnClickListener(v -> {
@@ -32,11 +61,6 @@ public class MealLogActivity extends AppCompatActivity {
             // Open Notification Activity
         });
 
-        // RIGHT MAIN FUNCTION BUTTONS
-        MealsPageButton = findViewById(R.id.MealsPageButton);
-        LogPageButton = findViewById(R.id.LogPageButton);
-
-        // Button Input Listeners
         MealsPageButton.setOnClickListener(v -> {
             //TODO: Send to MealPage
             Intent Navigate = new Intent(MealLogActivity.this, MealTrackingMain.class);
@@ -46,16 +70,52 @@ public class MealLogActivity extends AppCompatActivity {
 
         LogPageButton.setOnClickListener(v -> {
             //TODO: Send to LogPage
+            //NOT NEEDED
         });
 
-        // Handle back press
-        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
+        // APPENDING MEALS
+        for (int i = 0; i < 10; i++){
+            TableLayout tableLayout = new TableLayout(this);
+            tableLayout.setLayoutParams(new TableLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT));
+            addTableRow(tableLayout, "Meal ID", "Calories", "Carbs", "Meal Name", "Protein");
+            MealTableDisplay.addView(tableLayout);
+        }
+
+
+    }
+
+    private void addTableRow(TableLayout tableLayout, String... values) {
+        TableRow tableRow = new TableRow(this);
+        tableRow.setLayoutParams(new TableRow.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT));
+
+        for (String value : values) {
+            TextView textView = new TextView(this);
+            textView.setText(value);
+            textView.setPadding(4, 4, 4, 4);
+            textView.setTextSize(10);
+            tableRow.addView(textView);
+        }
+
+        tableLayout.addView(tableRow);
+    }
+
+    private void fetchMealData(String url) {
+        MealUtils.fetchMealData(this, url, new MealUtils.fetchMealDataCallback() {
             @Override
-            public void handleOnBackPressed() {
-                // Do nothing to disable back press
+            public void onSuccess(Meal meal, String message) {
+                meals.add(meal);
+                Toast.makeText(getApplicationContext(), "Meal Loaded", Toast.LENGTH_LONG).show();
             }
-        };
-        getOnBackPressedDispatcher().addCallback(this, callback);
+
+            @Override
+            public void onError(String error) {
+                Toast.makeText(getApplicationContext(), error, Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
 }
