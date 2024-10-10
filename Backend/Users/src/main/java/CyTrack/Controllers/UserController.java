@@ -2,6 +2,7 @@ package CyTrack.Controllers;
 
 import CyTrack.Entities.User;
 import CyTrack.Services.UserService;
+import org.hibernate.sql.Delete;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,42 +27,44 @@ public class UserController {
 
     // Register user
     @PostMapping("")
-    public ResponseEntity<LoginResponse> registerUser(@RequestBody User user) {
+    public ResponseEntity<?> registerUser(@RequestBody User user) {
         LOGGER.log(Level.INFO, "Received registration request for user: {0}", user.getUsername());
         try {
             if (user.getUsername() == null || user.getPassword() == null) {
                 return ResponseEntity.badRequest().body(null);
             }
             if (userService.findByUserName(user.getUsername()).isPresent()) {
-                return ResponseEntity.status(409).body(null);
+                ErrorResponse response = new ErrorResponse("error", 409, "Username already exists", "Username already exists");
+                return ResponseEntity.status(409).body(response);
             }
             else {
                 User registeredUser = userService.registerUser(user);
                 LOGGER.log(Level.INFO, "User registered with username: {0}", user.getUsername());
-                LoginResponse response = new LoginResponse("success", "User registered", registeredUser.getUserID());
+                LoginResponse response = new LoginResponse("success", registeredUser.getUserID(), "User registered" );
                 return ResponseEntity.status(201).body(response);
             }
         } catch (NoSuchAlgorithmException e) {
             LOGGER.log(Level.SEVERE, "Error during user registration", e);
-            return ResponseEntity.status(500).body(null);
+            ErrorResponse response = new ErrorResponse("error", 500, "Internal server error", "Internal server error");
+            return ResponseEntity.status(500).body(response);
         }
     }
 
     // Login user
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> loginUser(@RequestBody User user) {
+    public ResponseEntity<?> loginUser(@RequestBody User user) {
         try {
             Optional<User> foundUser = userService.findByUserName(user.getUsername());
             if (foundUser.isPresent() && userService.checkPassword(foundUser.get(), user.getPassword())) {
-                LoginResponse response = new LoginResponse("success", "Login successful", foundUser.get().getUserID());
+                LoginResponse response = new LoginResponse("success", foundUser.get().getUserID(), "Login successful");
                 return ResponseEntity.status(201).body(response);
             } else {
-                LoginResponse response = new LoginResponse("error", "Invalid username or password", null);
+                ErrorResponse response = new ErrorResponse("error", 401, "Account Does Not Exist", "Unauthorized");
                 return ResponseEntity.status(401).body(response);
             }
         } catch (NoSuchAlgorithmException e) {
             LOGGER.log(Level.SEVERE, "Error during user login", e);
-            LoginResponse response = new LoginResponse("error", "Internal server error", null);
+            ErrorResponse response = new ErrorResponse("error", 500, "Internal server error", "Internal server error");
             return ResponseEntity.status(500).body(response);
         }
     }
@@ -87,23 +90,24 @@ public class UserController {
      */
 
     @GetMapping("/{userID}")
-    public ResponseEntity<LoginResponse> getUserByUserID(@PathVariable Long userID) {
+    public ResponseEntity<?> getUserByUserID(@PathVariable Long userID) {
         Optional<User> user = userService.findByUserID(userID);
         if (user.isPresent()) {
             User foundUser = user.get();
             LoginResponse response = new LoginResponse(
                     "success",
-                    "Resource created successfully",
                     foundUser.getUserID(),
                     foundUser.getFirstName(),
                     foundUser.getLastName(),
                     foundUser.getAge(),
                     foundUser.getGender(),
-                    foundUser.getStreak()
+                    foundUser.getStreak(),
+                    "Resource created successfully"
             );
             return ResponseEntity.status(201).body(response);
         } else {
-            return ResponseEntity.status(404).body(null);
+            ErrorResponse error = new ErrorResponse("error", 404, "User not found", "User not found");
+            return ResponseEntity.status(404).body(error);
         }
     }
 
@@ -134,7 +138,7 @@ public class UserController {
     }
 
     @PostMapping("/resetPassword")
-    public ResponseEntity<passwordResponse> SendUserIDForPassReset(@RequestBody User user) {
+    public ResponseEntity<?> SendUserIDForPassReset(@RequestBody User user) {
         Optional<User> foundUser = userService.findByUserName(user.getUsername());
         if (foundUser.isPresent()) {
             try {
@@ -147,37 +151,44 @@ public class UserController {
                 }
             } catch (NoSuchAlgorithmException e) {
                 LOGGER.log(Level.SEVERE, "Error during password reset", e);
-                return ResponseEntity.status(500).body(null);
+                ErrorResponse response = new ErrorResponse("error", 500, "Internal server error", "Internal server error");
+                return ResponseEntity.status(500).body(response);
             }
         } else {
-            return ResponseEntity.status(404).body(null);
+            ErrorResponse response = new ErrorResponse("error", 404, "User not found", "User not found");
+            return ResponseEntity.status(404).body(response);
         }
     }
 
-    @PutMapping("/resetPassword")
-    public ResponseEntity<String> resetPassword(@RequestBody User user) {
-        Optional<User> foundUser = userService.findByUserName(user.getUsername());
+    @PutMapping("/resetPassword/{userID}")
+    public ResponseEntity<?> resetPasswordByUserID(@PathVariable Long userID, @RequestBody User user) {
+        Optional<User> foundUser = userService.findByUserID(userID);
         if (foundUser.isPresent()) {
             try {
                 User updatedUser = userService.resetPassword(foundUser.get(), user.getPassword());
-                return ResponseEntity.ok("Password reset");
+                passwordResponse response = new passwordResponse("success", "Password reset", updatedUser.getUserID());
+                return ResponseEntity.ok(response);
             } catch (NoSuchAlgorithmException e) {
                 LOGGER.log(Level.SEVERE, "Error during password reset", e);
-                return ResponseEntity.status(500).body("Internal server error");
+                ErrorResponse response = new ErrorResponse("error", 500, "Internal server error", "Internal server error");
+                return ResponseEntity.status(500).body(response);
             }
         } else {
-            return ResponseEntity.status(404).body("User not found");
+            ErrorResponse response = new ErrorResponse("error", 404, "User not found", "User not found");
+            return ResponseEntity.status(404).body(response);
         }
     }
 
-    @DeleteMapping("")
-    public ResponseEntity<String> deleteUser(@RequestBody User user) {
-        Optional<User> foundUser = userService.findByUserName(user.getUsername());
+    @DeleteMapping("/{userID}")
+    public ResponseEntity<?> deleteUser(@PathVariable Long userID) {
+        Optional<User> foundUser = userService.findByUserID(userID);
         if (foundUser.isPresent()) {
             userService.deleteUser(foundUser.get());
-            return ResponseEntity.ok("User deleted");
+            DeleteResponse response = new DeleteResponse("success", 200, "User deleted");
+            return ResponseEntity.ok(response);
         } else {
-            return ResponseEntity.status(404).body("User not found");
+            ErrorResponse response = new ErrorResponse("error", 404, "User not found", "User not found");
+            return ResponseEntity.status(404).body(response);
         }
     }
 
