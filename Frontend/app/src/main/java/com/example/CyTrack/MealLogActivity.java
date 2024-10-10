@@ -2,6 +2,7 @@ package com.example.CyTrack;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
@@ -16,6 +17,7 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.ColorInt;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
@@ -74,19 +76,35 @@ public class MealLogActivity extends AppCompatActivity {
         });
 
         // APPENDING MEALS
-        for (int i = 0; i < 10; i++){
+        for (int i = 0; i < 20; i++){
+            Meal input = new Meal(12, "Alex", "23", "42", "22");
             TableLayout tableLayout = new TableLayout(this);
             tableLayout.setLayoutParams(new TableLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT));
-            addTableRow(tableLayout, "Meal ID", "Calories", "Carbs", "Meal Name", "Protein");
+            if (i == 0){
+                addTableRow(tableLayout, 0, "|Meal ID|", "|Calories|", "|Carbs|", "|Meal Name|", "|Protein|");
+            }
+            else {
+                String id = String.valueOf(input.getID());
+                id = String.format("MID:  %s    ", id);
+                String name = input.getName();
+                name = String.format("   %s,", name);
+                String calories = input.getCalories();
+                calories = String.format("   %s cals,", calories);
+                String carbs = input.getCarbs();
+                carbs = String.format("   %s g,", carbs);
+                String protein = input.getProtein();
+                protein = String.format("   %s g", protein);
+                addTableRow(tableLayout, i, id, calories, carbs, name, protein);
+            }
             MealTableDisplay.addView(tableLayout);
         }
 
 
     }
 
-    private void addTableRow(TableLayout tableLayout, String... values) {
+    private void addTableRow(TableLayout tableLayout, int m, String... values) {
         TableRow tableRow = new TableRow(this);
         tableRow.setLayoutParams(new TableRow.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
@@ -98,7 +116,16 @@ public class MealLogActivity extends AppCompatActivity {
             textView.setPadding(4, 4, 4, 4);
             textView.setTextSize(10);
             tableRow.addView(textView);
+            if (m == 0){
+                tableRow.setBackgroundColor(Color.parseColor("#C8102E"));
+                textView.setTextColor(Color.parseColor("#FFFFFF"));
+
+            }
+            if (m % 2 == 1){
+                tableRow.setBackgroundColor(Color.parseColor("#f0e1b9"));
+            }
         }
+
 
         tableLayout.addView(tableRow);
     }

@@ -2,6 +2,7 @@ package com.example.CyTrack;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.EditText;
 
 import androidx.activity.EdgeToEdge;
@@ -25,7 +26,7 @@ public class MealSubmitActivity extends AppCompatActivity {
     private Meal meal;
 
     // TODO: Find proper URL to submit hashmap over
-    private final String URL = "http://coms-3090-040.class.las.iastate.edu:8082/";
+    private final String URL = "http://coms-3090-040.class.las.iastate.edu:8080/meal";
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,12 +95,14 @@ public class MealSubmitActivity extends AppCompatActivity {
         params.put("calories", mealcals);
         params.put("protein", mealprotein);
         params.put("carbs", mealcarbs);
+        //Log.d("MyApp", mealprotein);
 
         //POST
         MealUtils.postMealAndGetID(getApplicationContext(), URL, params, new MealUtils.postMealAndGetIDCallback() {
             @Override
             public void onSuccess(int id, String message) {
-                if (id != 0) fetchMealData(URL + id); // TODO: VERIFY IF URL CORRECT
+                //id = 1;
+                if (id != 0) fetchMealData(URL); // TODO: VERIFY IF URL CORRECT
             }
 
             @Override
@@ -120,6 +123,7 @@ public class MealSubmitActivity extends AppCompatActivity {
 
             @Override
             public void onError(String error) {
+                //Log.d("MyApp", error); // TEST
                 Toast.makeText(getApplicationContext(), error, Toast.LENGTH_LONG).show();
             }
         });

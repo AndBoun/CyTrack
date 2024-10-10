@@ -22,11 +22,11 @@
         <activity android:name=".SignUpActivity"
             android:exported="false"/>
         <activity android:name=".MealLogActivity"
-            android:exported="true"/>
+            android:exported="false"/>
         <activity android:name=".MealSubmitActivity"
-            android:exported="true"/>
+            android:exported="false"/>
         <activity android:name=".MealTrackingMain"
-            android:exported="true"/>
+            android:exported="false"/>
         <activity
             android:name=".LoginActivity"
             android:exported="true"
