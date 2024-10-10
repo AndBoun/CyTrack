@@ -7,17 +7,19 @@ import java.io.Serializable;
 class User implements Serializable {
     private final int ID;
 
-    private String name;
+    private String firstName;
 
+    private String lastName;
     private int age;
 
     private String gender;
 
     private int streak;
 
-    User(int ID, String name, int age, String gender, int streak) {
+    User(int ID, String firstName,String lastName, int age, String gender, int streak) {
         this.ID = ID;
-        this.name = name;
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.age = age;
         this.gender = gender;
         this.streak = streak;
@@ -27,12 +29,20 @@ class User implements Serializable {
         return ID;
     }
 
-    String getName() {
-        return name;
+    public String getFirstName() {
+        return firstName;
     }
 
-    void setName(String name) {
-        this.name = name;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     int getAge() {
@@ -59,12 +69,12 @@ class User implements Serializable {
         this.streak = streak;
     }
 
-    @NonNull
     @Override
     public String toString() {
         return "User{" +
                 "ID=" + ID +
-                ", name='" + name + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
                 ", age=" + age +
                 ", gender='" + gender + '\'' +
                 ", streak=" + streak +

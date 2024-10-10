@@ -14,7 +14,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 public class MainDashboardActivity extends AppCompatActivity {
 
-    private ImageButton profileSettingsButton, notificationButton, mealTrackingButton, workOutTrackingButton;
+    private ImageButton profileSettingsButton, notificationButton, mealTrackingButton, workOutTrackingButton, exerciseTrackingButton;
     private TextView userNameTextView, userStreakTextView;
 
     private User user;
@@ -31,18 +31,22 @@ public class MainDashboardActivity extends AppCompatActivity {
 
         user = (User) getIntent().getSerializableExtra("user");
 
-        profileSettingsButton = findViewById(R.id.profileSettingsButton);
+        profileSettingsButton = findViewById(R.id.profilePictureButton);
         notificationButton = findViewById(R.id.notificationButton);
         mealTrackingButton = findViewById(R.id.mealTrackingButton);
         workOutTrackingButton = findViewById(R.id.workOutTrackingButton);
+        exerciseTrackingButton = findViewById(R.id.exerciseTrackingButton);
         userNameTextView = findViewById(R.id.helloTextView);
         userStreakTextView = findViewById(R.id.streakTextView);
 
-        userNameTextView.setText("Hi, " + user.getName());
+        userNameTextView.setText("Hi, " + user.getFirstName());
         userStreakTextView.setText("Streak: " + user.getStreak());
 
         profileSettingsButton.setOnClickListener(v -> {
             // Open Profile Settings Activity
+            Intent intent = new Intent(this, ProfileSettingsActivity.class);
+            intent.putExtra("user", user);
+            startActivity(intent);
         });
 
         notificationButton.setOnClickListener(v -> {
@@ -57,6 +61,9 @@ public class MainDashboardActivity extends AppCompatActivity {
 
         workOutTrackingButton.setOnClickListener(v -> {
             // Open Workout Tracking Activity
+            Intent intent = new Intent(this, WorkoutActivity.class);
+            intent.putExtra("user", user);
+            startActivity(intent);
         });
 
         // Handle back press

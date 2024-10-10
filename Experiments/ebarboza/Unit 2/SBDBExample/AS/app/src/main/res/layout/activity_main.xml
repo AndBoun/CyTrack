@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+
+    <!-- Input fields for POST request -->
+    <EditText
+        android:id="@+id/input_first_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="First Name" />
+
+
+    <EditText
+        android:id="@+id/input_last_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Last Name" />
+
+
+    <EditText
+        android:id="@+id/input_email"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Email" />
+
+
+    <!-- Button to POST data -->
+    <Button
+        android:id="@+id/button_post"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Send POST Request" />
+
+
+    <!-- Button to GET data -->
+    <Button
+        android:id="@+id/button_get"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Send GET Request" />
+
+
+    <!-- TextView to display GET response -->
+    <TextView
+        android:id="@+id/text_get_response"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Response will appear here" />
+
+
+</LinearLayout>
+
