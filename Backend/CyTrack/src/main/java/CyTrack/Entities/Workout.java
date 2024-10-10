@@ -4,25 +4,33 @@ import jakarta.persistence.*;
 
 @Entity
 public class Workout {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long workoutID;
-    private Long userID;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
     private String exerciseType;
     private int duration;
     private int caloriesBurned;
     private String time;
 
+    // Default constructor
     public Workout() {}
 
-    public Workout(Long userID, String exerciseType, int duration, int caloriesBurned, String time) {
-        this.userID = userID;
+    // Constructor with fields
+    public Workout(User user, String exerciseType, int duration, int caloriesBurned, String time) {
+        this.user = user;
         this.exerciseType = exerciseType;
         this.duration = duration;
         this.caloriesBurned = caloriesBurned;
         this.time = time;
     }
 
+    // Getters and setters
     public Long getWorkoutID() {
         return workoutID;
     }
@@ -31,12 +39,12 @@ public class Workout {
         this.workoutID = workoutID;
     }
 
-    public Long getUserID() {
-        return userID;
+    public User getUser() {
+        return user;
     }
 
-    public void setUserID(Long userID) {
-        this.userID = userID;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public String getExerciseType() {
@@ -70,11 +78,4 @@ public class Workout {
     public void setTime(String time) {
         this.time = time;
     }
-
-
-
-
-
-
-
 }

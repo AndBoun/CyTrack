@@ -1,12 +1,9 @@
 package CyTrack.Repositories;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+
 import CyTrack.Entities.Workout;
-import java.util.Optional;
+import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.List;
 
 public interface WorkoutRepository extends JpaRepository<Workout, Long> {
-    Optional<Workout> findByWorkoutID(Long workoutID);
-    Optional<Workout> findByExerciseType(String exerciseType);
-    Optional<Workout> findByUserID(Long userID);
-
+    List<Workout> findByUserId(Long userId);
 }

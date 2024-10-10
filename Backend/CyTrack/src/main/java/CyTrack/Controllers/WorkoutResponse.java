@@ -12,9 +12,9 @@ public class WorkoutResponse {
         this.message = message;
     }
 
-    public WorkoutResponse(String status, Long workoutID, String workoutName, String workoutType, Long userID, String message) {
+    public WorkoutResponse(String status,Long workoutID, String exerciseType, int duration, int calories, int time, String message) {
         this.status = status;
-        this.data = new Data(workoutID, workoutName, workoutType, userID);
+        this.data = new Data(workoutID, exerciseType, duration, calories, time);
         this.message = message;
     }
 
@@ -45,18 +45,21 @@ public class WorkoutResponse {
 
     public static class Data {
         private Long workoutID;
-        private String workoutName;
+        private String exerciseType;
         private String workoutType;
-        private Long userID;
-
+        private int duration;
+        private int calories;
+        private int time;
         public Data(Long workoutID) {
             this.workoutID = workoutID;
         }
-        public Data(Long workoutID, String workoutName, String workoutType, Long userID) {
+        public Data(Long workoutID, String exerciseType, int duration, int calories, int time ) {
             this.workoutID = workoutID;
-            this.workoutName = workoutName;
-            this.workoutType = workoutType;
-            this.userID = userID;
+            this.exerciseType = exerciseType;
+            this.duration = duration;
+            this.calories = calories;
+            this.time = time;
+
         }
 
 
@@ -68,12 +71,12 @@ public class WorkoutResponse {
             this.workoutID = workoutID;
         }
 
-        public String getWorkoutName() {
-            return workoutName;
+        public String getExerciseType() {
+            return exerciseType;
         }
 
-        public void setWorkoutName(String workoutName) {
-            this.workoutName = workoutName;
+        public void setExerciseType(String exerciseType) {
+            this.exerciseType = exerciseType;
         }
 
         public String getWorkoutType() {
@@ -84,12 +87,30 @@ public class WorkoutResponse {
             this.workoutType = workoutType;
         }
 
-        public Long getUserID() {
-            return userID;
+        public int getDuration() {
+            return duration;
         }
 
-        public void setUserID(Long userID) {
-            this.userID = userID;
+        public void setDuration(int duration) {
+            this.duration = duration;
         }
+
+        public int getCalories() {
+            return calories;
+        }
+
+        public void setCalories(int calories) {
+            this.calories = calories;
+        }
+
+        public int getTime() {
+            return time;
+        }
+
+        public void setTime(int time) {
+            this.time = time;
+        }
+
+
     }
 }

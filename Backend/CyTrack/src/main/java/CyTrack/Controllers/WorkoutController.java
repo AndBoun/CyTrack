@@ -1,19 +1,17 @@
 package CyTrack.Controllers;
 
 import CyTrack.Entities.User;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import java.security.NoSuchAlgorithmException;
-import java.util.List;
-import java.util.Optional;
-import java.util.logging.Level;
 import CyTrack.Entities.Workout;
 import CyTrack.Services.UserService;
 import CyTrack.Services.WorkoutService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @RestController
-@RequestMapping("/workout/{userID}")
+@RequestMapping("/workouts/{userID}")
 public class WorkoutController {
     private final WorkoutService workoutService;
     private final UserService userService;
@@ -27,16 +25,15 @@ public class WorkoutController {
     @PostMapping("")
     public ResponseEntity<?> addWorkout(@PathVariable Long userID, @RequestBody Workout workout) {
         Optional<User> foundUser = userService.findByUserID(userID);
-        if (foundUser.isPresent()){
-            workout.setUserID(userID);
+        if (foundUser.isPresent()) {
+            workout.setUser(foundUser.get()); // Set the User object
+            workout.setWorkoutID(null); // Ensure workoutID is not set manually
             Workout addedWorkout = workoutService.addWorkout(workout);
             WorkoutResponse response = new WorkoutResponse("success", addedWorkout.getWorkoutID(), "Workout added");
             return ResponseEntity.status(201).body(response);
-        }
-        else {
+        } else {
             ErrorResponse response = new ErrorResponse("error", 404, "User not found", "User not found");
             return ResponseEntity.status(404).body(response);
         }
     }
-
 }
