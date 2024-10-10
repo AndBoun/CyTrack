@@ -5,6 +5,10 @@ public class passwordResponse {
     private String message;
     private Data data;
 
+    public passwordResponse(String status, String message) {
+        this.status = status;
+        this.message = message;
+    }
     public passwordResponse(String status, String message, Long userID) {
         this.status = status;
         this.message = message;
