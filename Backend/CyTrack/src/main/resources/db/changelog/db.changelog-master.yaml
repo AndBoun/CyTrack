@@ -1,7 +1,7 @@
 databaseChangeLog:
   - changeSet:
       id: 1
-      author:
+      author: Kai & Ed
       changes:
         - createTable:
             tableName: user
