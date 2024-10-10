@@ -59,6 +59,9 @@ public class MainDashboardActivity extends AppCompatActivity {
 
         workOutTrackingButton.setOnClickListener(v -> {
             // Open Workout Tracking Activity
+            Intent intent = new Intent(this, WorkoutActivity.class);
+            intent.putExtra("user", user);
+            startActivity(intent);
         });
 
         // Handle back press
