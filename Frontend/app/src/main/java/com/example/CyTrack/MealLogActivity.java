@@ -75,19 +75,31 @@ public class MealLogActivity extends AppCompatActivity {
             //NOT NEEDED
         });
 
+        meals.add(new Meal("joe", "24", "23","120"));
         // APPENDING MEALS
-        for (int i = 0; i < 20; i++){
-            Meal input = new Meal(12, "Alex", "23", "42", "22");
+        int id = 1;
+        while(true){
+            Meal input = null;
+            try {
+                fetchMealData("http://10.90.72.246:8080/meal/" + id);
+                input = meals.get(id);
+                id += 1;
+            }
+            catch (Exception e){
+                System.out.println(e.toString());
+                break;
+            }
+
             TableLayout tableLayout = new TableLayout(this);
             tableLayout.setLayoutParams(new TableLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT));
-            if (i == 0){
+            if (id == 0){
                 addTableRow(tableLayout, 0, "|Meal ID|", "|Calories|", "|Carbs|", "|Meal Name|", "|Protein|");
             }
             else {
-                String id = String.valueOf(input.getID());
-                id = String.format("MID:  %s    ", id);
+                String id1 = String.valueOf(input.getID());
+                id1 = String.format("MID:  %s    ", id1);
                 String name = input.getName();
                 name = String.format("   %s,", name);
                 String calories = input.getCalories();
@@ -96,7 +108,7 @@ public class MealLogActivity extends AppCompatActivity {
                 carbs = String.format("   %s g,", carbs);
                 String protein = input.getProtein();
                 protein = String.format("   %s g", protein);
-                addTableRow(tableLayout, i, id, calories, carbs, name, protein);
+                addTableRow(tableLayout, id, id1, calories, carbs, name, protein);
             }
             MealTableDisplay.addView(tableLayout);
         }

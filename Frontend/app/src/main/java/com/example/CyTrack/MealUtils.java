@@ -1,6 +1,7 @@
 package com.example.CyTrack;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -21,29 +22,37 @@ class MealUtils {
      * @param url the URL to post the user data to
      * @param params the parameters to post the user data with
      */
-    static void postMeal(Context context, String url, Map<String, String> params, callbackMessage callBack) {
+    static void postMeal(Context context, String url, Map<String, Object> params, callbackMessage callBack) {
         JSONObject jsonObject = new JSONObject(params);
-
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, jsonObject, response ->{
             try {
-                String message = response.getString("message");
-                callBack.onSuccess(message);
-            } catch (JSONException e) {
+                // TEST 1
+                Log.d("MealUtils",  " Headers Processing (PostMeal 1)");
+                callBack.onSuccess("Success");
+            } catch (Exception e) {
+                // TEST 2
+                Log.d("MealUtils",  e.toString() + " Headers Processing (PostMeal 2)");
                 e.printStackTrace();
             }
         }, error -> {
             String errorMessage = errorResponse(error);
+            // Test 3
+            Log.d("MealUtils",  errorMessage + " Headers Processing (PostMeal 3)");
             callBack.onError(errorMessage);
         }) {
             @Override
             public Map<String, String> getHeaders() {
                 Map<String, String> headers = new HashMap<>();
                 headers.put("Content-Type", "application/json");
+                // Test 4
+                Log.d("MealUtils",  headers.toString()+ " Headers Processing (PostMeal 4)");
+
                 return headers;
             }
         };
 
         VolleySingleton.getInstance(context).addToRequestQueue(jsonObjectRequest);
+
     }
 
     interface postMealAndGetIDCallback {
@@ -54,22 +63,31 @@ class MealUtils {
     static void postMealAndGetID(Context context, String url, Map<String, String> params, postMealAndGetIDCallback callback) {
         JSONObject jsonObject = new JSONObject(params);
 
+        //Log.d("MealUtils", url + " Processing"); // TEST
+
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, jsonObject, response -> {
             try {
+                Log.d("MealUtils", url + " Try(Catch) Processing"); // TEST
                 String message = response.getString("message");
                 JSONObject data = response.getJSONObject("data");
                 //TODO: Integrate MealIDS
                 int userID = data.getInt("ID");
                 callback.onSuccess(userID, message);
             } catch (JSONException e) {
+                Log.d("MealUtils", url + " JSONException Processing");
                 e.printStackTrace();
             }
         }, error -> {
+            Log.d("MealUtils", url + " Error Processing");
             callback.onError(errorResponse(error));
         }) {
             @Override
             public Map<String, String> getHeaders() {
+                // Test 3
+                Log.d("postMealAndGetID", url + " Hash Header Processing");
                 Map<String, String> headers = new HashMap<>();
+                // Test 4
+                Log.d("postMealAndGetID", url + " Hash Header Processing 2");
                 headers.put("Content-Type", "application/json");
                 return headers;
             }
@@ -98,12 +116,12 @@ class MealUtils {
                 JSONObject data = response.getJSONObject("data");
 
                 Meal meal = new Meal(
-                        data.getInt("ID"),
-                        data.getString("name"),
+                        data.getString("mealName"),
                         data.getString("calories"),
                         data.getString("carbs"),
                         data.getString("protein"));
                 callback.onSuccess(meal, message);
+
             } catch (JSONException e) {
                 e.printStackTrace();
             }

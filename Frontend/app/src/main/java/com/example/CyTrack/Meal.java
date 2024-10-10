@@ -5,7 +5,7 @@ import androidx.annotation.NonNull;
 import java.io.Serializable;
 
 class Meal implements Serializable {
-    private final int ID;
+    private final int ID = 0;
 
     private String name;
 
@@ -15,8 +15,7 @@ class Meal implements Serializable {
 
     private String protein;
 
-    Meal(int ID, String name, String calories, String carbs, String protein) {
-        this.ID = ID;
+    Meal(String name, String calories, String carbs, String protein) {
         this.calories = calories;
         this.carbs = carbs;
         this.name = name;

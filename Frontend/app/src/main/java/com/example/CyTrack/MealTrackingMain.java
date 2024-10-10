@@ -37,8 +37,10 @@ public class MealTrackingMain extends AppCompatActivity {
         });
 
         backbutton.setOnClickListener(v -> {
-
+            Intent Navigate = new Intent(MealTrackingMain.this, MainDashboardActivity.class);
+            startActivity(Navigate);
         });
+
         // LEFT MAIN FUNCTION BUTTONS
         CreateMealButton = findViewById(R.id.CreateMealButton);
         AddMealButton = findViewById(R.id.AddMealButton);

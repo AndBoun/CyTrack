@@ -26,7 +26,7 @@ public class MealSubmitActivity extends AppCompatActivity {
     private Meal meal;
 
     // TODO: Find proper URL to submit hashmap over
-    private final String URL = "http://coms-3090-040.class.las.iastate.edu:8080/meal";
+    private final String URL = "http://10.90.72.246:8080/meal";
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,26 +90,27 @@ public class MealSubmitActivity extends AppCompatActivity {
     // MEAL SUBMISSION
     private void mealsubmit(String mealnm, String mealcals, String mealprotein, String mealcarbs) {
         // TODO: Verify if input is done properly
-        Map<String, String> params = new HashMap<>();
-        params.put("name", mealnm);
+        Integer cals = Integer.parseInt(mealcals);
+        Integer prot = Integer.parseInt(mealprotein);
+        Integer carb = Integer.parseInt(mealcarbs);
+        //TEST
+        Map<String, Object> params = new HashMap<>();
+        params.put("mealName", mealnm);
         params.put("calories", mealcals);
         params.put("protein", mealprotein);
         params.put("carbs", mealcarbs);
         //Log.d("MyApp", mealprotein);
 
         //POST
-        MealUtils.postMealAndGetID(getApplicationContext(), URL, params, new MealUtils.postMealAndGetIDCallback() {
+        MealUtils.postMeal(getApplicationContext(), URL, params, new MealUtils.callbackMessage() {
             @Override
-            public void onSuccess(int id, String message) {
-                //id = 1;
-                if (id != 0) fetchMealData(URL); // TODO: VERIFY IF URL CORRECT
+            public void onSuccess(String response) {
+                Toast.makeText(getApplicationContext(), "Submitting Meal", Toast.LENGTH_LONG).show();
             }
-
             @Override
             public void onError(String error) {
                 Toast.makeText(getApplicationContext(), error, Toast.LENGTH_LONG).show();
-            }
-        });
+            }});
 
     }
 
@@ -123,7 +124,7 @@ public class MealSubmitActivity extends AppCompatActivity {
 
             @Override
             public void onError(String error) {
-                //Log.d("MyApp", error); // TEST
+                Log.d("MyApp", error + " MSA: FetchMealDaata"); // TEST
                 Toast.makeText(getApplicationContext(), error, Toast.LENGTH_LONG).show();
             }
         });
