@@ -178,7 +178,7 @@ class NetworkUtils {
         VolleySingleton.getInstance(context).addToRequestQueue(jsonObjectRequest);
     }
 
-    private static String errorResponse(VolleyError error) {
+    static String errorResponse(VolleyError error) {
         int statusCode = error.networkResponse != null ? error.networkResponse.statusCode : -1;
         String errorMessage = "";
 
