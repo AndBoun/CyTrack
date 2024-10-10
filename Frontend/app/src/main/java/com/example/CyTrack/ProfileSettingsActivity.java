@@ -20,8 +20,9 @@ public class ProfileSettingsActivity extends AppCompatActivity {
 
     private User user;
 
-//    private final String DELETE_URL = "https://7e68d300-a3cb-4835-bf2f-66cab084d974.mock.pstmn.io/login/";
-    private final String DELETE_URL = "http://10.90.72.246:8080/user/";
+    private final String DELETE_URL = "https://7e68d300-a3cb-4835-bf2f-66cab084d974.mock.pstmn.io/user";
+
+//    private final String DELETE_URL = "http://10.90.72.246:8080/user";
 
 
     @Override
@@ -64,10 +65,10 @@ public class ProfileSettingsActivity extends AppCompatActivity {
     }
 
     private void deleteUser() {
-        NetworkUtils.deleteRequest(getApplicationContext(), DELETE_URL + user.getID(), new NetworkUtils.callbackMessage() {
+        NetworkUtils.deleteRequest(getApplicationContext(), DELETE_URL + "/" + user.getID(), new NetworkUtils.callbackMessage() {
             @Override
             public void onSuccess(String response) {
-                Toast.makeText(getApplicationContext(), response, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Account Deleted", Toast.LENGTH_SHORT).show();
                 switchToLoginActivity();
             }
 

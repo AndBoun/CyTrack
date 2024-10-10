@@ -22,8 +22,8 @@ import java.util.Map;
 
 public class SignUpActivity extends AppCompatActivity {
 
-//    private final String URL = "https://7e68d300-a3cb-4835-bf2f-66cab084d974.mock.pstmn.io/SignUp/";
-    private final String URL = "http://10.90.72.246:8080/user";
+    private final String URL = "https://7e68d300-a3cb-4835-bf2f-66cab084d974.mock.pstmn.io/user";
+//    private final String URL = "http://10.90.72.246:8080/user";
     private Button signUpButton, backButton;
     private EditText usernameEditText, passwordEditText, passwordAgainEditText,
             firstNameEditText, lastNameEditText, emailEditText, phoneEditText,
