@@ -67,7 +67,6 @@ public class UserService {
             }
             return hexString.toString();
         } catch (NoSuchAlgorithmException e) {
-            LOGGER.log(Level.SEVERE, "Hashing algorithm not found", e);
             throw e;
         }
     }
