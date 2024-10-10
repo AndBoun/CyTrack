@@ -133,7 +133,28 @@ public class UserController {
         }
     }
 
-    @DeleteMapping("/resetPassword")
+    @PostMapping("/resetPassword")
+    public ResponseEntity<passwordResponse> SendUserIDForPassReset(@RequestBody User user) {
+        Optional<User> foundUser = userService.findByUserName(user.getUsername());
+        if (foundUser.isPresent()) {
+            try {
+                User existingUser = foundUser.get();
+                if (!userService.checkPassword(existingUser, user.getPassword())) {
+                    passwordResponse response = new passwordResponse("success", "Password does not match", existingUser.getUserID());
+                    return ResponseEntity.ok(response);
+                } else {
+                    return ResponseEntity.status(400).body(new passwordResponse("error", "New password cannot be the same as the current password", null));
+                }
+            } catch (NoSuchAlgorithmException e) {
+                LOGGER.log(Level.SEVERE, "Error during password reset", e);
+                return ResponseEntity.status(500).body(null);
+            }
+        } else {
+            return ResponseEntity.status(404).body(null);
+        }
+    }
+
+    @PutMapping("/resetPassword")
     public ResponseEntity<String> resetPassword(@RequestBody User user) {
         Optional<User> foundUser = userService.findByUserName(user.getUsername());
         if (foundUser.isPresent()) {
@@ -149,11 +170,11 @@ public class UserController {
         }
     }
 
-    @DeleteMapping("/{userID}")
-    public ResponseEntity<String> deleteUserByID(@PathVariable Long userID) {
-        Optional<User> user = userService.findByUserID(userID);
-        if (user.isPresent()) {
-            userService.deleteUser(user.get());
+    @DeleteMapping("")
+    public ResponseEntity<String> deleteUser(@RequestBody User user) {
+        Optional<User> foundUser = userService.findByUserName(user.getUsername());
+        if (foundUser.isPresent()) {
+            userService.deleteUser(foundUser.get());
             return ResponseEntity.ok("User deleted");
         } else {
             return ResponseEntity.status(404).body("User not found");
