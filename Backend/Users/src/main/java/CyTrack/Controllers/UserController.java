@@ -133,6 +133,22 @@ public class UserController {
         }
     }
 
+    @DeleteMapping("/resetPassword")
+    public ResponseEntity<String> resetPassword(@RequestBody User user) {
+        Optional<User> foundUser = userService.findByUserName(user.getUsername());
+        if (foundUser.isPresent()) {
+            try {
+                User updatedUser = userService.resetPassword(foundUser.get(), user.getPassword());
+                return ResponseEntity.ok("Password reset");
+            } catch (NoSuchAlgorithmException e) {
+                LOGGER.log(Level.SEVERE, "Error during password reset", e);
+                return ResponseEntity.status(500).body("Internal server error");
+            }
+        } else {
+            return ResponseEntity.status(404).body("User not found");
+        }
+    }
+
     @DeleteMapping("/{userID}")
     public ResponseEntity<String> deleteUserByID(@PathVariable Long userID) {
         Optional<User> user = userService.findByUserID(userID);
