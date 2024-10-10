@@ -32,6 +32,10 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    public User resetPassword(User user, String newPassword) throws NoSuchAlgorithmException {
+        user.setPassword(hashPassword(newPassword));
+        return userRepository.save(user);
+    }
 
 
 
