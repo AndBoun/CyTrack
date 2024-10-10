@@ -7,7 +7,9 @@ themselves Eg: A Person will have exactly one social security number(One to One)
 that one person can have only one laptop(made by poor people). It shows how a one to one relation can be represented between entities using JPA/Hibernate.
 
 ### One to Many relations
-Very often the interrations between entities are not always limited to OneToOne. SpringBoot provided the @OneToMany and @ManyToOne to specify these type of relations. In this example it is assumed that one person can own more than one phone, and if at all 2 people own the same model phone the ids have to be different.
+Very often the interrations between entities are not always limited to OneToOne. SpringBoot provided the @OneToMany and @ManyToOne to specify these type of relations. 
+In this example it is assumed that one person can own more than one phone, 
+and if at all 2 people own the same model phone the ids have to be different.
 
 
 ### Pre-requisites
