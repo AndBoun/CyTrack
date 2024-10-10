@@ -26,8 +26,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 }
 
@@ -37,8 +37,6 @@ dependencies {
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
-//    implementation("androidx.constraintlayout:constraintlayout:2.2.0-beta01")
-//    implementation("androidx.constraintlayout:constraintlayout-compose:1.1.0-beta01")
     implementation(libs.core.splashscreen)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)

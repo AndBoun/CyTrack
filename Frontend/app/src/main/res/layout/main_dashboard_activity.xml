@@ -6,14 +6,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainDashboardActivity">
-
     <ScrollView
         android:layout_width="412dp"
         android:layout_height="492dp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/top_card">
+        app:layout_constraintTop_toBottomOf="@+id/redBox">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -55,16 +53,46 @@
         </LinearLayout>
     </ScrollView>
 
-    <ImageView
-        android:id="@+id/top_card"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="-1dp"
+    <View
+        android:id="@+id/redBox"
+        android:layout_width="wrap_content"
+        android:layout_height="398dp"
+        android:background="@color/CyRed"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/profilePictureButton"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_marginTop="24dp"
+        android:backgroundTint="#00FFFFFF"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/red_top_card" />
+        app:srcCompat="@drawable/generic_avatar" />
+
+    <ImageView
+        android:id="@+id/imageView6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="44dp"
+        android:elevation="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/cytrack_text" />
+
+    <ImageButton
+        android:id="@+id/notificationButton"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_marginTop="24dp"
+        android:backgroundTint="#00FFFFFF"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/notifications" />
 
     <TextView
         android:id="@+id/helloTextView"
@@ -78,43 +106,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView6" />
-
-    <ImageView
-        android:id="@+id/imageView6"
-        android:layout_width="107dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="44dp"
-        android:elevation="20dp"
-        app:layout_constraintEnd_toEndOf="@+id/top_card"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/cytrack_text" />
-
-    <ImageButton
-        android:id="@+id/notificationButton"
-        android:layout_width="59dp"
-        android:layout_height="57dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="28dp"
-        android:backgroundTint="#00FFFFFF"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/imageView6"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/notifications" />
-
-    <ImageButton
-        android:id="@+id/profileSettingsButton"
-        android:layout_width="64dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="26dp"
-        android:layout_marginEnd="50dp"
-        android:backgroundTint="#00FFFFFF"
-        app:layout_constraintEnd_toStartOf="@+id/imageView6"
-        app:layout_constraintHorizontal_bias="0.181"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/generic_avatar" />
 
     <TextView
         android:id="@+id/streakTextView"

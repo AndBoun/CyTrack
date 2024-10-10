@@ -2,7 +2,6 @@ package com.example.CyTrack;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,11 +16,13 @@ public class ProfileSettingsActivity extends AppCompatActivity {
 
     private TextView nameTextView;
 
-    private ImageButton deleteButton, backButton;
+    private ImageButton deleteButton, backButton, logOutButton;
 
     private User user;
 
-    private final String URL = "https://7e68d300-a3cb-4835-bf2f-66cab084d974.mock.pstmn.io/login/";
+//    private final String DELETE_URL = "https://7e68d300-a3cb-4835-bf2f-66cab084d974.mock.pstmn.io/login/";
+    private final String DELETE_URL = "http://10.90.72.246:8080/user/";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,8 +40,9 @@ public class ProfileSettingsActivity extends AppCompatActivity {
         nameTextView = findViewById(R.id.nameTextView);
         deleteButton = findViewById(R.id.deleteButton);
         backButton = findViewById(R.id.backButton);
+        logOutButton = findViewById(R.id.logOutButton);
 
-        nameTextView.setText(user.getName());
+        nameTextView.setText(user.getFirstName());
 
         deleteButton.setOnClickListener(v -> {
             deleteUser();
@@ -48,6 +50,10 @@ public class ProfileSettingsActivity extends AppCompatActivity {
 
         backButton.setOnClickListener(v -> {
             finish();
+        });
+
+        logOutButton.setOnClickListener(v -> {
+            switchToLoginActivity();
         });
     }
 
@@ -58,12 +64,17 @@ public class ProfileSettingsActivity extends AppCompatActivity {
     }
 
     private void deleteUser() {
-        NetworkUtils.deleteRequest(getApplicationContext(), URL + user.getID(), response -> {
-            Toast.makeText(getApplicationContext(), "Account Deleted", Toast.LENGTH_SHORT).show();
-            switchToLoginActivity();
-        }, error -> {
-            error.printStackTrace();
-            Toast.makeText(getApplicationContext(), "Account Could Not Be Deleted", Toast.LENGTH_SHORT).show();
+        NetworkUtils.deleteRequest(getApplicationContext(), DELETE_URL + user.getID(), new NetworkUtils.callbackMessage() {
+            @Override
+            public void onSuccess(String response) {
+                Toast.makeText(getApplicationContext(), response, Toast.LENGTH_SHORT).show();
+                switchToLoginActivity();
+            }
+
+            @Override
+            public void onError(String error) {
+                Toast.makeText(getApplicationContext(), error, Toast.LENGTH_SHORT).show();
+            }
         });
     }
 
