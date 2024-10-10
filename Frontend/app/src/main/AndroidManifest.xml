@@ -25,6 +25,12 @@
             android:exported="false"/>
         <activity android:name=".SignUpActivity"
             android:exported="false"/>
+        <activity android:name=".MealLogActivity"
+            android:exported="false"/>
+        <activity android:name=".MealSubmitActivity"
+            android:exported="false"/>
+        <activity android:name=".MealTrackingMain"
+            android:exported="false"/>
         <activity
             android:name=".LoginActivity"
             android:exported="true"
@@ -33,6 +39,7 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
         </activity>
     </application>
 

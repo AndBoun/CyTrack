@@ -10,6 +10,7 @@ activity = "1.9.2"
 constraintlayout = "2.1.4"
 materialVersion = "<version>"
 volley = "1.2.1"
+legacySupportV4 = "1.0.0"
 
 [libraries]
 core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
@@ -23,6 +24,7 @@ constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayo
 material-vversion = { module = "com.google.android.material:material", version.ref = "materialVersion" }
 material3 = { module = "androidx.compose.material3:material3" }
 volley = { module = "com.android.volley:volley", version.ref = "volley" }
+legacy-support-v4 = { group = "androidx.legacy", name = "legacy-support-v4", version.ref = "legacySupportV4" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -55,6 +55,8 @@ public class MainDashboardActivity extends AppCompatActivity {
 
         mealTrackingButton.setOnClickListener(v -> {
             // Open Meal Tracking Activity
+            Intent Navigate = new Intent(MainDashboardActivity.this, MealTrackingMain.class);
+            startActivity(Navigate);
         });
 
         workOutTrackingButton.setOnClickListener(v -> {
