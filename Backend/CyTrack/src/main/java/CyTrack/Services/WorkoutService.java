@@ -15,14 +15,5 @@ public class WorkoutService {
         this.workoutRepository = workoutRepository;
     }
 
-    public Workout addWorkout(Workout workout) {
-        if (workout.getExerciseType() == null || workout.getUser() == null) {
-            throw new IllegalArgumentException("Exercise type and user cannot be null");
-        }
-        try {
-            return workoutRepository.save(workout);
-        } catch (Exception e) {
-            throw e;
-        }
-    }
+
 }

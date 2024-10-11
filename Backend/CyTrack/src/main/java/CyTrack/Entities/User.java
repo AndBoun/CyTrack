@@ -8,8 +8,10 @@ import jakarta.persistence.*;
 @Entity
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userID;
+
+
     @Column(nullable = false, unique = true)
     private String username;
     private String firstName;
@@ -78,12 +80,14 @@ public class User {
     public void setAge(int age) {
         this.age = age;
     }
+
     public int getStreak() {
         return streak;
     }
     public void setStreak(int streak) {
         this.streak = streak;
     }
+
     public String getGender() {
         return gender;
     }

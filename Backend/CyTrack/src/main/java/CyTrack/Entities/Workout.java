@@ -4,13 +4,12 @@ import jakarta.persistence.*;
 
 @Entity
 public class Workout {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)  // Auto-incremented primary key
     private Long workoutID;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "userID")  // Foreign key to User
     private User user;
 
     private String exerciseType;
@@ -22,8 +21,7 @@ public class Workout {
     public Workout() {}
 
     // Constructor with fields
-    public Workout(User user, String exerciseType, int duration, int caloriesBurned, String time) {
-        this.user = user;
+    public Workout(String exerciseType, int duration, int caloriesBurned, String time) {
         this.exerciseType = exerciseType;
         this.duration = duration;
         this.caloriesBurned = caloriesBurned;
