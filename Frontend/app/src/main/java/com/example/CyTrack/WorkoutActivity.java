@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.compose.ui.platform.ComposeView;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -41,6 +42,10 @@ public class WorkoutActivity extends AppCompatActivity implements WorkoutRecycle
 
     private RecyclerView recyclerView;
 
+    private ComposeView composeView;
+
+    private aTemp cv;
+
     User user;
 
     @Override
@@ -53,6 +58,9 @@ public class WorkoutActivity extends AppCompatActivity implements WorkoutRecycle
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+
+
 
         recyclerView = findViewById(R.id.recyclerView);
 
@@ -119,9 +127,11 @@ public class WorkoutActivity extends AppCompatActivity implements WorkoutRecycle
                             workout.getString("time"),
                             workout.getInt("workoutID")));
                 }
-                WorkoutsRecyclerViewAdapter adapter = new WorkoutsRecyclerViewAdapter(this, workoutList, this, user.getID());
-                recyclerView.setAdapter(adapter);
-                recyclerView.setLayoutManager(new LinearLayoutManager(this));
+//                WorkoutsRecyclerViewAdapter adapter = new WorkoutsRecyclerViewAdapter(this, workoutList, this);
+//                recyclerView.setAdapter(adapter);
+//                recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+
                 //Toast.makeText(this, "Workouts fetched" + workoutList.size(), Toast.LENGTH_SHORT).show();
             } catch (JSONException e) {
                 e.printStackTrace();

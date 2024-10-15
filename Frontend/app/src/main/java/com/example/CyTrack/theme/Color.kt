@@ -1,4 +1,4 @@
-package com.example.composetutorial.ui.theme
+package com.example.CyTrack.theme
 
 import androidx.compose.ui.graphics.Color
 

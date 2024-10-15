@@ -18,7 +18,7 @@ public class WorkoutsRecyclerViewAdapter extends RecyclerView.Adapter<WorkoutsRe
 
     private ArrayList<WorkoutObject> workoutList;
 
-    public WorkoutsRecyclerViewAdapter(Context context, ArrayList<WorkoutObject> workoutList, WorkoutRecyclerInterface workoutRecyclerInterface, int userID) {
+    public WorkoutsRecyclerViewAdapter(Context context, ArrayList<WorkoutObject> workoutList, WorkoutRecyclerInterface workoutRecyclerInterface) {
         this.context = context;
         this.workoutList = workoutList;
         this.workoutRecyclerInterface = workoutRecyclerInterface;

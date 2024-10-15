@@ -1,6 +1,5 @@
-package com.example.composetutorial.ui.theme
+package com.example.CyTrack.theme
 
-import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme

@@ -1,15 +1,15 @@
 package com.example.CyTrack;
 
-class WorkoutObject {
-    String exerciseType;
+public class WorkoutObject {
+    private String exerciseType;
 
-    String duration;
-    String caloriesBurned;
-    String time;
-    int workoutID;
+    private String duration;
+    private String caloriesBurned;
+    private String time;
+    private int workoutID;
 
 
-    WorkoutObject(String exerciseType, String duration, String caloriesBurned, String time, int workoutID) {
+    public WorkoutObject(String exerciseType, String duration, String caloriesBurned, String time, int workoutID) {
         this.exerciseType = exerciseType;
         this.duration = duration;
         this.caloriesBurned = caloriesBurned;
