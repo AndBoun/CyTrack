@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Client</title>
+
+</head>
+<body>
+    <h1>WebSocket Test Client</h1>
+    <p>Status: <span id="status">Disconnected</span></p>
+    <button onclick="startWebSocketConnection()">Connect to WebSocket</button>
+    <br><br>
+    <input type="text" id="messageInput" placeholder="Enter your message">
+    <button onclick="sendMessage()">Send Message</button>
+
+    <h2>Messages from Server:</h2>
+    <ul id="messages"></ul>
+    <script src="./websocket.js"></script>
+</body>
+</html>
