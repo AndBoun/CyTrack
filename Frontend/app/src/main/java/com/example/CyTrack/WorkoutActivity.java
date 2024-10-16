@@ -44,7 +44,6 @@ public class WorkoutActivity extends AppCompatActivity implements WorkoutRecycle
 
     private ComposeView composeView;
 
-    private aTemp cv;
 
     User user;
 
@@ -59,7 +58,9 @@ public class WorkoutActivity extends AppCompatActivity implements WorkoutRecycle
             return insets;
         });
 
-
+        ComposeView composeView = findViewById(R.id.composeView);
+        aTemp temp = new aTemp();
+        temp.setComposeViewContent(this, composeView);
 
 
         recyclerView = findViewById(R.id.recyclerView);

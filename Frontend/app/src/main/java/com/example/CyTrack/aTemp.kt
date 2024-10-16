@@ -1,5 +1,6 @@
 package com.example.CyTrack
 
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.border
@@ -14,6 +15,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,10 +30,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 class aTemp : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
 
-        val composeView: ComposeView = findViewById(R.id.composeView)
+    fun setComposeViewContent(context: Context, composeView: ComposeView) {
         composeView.setContent {
             val workoutList = ArrayList<WorkoutObject>()
             workoutList.add(WorkoutObject("Running", "30 minutes", "300 calories", "10/10/24", 5))
@@ -38,7 +39,6 @@ class aTemp : ComponentActivity() {
             workoutList.add(WorkoutObject("Running", "30 minutes", "300 calories", "10/10/24", 5))
             WorkoutList(workoutList)
         }
-
     }
 }
 
@@ -75,6 +75,30 @@ fun WorkoutCard(workout: WorkoutObject) {
             }
         }
     }
+}
+
+@Composable
+fun EditDeleteDialog(
+    workout: WorkoutObject,
+    onDismiss: () -> Unit,
+    onEdit: (WorkoutObject) -> Unit,
+    onDelete: (WorkoutObject) -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(text = "Edit or Delete Workout") },
+        text = { Text(text = "Would you like to edit or delete this workout?") },
+        confirmButton = {
+            Button(onClick = { onEdit(workout) }) {
+                Text("Edit")
+            }
+        },
+        dismissButton = {
+            Button(onClick = { onDelete(workout) }) {
+                Text("Delete")
+            }
+        }
+    )
 }
 
 @Composable
