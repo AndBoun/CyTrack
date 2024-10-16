@@ -46,7 +46,6 @@ public class WorkoutResponse {
     public static class Data {
         private Long workoutID;
         private String exerciseType;
-        private String workoutType;
         private int duration;
         private int calories;
         private String date;
@@ -77,14 +76,6 @@ public class WorkoutResponse {
 
         public void setExerciseType(String exerciseType) {
             this.exerciseType = exerciseType;
-        }
-
-        public String getWorkoutType() {
-            return workoutType;
-        }
-
-        public void setWorkoutType(String workoutType) {
-            this.workoutType = workoutType;
         }
 
         public int getDuration() {
