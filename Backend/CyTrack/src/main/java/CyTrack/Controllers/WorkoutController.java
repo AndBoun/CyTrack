@@ -30,16 +30,16 @@ public class WorkoutController {
     public ResponseEntity<?> createWorkout(@PathVariable Long userID, @RequestBody Workout workout) {
         Optional<User> user = userService.findByUserID(userID);
         if (user.isPresent()) {
+            workout.setUser(user.get()); // Set the user property
             Workout newWorkout = workoutService.createWorkout(workout);
-            WorkoutResponse response = new WorkoutResponse("success", workout.getWorkoutID(), "Workout created");
+            WorkoutResponse response = new WorkoutResponse("success", newWorkout.getWorkoutID(), "Workout created");
             return ResponseEntity.status(201).body(response);
         }
         ErrorResponse response = new ErrorResponse("error", 404, "User not found", "User not found");
         return ResponseEntity.status(404).body(response);
-
     }
 
-    @GetMapping("/{userID}/{workoutID}")
+    @GetMapping("/{userID}/workout/{workoutID}")
     public ResponseEntity<?> getWorkout(@PathVariable Long userID, @PathVariable Long workoutID) {
         Optional<User> user = userService.findByUserID(userID);
         if (user.isEmpty()) {
