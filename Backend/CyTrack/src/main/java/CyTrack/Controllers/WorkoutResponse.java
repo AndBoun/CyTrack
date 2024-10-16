@@ -12,9 +12,9 @@ public class WorkoutResponse {
         this.message = message;
     }
 
-    public WorkoutResponse(String status,Long workoutID, String exerciseType, int duration, int calories, int time, String message) {
+    public WorkoutResponse(String status,Long workoutID, String exerciseType, int duration, int calories, String date, String message) {
         this.status = status;
-        this.data = new Data(workoutID, exerciseType, duration, calories, time);
+        this.data = new Data(workoutID, exerciseType, duration, calories, date);
         this.message = message;
     }
 
@@ -49,16 +49,16 @@ public class WorkoutResponse {
         private String workoutType;
         private int duration;
         private int calories;
-        private int time;
+        private String date;
         public Data(Long workoutID) {
             this.workoutID = workoutID;
         }
-        public Data(Long workoutID, String exerciseType, int duration, int calories, int time ) {
+        public Data(Long workoutID, String exerciseType, int duration, int calories, String data ) {
             this.workoutID = workoutID;
             this.exerciseType = exerciseType;
             this.duration = duration;
             this.calories = calories;
-            this.time = time;
+            this.date = date;
 
         }
 
@@ -103,13 +103,14 @@ public class WorkoutResponse {
             this.calories = calories;
         }
 
-        public int getTime() {
-            return time;
+        public String getDate() {
+            return date;
         }
 
-        public void setTime(int time) {
-            this.time = time;
+        public void setDate(String date) {
+            this.date = date;
         }
+
 
 
     }

@@ -10,40 +10,56 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.swing.text.html.Option;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/workouts")
+@RequestMapping("/user")
 public class WorkoutController {
-   @Autowired
-    WorkoutRepository workoutRepository;
+    private final WorkoutService workoutService;
+    private final UserService userService;
 
-   @Autowired
-    UserRepository userRepository;
 
-    @PostMapping("")
-    public ResponseEntity<?> createWorkout(@RequestBody Workout workout) {
-        if (workout == null) {
-            return ResponseEntity.badRequest().body(null);
+    @Autowired
+    public WorkoutController(WorkoutService workoutService, UserService userService) {
+        this.workoutService = workoutService;
+        this.userService = userService;
+    }
+
+    @PostMapping("/{userID}/workout")
+    public ResponseEntity<?> createWorkout(@PathVariable Long userID, @RequestBody Workout workout) {
+        Optional<User> user = userService.findByUserID(userID);
+        if (user.isPresent()) {
+            Workout newWorkout = workoutService.createWorkout(workout);
+            WorkoutResponse response = new WorkoutResponse("success", workout.getWorkoutID(), "Workout created");
+            return ResponseEntity.status(201).body(response);
         }
-        workoutRepository.save(workout);
-        WorkoutResponse response = new WorkoutResponse("success", workout.getWorkoutID(), "Workout created");
-        return ResponseEntity.status(201).body(response);
+        ErrorResponse response = new ErrorResponse("error", 404, "User not found", "User not found");
+        return ResponseEntity.status(404).body(response);
+
     }
 
     @GetMapping("/{userID}/{workoutID}")
     public ResponseEntity<?> getWorkout(@PathVariable Long userID, @PathVariable Long workoutID) {
-        Optional<User> user = userRepository.findById(userID);
+        Optional<User> user = userService.findByUserID(userID);
         if (user.isEmpty()) {
             ErrorResponse response = new ErrorResponse("error", 404, "User not found", "User not found");
             return ResponseEntity.status(404).body(response);
         }
-        Optional<Workout> workout = workoutRepository.findByWorkoutID(workoutID);
+        Optional<Workout> workout = workoutService.findByWorkoutID(workoutID);
         if (workout.isEmpty()) {
             ErrorResponse response = new ErrorResponse("error", 404, "Workout not found", "Workout not found");
             return ResponseEntity.status(404).body(response);
         }
-        WorkoutResponse response = new WorkoutResponse("success", workout.get().getWorkoutID(), "Workout found");
+        Workout foundWorkout = workout.get();
+        WorkoutResponse response = new WorkoutResponse(
+                "success",
+                foundWorkout.getWorkoutID(),
+                foundWorkout.getExerciseType(),
+                foundWorkout.getDuration(),
+                foundWorkout.getCaloriesBurned(),
+                foundWorkout.getDate(),
+                "Workout found");
         return ResponseEntity.status(200).body(response);
     }
 }

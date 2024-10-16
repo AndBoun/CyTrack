@@ -1,6 +1,8 @@
 package CyTrack.Entities;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 public class Workout {
@@ -8,24 +10,25 @@ public class Workout {
     @GeneratedValue(strategy = GenerationType.IDENTITY)  // Auto-incremented primary key
     private Long workoutID;
 
-    @ManyToOne
-    @JoinColumn(name = "userID")  // Foreign key to User
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "userID", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
     private String exerciseType;
     private int duration;
     private int caloriesBurned;
-    private String time;
+    private String date;
 
     // Default constructor
     public Workout() {}
 
     // Constructor with fields
-    public Workout(String exerciseType, int duration, int caloriesBurned, String time) {
+    public Workout(String exerciseType, int duration, int caloriesBurned, String date) {
         this.exerciseType = exerciseType;
         this.duration = duration;
         this.caloriesBurned = caloriesBurned;
-        this.time = time;
+        this.date = date;
     }
 
     // Getters and setters
@@ -69,11 +72,12 @@ public class Workout {
         this.caloriesBurned = caloriesBurned;
     }
 
-    public String getTime() {
-        return time;
+    public String getDate() {
+        return date;
     }
 
-    public void setTime(String time) {
-        this.time = time;
+    public void setDate(String date) {
+        this.date = date;
     }
+
 }
