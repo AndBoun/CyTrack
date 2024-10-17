@@ -18,7 +18,7 @@ public class WorkoutsRecyclerViewAdapter extends RecyclerView.Adapter<WorkoutsRe
 
     private ArrayList<WorkoutObject> workoutList;
 
-    public WorkoutsRecyclerViewAdapter(Context context, ArrayList<WorkoutObject> workoutList, WorkoutRecyclerInterface workoutRecyclerInterface, int userID) {
+    public WorkoutsRecyclerViewAdapter(Context context, ArrayList<WorkoutObject> workoutList, WorkoutRecyclerInterface workoutRecyclerInterface) {
         this.context = context;
         this.workoutList = workoutList;
         this.workoutRecyclerInterface = workoutRecyclerInterface;
@@ -37,7 +37,7 @@ public class WorkoutsRecyclerViewAdapter extends RecyclerView.Adapter<WorkoutsRe
         holder.exerciseType.setText(workoutList.get(position).getExerciseType());
         holder.duration.setText(workoutList.get(position).getDuration() + "m");
         holder.caloriesBurned.setText("calories burned: " + workoutList.get(position).getCaloriesBurned());
-        holder.time.setText("date: " + workoutList.get(position).getTime());
+        holder.time.setText("date: " + workoutList.get(position).getDate());
     }
 
     @Override
