@@ -28,11 +28,11 @@ public class LoginActivity extends AppCompatActivity {
 
     private User user;
 
-//    private final String URL_LOGIN = "https://e8d89384-93d7-4dee-b704-f1103033e07d.mock.pstmn.io/user/login";
-//    private final String URL_GET_USER = "https://7e68d300-a3cb-4835-bf2f-66cab084d974.mock.pstmn.io/user";
+    private final String URL_LOGIN = "https://e8d89384-93d7-4dee-b704-f1103033e07d.mock.pstmn.io/user/login";
+    private final String URL_GET_USER = "https://7e68d300-a3cb-4835-bf2f-66cab084d974.mock.pstmn.io/user";
 
-    private final String URL_LOGIN = "http://10.90.72.246:8080/user/login";
-    private final String URL_GET_USER = "http://10.90.72.246:8080/user";
+//    private final String URL_LOGIN = "http://10.90.72.246:8080/user/login";
+//    private final String URL_GET_USER = "http://10.90.72.246:8080/user";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

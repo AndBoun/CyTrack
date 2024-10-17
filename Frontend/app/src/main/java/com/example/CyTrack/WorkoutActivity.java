@@ -33,13 +33,13 @@ import java.util.Objects;
 
 public class WorkoutActivity extends AppCompatActivity implements WorkoutRecyclerInterface {
 
-    private ArrayList<WorkoutObject> workoutList = new ArrayList<>();
+    private final ArrayList<WorkoutObject> workoutList = new ArrayList<>();
 
-//    private String URL = "https://7e68d300-a3cb-4835-bf2f-66cab084d974.mock.pstmn.io/user/";
+    private String URL = "https://7e68d300-a3cb-4835-bf2f-66cab084d974.mock.pstmn.io/user/";
 
     private User user;
 
-    private String URL = "http://10.90.72.246:8080/user/";
+//    private String URL = "http://10.90.72.246:8080/user/";
 
 
     ImageButton addWorkoutButton, backButton;
@@ -63,7 +63,6 @@ public class WorkoutActivity extends AppCompatActivity implements WorkoutRecycle
         user = (User) getIntent().getSerializableExtra("user");
         assert user != null;
         URL += user.getID() + "/workout";
-//        Log.d("WorkoutActivity", "URL: " + URL);
 
         recyclerView = findViewById(R.id.recyclerView);
         WorkoutsRecyclerViewAdapter adapter = new WorkoutsRecyclerViewAdapter(this, workoutList, this);
@@ -79,52 +78,6 @@ public class WorkoutActivity extends AppCompatActivity implements WorkoutRecycle
         addWorkoutButton.setOnClickListener(v -> showAddWorkoutDialog());
 
         backButton.setOnClickListener(v -> finish());
-    }
-
-
-    private void showAddWorkoutDialog() {
-        // Inflate the dialog layout
-        LayoutInflater inflater = LayoutInflater.from(this);
-        View dialogView = inflater.inflate(R.layout.dialog_add_workout, null);
-
-        // Create the AlertDialog
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setView(dialogView)
-                .setTitle("Add Workout")
-                .setPositiveButton("Add", (dialog, which) -> {
-                    // Handle the add button click
-                    EditText inputExerciseType = dialogView.findViewById(R.id.inputExerciseType);
-                    EditText inputWorkoutDuration = dialogView.findViewById(R.id.inputWorkoutDuration2);
-                    EditText inputCalories = dialogView.findViewById(R.id.inputCalories);
-
-
-                    if(inputExerciseType.getText().toString().isEmpty() || inputWorkoutDuration.getText().toString().isEmpty() || inputCalories.getText().toString().isEmpty()){
-                        Toast.makeText(WorkoutActivity.this, "Please fill out all fields", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-
-                    String exerciseType = inputExerciseType.getText().toString();
-                    String duration = inputWorkoutDuration.getText().toString();
-                    String calories = inputCalories.getText().toString();
-                    String date = getCurrentDate();
-
-
-                    // Add your logic to handle the input data
-                    postWorkout(exerciseType, duration, calories, date);
-                    dialog.dismiss();
-                })
-                .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
-                .create()
-                .show();
-    }
-
-
-    private String getCurrentDate() {
-            SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yy");
-
-            Date date = new Date();
-
-            return formatter.format(date);
     }
 
     @Override
@@ -160,10 +113,7 @@ public class WorkoutActivity extends AppCompatActivity implements WorkoutRecycle
             workout.setDuration(inputWorkoutDuration.getText().toString());
             workout.setCaloriesBurned(inputCalories.getText().toString());
             workout.setDate(inputDate.getText().toString());
-            // Update the workout in the list and notify the adapter
-//            workoutList.set(position, workout);
-//            recyclerView.getAdapter().notifyItemChanged(position);
-            // Dismiss the dialog
+
             modifyWorkout(workout.getWorkoutID(),
                     workout.getExerciseType(),
                     workout.getDuration(),
@@ -176,19 +126,59 @@ public class WorkoutActivity extends AppCompatActivity implements WorkoutRecycle
 
         // Handle the delete button click
         dialogView.findViewById(R.id.deleteButton).setOnClickListener(v -> {
-            // Remove the workout from the list and notify the adapter
-//            workoutList.remove(position);
-//            recyclerView.getAdapter().notifyItemRemoved(position);
-            // Dismiss the dialog
             deleteWorkout(workout.getWorkoutID(), position);
             dialog.dismiss();
         });
 
         // Handle the cancel button click
         dialogView.findViewById(R.id.cancelButton).setOnClickListener(v -> {
-            // Dismiss the dialog
             dialog.dismiss();
         });
+    }
+
+
+    private void showAddWorkoutDialog() {
+        // Inflate the dialog layout
+        LayoutInflater inflater = LayoutInflater.from(this);
+        View dialogView = inflater.inflate(R.layout.dialog_add_workout, null);
+
+        // Create the AlertDialog
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(dialogView)
+                .setTitle("Add Workout")
+                .setPositiveButton("Add", (dialog, which) -> {
+                    // Handle the add button click
+                    EditText inputExerciseType = dialogView.findViewById(R.id.inputExerciseType);
+                    EditText inputWorkoutDuration = dialogView.findViewById(R.id.inputWorkoutDuration2);
+                    EditText inputCalories = dialogView.findViewById(R.id.inputCalories);
+
+
+                    if(inputExerciseType.getText().toString().isEmpty() ||
+                            inputWorkoutDuration.getText().toString().isEmpty() ||
+                            inputCalories.getText().toString().isEmpty()){
+                        Toast.makeText(WorkoutActivity.this, "Please fill out all fields", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    String exerciseType = inputExerciseType.getText().toString();
+                    String duration = inputWorkoutDuration.getText().toString();
+                    String calories = inputCalories.getText().toString();
+                    String date = getCurrentDate();
+
+
+                    postWorkout(exerciseType, duration, calories, date);
+                    dialog.dismiss();
+                })
+                .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+                .create()
+                .show();
+    }
+
+
+    private String getCurrentDate() {
+        SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yy");
+        Date date = new Date();
+        return formatter.format(date);
     }
 
     private void getWorkouts(){
@@ -207,7 +197,7 @@ public class WorkoutActivity extends AppCompatActivity implements WorkoutRecycle
                     Objects.requireNonNull(recyclerView.getAdapter()).notifyItemInserted(workoutList.size() - 1);
                 }
 
-                Toast.makeText(this, "Workouts fetched " + workoutList.size(), Toast.LENGTH_SHORT).show();
+//                Toast.makeText(this, "Workouts fetched " + workoutList.size(), Toast.LENGTH_SHORT).show();
             } catch (JSONException e) {
                 e.printStackTrace();
             }
