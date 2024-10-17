@@ -1,15 +1,19 @@
 package CyTrack.Entities;
 
 import jakarta.persistence.*;
+import java.util.List;
 
-/*
- * Author for all user - Kai Quach
- */
 @Entity
+@Table(name = "user")
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long userID;
+
+    @OneToMany(mappedBy = "user")
+    private List<Workout> workouts;
+
     @Column(nullable = false, unique = true)
     private String username;
     private String firstName;
@@ -19,24 +23,12 @@ public class User {
     private int streak;
     private String gender;
 
-    public User() {}
-
-    public User(String username, String firstName, String lastName, String password, int age, int streak, String gender) {
-        this.username = username;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.password = password;
-        this.age = age;
-        this.gender = gender;
-        this.streak = streak;
-
-    }
-
+    // Getters and setters
     public Long getUserID() {
         return userID;
     }
 
-    public void setId(Long userID) {
+    public void setUserID(Long userID) {
         this.userID = userID;
     }
 
@@ -75,20 +67,32 @@ public class User {
     public int getAge() {
         return age;
     }
+
     public void setAge(int age) {
         this.age = age;
     }
+
     public int getStreak() {
         return streak;
     }
+
     public void setStreak(int streak) {
         this.streak = streak;
     }
+
     public String getGender() {
         return gender;
     }
-    public void setGender(String gender){
+
+    public void setGender(String gender) {
         this.gender = gender;
     }
 
+    public List<Workout> getWorkouts() {
+        return workouts;
+    }
+
+    public void setWorkouts(List<Workout> workouts) {
+        this.workouts = workouts;
+    }
 }

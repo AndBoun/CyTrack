@@ -5,6 +5,9 @@ import org.springframework.stereotype.Service;
 import CyTrack.Entities.Workout;
 import CyTrack.Repositories.WorkoutRepository;
 
+import java.util.List;
+import java.util.Optional;
+
 @Service
 public class WorkoutService {
 
@@ -15,14 +18,20 @@ public class WorkoutService {
         this.workoutRepository = workoutRepository;
     }
 
-    public Workout addWorkout(Workout workout) {
-        if (workout.getExerciseType() == null || workout.getUser() == null) {
-            throw new IllegalArgumentException("Exercise type and user cannot be null");
-        }
-        try {
-            return workoutRepository.save(workout);
-        } catch (Exception e) {
-            throw e;
-        }
+    public Workout createWorkout(Workout workout) {
+        return workoutRepository.save(workout);
     }
+
+    public Optional<Workout> findByWorkoutID(Long workoutID) {
+        return workoutRepository.findByWorkoutID(workoutID);
+    }
+
+    public void deleteWorkout(Long workoutID) {
+        workoutRepository.deleteById(workoutID);
+    }
+
+    public List<Workout> getAllWorkouts(Long userID) {
+        return workoutRepository.findByUser_UserID(userID);
+    }
+
 }

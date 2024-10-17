@@ -1,23 +1,17 @@
 package CyTrack.Controllers;
 
+import java.util.List;
 
 public class WorkoutResponse {
     private String status;
     private Data data;
     private String message;
 
-    public WorkoutResponse(String status, Long workoutID, String message) {
+    public WorkoutResponse(String status, List<WorkoutData> workouts, String message) {
         this.status = status;
-        this.data = new Data(workoutID);
+        this.data = new Data(workouts);
         this.message = message;
     }
-
-    public WorkoutResponse(String status,Long workoutID, String exerciseType, int duration, int calories, int time, String message) {
-        this.status = status;
-        this.data = new Data(workoutID, exerciseType, duration, calories, time);
-        this.message = message;
-    }
-
 
     public String getStatus() {
         return status;
@@ -44,30 +38,33 @@ public class WorkoutResponse {
     }
 
     public static class Data {
-        private Long workoutID;
+        private List<WorkoutData> workouts;
+
+        public Data(List<WorkoutData> workouts) {
+            this.workouts = workouts;
+        }
+
+        public List<WorkoutData> getWorkouts() {
+            return workouts;
+        }
+
+        public void setWorkouts(List<WorkoutData> workouts) {
+            this.workouts = workouts;
+        }
+    }
+
+    public static class WorkoutData {
         private String exerciseType;
-        private String workoutType;
         private int duration;
         private int calories;
-        private int time;
-        public Data(Long workoutID) {
-            this.workoutID = workoutID;
-        }
-        public Data(Long workoutID, String exerciseType, int duration, int calories, int time ) {
-            this.workoutID = workoutID;
+        private String date;
+        private Long workoutID;
+
+        public WorkoutData(String exerciseType, int duration, int calories, String date, Long workoutID) {
             this.exerciseType = exerciseType;
             this.duration = duration;
             this.calories = calories;
-            this.time = time;
-
-        }
-
-
-        public Long getWorkoutID() {
-            return workoutID;
-        }
-
-        public void setWorkoutID(Long workoutID) {
+            this.date = date;
             this.workoutID = workoutID;
         }
 
@@ -77,14 +74,6 @@ public class WorkoutResponse {
 
         public void setExerciseType(String exerciseType) {
             this.exerciseType = exerciseType;
-        }
-
-        public String getWorkoutType() {
-            return workoutType;
-        }
-
-        public void setWorkoutType(String workoutType) {
-            this.workoutType = workoutType;
         }
 
         public int getDuration() {
@@ -103,14 +92,20 @@ public class WorkoutResponse {
             this.calories = calories;
         }
 
-        public int getTime() {
-            return time;
+        public String getDate() {
+            return date;
         }
 
-        public void setTime(int time) {
-            this.time = time;
+        public void setDate(String date) {
+            this.date = date;
         }
 
+        public Long getWorkoutID() {
+            return workoutID;
+        }
 
+        public void setWorkoutID(Long workoutID) {
+            this.workoutID = workoutID;
+        }
     }
 }
