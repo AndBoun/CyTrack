@@ -52,7 +52,7 @@ public class WorkoutResponse {
         public Data(Long workoutID) {
             this.workoutID = workoutID;
         }
-        public Data(Long workoutID, String exerciseType, int duration, int calories, String data ) {
+        public Data(Long workoutID, String exerciseType, int duration, int calories, String date ) {
             this.workoutID = workoutID;
             this.exerciseType = exerciseType;
             this.duration = duration;

@@ -2,6 +2,7 @@ package CyTrack.Controllers;
 
 import CyTrack.Entities.User;
 import CyTrack.Services.UserService;
+import org.apache.coyote.Response;
 import org.hibernate.sql.Delete;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -98,7 +99,7 @@ public class UserController {
                     foundUser.getAge(),
                     foundUser.getGender(),
                     foundUser.getStreak(),
-                    "Resource created successfully"
+                    "Resources sent successfully"
             );
             return ResponseEntity.status(201).body(response);
         } else {
@@ -109,7 +110,7 @@ public class UserController {
 
     // Update user information
     @PutMapping("/{userID}")
-    public ResponseEntity<User> updateUser(@PathVariable Long userID, @RequestBody User updatedUser) {
+    public ResponseEntity<?> updateUser(@PathVariable Long userID, @RequestBody User updatedUser) {
         Optional<User> user = userService.findByUserID(userID);
         if (user.isPresent()) {
             User existingUser = user.get();
@@ -125,11 +126,19 @@ public class UserController {
             if (updatedUser.getUsername() != null) {
                 existingUser.setUsername(updatedUser.getUsername());
             }
+            if (updatedUser.getAge() != 0) {
+                existingUser.setAge(updatedUser.getAge());
+            }
+            if (updatedUser.getGender() != null) {
+                existingUser.setGender(updatedUser.getGender());
+            }
             User updated = userService.updateUser(existingUser);
-            return ResponseEntity.ok(updated);
+            LoginResponse response = new LoginResponse("success", updated.getUserID(), "User updated");
+            return ResponseEntity.ok(response);
         }
         else {
-            return ResponseEntity.notFound().build();
+            ErrorResponse response = new ErrorResponse("error", 404, "User not found", "User not found");
+            return ResponseEntity.status(404).body(response);
         }
     }
 

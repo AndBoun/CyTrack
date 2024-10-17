@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import CyTrack.Entities.Workout;
 import CyTrack.Repositories.WorkoutRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -23,6 +24,14 @@ public class WorkoutService {
 
     public Optional<Workout> findByWorkoutID(Long workoutID) {
         return workoutRepository.findByWorkoutID(workoutID);
+    }
+
+    public void deleteWorkout(Long workoutID) {
+        workoutRepository.deleteById(workoutID);
+    }
+
+    public List<Workout> getAllWorkouts(Long userID) {
+        return workoutRepository.findByUser_UserID(userID);
     }
 
 }
