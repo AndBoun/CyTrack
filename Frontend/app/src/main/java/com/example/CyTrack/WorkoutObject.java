@@ -5,15 +5,15 @@ class WorkoutObject {
 
     String duration;
     String caloriesBurned;
-    String time;
+    String date;
     int workoutID;
 
 
-    WorkoutObject(String exerciseType, String duration, String caloriesBurned, String time, int workoutID) {
+    WorkoutObject(String exerciseType, String duration, String caloriesBurned, String date, int workoutID) {
         this.exerciseType = exerciseType;
         this.duration = duration;
         this.caloriesBurned = caloriesBurned;
-        this.time = time;
+        this.date = date;
         this.workoutID = workoutID;
     }
 
@@ -41,12 +41,12 @@ class WorkoutObject {
         this.caloriesBurned = caloriesBurned;
     }
 
-    public String getTime() {
-        return time;
+    public String getDate() {
+        return date;
     }
 
-    public void setTime(String time) {
-        this.time = time;
+    public void setDate(String date) {
+        this.date = date;
     }
 
     public int getWorkoutID() {
