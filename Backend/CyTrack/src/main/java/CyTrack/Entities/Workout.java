@@ -20,17 +20,17 @@ public class Workout {
 
     private String exerciseType;
     private int duration;
-    private int caloriesBurned;
+    private int calories;
     private String date;
 
     // Default constructor
     public Workout() {}
 
     // Constructor with fields
-    public Workout(String exerciseType, int duration, int caloriesBurned, String date) {
+    public Workout(String exerciseType, int duration, int calories, String date) {
         this.exerciseType = exerciseType;
         this.duration = duration;
-        this.caloriesBurned = caloriesBurned;
+        this.calories = calories;
         this.date = date;
     }
 
@@ -67,12 +67,12 @@ public class Workout {
         this.duration = duration;
     }
 
-    public int getCaloriesBurned() {
-        return caloriesBurned;
+    public int getCalories() {
+        return calories;
     }
 
-    public void setCaloriesBurned(int caloriesBurned) {
-        this.caloriesBurned = caloriesBurned;
+    public void setCalories(int calories) {
+        this.calories = calories;
     }
 
     public String getDate() {
