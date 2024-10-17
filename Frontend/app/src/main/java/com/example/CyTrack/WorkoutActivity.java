@@ -44,6 +44,7 @@ public class WorkoutActivity extends AppCompatActivity implements WorkoutRecycle
 
     private ComposeView composeView;
 
+    private aTemp temp;
 
     User user;
 
@@ -58,9 +59,9 @@ public class WorkoutActivity extends AppCompatActivity implements WorkoutRecycle
             return insets;
         });
 
-        ComposeView composeView = findViewById(R.id.composeView);
-        aTemp temp = new aTemp();
-        temp.setComposeViewContent(this, composeView);
+        composeView = findViewById(R.id.composeView);
+        temp = new aTemp();
+//        temp.setComposeViewContent(this, composeView, workoutList);
 
 
         recyclerView = findViewById(R.id.recyclerView);
@@ -127,11 +128,15 @@ public class WorkoutActivity extends AppCompatActivity implements WorkoutRecycle
                             workout.getString("calories"),
                             workout.getString("time"),
                             workout.getInt("workoutID")));
+                    temp.addWorkout(composeView, new WorkoutObject(workout.getString("exerciseType"),
+                            workout.getString("duration"),
+                            workout.getString("calories"),
+                            workout.getString("time"),
+                            workout.getInt("workoutID")));
                 }
 //                WorkoutsRecyclerViewAdapter adapter = new WorkoutsRecyclerViewAdapter(this, workoutList, this);
 //                recyclerView.setAdapter(adapter);
 //                recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
 
                 //Toast.makeText(this, "Workouts fetched" + workoutList.size(), Toast.LENGTH_SHORT).show();
             } catch (JSONException e) {
@@ -168,9 +173,11 @@ public class WorkoutActivity extends AppCompatActivity implements WorkoutRecycle
             try {
                 JSONObject data = response.getJSONObject("data");
                 int workoutID = data.getInt("workoutID");
-                workoutList.add(new WorkoutObject(exerciseType, duration, calories, time, workoutID));
-                recyclerView.getAdapter().notifyItemInserted(workoutList.size() - 1);
-                Toast.makeText(this, "Workout added", Toast.LENGTH_SHORT).show();
+//                workoutList.add(new WorkoutObject(exerciseType, duration, calories, time, workoutID));
+//                recyclerView.getAdapter().notifyItemInserted(workoutList.size() - 1);
+//                Toast.makeText(this, "Workout added", Toast.LENGTH_SHORT).show();
+
+                temp.addWorkout(composeView, new WorkoutObject(exerciseType, duration, calories, time, workoutID));
             } catch (JSONException e) {
                 e.printStackTrace();
             }
