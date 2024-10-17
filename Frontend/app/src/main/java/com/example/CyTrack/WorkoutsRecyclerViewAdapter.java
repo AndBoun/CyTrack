@@ -14,9 +14,9 @@ import java.util.ArrayList;
 public class WorkoutsRecyclerViewAdapter extends RecyclerView.Adapter<WorkoutsRecyclerViewAdapter.ViewHolder> {
 
     private final WorkoutRecyclerInterface workoutRecyclerInterface;
-    private Context context;
+    private final Context context;
 
-    private ArrayList<WorkoutObject> workoutList;
+    private final ArrayList<WorkoutObject> workoutList;
 
     public WorkoutsRecyclerViewAdapter(Context context, ArrayList<WorkoutObject> workoutList, WorkoutRecyclerInterface workoutRecyclerInterface) {
         this.context = context;
@@ -37,7 +37,7 @@ public class WorkoutsRecyclerViewAdapter extends RecyclerView.Adapter<WorkoutsRe
         holder.exerciseType.setText(workoutList.get(position).getExerciseType());
         holder.duration.setText(workoutList.get(position).getDuration() + "m");
         holder.caloriesBurned.setText("calories burned: " + workoutList.get(position).getCaloriesBurned());
-        holder.time.setText("date: " + workoutList.get(position).getDate());
+        holder.time.setText(workoutList.get(position).getDate());
     }
 
     @Override

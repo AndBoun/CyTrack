@@ -208,8 +208,6 @@ class NetworkUtils {
             }
         }
          return "Error Code: " + statusCode;
-
-
     }
 
 
