@@ -18,34 +18,34 @@ public class Meal {
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int mealId;
+    private Long mealId;
 
     private String mealName;
     private Integer calories;
     private Integer protein;
     private Integer carbs;
+    private String time;
 
     // =============================== Constructors ================================== //
 
     public Meal(){}
 
-    public Meal(String name, int calories, int protein, int carbs) {
+    public Meal(String name, int calories, int protein, int carbs, String time) {
         this.mealName = name;
         this.calories = calories;
         this.protein = protein;
         this.carbs = carbs;
-
-        //TODO initialize/set timestamp
+        this.time = time;
     }
 
     // =============================== Getters and Setters for each field ================================== //
 
 
-    public Integer getId() {
+    public Long getId() {
         return mealId;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.mealId = id;
     }
 
@@ -81,8 +81,7 @@ public class Meal {
         this.carbs = carbs;
     }
 
+    public String getTime() {return time; }
 
-
-
-
+    public void setTime(String time) {this.time = time; }
 }
