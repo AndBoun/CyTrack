@@ -3,8 +3,10 @@ package com.example.CyTrack
 import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -38,6 +40,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.animation.core.tween as tween1
 
 class aTemp : ComponentActivity() {
 
@@ -58,7 +63,7 @@ class aTemp : ComponentActivity() {
             WorkoutList(workoutList, onCardClickable = {workout -> showEditDeleteDialog(composeView, workout)})
             EditDeleteDialog(
                 workout = workout,
-                onDismiss = { /* Handle dismiss */ },
+                onDismiss = { composeView.setContent { WorkoutList(workoutList, onCardClickable = { workout -> showEditDeleteDialog(composeView, workout) }) } },
                 onEdit = { /* Handle edit */ },
                 onDelete = { workoutList.remove(workout) }
             )
@@ -68,14 +73,30 @@ class aTemp : ComponentActivity() {
 
 @Composable
 fun WorkoutCard(workout: WorkoutObject, onDelete: (WorkoutObject) -> Unit, onClick: (WorkoutObject) -> Unit) {
+
+    var isPressed by remember { mutableStateOf(false) }
+    val scale by animateFloatAsState(if (isPressed) 0.95f else 1f, animationSpec = tween1(durationMillis = 100))
+
     Surface(
         shape = RoundedCornerShape(20.dp),
         shadowElevation = 1.dp,
         modifier = Modifier
             .padding(horizontal = 32.dp, vertical = 15.dp)
+            .scale(scale)
             .border(2.dp, Color(0xFFFFD700), RoundedCornerShape(20.dp))
             .fillMaxWidth() // Make the Surface fill the width
-            .clickable(onClick = { onClick(workout) }) // Added clickable modifier
+//            .clickable(onClick = { onClick(workout) }) // Added clickable modifier
+            .pointerInput(Unit) {
+                detectTapGestures(
+                    onPress = {
+                        isPressed = true
+                        tryAwaitRelease()
+                        isPressed = false
+                        onClick(workout)
+                    }
+                )
+            }
+
     ) {
         Column(modifier = Modifier.padding(16.dp)) { // Added padding to the Column
             Text(
@@ -93,10 +114,10 @@ fun WorkoutCard(workout: WorkoutObject, onDelete: (WorkoutObject) -> Unit, onCli
                 Text(text = workout.time)
                 Spacer(modifier = Modifier.width(20.dp))
 
-                Text(text = workout.caloriesBurned)
+                Text(text = "Calories Burned: " + workout.caloriesBurned)
                 Spacer(modifier = Modifier.width(20.dp))
 
-                Text(text = workout.duration)
+                Text(text = workout.duration + "m")
             }
         }
     }
@@ -144,19 +165,25 @@ fun EditDeleteDialog(
         },
         confirmButton = {
             TextButton(onClick = {
-//                onEdit(workout.copy(
-//                    exerciseType = exerciseType,
-//                    duration = duration,
-//                    caloriesBurned = calories,
-//                    time = time
-//                )
-//                )
+                onEdit(
+                    workout.apply {
+                        workout.exerciseType = exerciseType
+                        workout.duration = duration
+                        workout.caloriesBurned = calories
+                        workout.time = time
+                    }
+                )
+                onDismiss()
+
             }) {
                 Text("Edit")
             }
         },
         dismissButton = {
-            TextButton(onClick = { onDelete(workout) }) {
+            TextButton(onClick = {
+                onDelete(workout)
+                onDismiss()
+            }) {
                 Text("Delete")
             }
         }

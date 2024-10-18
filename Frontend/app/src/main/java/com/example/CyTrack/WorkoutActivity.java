@@ -34,9 +34,9 @@ public class WorkoutActivity extends AppCompatActivity implements WorkoutRecycle
 
     private ArrayList<WorkoutObject> workoutList = new ArrayList<>();
 
-    private static final String URL = "https://7e68d300-a3cb-4835-bf2f-66cab084d974.mock.pstmn.io/workouts";
+    private static String URL = "https://7e68d300-a3cb-4835-bf2f-66cab084d974.mock.pstmn.io/user/";
 
-//    private static final String URL = "http://10.90.72.246:8080/workouts";
+//    private static String URL = "http://10.90.72.246:8080/user/";
 
     ImageButton addWorkoutButton, backButton;
 
@@ -67,6 +67,8 @@ public class WorkoutActivity extends AppCompatActivity implements WorkoutRecycle
         recyclerView = findViewById(R.id.recyclerView);
 
         user = (User) getIntent().getSerializableExtra("user");
+        assert user != null;
+        URL += user.getID() + "/workouts";
 
         getWorkouts();
 
@@ -126,12 +128,12 @@ public class WorkoutActivity extends AppCompatActivity implements WorkoutRecycle
                     workoutList.add(new WorkoutObject(workout.getString("exerciseType"),
                             workout.getString("duration"),
                             workout.getString("calories"),
-                            workout.getString("time"),
+                            workout.getString("date"),
                             workout.getInt("workoutID")));
                     temp.addWorkout(composeView, new WorkoutObject(workout.getString("exerciseType"),
                             workout.getString("duration"),
                             workout.getString("calories"),
-                            workout.getString("time"),
+                            workout.getString("date"),
                             workout.getInt("workoutID")));
                 }
 //                WorkoutsRecyclerViewAdapter adapter = new WorkoutsRecyclerViewAdapter(this, workoutList, this);
