@@ -37,6 +37,9 @@ public class MealTrackingMain extends AppCompatActivity {
         });
 
         backbutton.setOnClickListener(v -> {
+            // @ Ethan
+            // You should just use a call to:
+            // finished();
             Intent Navigate = new Intent(MealTrackingMain.this, MainDashboardActivity.class);
             startActivity(Navigate);
         });
