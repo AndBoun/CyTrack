@@ -3,7 +3,7 @@ package CyTrack.Entities;
 import jakarta.persistence.*;
 
 /**
- *@author Eduardo Barboza-Campos
+ * @author Eduardo Barboza-Campos
  * Class representing a table for a 'Meal' entity.
  * For now, we're just working on this table alone and not worrying too much about
  * table relationships.
@@ -36,6 +36,7 @@ public class Meal {
         this.protein = protein;
         this.carbs = carbs;
         this.time = time;
+
     }
 
     // =============================== Getters and Setters for each field ================================== //

@@ -46,6 +46,7 @@ public class UserController {
             ErrorResponse response = new ErrorResponse("error", 500, "Internal server error", "Internal server error");
             return ResponseEntity.status(500).body(response);
         }
+        
     }
 
     // Login user

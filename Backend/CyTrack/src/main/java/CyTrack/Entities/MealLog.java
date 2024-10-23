@@ -11,7 +11,7 @@ import java.util.List;
  * @author Eduardo Barboza-Campos
  * Class representing a table for a 'Meal Log' entity.
  * Represents a dairy entry for a given day.
- * This diary entry is composed of
+ * This diary entry is composed of:
  * a unique ID
  * a list of meals for the day,
  * and a date
@@ -20,24 +20,27 @@ import java.util.List;
 public class MealLog {
 
     /**
-     *
+     * Fields for our MealLog entity
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long logID;
+    private Long mealLogID;
 
     private List<Meal> mealList;
 
-    private String logDate;
+    private String mealLogDate;
 
     // =============================== Constructors ================================== //
 
     public MealLog(){}
 
     public MealLog(String date) {
-        this.logDate = date;
+        this.mealLogDate = date;
     }
 
     // =============================== Getters and Setters for each field ================================== //
+
+    //TODO need some method for updating mealList
+
 
 }
