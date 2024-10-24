@@ -1,20 +1,16 @@
 package CyTrack.Controllers;
 
+import java.util.List;
+
 public class MealResponse {
     private String status;
     private String message;
     private Data data;
 
-    public MealResponse(String status, String message, Long mealID) {
+    public MealResponse(String status, List<MealData> meals, String message) {
         this.status = status;
         this.message = message;
-        this.data  = new Data(mealID);
-    }
-
-    public MealResponse(String status, String message, Long mealID, String mealName, Integer calories, Integer protein, Integer carbs, String time) {
-        this.status = status;
-        this.message = message;
-        this.data = new Data(mealID, mealName, calories, protein, carbs, time);
+        this.data = new Data(meals);
     }
 
     public String getStatus() {
@@ -42,30 +38,34 @@ public class MealResponse {
     }
 
     public static class Data {
+        private List<MealData> meals;
+
+        public Data(List<MealData> meals) { this.meals = meals; }
+
+        public List<MealData> getMeals() { return meals; };
+
+        public void setMeals(List<MealData> meals) { this.meals = meals; }
+    }
+
+    public static class MealData {
         private Long mealID;
         private String mealName;
         private Integer calories;
         private Integer protein;
         private Integer carbs;
         private String time;
+        private String date;
 
-        public Data(Long mealID) {this.mealID = mealID;}
 
-        public Data (Long mealID, String mealName, Integer calories, Integer protein, Integer carbs, String time) {
+        public MealData (Long mealID, String mealName, Integer calories,
+                     Integer protein, Integer carbs, String time, String date) {
             this.mealID = mealID;
             this.mealName = mealName;
             this.calories = calories;
             this.protein = protein;
             this.carbs = carbs;
             this.time = time;
-        }
-
-        public Long getMealID() {
-            return mealID;
-        }
-
-        public void setMealID(Long mealID) {
-            this.mealID = mealID;
+            this.date = date;
         }
 
         public String getMealName() {
@@ -107,6 +107,10 @@ public class MealResponse {
         public void setTime(String time) {
             this.time = time;
         }
+
+        public String getDate() {return date; }
+
+        public void setDate(String date) {this.date = date; }
     }
 
 }

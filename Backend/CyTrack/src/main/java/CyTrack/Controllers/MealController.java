@@ -1,7 +1,11 @@
 package CyTrack.Controllers;
 
 import CyTrack.Entities.Meal;
+import CyTrack.Entities.User;
+import CyTrack.Entities.Workout;
 import CyTrack.Repositories.MealRepository;
+import CyTrack.Services.MealService;
+import CyTrack.Services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,17 +18,40 @@ import java.util.Optional;
 @RequestMapping("/meal")
 public class MealController {
 
+    private final MealService mealService;
+    private final UserService userService;
+
     @Autowired
-    MealRepository mealRepo;
+    public MealController(MealService mealService, UserService userService) {
+        this.mealService = mealService;
+        this.userService = userService;
+    }
 
     /**
-     * LIST of all meals in DB
-     * @return list of all meals in DB
+     * LIST of ALL MEALS for a SPECIFIC USER
+     * @return list of all meals given that belong to a given user
      */
-    @GetMapping("")
-    public ResponseEntity<List<Meal>> getAllMeals (){
-        List<Meal> meals = mealRepo.findAll();
-        return ResponseEntity.ok(meals);
+    @GetMapping("/{userID}/meal")
+    public ResponseEntity<?> getAllMealsByUserID(@PathVariable Long userID){
+        Optional<User> user = userService.findByUserID(userID);
+        if (user.isPresent()) {
+            List<Meal> meals = mealService.getAllMeals(userID);
+            List<MealResponse.MealData> mealDataList = meals.stream()
+                    .map(meal -> new MealResponse.MealData(
+                            meal.getMealId(),
+                            meal.getMealName(),
+                            meal.getCalories(),
+                            meal.getProtein(),
+                            meal.getCarbs(),
+                            meal.getTime(),
+                            meal.getDate()
+                    ))
+                    .toList();
+            MealResponse response = new MealResponse("success", mealDataList, "Meals found");
+            return ResponseEntity.status(200).body(response);
+        }
+        ErrorResponse response = new ErrorResponse("error", 404, "User not found", "Unable to find user given userID");
+        return ResponseEntity.status(404).body(response);
     }
 
     /**
@@ -32,32 +59,29 @@ public class MealController {
      * @param mealId of meal to return
      * @return individual meal object
      */
-    @GetMapping("/{mealId}")
-    public ResponseEntity<?> getMealById(@PathVariable Long mealId) {
-        //Find Meal by id
-        Optional<Meal> existingMealOptional = mealRepo.findByMealId(mealId);
-
-        if (existingMealOptional.isPresent()) {
-            //201 ok + meal data
-            Meal foundMeal = existingMealOptional.get();
-            MealResponse response = new MealResponse(
-                    "success",
-                    "Meal retrieved successfully",
-                    foundMeal.getId(),
-                    foundMeal.getMealName(),
-                    foundMeal.getCalories(),
-                    foundMeal.getProtein(),
-                    foundMeal.getCarbs(),
-                    foundMeal.getTime()
-            );
-            return ResponseEntity.status(201).body(response);
-        } else {
-            //404 not found
-            ErrorResponse error = new ErrorResponse("error", 404, "Meal not found", "The meal you are looking for does not exist");
-            return ResponseEntity.status(404).body(error);
-        }
+    @GetMapping("/{mealId}/meal/{mealID}")
+    public ResponseEntity<?> getMealById(@PathVariable Long userID, @PathVariable Long mealId) {
+        Optional<User> user = userService.findByUserID(userID);
+        if (user.isPresent()) {
+            Optional<Meal> meal = mealService.findByMealID(mealId);
+            if (meal.isPresent()) {
+                Meal foundMeal = meal.get();
+                MealResponse.MealData mealData = new MealResponse.MealData(
+                        foundMeal.getMealId(),
+                        foundMeal.getMealName(),
+                        foundMeal.getCalories(),
+                        foundMeal.getProtein(),
+                        foundMeal.getCarbs(),
+                        foundMeal.getTime(),
+                        foundMeal.getDate()
+                );
+                MealResponse response = new MealResponse("success", List.of(mealData), "Meal found");
+                return ResponseEntity.status(200).body(response);
+            }
+            ErrorResponse response = new ErrorResponse("error", 404, "Meal not found", "Could not find meal with given mealID")
     }
 
+        //TODO - finish refactoring and updating to use correct methods and responses
     /**
      * CREATE new meal entry
      * @param meal we're attempting to add/create
@@ -83,7 +107,8 @@ public class MealController {
                     savedMeal.getCalories(),
                     savedMeal.getProtein(),
                     savedMeal.getCarbs(),
-                    savedMeal.getTime()
+                    savedMeal.getTime(),
+                    savedMeal.getDate()
             );
 
             //201 Created + new meal as response body
@@ -150,7 +175,8 @@ public class MealController {
                     updatedMeal.getCalories(),
                     updatedMeal.getProtein(),
                     updatedMeal.getCarbs(),
-                    updatedMeal.getTime()
+                    updatedMeal.getTime(),
+                    updatedMeal.getDate()
             );
             return ResponseEntity.status(201).body(response);
         }
