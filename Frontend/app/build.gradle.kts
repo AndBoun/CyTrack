@@ -105,7 +105,6 @@ dependencies {
     implementation(libs.core.ktx)
     implementation(platform(libs.compose.bom))
     implementation(libs.activity.compose)
-    implementation(libs.androidx.material3)
     implementation(libs.accompanist.themeadapter.material3)
     debugImplementation(libs.androidx.ui.tooling)
     testImplementation(libs.junit)
