@@ -1,7 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    id("org.jetbrains.kotlin.plugin.compose") version "2.0.21"
+    alias(libs.plugins.kotlin.compose)
 }
 
 android {
@@ -101,7 +101,7 @@ dependencies {
     implementation(libs.storage)
     implementation(libs.foundation.layout.android)
     implementation(libs.material3.android)
-    implementation(libs.ui.tooling.preview.android)
+    implementation(libs.ui.tooling)
     implementation(libs.core.ktx)
     implementation(platform(libs.compose.bom))
     implementation(libs.activity.compose)
