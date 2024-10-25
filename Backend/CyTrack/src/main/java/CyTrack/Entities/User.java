@@ -13,6 +13,7 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private List<Workout> workouts;
+    private List<Meal>  meals;
 
     @Column(nullable = false, unique = true)
     private String username;
@@ -95,4 +96,8 @@ public class User {
     public void setWorkouts(List<Workout> workouts) {
         this.workouts = workouts;
     }
+
+    public List<Meal> getMeals() {return meals; }
+
+    public void setMeals(List<Meal> meals) {this.meals = meals; }
 }

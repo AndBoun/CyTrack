@@ -27,7 +27,6 @@ public class WorkoutIDResponse {
         this.data = data;
     }
 
-
     public String getMessage() {
         return message;
     }

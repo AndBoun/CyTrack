@@ -29,10 +29,11 @@ public class MealController {
 
     /**
      * LIST of ALL MEALS for a SPECIFIC USER
+     *
      * @return list of all meals given that belong to a given user
      */
     @GetMapping("/{userID}/meal")
-    public ResponseEntity<?> getAllMealsByUserID(@PathVariable Long userID){
+    public ResponseEntity<?> getAllMealsByUserID(@PathVariable Long userID) {
         Optional<User> user = userService.findByUserID(userID);
         if (user.isPresent()) {
             List<Meal> meals = mealService.getAllMeals(userID);
@@ -56,6 +57,7 @@ public class MealController {
 
     /**
      * READ/return contents of an individual meal
+     *
      * @param mealId of meal to return
      * @return individual meal object
      */
@@ -78,112 +80,96 @@ public class MealController {
                 MealResponse response = new MealResponse("success", List.of(mealData), "Meal found");
                 return ResponseEntity.status(200).body(response);
             }
-            ErrorResponse response = new ErrorResponse("error", 404, "Meal not found", "Could not find meal with given mealID")
+            ErrorResponse response = new ErrorResponse("error", 404, "Meal not found", "Could not find meal with given mealID");
+            return ResponseEntity.status(404).body(response);
+        }
+        ErrorResponse response = new ErrorResponse("error", 404, "User not found", "Could not find user with the given userID");
+        return ResponseEntity.status(404).body(response);
     }
 
-        //TODO - finish refactoring and updating to use correct methods and responses
+    //TODO - finish refactoring and updating to use correct methods and responses
+
     /**
      * CREATE new meal entry
+     *
      * @param meal we're attempting to add/create
      * @return response indicating whether meal was added or not
      */
-    @PostMapping("")
-    public ResponseEntity<?> createMeal(@RequestBody Meal meal) {
-        //Check if Meal with same mealName already exists
-        Optional<Meal> existingMeal = mealRepo.findByMealName(meal.getMealName());
+    @PostMapping("/{userID}/meal")
+    public ResponseEntity<?> createMeal(@PathVariable Long userID, @RequestBody Meal meal) {
+        Optional<User> user = userService.findByUserID(userID);
+        if (user.isPresent()) {
+            meal.setUser(user.get());
+            Meal newMeal = mealService.createMeal(meal);
 
-        if (existingMeal.isPresent()) {
-            //409 conflict
-            ErrorResponse response = new ErrorResponse("error", 409, "Unable to create Meal", "Meal already exists");
-            return ResponseEntity.status(409).body(response);
-        } else {
-            //save meal in repository
-            Meal savedMeal = mealRepo.save(meal);
-            MealResponse response = new MealResponse(
-                    "success",
-                    "Meal created successfully",
-                    savedMeal.getId(),
-                    savedMeal.getMealName(),
-                    savedMeal.getCalories(),
-                    savedMeal.getProtein(),
-                    savedMeal.getCarbs(),
-                    savedMeal.getTime(),
-                    savedMeal.getDate()
-            );
-
-            //201 Created + new meal as response body
+            MealIDResponse response = new MealIDResponse("success", newMeal.getMealId(), "Meal created");
             return ResponseEntity.status(201).body(response);
         }
+        ErrorResponse response = new ErrorResponse("error", 404, "User not found", "Could not find user with the given userID");
+        return ResponseEntity.status(404).body(response);
     }
 
     /**
      * DELETE a meal row based on a given input
      */
     @DeleteMapping("/{mealId}")
-    ResponseEntity<?> deleteMeal(@PathVariable Long mealId) {
-        //check if Meal with given id exists
-        Optional<Meal> existingMealOptional = mealRepo.findByMealId(mealId);
-
-        if (existingMealOptional.isPresent()) {
-            //meal exists --delete meal
-            mealRepo.deleteByMealId(mealId);
-            DeleteResponse response = new DeleteResponse("success", 200, "Meal deleted");
-            return ResponseEntity.ok(response); //204 success no content
-        } else {
-            ErrorResponse response = new ErrorResponse("error", 404, "failed to delete meal", "Could not find specified Meal");
-            return ResponseEntity.status(404).body(response);//404 not found
+    ResponseEntity<?> deleteMeal(@PathVariable Long userID, @PathVariable Long mealID) {
+        Optional<User> user = userService.findByUserID(userID);
+        if (user.isPresent()) {
+            Optional<Meal> meal = mealService.findByMealID(mealID);
+            if (meal.isPresent()) {
+                mealService.deleteMeal(mealID);
+                MealIDResponse response = new MealIDResponse("success", mealID, "Meal deleted");
+                return ResponseEntity.status(200).body(response);
+            }
+            ErrorResponse response = new ErrorResponse("error", 404, "Meal not found", "could not find meal with given mealID");
+            return ResponseEntity.status(200).body(response);
         }
+        ErrorResponse response = new ErrorResponse("error", 404, "User not found", "could not find user with given userID");
+        return ResponseEntity.status(404).body(response);
     }
 
     /**
      * UPDATE/replace existing meal based on given JSON input
-     * @param mealID of Meal to update
+     *
+     * @param mealID  of Meal to update
      * @param newMeal Meal object (from JSON) containing info for updating
      * @return response status indicating success or failure
      */
-    @PutMapping("/{mealID}")
-    public ResponseEntity<?> updateMeal (@PathVariable Long mealID, @RequestBody Meal newMeal) {
-        //
-        Optional<Meal> existingMealOptional = mealRepo.findByMealId(mealID);
-
-        if (existingMealOptional.isPresent()) {
-            Meal existingMeal = existingMealOptional.get();
-
-            //update fields if new values not null
-            if (newMeal.getMealName() != null) {
-                existingMeal.setMealName(newMeal.getMealName());
+    @PutMapping("/{userID}/meal/{mealID}")
+    public ResponseEntity<?> updateMeal(@PathVariable Long userID, @PathVariable Long mealID, @RequestBody Meal newMeal) {
+        Optional<User> user = userService.findByUserID(userID);
+        if (user.isPresent()) {
+            Optional<Meal> existingMeal = mealService.findByMealID(mealID);
+            if (existingMeal.isPresent()) {
+                Meal updatedMeal = existingMeal.get();
+                //update fields if new values not null
+                if (newMeal.getMealName() != null) {
+                    updatedMeal.setMealName(newMeal.getMealName());
+                }
+                if (newMeal.getCalories() != null) {
+                    updatedMeal.setCalories(newMeal.getCalories());
+                }
+                if (newMeal.getProtein() != null) {
+                    updatedMeal.setProtein(newMeal.getProtein());
+                }
+                if (newMeal.getCarbs() != null) {
+                    updatedMeal.setCarbs(newMeal.getCarbs());
+                }
+                if (newMeal.getTime() != null) {
+                    updatedMeal.setTime(newMeal.getTime());
+                }
+                if (newMeal.getDate() != null) {
+                    updatedMeal.setDate(newMeal.getDate());
+                }
+                mealService.createMeal(updatedMeal);
+                MealIDResponse response = new MealIDResponse("success", mealID, "Meal created");
+                return ResponseEntity.status(200).body(response);
             }
-            if (newMeal.getCalories() != null) {
-                existingMeal.setCalories(newMeal.getCalories());
-            }
-            if (newMeal.getProtein() != null) {
-                existingMeal.setProtein(newMeal.getProtein());
-            }
-            if (newMeal.getCarbs() != null) {
-                existingMeal.setCarbs(newMeal.getCarbs());
-            }
-            if (newMeal.getTime() != null) {
-                existingMeal.setTime(newMeal.getTime());
-            }
-
-            Meal updatedMeal = mealRepo.save(existingMeal);
-            MealResponse response = new MealResponse(
-                    "success",
-                    "Meal updated successfully",
-                    updatedMeal.getId(),
-                    updatedMeal.getMealName(),
-                    updatedMeal.getCalories(),
-                    updatedMeal.getProtein(),
-                    updatedMeal.getCarbs(),
-                    updatedMeal.getTime(),
-                    updatedMeal.getDate()
-            );
-            return ResponseEntity.status(201).body(response);
+            ErrorResponse response = new ErrorResponse("error", 404, "Meal not found", "could not find meal with given mealID");
+            return ResponseEntity.status(404).body(response);
         }
-
-        //404 not found if meal DNE
-        return ResponseEntity.notFound().build();
+        ErrorResponse response = new ErrorResponse("error", 404, "User not found", "could not find user with given userID");
+        return ResponseEntity.status(404).body(response);
     }
-
-
 }

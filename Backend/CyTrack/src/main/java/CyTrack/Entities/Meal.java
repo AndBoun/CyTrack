@@ -21,7 +21,7 @@ public class Meal {
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long mealId;
+    private Long mealID;
 
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -55,13 +55,19 @@ public class Meal {
     // =============================== Getters and Setters for each field ================================== //
 
 
+
+
     public Long getMealId() {
-        return mealId;
+        return mealID;
     }
 
-    public void setId(Long id) {
-        this.mealId = id;
+    public void setMealId(Long id) {
+        this.mealID = id;
     }
+
+    public User getUser() {return user; }
+
+    public void setUser(User user) {this.user = user; }
 
     public String getMealName() {
         return mealName;

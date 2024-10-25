@@ -18,9 +18,9 @@ public class MealService {
 
     public Meal createMeal(Meal meal) { return mealRepository.save(meal); }
 
-    public Optional<Meal> findByMealID(Long mealID) { return mealRepository.findByMealId(mealID); }
+    public Optional<Meal> findByMealID(Long mealID) { return mealRepository.findByMealID(mealID); }
 
-    public void deleteMeal(Long mealID) { mealRepository.deleteByMealId(mealID); }
+    public void deleteMeal(Long mealID) { mealRepository.deleteByMealID(mealID); }
 
-    public List<Meal> getAllMeals(Long userID) {return mealRepository.findyByUser_UserID(userID); }
+    public List<Meal> getAllMeals(Long userID) {return mealRepository.findByUser_UserID(userID); }
 }
