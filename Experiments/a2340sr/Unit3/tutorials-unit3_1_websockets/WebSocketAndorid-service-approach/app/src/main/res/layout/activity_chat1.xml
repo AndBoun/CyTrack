@@ -18,11 +18,13 @@ android:orientation="vertical">
         android:hint="message"
         android:textSize="20dp"
         android:id="@+id/msgEdt" />
+
     <Button
+        android:id="@+id/sendBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Send"
-        android:id="@+id/sendBtn" />
+        android:backgroundTint="#00BCD4"
+        android:text="Send" />
 </LinearLayout>
 
 
@@ -40,12 +42,13 @@ android:orientation="vertical">
         android:textSize="20dp" />
 </ScrollView>
 
-<Button
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_gravity="bottom"
-    android:text="Back to Main"
-    android:id="@+id/backMainBtn" />
+    <Button
+        android:id="@+id/backMainBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:backgroundTint="#00BCD4"
+        android:text="Back to Main" />
 
 
 </androidx.appcompat.widget.LinearLayoutCompat>

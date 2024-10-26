@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity{
 
@@ -29,6 +30,10 @@ public class MainActivity extends AppCompatActivity{
 
         /* connect button listener */
         connectBtn.setOnClickListener(view -> {
+            if (usernameEtx.getText().length() == 0) {
+                Toast.makeText(this, "Enter a username", Toast.LENGTH_SHORT).show();
+                return;
+            }
             String serverUrl = serverEtx.getText().toString() + usernameEtx.getText().toString();
 
             // Establish WebSocket connection and set listener
@@ -41,6 +46,10 @@ public class MainActivity extends AppCompatActivity{
 
         /* connect button listener */
         connectBtn2.setOnClickListener(view -> {
+            if (usernameEtx2.getText().length() == 0) {
+                Toast.makeText(this, "Enter a username", Toast.LENGTH_SHORT).show();
+                return;
+            }
             String serverUrl = serverEtx2.getText().toString() + usernameEtx2.getText().toString();
 
             // Establish WebSocket connection and set listener
