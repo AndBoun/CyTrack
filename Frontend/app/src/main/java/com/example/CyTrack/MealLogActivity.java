@@ -36,8 +36,8 @@ public class MealLogActivity extends AppCompatActivity {
     private ImageButton profileSettingsButton, notificationButton, MealsPageButton, LogPageButton;
     private ScrollView MealTable;
     private LinearLayout MealTableDisplay;
-    private ArrayList<Meal> meals = new ArrayList<Meal>();
-    private String url = "http://10.90.72.246:8080/meal/";
+    private final ArrayList<Meal> meals = new ArrayList<Meal>();
+    private final String url = "http://10.90.72.246:8080/meal/";
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
@@ -109,7 +109,7 @@ public class MealLogActivity extends AppCompatActivity {
                 id += 1;
             }
             catch (Exception e){
-                System.out.println(e.toString());
+                System.out.println(e);
                 break;
             }
         }

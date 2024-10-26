@@ -1,7 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    id("org.jetbrains.kotlin.plugin.compose") version "2.0.21"
+    alias(libs.plugins.kotlin.compose)
 }
 
 android {
@@ -39,6 +39,57 @@ android {
     }
 }
 
+
+androidComponents {
+    onVariants { variant ->
+        tasks.register<Javadoc>("javadoc${variant.name.capitalize()}") {
+
+            doFirst {
+                configurations["implementation"]
+                    .filter { it.name.endsWith(".aar") }
+                    .forEach { aar ->
+                        copy {
+                            from(zipTree(aar))
+                            include("**/classes.jar")
+                            into("${buildDir}/tmp/aarsToJars/${aar.name.replace(".aar", "")}")
+                        }
+                    }
+            }
+
+            configurations["implementation"].attributes {
+                attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage::class.java, Usage.JAVA_RUNTIME))
+            }
+            configurations["implementation"].isCanBeResolved = true
+
+            // Set the source directories for generating Javadoc
+            source = fileTree(mapOf("dir" to "src/main/java", "includes" to listOf("**/*.java")))
+
+            // Include Android's boot classpath and implementation dependencies in the Javadoc classpath
+            classpath = files(android.bootClasspath.joinToString(File.pathSeparator)) +
+                    configurations["implementation"] +
+                    fileTree("${buildDir}/tmp/aarsToJars/")
+
+            if (variant.buildType == "release") {
+                classpath += variant.compileConfiguration
+            }
+
+            setDestinationDir(file("${buildDir}/outputs/javadoc/"))
+
+            // Set the visibility level for the Javadoc members
+            (options as StandardJavadocDocletOptions).apply {
+                memberLevel = JavadocMemberLevel.PRIVATE
+            }
+
+            // Disable failing the build on errors in Javadoc generation
+            isFailOnError = false
+
+            // Exclude auto-generated Android classes from the Javadoc
+            exclude("**/BuildConfig.java", "**/R.java")
+        }
+    }
+}
+
+
 dependencies {
     implementation(libs.appcompat)
     implementation(libs.material)
@@ -50,11 +101,10 @@ dependencies {
     implementation(libs.storage)
     implementation(libs.foundation.layout.android)
     implementation(libs.material3.android)
-    implementation(libs.ui.tooling.preview.android)
+    implementation(libs.ui.tooling)
     implementation(libs.core.ktx)
     implementation(platform(libs.compose.bom))
     implementation(libs.activity.compose)
-    implementation(libs.androidx.material3)
     implementation(libs.accompanist.themeadapter.material3)
     debugImplementation(libs.androidx.ui.tooling)
     testImplementation(libs.junit)
