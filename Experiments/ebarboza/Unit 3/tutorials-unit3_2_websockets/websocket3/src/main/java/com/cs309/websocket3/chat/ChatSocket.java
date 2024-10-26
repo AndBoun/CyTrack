@@ -58,7 +58,7 @@ public class ChatSocket {
 		sendMessageToPArticularUser(username, getChatHistory());
 		
     // broadcast that new user joined
-		String message = "User:" + username + " has Joined the Chat";
+		String message = "User:" + username + " IS HERE!";
 		broadcast(message);
 	}
 
@@ -75,11 +75,15 @@ public class ChatSocket {
 			String destUsername = message.split(" ")[0].substring(1); 
 
       // send the message to the sender and receiver
-			sendMessageToPArticularUser(destUsername, "[DM] " + username + ": " + message);
-			sendMessageToPArticularUser(username, "[DM] " + username + ": " + message);
+			sendMessageToPArticularUser(destUsername, "[Message from] " + username + ": " + message);
+			sendMessageToPArticularUser(username, "[Message to] " + username + ": " + message);
 
-		} 
-    else { // broadcast
+		}
+		//Shows chat history to the user who invoked the /history command in chat
+		else if (message.equalsIgnoreCase("/history")) {
+			sendMessageToPArticularUser(username, getChatHistory());
+		}
+    	else { // broadcast
 			broadcast(username + ": " + message);
 		}
 
