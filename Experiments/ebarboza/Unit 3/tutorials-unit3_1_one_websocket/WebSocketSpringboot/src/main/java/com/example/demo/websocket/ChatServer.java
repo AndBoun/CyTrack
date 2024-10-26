@@ -51,12 +51,12 @@ public class ChatServer {
     @OnOpen
     public void onOpen(Session session, @PathParam("username") String username) throws IOException {
 
-        // server side log
+        // server side log - log event into console only
         logger.info("[onOpen] " + username);
 
         // Handle the case of a duplicate username
         if (usernameSessionMap.containsKey(username)) {
-            session.getBasicRemote().sendText("Username already exists");
+            session.getBasicRemote().sendText("Can't use that! Username already exists, so try something else :3");
             session.close();
         }
         else {
@@ -67,10 +67,10 @@ public class ChatServer {
             usernameSessionMap.put(username, session);
 
             // send to the user joining in
-            sendMessageToPArticularUser(username, "Welcome to the chat server, "+username);
+            sendMessageToPArticularUser(username, "Yo what's good, choom, "+username);
 
             // send to everyone in the chat
-            broadcast("User: " + username + " has Joined the Chat");
+            broadcast("User: " + username + " just pulled up frfr");
         }
     }
 
@@ -102,8 +102,8 @@ public class ChatServer {
             }
             String destUserName = split_msg[0].substring(1);    //@username and get rid of @
             String actualMessage = actualMessageBuilder.toString();
-            sendMessageToPArticularUser(destUserName, "[DM from " + username + "]: " + actualMessage);
-            sendMessageToPArticularUser(username, "[DM from " + username + "]: " + actualMessage);
+            sendMessageToPArticularUser(destUserName, "[Secret Message From " + username + "]! :0: " + actualMessage);
+            sendMessageToPArticularUser(username, "[Secret Message To " + destUserName + "]: " + actualMessage);
         }
         else { // Message to whole chat
             broadcast(username + ": " + message);
@@ -129,7 +129,7 @@ public class ChatServer {
         usernameSessionMap.remove(username);
 
         // send the message to chat
-        broadcast(username + " disconnected");
+        broadcast(username + " left us :(");
     }
 
     /**
