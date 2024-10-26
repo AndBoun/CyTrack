@@ -7,6 +7,7 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.java_websocket.handshake.ServerHandshake;
 
@@ -34,6 +35,7 @@ public class ChatActivity2 extends AppCompatActivity implements WebSocketListene
             try {
                 // send message
                 WebSocketManager2.getInstance().sendMessage(msgEtx.getText().toString());
+                msgEtx.setText("");
             } catch (Exception e) {
                 Log.d("ExceptionSendMessage:", e.getMessage().toString());
             }
@@ -60,13 +62,23 @@ public class ChatActivity2 extends AppCompatActivity implements WebSocketListene
         String closedBy = remote ? "server" : "local";
         runOnUiThread(() -> {
             String s = msgTv.getText().toString();
-            msgTv.setText(s + "---\nconnection closed by " + closedBy + "\nreason: " + reason);
+            msgTv.setText(s + "---\n\nBoss disconnected " + closedBy + "\nbecause: " + reason);
         });
+        Toast.makeText(this, "Disconnected from Chat 2", Toast.LENGTH_SHORT).show();
     }
 
     @Override
-    public void onWebSocketOpen(ServerHandshake handshakedata) {}
+    public void onWebSocketOpen(ServerHandshake handshakedata) {
+        Toast.makeText(this, "Connected to Chat 2", Toast.LENGTH_SHORT).show();
+    }
 
     @Override
-    public void onWebSocketError(Exception ex) {}
+    public void onWebSocketError(Exception ex) {
+    }
+
+    @Override
+    public void onBackPressed() {
+        WebSocketManager2.getInstance().disconnectWebSocket();
+        super.onBackPressed();
+    }
 }

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import org.java_websocket.handshake.ServerHandshake;
 
@@ -26,6 +27,11 @@ public class MainActivity extends AppCompatActivity implements WebSocketListener
 
         /* connect button listener */
         connectBtn.setOnClickListener(view -> {
+            if (usernameEtx.getText().length() == 0){
+                Toast.makeText(this, "Must enter a username", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
             String serverUrl = serverEtx.getText().toString() + usernameEtx.getText().toString();
 
             // Establish WebSocket connection and set listener
@@ -40,14 +46,18 @@ public class MainActivity extends AppCompatActivity implements WebSocketListener
 
 
     @Override
-    public void onWebSocketMessage(String message) {}
+    public void onWebSocketMessage(String message) {
+    }
 
     @Override
-    public void onWebSocketClose(int code, String reason, boolean remote) {}
+    public void onWebSocketClose(int code, String reason, boolean remote) {
+    }
 
     @Override
-    public void onWebSocketOpen(ServerHandshake handshakedata) {}
+    public void onWebSocketOpen(ServerHandshake handshakedata) {
+    }
 
     @Override
-    public void onWebSocketError(Exception ex) {}
+    public void onWebSocketError(Exception ex) {
+    }
 }

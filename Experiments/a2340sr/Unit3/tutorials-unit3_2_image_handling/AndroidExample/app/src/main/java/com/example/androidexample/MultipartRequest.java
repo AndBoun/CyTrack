@@ -28,6 +28,8 @@ import java.io.IOException;
     private final String mLineEnd = "\r\n";
     private final String mTwoHyphens = "--";
 
+    private static int c = 0;
+
     public MultipartRequest(int method, String url, byte[] imageData, Response.Listener<String> listener, Response.ErrorListener errorListener) {
         super(method, url, errorListener);
         this.mListener = listener;
@@ -47,7 +49,8 @@ import java.io.IOException;
 
         try {
             dos.writeBytes(mTwoHyphens + mBoundary + mLineEnd);
-            dos.writeBytes("Content-Disposition: form-data; name=\"image\";filename=\"image.jpg\"" + mLineEnd);
+            dos.writeBytes("Content-Disposition: form-data; name=\"image\";filename=\"image" + c + ".jpg\"" + mLineEnd);
+            c++;
             dos.writeBytes(mLineEnd);
 
             dos.write(mImageData);

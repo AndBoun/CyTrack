@@ -13,7 +13,7 @@ import java.nio.file.Files;
 public class ImageController {
 
     // replace this! careful with the operating system in use
-    private static String directory = "/Users/hobian/";
+   private static String directory = "/Users/andrewboun/Downloads/test";
 
     @Autowired
     private ImageRepository imageRepository;
