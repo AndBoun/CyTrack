@@ -1,6 +1,6 @@
 package CyTrack.Controllers;
 
-
+// Workout response specifically for workout ID due to JSON formatting issues with workout response
 public class WorkoutIDResponse {
     private String status;
     private Data data;

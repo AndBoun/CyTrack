@@ -2,16 +2,13 @@ package CyTrack.Controllers;
 
 import CyTrack.Entities.User;
 import CyTrack.Services.UserService;
-import org.apache.coyote.Response;
-import org.hibernate.sql.Delete;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 
 @RestController
 @RequestMapping("/user")
