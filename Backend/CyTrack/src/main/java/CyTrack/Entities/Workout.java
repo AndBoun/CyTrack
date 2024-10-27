@@ -10,7 +10,7 @@ import org.hibernate.annotations.OnDeleteAction;
 public class Workout {
     // =============================== Fields ================================== //
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)  // Auto-incremented primary key
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long workoutID;
     // Many workouts can belong to one user
     @ManyToOne(fetch = FetchType.LAZY)

@@ -1,6 +1,8 @@
 package CyTrack.Entities;
 
 import jakarta.persistence.*;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -14,6 +16,16 @@ public class User {
     // One user can have many workouts
     @OneToMany(mappedBy = "user")
     private List<Workout> workouts;
+
+    @ElementCollection
+    private List<String> incomingFriendRequests; // User's incoming friend requests
+
+    @ElementCollection
+    private List<String> outgoingFriendRequests; // User's ongoing friends requests
+
+    @ElementCollection
+    private List<String> friends; //Displays lists of user's friends
+
     // Username is unique
     @Column(nullable = false, unique = true)
     private String username;
@@ -24,11 +36,22 @@ public class User {
     private int streak;
     private String gender;
 
+
     // ========================= Constructor ========================= //
+    public User(String username, String password){
+        this.username = username;
+        this.password = password;
+        incomingFriendRequests = new ArrayList<String>();
+        outgoingFriendRequests = new ArrayList<String>();
+        friends = new ArrayList<String>();
+
+    }
+
+
+    // ========================= Getter and Setter ========================= //
     public Long getUserID() {
         return userID;
     }
-    // ========================= Getter and Setter ========================= //
     public void setUserID(Long userID) {
         this.userID = userID;
     }
@@ -96,4 +119,30 @@ public class User {
     public void setWorkouts(List<Workout> workouts) {
         this.workouts = workouts;
     }
+
+    public List<String> getIncomingFriendRequests() {
+        return incomingFriendRequests;
+    }
+
+    public void setIncomingFriendRequests(List<String> incomingFriendRequests) {
+        this.incomingFriendRequests = incomingFriendRequests;
+    }
+
+    public List<String> getOutgoingFriendRequests() {
+        return outgoingFriendRequests;
+    }
+
+    public void setOutgoingFriendRequests(List<String> outgoingFriendRequests) {
+        this.outgoingFriendRequests = outgoingFriendRequests;
+    }
+
+    public List<String> getFriends() {
+        return friends;
+    }
+
+    public void setFriends(List<String> friends) {
+        this.friends = friends;
+    }
+
+
 }
