@@ -10,19 +10,19 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
-
+//Controller for Workout entity
 @RestController
 @RequestMapping("/user")
 public class WorkoutController {
     private final WorkoutService workoutService;
     private final UserService userService;
-
+    //Constructor
     @Autowired
     public WorkoutController(WorkoutService workoutService, UserService userService) {
         this.workoutService = workoutService;
         this.userService = userService;
     }
-
+    //Create a workout
     @PostMapping("/{userID}/workout")
     public ResponseEntity<?> createWorkout(@PathVariable Long userID, @RequestBody Workout workout) {
         Optional<User> user = userService.findByUserID(userID);
@@ -36,7 +36,7 @@ public class WorkoutController {
         ErrorResponse response = new ErrorResponse("error", 404, "User not found", "User not found");
         return ResponseEntity.status(404).body(response);
     }
-
+    //Get all workouts by user ID
     @GetMapping("/{userID}/workout")
     public ResponseEntity<?> getAllWorkoutsByUserID(@PathVariable Long userID) {
         Optional<User> user = userService.findByUserID(userID);
@@ -57,7 +57,7 @@ public class WorkoutController {
         ErrorResponse response = new ErrorResponse("error", 404, "User not found", "User not found");
         return ResponseEntity.status(404).body(response);
     }
-
+    //Get a workout by user ID and workout ID
     @GetMapping("/{userID}/workout/{workoutID}")
     public ResponseEntity<?> getWorkout(@PathVariable Long userID, @PathVariable Long workoutID) {
         Optional<User> user = userService.findByUserID(userID);
@@ -82,6 +82,7 @@ public class WorkoutController {
         return ResponseEntity.status(404).body(response);
     }
 
+    //Update a workout
     @PutMapping("/{userID}/workout/{workoutID}")
     public ResponseEntity<?> updateWorkout(@PathVariable Long userID, @PathVariable Long workoutID, @RequestBody Workout workout) {
         Optional<User> user = userService.findByUserID(userID);
@@ -112,6 +113,7 @@ public class WorkoutController {
         return ResponseEntity.status(404).body(response);
     }
 
+    //Delete a workout
     @DeleteMapping("/{userID}/workout/{workoutID}")
     public ResponseEntity<?> deleteWorkout(@PathVariable Long userID, @PathVariable Long workoutID) {
         Optional<User> user = userService.findByUserID(userID);

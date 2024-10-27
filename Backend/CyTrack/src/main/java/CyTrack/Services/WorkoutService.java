@@ -7,7 +7,7 @@ import CyTrack.Repositories.WorkoutRepository;
 
 import java.util.List;
 import java.util.Optional;
-
+//Service for Workout entity
 @Service
 public class WorkoutService {
 

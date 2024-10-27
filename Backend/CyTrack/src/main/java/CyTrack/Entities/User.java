@@ -6,14 +6,15 @@ import java.util.List;
 @Entity
 @Table(name = "user")
 public class User {
+    // ========================= Fields ========================= //
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long userID;
-
+    // One user can have many workouts
     @OneToMany(mappedBy = "user")
     private List<Workout> workouts;
-
+    // Username is unique
     @Column(nullable = false, unique = true)
     private String username;
     private String firstName;
@@ -23,11 +24,11 @@ public class User {
     private int streak;
     private String gender;
 
-    // Getters and setters
+    // ========================= Constructor ========================= //
     public Long getUserID() {
         return userID;
     }
-
+    // ========================= Getter and Setter ========================= //
     public void setUserID(Long userID) {
         this.userID = userID;
     }
