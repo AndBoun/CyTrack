@@ -1,39 +1,28 @@
+<!DOCTYPE html>
 <html>
 
 <head>
-  <title>Chat</title>
+    <title>Chat</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 
 <body>
-  <table style="width: 100%">
-    <tr>
-      <td>
-        <input type="text" id="wsserver"
-	style = "width: 15rem;"
-        placeholder="ws://localhost:8080/chat/"
-	value ="ws://localhost:8080/chat/"	
-/>
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <input type="text" id="username" style:"width=100%;" placeholder="Username" />
-        <button type="button" onclick="connect();">Connect</button>
-      </td>
-    </tr>
-    <tr>
-      <td>
+<div id="wrapper">
+    <h1>Chat Application</h1>
+    <div id="addDevice">
+        <input type="text" id="wsserver" placeholder="ws://localhost:8080/chat/" value="ws://localhost:8080/chat/" />
+        <input type="text" id="username" placeholder="Username" />
+        <button class="button" type="button" onclick="connect();">Connect</button>
+    </div>
+    <div id="content">
         <textarea readonly="true" rows="10" cols="80" id="log"></textarea>
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <input type="text" size="51" id="msg" placeholder="Message" />
-        <button type="button" onclick="send();">Send</button>
-      </td>
-    </tr>
-  </table>
-</body>
+        <div id="addDeviceForm">
+            <input type="text" id="msg" placeholder="Message" />
+            <button class="button" type="button" onclick="send();">Send</button>
+        </div>
+    </div>
+</div>
 <script src="websocket.js"></script>
+</body>
 
 </html>
