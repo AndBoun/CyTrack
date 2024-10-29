@@ -62,10 +62,10 @@ public class ChatServer2 {
             usernameSessionMap.put(username, session);
 
             // send to the user joining in
-            sendMessageToPArticularUser(username, "Welcome to the chat server, "+username);
+            sendMessageToPArticularUser(username, "Welcome to the awesome chat 2!, "+username + ":3");
 
             // send to everyone in the chat
-            broadcast("User: " + username + " has Joined the Chat");
+            broadcast("User: " + username + " joined chat2's crusade");
         }
     }
 
@@ -84,8 +84,31 @@ public class ChatServer2 {
         // server side log
         logger.info("[onMessage] " + username + ": " + message);
 
-        // Direct message to a user using the format "@username <message>"
-        if (message.startsWith("@")) {
+        // Typing indicator for when a user is typing
+        // Handle the "/poke" command
+        if (message.startsWith("/poke")) {
+            String[] splitMsg = message.split("\\s+");
+
+            if (splitMsg.length < 2) {
+                sendMessageToPArticularUser(username, "Usage: /poke <username>");
+            } else {
+                String targetUsername = splitMsg[1];
+                sendPokeNotification(username, targetUsername);
+            }
+        }
+        else if (message.equalsIgnoreCase("/typing")) {
+            broadcast(username + " is typing...");
+        }
+        else if (message.equalsIgnoreCase("/stopTyping")) {
+            broadcast(username + " has stopped typing.");
+        }
+        else if (message.equalsIgnoreCase("/list")) {
+            // Create a list of all connected usernames
+            String userList = String.join(", ", usernameSessionMap.keySet());
+            // Send the list back to the requesting user
+            sendMessageToPArticularUser(username, "Currently connected users: " + userList);
+        }
+        else if (message.startsWith("@")) {
 
             // split by space
             String[] split_msg =  message.split("\\s+");
@@ -170,5 +193,28 @@ public class ChatServer2 {
                 logger.info("[Broadcast Exception] " + e.getMessage());
             }
         });
+    }
+
+    /**
+     * Sends a "poke" notification to a specific user.
+     *
+     * @param fromUsername The username of the user sending the poke.
+     * @param toUsername   The username of the user being poked.
+     */
+    private void sendPokeNotification(String fromUsername, String toUsername) {
+        Session targetSession = usernameSessionMap.get(toUsername);
+
+        if (targetSession != null) {
+            // Notify the target user that they have been poked
+            try {
+                targetSession.getBasicRemote().sendText(fromUsername + " poked you!");
+                sendMessageToPArticularUser(fromUsername, "You poked " + toUsername);
+            } catch (IOException e) {
+                logger.error("[Poke Error] " + e.getMessage());
+            }
+        } else {
+            // Notify the sender that the target user is not online
+            sendMessageToPArticularUser(fromUsername, "User " + toUsername + " is not online.");
+        }
     }
 }

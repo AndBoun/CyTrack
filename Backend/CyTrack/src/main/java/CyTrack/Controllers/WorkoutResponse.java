@@ -1,7 +1,7 @@
 package CyTrack.Controllers;
 
 import java.util.List;
-
+//Response for Workout
 public class WorkoutResponse {
     private String status;
     private Data data;
@@ -36,6 +36,7 @@ public class WorkoutResponse {
     public void setData(Data data) {
         this.data = data;
     }
+
 
     public static class Data {
         private List<WorkoutData> workouts;

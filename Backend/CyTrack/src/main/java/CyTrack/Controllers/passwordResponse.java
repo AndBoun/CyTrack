@@ -1,5 +1,5 @@
 package CyTrack.Controllers;
-
+//Response for password
 public class passwordResponse {
     private String status;
     private String message;
@@ -34,7 +34,7 @@ public class passwordResponse {
     }
 
 
-
+    //Data class for JSON formatting
     public static class Data {
         private String password;
         private Long userID;

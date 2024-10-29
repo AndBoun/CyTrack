@@ -7,6 +7,7 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.java_websocket.handshake.ServerHandshake;
 
@@ -34,6 +35,7 @@ public class ChatActivity extends AppCompatActivity implements WebSocketListener
             try {
                 // send message
                 WebSocketManager.getInstance().sendMessage(msgEtx.getText().toString());
+                msgEtx.setText("");
             } catch (Exception e) {
                 Log.d("ExceptionSendMessage:", e.getMessage().toString());
             }
@@ -61,12 +63,25 @@ public class ChatActivity extends AppCompatActivity implements WebSocketListener
         runOnUiThread(() -> {
             String s = msgTv.getText().toString();
             msgTv.setText(s + "---\nconnection closed by " + closedBy + "\nreason: " + reason);
+
+            Toast.makeText(this, "connection closed", Toast.LENGTH_SHORT).show();
         });
     }
 
     @Override
-    public void onWebSocketOpen(ServerHandshake handshakedata) {}
+    public void onWebSocketOpen(ServerHandshake handshakedata) {
+        Toast.makeText(this, "connection Opened", Toast.LENGTH_SHORT).show();
+
+    }
 
     @Override
     public void onWebSocketError(Exception ex) {}
+
+    @Override
+    public void onBackPressed() {
+        // Close the WebSocket connection
+        WebSocketManager.getInstance().disconnectWebSocket();
+        // Call the superclass method to handle the normal back button behavior
+        super.onBackPressed();
+    }
 }

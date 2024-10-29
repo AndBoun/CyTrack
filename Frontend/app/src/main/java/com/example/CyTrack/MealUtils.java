@@ -31,7 +31,7 @@ class MealUtils {
                 callBack.onSuccess("Success");
             } catch (Exception e) {
                 // TEST 2
-                Log.d("MealUtils",  e.toString() + " Headers Processing (PostMeal 2)");
+                Log.d("MealUtils",  e + " Headers Processing (PostMeal 2)");
                 e.printStackTrace();
             }
         }, error -> {
@@ -45,7 +45,7 @@ class MealUtils {
                 Map<String, String> headers = new HashMap<>();
                 headers.put("Content-Type", "application/json");
                 // Test 4
-                Log.d("MealUtils",  headers.toString()+ " Headers Processing (PostMeal 4)");
+                Log.d("MealUtils",  headers + " Headers Processing (PostMeal 4)");
 
                 return headers;
             }

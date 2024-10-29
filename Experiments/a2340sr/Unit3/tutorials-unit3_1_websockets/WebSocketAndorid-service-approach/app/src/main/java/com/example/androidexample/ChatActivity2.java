@@ -11,10 +11,11 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class ChatActivity2 extends AppCompatActivity {
 
-    private Button sendBtn;
+    private Button sendBtn, backMainBtn;
     private EditText msgEtx;
     private TextView msgTv;
 
@@ -27,9 +28,18 @@ public class ChatActivity2 extends AppCompatActivity {
         sendBtn = (Button) findViewById(R.id.sendBtn2);
         msgEtx = (EditText) findViewById(R.id.msgEdt2);
         msgTv = (TextView) findViewById(R.id.tx2);
+        backMainBtn = (Button) findViewById(R.id.backMainBtn);
+
+        backMainBtn.setOnClickListener( view -> {
+            finish(); // close this activity and go back to the previous one
+            Toast.makeText( this, "Exiting chat 2", Toast.LENGTH_SHORT).show();
+        });
 
         /* send button listener */
         sendBtn.setOnClickListener(v -> {
+            if (msgEtx.getText().length() == 0) {
+                return; // do nothing if the input is empty
+            }
             // broadcast this message to the WebSocketService
             // tag it with the key - to specify which WebSocketClient (connection) to send
             // in this case: "chat2"
@@ -37,6 +47,7 @@ public class ChatActivity2 extends AppCompatActivity {
             intent.putExtra("key", "chat2");
             intent.putExtra("message", msgEtx.getText().toString());
             LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+            msgEtx.setText(""); // clear the input field
         });
     }
 
@@ -50,7 +61,7 @@ public class ChatActivity2 extends AppCompatActivity {
                 String message = intent.getStringExtra("message");
                 runOnUiThread(() -> {
                     String s = msgTv.getText().toString();
-                    msgTv.setText(s + "\n" + message);
+                    msgTv.setText(s + "\n\t" + message);
                 });
             }
         }

@@ -18,18 +18,20 @@
             android:hint="message"
             android:textSize="20dp"
             android:id="@+id/msgEdt2" />
+
         <Button
+            android:id="@+id/sendBtn2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Send"
-            android:id="@+id/sendBtn2" />
+            android:backgroundTint="#E91E63"
+            android:text="Send" />
     </LinearLayout>
 
 
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="650dp">
+        android:layout_height="600dp">
 
         <TextView
             android:id="@+id/tx2"
@@ -39,6 +41,14 @@
             android:hint="The Conversation will appear here:\n"
             android:textSize="20dp" />
     </ScrollView>
+
+    <Button
+        android:id="@+id/backMainBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:backgroundTint="#E91E63"
+        android:text="Back to Main" />
 
 
 </androidx.appcompat.widget.LinearLayoutCompat>

@@ -2,16 +2,13 @@ package CyTrack.Controllers;
 
 import CyTrack.Entities.User;
 import CyTrack.Services.UserService;
-import org.apache.coyote.Response;
-import org.hibernate.sql.Delete;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 
 @RestController
 @RequestMapping("/user")
@@ -73,19 +70,6 @@ public class UserController {
         return ResponseEntity.ok(users);
     }
 
-    // Get user by username
-    /*
-    @GetMapping("/{username}")
-    public ResponseEntity<User> getUserByUsername(@PathVariable String username) {
-        Optional<User> user = userService.findByUserName(username);
-        if (user.isPresent()) {
-            return ResponseEntity.ok(user.get());
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
-     */
-
     @GetMapping("/{userID}")
     public ResponseEntity<?> getUserByUserID(@PathVariable Long userID) {
         Optional<User> user = userService.findByUserID(userID);
@@ -141,7 +125,9 @@ public class UserController {
             return ResponseEntity.status(404).body(response);
         }
     }
-
+    /*
+    Post request check if the user exists and if the password matches the current password
+     */
     @PostMapping("/resetPassword")
     public ResponseEntity<?> SendUserIDForPassReset(@RequestBody User user) {
         Optional<User> foundUser = userService.findByUserName(user.getUsername());
@@ -164,6 +150,7 @@ public class UserController {
         }
     }
 
+    // Resets password by userID
     @PutMapping("/resetPassword/{userID}")
     public ResponseEntity<?> resetPasswordByUserID(@PathVariable Long userID, @RequestBody User user) {
         Optional<User> foundUser = userService.findByUserID(userID);
@@ -181,7 +168,7 @@ public class UserController {
             return ResponseEntity.status(404).body(response);
         }
     }
-
+    // Delete user
     @DeleteMapping("/{userID}")
     public ResponseEntity<?> deleteUser(@PathVariable Long userID) {
         Optional<User> foundUser = userService.findByUserID(userID);

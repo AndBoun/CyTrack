@@ -12,6 +12,7 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.java_websocket.handshake.ServerHandshake;
 
@@ -34,6 +35,9 @@ public class ChatActivity1 extends AppCompatActivity {
 
         /* send button listener */
         sendBtn.setOnClickListener(v -> {
+            if (msgEtx.getText().length() == 0) {
+                return; // do nothing if the input is empty
+            }
 
             // broadcast this message to the WebSocketService
             // tag it with the key - to specify which WebSocketClient (connection) to send
@@ -42,13 +46,14 @@ public class ChatActivity1 extends AppCompatActivity {
             intent.putExtra("key", "chat1");
             intent.putExtra("message", msgEtx.getText().toString());
             LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+            msgEtx.setText(""); // clear the input field
         });
 
         /* back button listener */
         backMainBtn.setOnClickListener(view -> {
             // got to chat activity
-            Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);
+            finish();
+            Toast.makeText( this, "Exiting chat 1", Toast.LENGTH_SHORT).show();
         });
     }
 
@@ -62,7 +67,7 @@ public class ChatActivity1 extends AppCompatActivity {
                 String message = intent.getStringExtra("message");
                 runOnUiThread(() -> {
                     String s = msgTv.getText().toString();
-                    msgTv.setText(s + "\n" + message);
+                    msgTv.setText(s + "\n\t" + message);
                 });
             }
         }
