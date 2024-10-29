@@ -1,4 +1,4 @@
-package com.example.CyTrack;
+package com.example.CyTrack.Startup;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,11 +11,14 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.core.splashscreen.SplashScreen;
 import android.widget.Button;
-import android.widget.TextView;
 
 import android.widget.Toast;
 
-import org.json.JSONException;
+import com.example.CyTrack.Dashboard.MainDashboardActivity;
+import com.example.CyTrack.R;
+import com.example.CyTrack.Utilities.User;
+import com.example.CyTrack.Utilities.FocusUtils;
+import com.example.CyTrack.Utilities.NetworkUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -39,7 +42,7 @@ public class LoginActivity extends AppCompatActivity {
         SplashScreen splashScreen = SplashScreen.installSplashScreen(this);
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.login_activity);
+        setContentView(R.layout.startup_login_activity);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);

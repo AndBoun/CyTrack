@@ -1,4 +1,4 @@
-package com.example.CyTrack;
+package com.example.CyTrack.Meals;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -6,15 +6,15 @@ import android.util.Log;
 import android.widget.EditText;
 
 import androidx.activity.EdgeToEdge;
-import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.widget.ImageButton;
-import android.widget.TextView;
 import android.widget.Toast;
 
 
-import org.json.JSONException;
+import com.example.CyTrack.R;
+import com.example.CyTrack.Utilities.FocusUtils;
+
 import java.util.HashMap;
 import java.util.Map;
 

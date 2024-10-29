@@ -1,4 +1,4 @@
-package com.example.CyTrack;
+package com.example.CyTrack.Workouts;
 
 import android.app.AlertDialog;
 import android.os.Bundle;
@@ -19,6 +19,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.Request;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.example.CyTrack.Utilities.NetworkUtils;
+import com.example.CyTrack.R;
+import com.example.CyTrack.Utilities.User;
+import com.example.CyTrack.Utilities.VolleySingleton;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -52,7 +56,7 @@ public class WorkoutActivity extends AppCompatActivity implements WorkoutRecycle
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.workout_activity);
+        setContentView(R.layout.workouts_activity);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.workoutScreen), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -86,7 +90,7 @@ public class WorkoutActivity extends AppCompatActivity implements WorkoutRecycle
 
         // Inflate the dialog layout
         LayoutInflater inflater = LayoutInflater.from(this);
-        View dialogView = inflater.inflate(R.layout.dialog_modify_workout, null);
+        View dialogView = inflater.inflate(R.layout.workouts_modify_workout_dialog, null);
 
         // Populate the dialog with workout data
         EditText inputExerciseType = dialogView.findViewById(R.id.inputExerciseType);
@@ -140,7 +144,7 @@ public class WorkoutActivity extends AppCompatActivity implements WorkoutRecycle
     private void showAddWorkoutDialog() {
         // Inflate the dialog layout
         LayoutInflater inflater = LayoutInflater.from(this);
-        View dialogView = inflater.inflate(R.layout.dialog_add_workout, null);
+        View dialogView = inflater.inflate(R.layout.workouts_add_workout_dialog, null);
 
         // Create the AlertDialog
         AlertDialog.Builder builder = new AlertDialog.Builder(this);

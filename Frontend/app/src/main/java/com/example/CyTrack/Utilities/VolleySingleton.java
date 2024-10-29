@@ -1,4 +1,4 @@
-package com.example.CyTrack;
+package com.example.CyTrack.Utilities;
 
 import android.content.Context;
 import android.graphics.Bitmap;

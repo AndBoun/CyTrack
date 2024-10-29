@@ -1,4 +1,4 @@
-package com.example.CyTrack;
+package com.example.CyTrack.Dashboard;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,6 +11,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+
+import com.example.CyTrack.R;
+import com.example.CyTrack.Startup.LoginActivity;
+import com.example.CyTrack.Utilities.User;
+import com.example.CyTrack.Utilities.NetworkUtils;
 
 public class ProfileSettingsActivity extends AppCompatActivity {
 
@@ -29,7 +34,7 @@ public class ProfileSettingsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.profile_settings_activity);
+        setContentView(R.layout.settings_profile_activity);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.profileSettingsScreen), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);

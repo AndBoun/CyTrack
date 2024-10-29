@@ -1,4 +1,4 @@
-package com.example.CyTrack;
+package com.example.CyTrack.Dashboard;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,6 +11,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+
+import com.example.CyTrack.Meals.MealTrackingMain;
+import com.example.CyTrack.R;
+import com.example.CyTrack.Utilities.User;
+import com.example.CyTrack.Workouts.WorkoutActivity;
 
 public class MainDashboardActivity extends AppCompatActivity {
 

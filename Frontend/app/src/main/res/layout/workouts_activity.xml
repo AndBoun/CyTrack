@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:id="@+id/workoutScreen"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".WorkoutActivity">
+    tools:context=".Workouts.WorkoutActivity">
 
     <View
         android:id="@+id/redBox"
@@ -28,7 +28,7 @@
         android:elevation="3dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/arrow_back" />
+        app:srcCompat="@drawable/general_back_arrow_button" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
@@ -51,7 +51,7 @@
         android:elevation="3dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/addworkoutbutton" />
+        app:srcCompat="@drawable/workouts_add_button" />
 
     <ImageView
         android:id="@+id/imageView4"
@@ -62,7 +62,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/redBox"
-        app:srcCompat="@drawable/workoutstitle" />
+        app:srcCompat="@drawable/workouts_title" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

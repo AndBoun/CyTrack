@@ -1,4 +1,4 @@
-package com.example.CyTrack;
+package com.example.CyTrack.Workouts;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -8,6 +8,8 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.CyTrack.R;
 
 import java.util.ArrayList;
 
@@ -28,7 +30,7 @@ public class WorkoutsRecyclerViewAdapter extends RecyclerView.Adapter<WorkoutsRe
     @Override
     public WorkoutsRecyclerViewAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(context);
-        View view = inflater.inflate(R.layout.workout_recycle_layout, parent, false);
+        View view = inflater.inflate(R.layout.workouts_recycle_layout, parent, false);
         return new WorkoutsRecyclerViewAdapter.ViewHolder(view, workoutRecyclerInterface);
     }
 
