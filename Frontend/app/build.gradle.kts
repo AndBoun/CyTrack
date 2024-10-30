@@ -106,7 +106,16 @@ tasks.withType<DokkaTask>().configureEach {
             sourceRoots.from(file("src/main/kotlin"))
         }
         configureEach{
-            suppress.set(true)
+            // Exclude inherited members
+            suppressInheritedMembers.set(true)
+
+            // Exclude specific packages, classes, or files if needed
+            // For example, exclude Android framework packages:
+            perPackageOption {
+                matchingRegex.set("android.*") // or "androidx.*" to exclude AndroidX classes too
+                suppress.set(true)
+            }
+
             skipEmptyPackages.set(true)
             documentedVisibilities.set(
                 setOf(
