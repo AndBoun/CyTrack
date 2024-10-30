@@ -50,7 +50,7 @@ class MyProfile : ComponentActivity(){
     }
 }
 
-private fun getCustomFontFamily(): FontFamily {
+fun getCustomFontFamily(): FontFamily {
     val provider = GoogleFont.Provider(
         providerAuthority = "com.google.android.gms.fonts",
         providerPackage = "com.google.android.gms",
@@ -70,7 +70,7 @@ private fun getCustomFontFamily(): FontFamily {
 
 
 @Composable
-fun ProfileCard(name: String, userName: String, imageUrl: String){
+fun MainProfileCard(name: String, userName: String, imageUrl: String){
     Row(
         verticalAlignment = CenterVertically,
         modifier = Modifier.fillMaxWidth()
@@ -178,7 +178,7 @@ fun ProfileScreen(name: String, userName: String, imageUrl: String){
                 .padding(top = 80.dp),
             horizontalAlignment = CenterHorizontally
         ){
-            ProfileCard(name, userName, imageUrl)
+            MainProfileCard(name, userName, imageUrl)
 
             Spacer(modifier = Modifier.height(55.dp))
 
@@ -207,7 +207,7 @@ fun ProfileCardPreview(){
         color = Color(0xFFC8102E)
 
     ) {
-         ProfileCard(
+         MainProfileCard(
             name = "Cati",
             userName = "#cattack",
             imageUrl = "https://thumbs.dreamstime.com/b/cute-cat-portrait-square-photo-beautiful-white-closeup-105311158.jpg"
