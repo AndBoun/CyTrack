@@ -1,4 +1,5 @@
 package CyTrack.Entities;
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
@@ -26,41 +27,51 @@ public class FriendRequest {
     @Enumerated(EnumType.STRING)
     private RequestStatus status;
 
+    // Default constructor
+    public FriendRequest() {
+    }
+
     public FriendRequest(User sender, User receiver) {
         this.sender = sender;
         this.receiver = receiver;
         this.status = RequestStatus.PENDING;
     }
 
-    public User getSender(){
+    public User getSender() {
         return sender;
     }
 
-    public User getReceiver(){
+    public User getReceiver() {
         return receiver;
     }
 
-    public void setSender(User sender){
+    public void setSender(User sender) {
         this.sender = sender;
     }
 
-    public void setReceiver(User receiver){
+    public void setReceiver(User receiver) {
         this.receiver = receiver;
     }
 
-    public Long getFriendRequestID(){
+    public Long getFriendRequestID() {
         return friendRequestID;
     }
 
-    public void setFriendRequestID(Long friendRequestID){
+    public void setFriendRequestID(Long friendRequestID) {
         this.friendRequestID = friendRequestID;
     }
 
+    public void setStatus(RequestStatus requestStatus) {
+        this.status = requestStatus;
+    }
+
+    public RequestStatus getStatus() {
+        return status;
+    }
 
     public enum RequestStatus {
         ACCEPTED,
         DECLINED,
         PENDING
     }
-
 }
