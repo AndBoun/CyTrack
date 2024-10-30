@@ -1,7 +1,5 @@
 package CyTrack.Entities;
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import org.hibernate.annotations.OnDelete;
@@ -9,31 +7,27 @@ import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 public class FriendRequest {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long friendRequestID;
 
     @ManyToOne
-    @JsonBackReference
     @OnDelete(action = OnDeleteAction.CASCADE)
+    @JsonBackReference(value = "sender-friendRequests")
     @JsonProperty("sender")
     private User sender;
 
     @ManyToOne
-    @JsonManagedReference
     @OnDelete(action = OnDeleteAction.CASCADE)
+    @JsonBackReference(value = "receiver-friendRequests")
     @JsonProperty("receiver")
     private User receiver;
 
     @Enumerated(EnumType.STRING)
-    private RequestStatus status = RequestStatus.PENDING;
+    private RequestStatus status;
 
-    public FriendRequest(){
 
-    }
-
-    public FriendRequest(User sender, User receiver){
+    public FriendRequest(User sender, User receiver) {
         this.sender = sender;
         this.receiver = receiver;
         this.status = RequestStatus.PENDING;
@@ -62,6 +56,7 @@ public class FriendRequest {
     public void setFriendRequestID(Long friendRequestID){
         this.friendRequestID = friendRequestID;
     }
+
 
     public enum RequestStatus {
         ACCEPTED,

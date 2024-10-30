@@ -1,5 +1,6 @@
 package CyTrack.Entities;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -16,6 +17,22 @@ public class User {
     // One user can have many workouts
     @OneToMany(mappedBy = "user")
     private List<Workout> workouts;
+
+    @ManyToMany
+    @JoinTable(
+            name = "friends",
+            joinColumns = @JoinColumn(name = "user1_id"),
+            inverseJoinColumns = @JoinColumn(name = "user2_id")
+    )
+    private List<Friends> friends = new ArrayList<>();
+
+    @OneToMany(mappedBy = "sender")
+    @JsonManagedReference
+    private List<FriendRequest> sentRequests = new ArrayList<>();
+
+    @OneToMany(mappedBy = "receiver")
+    @JsonManagedReference
+    private List<FriendRequest> receivedRequests = new ArrayList<>();
 
 
     // Username is unique
@@ -100,6 +117,32 @@ public class User {
     public void setWorkouts(List<Workout> workouts) {
         this.workouts = workouts;
     }
+
+    public List<Friends> getFriends() {
+        return friends;
+    }
+
+    public void setFriends(List<Friends> friends) {
+        this.friends = friends;
+    }
+
+    public List<FriendRequest> getSentRequests() {
+        return sentRequests;
+    }
+
+    public void setSentRequests(List<FriendRequest> sentRequests) {
+        this.sentRequests = sentRequests;
+    }
+
+    public List<FriendRequest> getReceivedRequests() {
+        return receivedRequests;
+    }
+
+    public void setReceivedRequests(List<FriendRequest> receivedRequests) {
+        this.receivedRequests = receivedRequests;
+    }
+
+
 
 
 

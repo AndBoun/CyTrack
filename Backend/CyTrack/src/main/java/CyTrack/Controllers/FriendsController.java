@@ -6,15 +6,21 @@ import CyTrack.Repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import CyTrack.Services.FriendsService;
+import CyTrack.Services.UserService;
 
-
-@RestController("/user/{userID}/friends")
+@RestController("/{userID}/friends")
 public class FriendsController {
 
-    @Autowired
-    FriendsRepository friendsRepository;
+    private final FriendsService friendsService;
+    private final UserService userService;
 
     @Autowired
-    UserRepository userRepository;
+    public FriendsController(FriendsService friendsService, UserService userService) {
+        this.friendsService = friendsService;
+        this.userService = userService;
+    }
+
+
 
 }

@@ -1,11 +1,9 @@
 package CyTrack.Repositories;
-import CyTrack.Entities.Friends;
+
+import CyTrack.Entities.FriendRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public interface FriendsRepository extends JpaRepository<Friends, Long> {
-    Friends findByFriendID(Long friendID);
-
-    void deleteByFriendID(Long friendID);
+public interface FriendsRepository extends JpaRepository<FriendRequest, Long> {
+    boolean existsBySenderUserID(Long userID);
+    boolean existsByReceiverUserID(Long userID);
 }
