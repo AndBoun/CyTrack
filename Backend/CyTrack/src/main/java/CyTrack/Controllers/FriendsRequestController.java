@@ -25,7 +25,7 @@ public class FriendsRequestController {
     }
     //Sends a friend request, by inputting a person's username.
     @PostMapping("")
-    public ResponseEntity<?> sendFriendRequest(@PathVariable Long userID, @RequestParam String friendUsername) {
+    public ResponseEntity<?> sendFriendRequest(@PathVariable Long userID, @RequestBody String friendUsername) {
         Optional<User> friend = userService.findByUserName(friendUsername);
         if (friend.isPresent()){
             //checks if the user is already friends with the friend

@@ -27,15 +27,13 @@ public class User {
     private List<Friends> friends = new ArrayList<>();
 
     @OneToMany(mappedBy = "sender")
-    @JsonManagedReference
+    @JsonManagedReference(value = "sender-friendRequests")
     private List<FriendRequest> sentRequests = new ArrayList<>();
 
     @OneToMany(mappedBy = "receiver")
-    @JsonManagedReference
+    @JsonManagedReference(value = "receiver-friendRequests")
     private List<FriendRequest> receivedRequests = new ArrayList<>();
 
-
-    // Username is unique
     @Column(nullable = false, unique = true)
     private String username;
     private String firstName;

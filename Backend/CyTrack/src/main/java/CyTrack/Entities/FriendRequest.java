@@ -26,7 +26,6 @@ public class FriendRequest {
     @Enumerated(EnumType.STRING)
     private RequestStatus status;
 
-
     public FriendRequest(User sender, User receiver) {
         this.sender = sender;
         this.receiver = receiver;
