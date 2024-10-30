@@ -11,6 +11,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -28,6 +29,7 @@ public class FriendsService {
         this.userRepository = userRepository;
 
     }
+
 
     // Checks if two users are friends by seeing if there is an accepted friend request between them
     public boolean checkIfFriends(Long userID, Long friendID) {
@@ -68,6 +70,9 @@ public class FriendsService {
         template.convertAndSendToUser(receiverId.toString(), "/queue/friendRequest", message);
     }
 
+    public List<Friends> getAllFriends(Long userID) {
+        return friendsRepository.findByUser1_UserIDOrUser2_UserID(userID, userID);
+    }
     // Checks if a friend request has already been sent from sender to receiver
     public boolean checkIfRequestSent(Long senderID, Long receiverID) {
         return friendRequestRepository.existsBySenderUserIDAndReceiverUserIDAndStatus(senderID, receiverID, FriendRequest.RequestStatus.PENDING);
