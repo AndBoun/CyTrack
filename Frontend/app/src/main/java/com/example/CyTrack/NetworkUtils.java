@@ -99,6 +99,7 @@ class NetworkUtils {
 
                 User user = new User(
                         data.getInt("userID"),
+                        data.getString("username"),
                         data.getString("firstName"),
                         data.getString("lastName"),
                         data.getInt("age"),

@@ -2,6 +2,7 @@ package com.example.CyTrack;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -10,7 +11,9 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.core.view.WindowInsetsControllerCompat;
 
 public class MainDashboardActivity extends AppCompatActivity {
 
@@ -28,6 +31,8 @@ public class MainDashboardActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        StatusBarUtil.setStatusBarColor(this, R.color.CyRed);
 
         user = (User) getIntent().getSerializableExtra("user");
 
@@ -65,6 +70,15 @@ public class MainDashboardActivity extends AppCompatActivity {
             intent.putExtra("user", user);
             startActivity(intent);
         });
+
+        Button myProfileButton = findViewById(R.id.myProfileButton);
+        myProfileButton.setOnClickListener(v -> {
+            // Open My Profile Activity
+            Intent intent = new Intent(this, MyProfile.class);
+            intent.putExtra("user", user);
+            startActivity(intent);
+        });
+
 
         // Handle back press
         OnBackPressedCallback callback = new OnBackPressedCallback(true) {

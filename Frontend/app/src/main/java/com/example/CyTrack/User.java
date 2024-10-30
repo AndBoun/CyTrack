@@ -16,13 +16,20 @@ class User implements Serializable {
 
     private int streak;
 
-    User(int ID, String firstName,String lastName, int age, String gender, int streak) {
+    private final String username;
+
+    User(int ID, String username, String firstName,String lastName, int age, String gender, int streak) {
         this.ID = ID;
+        this.username = username;
         this.firstName = firstName;
         this.lastName = lastName;
         this.age = age;
         this.gender = gender;
         this.streak = streak;
+    }
+
+    public String getUsername() {
+        return username;
     }
 
     int getID() {
