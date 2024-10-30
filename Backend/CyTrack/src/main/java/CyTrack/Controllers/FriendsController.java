@@ -43,6 +43,11 @@ public class FriendsController {
         return ResponseEntity.status(200).body(response);
     }
 
+    @DeleteMapping("/{friendID}")
+    public ResponseEntity<?> removeFriend(@PathVariable Long userId){
+        return null;
+    }
+
 
 
 }
