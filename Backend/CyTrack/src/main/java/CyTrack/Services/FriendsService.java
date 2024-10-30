@@ -31,6 +31,8 @@ public class FriendsService {
     }
 
 
+
+
     // Checks if two users are friends by seeing if there is an accepted friend request between them
     public boolean checkIfFriends(Long userID, Long friendID) {
         return friendsRepository.existsByUser1_UserIDAndUser2_UserID(userID, friendID) ||
