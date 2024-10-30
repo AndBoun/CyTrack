@@ -56,8 +56,6 @@ public class FriendsRequestController {
             FriendRequest friendRequest = friendsService.sendFriendRequest(friend.get().getUserID(), userID);
             FriendRequestIDResponse response = new FriendRequestIDResponse("success", friendRequest.getFriendRequestID(), "Friend request sent");
 
-            friendsService.sendNotif(userID);
-
             return ResponseEntity.status(201).body(response);
         }
         ErrorResponse response = new ErrorResponse("error", 404, "User not found", "User not found");

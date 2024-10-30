@@ -13,9 +13,9 @@ public class LoginResponse {
     }
 
     // Constructor for GET response
-    public LoginResponse(String status, Long userID, String firstName, String lastName, int age, String gender, int streak, String message) {
+    public LoginResponse(String status, Long userID,String username, String firstName, String lastName, int age, String gender, int streak, String message) {
         this.status = status;
-        this.data = new Data(userID, firstName, lastName, age, gender, streak);
+        this.data = new Data(userID, username, firstName, lastName, age, gender, streak);
         this.message = message;
     }
 
@@ -45,6 +45,7 @@ public class LoginResponse {
 
     public static class Data {
         private Long userID;
+        private String username;
         private String firstName;
         private String lastName;
         private int age;
@@ -57,8 +58,9 @@ public class LoginResponse {
         }
 
         // Constructor for GET response
-        public Data(Long userID, String firstName, String lastName, int age, String gender, int streak) {
+        public Data(Long userID,String username, String firstName, String lastName, int age, String gender, int streak) {
             this.userID = userID;
+            this.username = username;
             this.firstName = firstName;
             this.lastName = lastName;
             this.age = age;
@@ -72,6 +74,14 @@ public class LoginResponse {
 
         public void setUserID(Long userID) {
             this.userID = userID;
+        }
+
+        public String getUsername() {
+            return username;
+        }
+
+        public void setUsername(String username) {
+            this.username = username;
         }
 
         public String getFirstName() {

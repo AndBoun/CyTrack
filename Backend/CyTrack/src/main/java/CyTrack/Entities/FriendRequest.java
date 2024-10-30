@@ -1,6 +1,7 @@
 package CyTrack.Entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import org.hibernate.annotations.OnDelete;
@@ -14,14 +15,12 @@ public class FriendRequest {
 
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JsonBackReference(value = "sender-friendRequests")
-    @JsonProperty("sender")
+    @JsonIgnoreProperties("sentRequests")
     private User sender;
 
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JsonBackReference(value = "receiver-friendRequests")
-    @JsonProperty("receiver")
+    @JsonIgnoreProperties("receivedRequests")
     private User receiver;
 
     @Enumerated(EnumType.STRING)

@@ -78,6 +78,7 @@ public class UserController {
             LoginResponse response = new LoginResponse(
                     "success",
                     foundUser.getUserID(),
+                    foundUser.getUsername(),
                     foundUser.getFirstName(),
                     foundUser.getLastName(),
                     foundUser.getAge(),

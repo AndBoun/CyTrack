@@ -1,5 +1,7 @@
 package CyTrack.Entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
@@ -27,11 +29,11 @@ public class User {
     private List<Friends> friends = new ArrayList<>();
 
     @OneToMany(mappedBy = "sender")
-    @JsonManagedReference(value = "sender-friendRequests")
+    @JsonIgnoreProperties("sender")
     private List<FriendRequest> sentRequests = new ArrayList<>();
 
     @OneToMany(mappedBy = "receiver")
-    @JsonManagedReference(value = "receiver-friendRequests")
+    @JsonIgnoreProperties("receiver")
     private List<FriendRequest> receivedRequests = new ArrayList<>();
 
     @Column(nullable = false, unique = true)

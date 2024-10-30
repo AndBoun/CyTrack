@@ -7,6 +7,7 @@ import CyTrack.Repositories.FriendRequestRepository;
 import CyTrack.Repositories.FriendsRepository;
 import CyTrack.Repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
@@ -39,15 +40,17 @@ public class FriendsService {
         User sender = userRepository.findById(userID).orElseThrow(() -> new RuntimeException("Sender not found"));
         User receiver = userRepository.findById(friendID).orElseThrow(() -> new RuntimeException("Receiver not found"));
 
-        // Check if a friend request already exists in either direction
         if (checkIfRequestSent(userID, friendID) || checkIfRequestReceived(userID, friendID)) {
             throw new RuntimeException("Friend request already exists between these users");
         }
 
-        // Create and save a new friend request with PENDING status
         FriendRequest friendRequest = new FriendRequest(sender, receiver);
         friendRequest.setStatus(FriendRequest.RequestStatus.PENDING);
-        return friendRequestRepository.save(friendRequest);
+        friendRequestRepository.save(friendRequest);
+
+        sendNotification(receiver.getUserID(), sender.getUsername());
+
+        return friendRequest;
     }
 
     public void acceptFriendRequest(FriendRequest friendRequest){
@@ -60,10 +63,9 @@ public class FriendsService {
         friends.setFriendRequest(friendRequest);
         friendsRepository.save(friends);
     }
-
-    public void sendNotif(Long userId){
-        String message = "You have a new friend request by " + userRepository.findById(userId).get().getUsername();
-        template.convertAndSend("/topic/notification/", message);
+    private void sendNotification(Long receiverId, String senderUsername) {
+        String message = "You have a new friend request from " + senderUsername;
+        template.convertAndSendToUser(receiverId.toString(), "/queue/friendRequest", message);
     }
 
     // Checks if a friend request has already been sent from sender to receiver
