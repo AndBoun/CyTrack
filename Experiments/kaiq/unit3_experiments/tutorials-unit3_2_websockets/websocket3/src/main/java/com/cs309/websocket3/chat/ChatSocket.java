@@ -58,7 +58,7 @@ public class ChatSocket {
 		sendMessageToPArticularUser(username, getChatHistory());
 		
     // broadcast that new user joined
-		String message = "User:" + username + " has Joined the Chat";
+		String message = "User:" + username + " has entered the ZONE";
 		broadcast(message);
 	}
 

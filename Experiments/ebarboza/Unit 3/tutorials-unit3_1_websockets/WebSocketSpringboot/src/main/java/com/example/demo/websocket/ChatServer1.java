@@ -67,10 +67,10 @@ public class ChatServer1 {
             usernameSessionMap.put(username, session);
 
             // send to the user joining in
-            sendMessageToPArticularUser(username, "Welcome to the chat server, "+username);
+            sendMessageToPArticularUser(username, "Welcome to CHAT 1 RAAAHH, "+username);
 
             // send to everyone in the chat
-            broadcast("User: " + username + " has Joined the Chat");
+            broadcast("User: " + username + " is here in chat 1 lol");
         }
     }
 
@@ -90,7 +90,14 @@ public class ChatServer1 {
         logger.info("[onMessage] " + username + ": " + message);
 
         // Direct message to a user using the format "@username <message>"
-        if (message.startsWith("@")) {
+        // Check if the message is the "/list" command
+        if (message.equalsIgnoreCase("/list")) {
+            // Create a list of all connected usernames
+            String userList = String.join(", ", usernameSessionMap.keySet());
+            // Send the list back to the requesting user
+            sendMessageToPArticularUser(username, "Currently connected users: " + userList);
+        }
+        else if (message.startsWith("@")) {
 
             // split by space
             String[] split_msg =  message.split("\\s+");
@@ -129,7 +136,7 @@ public class ChatServer1 {
         usernameSessionMap.remove(username);
 
         // send the message to chat
-        broadcast(username + " disconnected");
+        broadcast(username + " left chat 1 mane ");
     }
 
     /**

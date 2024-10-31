@@ -8,10 +8,11 @@ import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 public class Workout {
+    // =============================== Fields ================================== //
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)  // Auto-incremented primary key
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long workoutID;
-
+    // Many workouts can belong to one user
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userID", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
@@ -23,10 +24,10 @@ public class Workout {
     private int calories;
     private String date;
 
-    // Default constructor
+    // =============================== Constructors ================================== //
     public Workout() {}
 
-    // Constructor with fields
+
     public Workout(String exerciseType, int duration, int calories, String date) {
         this.exerciseType = exerciseType;
         this.duration = duration;
@@ -34,7 +35,7 @@ public class Workout {
         this.date = date;
     }
 
-    // Getters and setters
+    // =============================== Getters and Setters for each field ================================== //
     public Long getWorkoutID() {
         return workoutID;
     }

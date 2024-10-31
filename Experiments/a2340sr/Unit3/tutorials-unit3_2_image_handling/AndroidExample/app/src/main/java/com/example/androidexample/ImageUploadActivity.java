@@ -103,7 +103,7 @@ public class ImageUploadActivity extends AppCompatActivity {
             InputStream inputStream = getContentResolver().openInputStream(imageUri);
             ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
 
-            int bufferSize = 1024;
+            int bufferSize = 10000;
             byte[] buffer = new byte[bufferSize];
 
             int len;
@@ -114,6 +114,7 @@ public class ImageUploadActivity extends AppCompatActivity {
             return byteBuffer.toByteArray();
         } catch (IOException e) {
             e.printStackTrace();
+            Toast.makeText(getApplicationContext(), "image not supported",Toast.LENGTH_LONG).show();
         }
         return null;
     }
