@@ -20,7 +20,7 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<Workout> workouts;
 
-    @OneToMany
+    @OneToMany(mappedBy = "user")
     private List<Meal> meals;
 
     @ManyToMany

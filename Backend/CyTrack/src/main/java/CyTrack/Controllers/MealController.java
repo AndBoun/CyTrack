@@ -87,8 +87,6 @@ public class MealController {
         return ResponseEntity.status(404).body(response);
     }
 
-    //TODO - finish refactoring and updating to use correct methods and responses
-
     /**
      * CREATE new meal entry
      *
