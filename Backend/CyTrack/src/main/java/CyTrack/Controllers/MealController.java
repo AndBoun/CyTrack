@@ -112,7 +112,7 @@ public class MealController {
     /**
      * DELETE a meal row based on a given input
      */
-    @DeleteMapping("/{mealId}")
+    @DeleteMapping("/{userID}/meal/{mealID}")
     ResponseEntity<?> deleteMeal(@PathVariable Long userID, @PathVariable Long mealID) {
         Optional<User> user = userService.findByUserID(userID);
         if (user.isPresent()) {

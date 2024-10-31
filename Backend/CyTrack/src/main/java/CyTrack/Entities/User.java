@@ -13,6 +13,8 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private List<Workout> workouts;
+
+    @OneToMany
     private List<Meal>  meals;
 
     @Column(nullable = false, unique = true)
