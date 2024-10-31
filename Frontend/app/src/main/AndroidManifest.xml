@@ -18,7 +18,7 @@
         <!--        <activity android:name=".DirectMessage"-->
         <!--            android:exported="false"/>-->
 
-        <activity android:name=".DirectMessage"
+        <activity android:name=".Social.DirectMessage"
             android:exported="true"
             >
             <intent-filter>
@@ -27,11 +27,11 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".MyMessages"
+        <activity android:name=".Social.MyMessages"
             android:exported="false"/>
-        <activity android:name=".MyFriends"
+        <activity android:name=".Social.MyFriends"
             android:exported="false"/>
-        <activity android:name=".MyProfile"
+        <activity android:name=".Social.MyProfile"
             android:exported="false"/>
         <activity android:name=".Workouts.WorkoutActivity"
             android:exported="false"/>

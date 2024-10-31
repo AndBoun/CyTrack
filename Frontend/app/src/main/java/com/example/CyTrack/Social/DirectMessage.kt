@@ -1,11 +1,9 @@
-package com.example.CyTrack
+package com.example.CyTrack.Social
 
 import android.os.Bundle
-import android.os.PersistableBundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -26,7 +24,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -44,16 +41,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.VerticalAlignmentLine
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.CyTrack.R
+import com.example.CyTrack.Utilities.User
+import com.example.CyTrack.Utilities.StatusBarUtil
 
 
 class DirectMessage : ComponentActivity(){
@@ -180,7 +177,7 @@ fun DirectMessageTopCard(name: String, username : String , img : String){
                 modifier = Modifier.size(24.dp)
             ) {
                 Icon(
-                    painter = painterResource(R.drawable.arrow_back),
+                    painter = painterResource(R.drawable.general_back_arrow_button),
                     contentDescription = "Back arrow",
                     tint = Color.White
                 )
@@ -189,7 +186,7 @@ fun DirectMessageTopCard(name: String, username : String , img : String){
             Spacer(modifier = Modifier.width(20.dp))
 
             Image(
-                painter = painterResource(R.drawable.generic_avatar),
+                painter = painterResource(R.drawable.general_generic_avatar),
                 contentDescription = "Contact profile picture",
                 modifier = Modifier
                     .size(50.dp)

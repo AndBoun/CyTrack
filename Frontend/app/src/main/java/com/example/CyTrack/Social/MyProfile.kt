@@ -1,4 +1,4 @@
-package com.example.CyTrack
+package com.example.CyTrack.Social
 
 import android.content.Intent
 import android.os.Bundle
@@ -35,6 +35,9 @@ import androidx.compose.ui.text.googlefonts.GoogleFont
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.CyTrack.R
+import com.example.CyTrack.Utilities.User
+import com.example.CyTrack.Utilities.StatusBarUtil
 
 class MyProfile : ComponentActivity(){
 
@@ -85,7 +88,7 @@ fun MainProfileCard(name: String, userName: String, imageUrl: String){
         ) {
             Image(
 //            painter = rememberAsyncImagePainter(imageUrl),
-                painter = painterResource(R.drawable.generic_avatar),
+                painter = painterResource(R.drawable.general_generic_avatar),
                 contentDescription = "Profile picture",
                 modifier = Modifier
                     .size(120.dp)

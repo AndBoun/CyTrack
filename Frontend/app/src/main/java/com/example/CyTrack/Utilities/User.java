@@ -1,4 +1,4 @@
-package com.example.CyTrack;
+package com.example.CyTrack.Utilities;
 
 import androidx.annotation.NonNull;
 
@@ -18,7 +18,7 @@ public class User implements Serializable {
 
     private int streak;
 
-    User(int ID, String username, String firstName,String lastName, int age, String gender, int streak) {
+    public User(int ID, String username, String firstName,String lastName, int age, String gender, int streak) {
         this.ID = ID;
         this.username = username;
         this.firstName = firstName;
@@ -52,27 +52,27 @@ public class User implements Serializable {
         this.lastName = lastName;
     }
 
-    int getAge() {
+    public int getAge() {
         return age;
     }
 
-    void setAge(int age) {
+    public void setAge(int age) {
         this.age = age;
     }
 
-    String getGender() {
+    public String getGender() {
         return gender;
     }
 
-    void setGender(String gender) {
+    public void setGender(String gender) {
         this.gender = gender;
     }
 
-    int getStreak() {
+    public int getStreak() {
         return streak;
     }
 
-    void setStreak(int streak) {
+    public void setStreak(int streak) {
         this.streak = streak;
     }
 

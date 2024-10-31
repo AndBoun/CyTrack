@@ -17,7 +17,9 @@ import androidx.core.view.WindowInsetsControllerCompat;
 
 import com.example.CyTrack.Meals.MealTrackingMain;
 import com.example.CyTrack.R;
+import com.example.CyTrack.Social.MyProfile;
 import com.example.CyTrack.Utilities.User;
+import com.example.CyTrack.Utilities.StatusBarUtil;
 import com.example.CyTrack.Workouts.WorkoutActivity;
 
 public class MainDashboardActivity extends AppCompatActivity {

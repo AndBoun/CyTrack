@@ -1,4 +1,4 @@
-package com.example.CyTrack;
+package com.example.CyTrack.Utilities;
 
 import android.app.Service;
 import android.content.BroadcastReceiver;

@@ -1,4 +1,4 @@
-package com.example.CyTrack
+package com.example.CyTrack.Social
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -37,6 +37,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.CyTrack.R
+import com.example.CyTrack.Utilities.User
+import com.example.CyTrack.Utilities.StatusBarUtil
 
 class MyFriends : ComponentActivity() {
 
@@ -87,7 +90,7 @@ fun ListProfileCard(name: String, username: String, img: String) {
                 .clickable(onClick = { /*TODO*/ })
         ) {
             Image(
-                painter = painterResource(id = R.drawable.generic_avatar),
+                painter = painterResource(id = R.drawable.general_generic_avatar),
                 contentDescription = "Profile Picture",
                 modifier = Modifier.size(40.dp),
             )
@@ -214,7 +217,7 @@ fun MyFriendsTopCard() {
                 onClick = {},
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.arrow_back),
+                    painter = painterResource(id = R.drawable.general_back_arrow_button),
                     contentDescription = "Back arrow",
                     modifier = Modifier.size(24.dp)
                 )

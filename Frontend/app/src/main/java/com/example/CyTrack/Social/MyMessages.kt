@@ -1,4 +1,4 @@
-package com.example.CyTrack
+package com.example.CyTrack.Social
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -28,6 +28,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
+import com.example.CyTrack.R
+import com.example.CyTrack.Utilities.User
+import com.example.CyTrack.Utilities.StatusBarUtil
 
 class MyMessages : ComponentActivity() {
 
@@ -54,7 +57,7 @@ fun ListMessageCard(name: String, message: String, img: String) {
                 .fillMaxWidth()
         ){
             Image(
-                painter = painterResource(R.drawable.generic_avatar),
+                painter = painterResource(R.drawable.general_generic_avatar),
                 contentDescription = "Contact profile picture",
                 modifier = Modifier
                     .size(40.dp)
