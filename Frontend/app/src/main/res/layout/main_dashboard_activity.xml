@@ -6,7 +6,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Dashboard.MainDashboardActivity">
+
     <ScrollView
+        android:id="@+id/scrollView2"
         android:layout_width="412dp"
         android:layout_height="492dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -25,7 +27,7 @@
                 android:layout_gravity="center"
                 android:layout_marginTop="32dp"
                 android:backgroundTint="#00FFFFFF"
-                app:srcCompat="@drawable/workouttrackingbutton" />
+                app:srcCompat="@drawable/main_dashboard_workout_button" />
 
             <ImageButton
                 android:id="@+id/mealTrackingButton"
@@ -34,7 +36,7 @@
                 android:layout_gravity="center"
                 android:layout_marginTop="32dp"
                 android:backgroundTint="#00FFFFFF"
-                app:srcCompat="@drawable/mealtrackingbutton" />
+                app:srcCompat="@drawable/main_dashboard_meal_tracking_button" />
 
             <ImageButton
                 android:id="@+id/exerciseTrackingButton"
@@ -43,13 +45,13 @@
                 android:layout_gravity="center"
                 android:layout_marginTop="32dp"
                 android:backgroundTint="#00FFFFFF"
-                app:srcCompat="@drawable/exercisetrackingbutton" />
+                app:srcCompat="@drawable/main_dashboard_exercise_tracking_button" />
 
             <ImageView
                 android:id="@+id/imageView3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:srcCompat="@drawable/cy_clone" />
+                app:srcCompat="@drawable/general_cy_clone_picture" />
         </LinearLayout>
     </ScrollView>
 
@@ -71,7 +73,7 @@
         android:backgroundTint="#00FFFFFF"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/generic_avatar" />
+        app:srcCompat="@drawable/general_generic_avatar" />
 
     <ImageView
         android:id="@+id/imageView6"
@@ -82,7 +84,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/cytrack_text" />
+        app:srcCompat="@drawable/general_cytrack_text" />
 
     <ImageButton
         android:id="@+id/notificationButton"
@@ -92,7 +94,7 @@
         android:backgroundTint="#00FFFFFF"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/notifications" />
+        app:srcCompat="@drawable/general_notification_button" />
 
     <TextView
         android:id="@+id/helloTextView"
@@ -126,10 +128,10 @@
         android:id="@+id/myProfileButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="48dp"
-        android:text="Button"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="104dp"
+        android:text="MyProfile"
         app:layout_constraintBottom_toTopOf="@+id/scrollView2"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

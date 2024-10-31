@@ -131,6 +131,7 @@ fun MainProfileCard(name: String, userName: String, imageUrl: String){
 fun FriendsButton(onClick: () -> Unit){
     Column(
         horizontalAlignment = CenterHorizontally,
+        modifier = Modifier.clickable(onClick = onClick)
     ){
         Image(
             painter = painterResource(R.drawable.general_friends_icon),
