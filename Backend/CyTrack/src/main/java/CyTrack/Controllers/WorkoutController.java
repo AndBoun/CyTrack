@@ -12,10 +12,11 @@ import java.util.List;
 import java.util.Optional;
 //Controller for Workout entity
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/workout")
 public class WorkoutController {
     private final WorkoutService workoutService;
     private final UserService userService;
+
     //Constructor
     @Autowired
     public WorkoutController(WorkoutService workoutService, UserService userService) {
@@ -36,6 +37,43 @@ public class WorkoutController {
         ErrorResponse response = new ErrorResponse("error", 404, "User not found", "User not found");
         return ResponseEntity.status(404).body(response);
     }
+
+    // Start a workout
+    @PostMapping("/{userID}/workout/{workoutID}/start")
+    public ResponseEntity<?> startWorkout(@PathVariable Long userID, @PathVariable Long workoutID) {
+        Optional<User> user = userService.findByUserID(userID);
+        if (user.isPresent()) {
+            Optional<Workout> workout = workoutService.findByWorkoutID(workoutID);
+            if (workout.isPresent()) {
+                Workout startedWorkout = workoutService.startWorkout(workoutID);
+                WorkoutIDResponse response = new WorkoutIDResponse("success", workoutID, "Workout started");
+                return ResponseEntity.status(200).body(response);
+            }
+            ErrorResponse response = new ErrorResponse("error", 404, "Workout not found", "Workout not found");
+            return ResponseEntity.status(404).body(response);
+        }
+        ErrorResponse response = new ErrorResponse("error", 404, "User not found", "User not found");
+        return ResponseEntity.status(404).body(response);
+    }
+
+    // End a workout
+    @PostMapping("/{userID}/workout/{workoutID}/end")
+    public ResponseEntity<?> endWorkout(@PathVariable Long userID, @PathVariable Long workoutID) {
+        Optional<User> user = userService.findByUserID(userID);
+        if (user.isPresent()) {
+            Optional<Workout> workout = workoutService.findByWorkoutID(workoutID);
+            if (workout.isPresent()) {
+                Workout endedWorkout = workoutService.endWorkout(workoutID);
+                WorkoutIDResponse response = new WorkoutIDResponse("success", workoutID, "Workout ended");
+                return ResponseEntity.status(200).body(response);
+            }
+            ErrorResponse response = new ErrorResponse("error", 404, "Workout not found", "Workout not found");
+            return ResponseEntity.status(404).body(response);
+        }
+        ErrorResponse response = new ErrorResponse("error", 404, "User not found", "User not found");
+        return ResponseEntity.status(404).body(response);
+    }
+
     //Get all workouts by user ID
     @GetMapping("/{userID}/workout")
     public ResponseEntity<?> getAllWorkoutsByUserID(@PathVariable Long userID) {
