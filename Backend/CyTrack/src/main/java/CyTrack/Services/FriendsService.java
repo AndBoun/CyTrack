@@ -47,8 +47,9 @@ public class FriendsService {
         if (checkIfRequestSent(userID, friendID) || checkIfRequestReceived(userID, friendID)) {
             throw new RuntimeException("Friend request already exists between these users");
         }
-
-        FriendRequest friendRequest = new FriendRequest(sender, receiver);
+        String senderUsername = sender.getUsername();
+        String receiverUsername = receiver.getUsername();
+        FriendRequest friendRequest = new FriendRequest(sender, senderUsername, receiver, receiverUsername);
         friendRequest.setStatus(FriendRequest.RequestStatus.PENDING);
         friendRequestRepository.save(friendRequest);
 
@@ -63,7 +64,7 @@ public class FriendsService {
         friendRequestRepository.save(friendRequest);
 
         // Create a new Friends record
-        Friends friends = new Friends(friendRequest.getSender(), friendRequest.getReceiver());
+        Friends friends = new Friends(friendRequest.getSender(), friendRequest.getSender().getUsername(), friendRequest.getReceiver(), friendRequest.getReceiver().getUsername());
         friends.setFriendRequest(friendRequest);
         friendsRepository.save(friends);
     }
