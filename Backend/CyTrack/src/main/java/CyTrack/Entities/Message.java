@@ -4,7 +4,10 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.util.Date;
-
+/*
+ *@Author Kai Quach
+ * Class for the message entity
+ */
 @Entity
 @Table(name = "message")
 public class Message {

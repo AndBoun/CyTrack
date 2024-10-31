@@ -5,6 +5,10 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+/*
+ *@Author Kai Quach
+ * Class for the Friends entity
+ */
 @Entity
 public class Friends {
     @Id

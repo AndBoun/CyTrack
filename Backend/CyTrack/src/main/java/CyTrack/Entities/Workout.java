@@ -5,7 +5,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-
+/*
+ *@Author Kai Quach
+ * Class for the Workout entity
+ */
 @Entity
 public class Workout {
     // =============================== Fields ================================== //
