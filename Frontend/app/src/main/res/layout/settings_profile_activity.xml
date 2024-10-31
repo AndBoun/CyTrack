@@ -33,7 +33,7 @@
                 app:layout_constraintHorizontal_bias="0.491"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/topCardImageView"
-                app:srcCompat="@drawable/deleteaccountbutton" />
+                app:srcCompat="@drawable/settings_delete_account_button" />
 
             <ImageButton
                 android:id="@+id/logOutButton"
@@ -43,7 +43,7 @@
                 android:layout_gravity="center"
                 android:layout_marginTop="32dp"
 
-                app:srcCompat="@drawable/logoutbutton" />
+                app:srcCompat="@drawable/settings_logout_button" />
 
         </LinearLayout>
     </ScrollView>
@@ -60,13 +60,13 @@
 
     <ImageView
         android:id="@+id/profilePicture"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="111dp"
+        android:layout_height="109dp"
         android:layout_marginStart="40dp"
-        android:layout_marginTop="80dp"
+        android:layout_marginTop="85dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/generic_avatar_settings" />
+        app:srcCompat="@drawable/general_generic_avatar" />
 
     <ImageButton
         android:id="@+id/backButton"
@@ -77,7 +77,7 @@
         android:backgroundTint="#00FFFFFF"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/arrow_back" />
+        app:srcCompat="@drawable/general_back_arrow_button" />
 
     <TextView
         android:id="@+id/nameTextView"

@@ -1,11 +1,12 @@
-package com.example.CyTrack;
+package com.example.CyTrack.Meals;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.android.volley.Request;
-import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.example.CyTrack.Utilities.VolleySingleton;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -13,63 +14,80 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
-class NetworkUtils {
+class MealUtils {
 
     /**
-     * Posts user data to the given URL with the given parameters
+     * Posts meal data to the given URL with the given parameters
      * @param context the context
      * @param url the URL to post the user data to
      * @param params the parameters to post the user data with
      */
-    static void postData(Context context, String url, Map<String, String> params, callbackMessage callBack) {
+    static void postMeal(Context context, String url, Map<String, Object> params, callbackMessage callBack) {
         JSONObject jsonObject = new JSONObject(params);
-
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, jsonObject, response ->{
             try {
-                String message = response.getString("message");
-                callBack.onSuccess(message);
-            } catch (JSONException e) {
+                // TEST 1
+                Log.d("MealUtils",  " Headers Processing (PostMeal 1)");
+                callBack.onSuccess("Success");
+            } catch (Exception e) {
+                // TEST 2
+                Log.d("MealUtils",  e + " Headers Processing (PostMeal 2)");
                 e.printStackTrace();
             }
         }, error -> {
             String errorMessage = errorResponse(error);
+            // Test 3
+            Log.d("MealUtils",  errorMessage + " Headers Processing (PostMeal 3)");
             callBack.onError(errorMessage);
         }) {
             @Override
             public Map<String, String> getHeaders() {
                 Map<String, String> headers = new HashMap<>();
                 headers.put("Content-Type", "application/json");
+                // Test 4
+                Log.d("MealUtils",  headers + " Headers Processing (PostMeal 4)");
+
                 return headers;
             }
         };
 
         VolleySingleton.getInstance(context).addToRequestQueue(jsonObjectRequest);
+
     }
 
-    interface postUserAndGetIDCallback {
+    interface postMealAndGetIDCallback {
         void onSuccess(int id, String message);
         void onError(String message);
     }
 
-    static void postUserAndGetID(Context context, String url, Map<String, String> params, postUserAndGetIDCallback callback) {
+    static void postMealAndGetID(Context context, String url, Map<String, String> params, postMealAndGetIDCallback callback) {
         JSONObject jsonObject = new JSONObject(params);
+
+        //Log.d("MealUtils", url + " Processing"); // TEST
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, jsonObject, response -> {
             try {
+                Log.d("MealUtils", url + " Try(Catch) Processing"); // TEST
                 String message = response.getString("message");
                 JSONObject data = response.getJSONObject("data");
-
-                int userID = data.getInt("userID");
+                //TODO: Integrate MealIDS
+                int userID = data.getInt("ID");
                 callback.onSuccess(userID, message);
             } catch (JSONException e) {
+                Log.d("MealUtils", url + " JSONException Processing");
                 e.printStackTrace();
             }
         }, error -> {
+            Log.d("MealUtils", url + " Error Processing");
             callback.onError(errorResponse(error));
         }) {
             @Override
             public Map<String, String> getHeaders() {
+                // Test 3
+                Log.d("postMealAndGetID", url + " Hash Header Processing");
                 Map<String, String> headers = new HashMap<>();
+                // Test 4
+                Log.d("postMealAndGetID", url + " Hash Header Processing 2");
                 headers.put("Content-Type", "application/json");
                 return headers;
             }
@@ -78,33 +96,32 @@ class NetworkUtils {
     }
 
     /**
-     * Callback interface for fetching user data, to be used with {@link NetworkUtils#fetchUserData(Context, String, fetchUserDataCallback)}
+     * Callback interface for fetching meal data, to be used with {@link MealUtils#fetchMealData(Context, String, fetchMealDataCallback)}
      */
-    interface fetchUserDataCallback {
-        void onSuccess(User user, String message);
+    interface fetchMealDataCallback {
+        void onSuccess(Meal meal, String message);
         void onError(String message);
     }
 
     /**
-     * Fetches user data from the given URL and calls the appropriate callback method
+     * Fetches meal data from the given URL and calls the appropriate callback method
      * @param context the context
-     * @param url the URL to fetch the user data from
+     * @param url the URL to fetch the meal data from
      * @param callback the callback to call when the data is fetched
      */
-    static void fetchUserData(Context context, String url, fetchUserDataCallback callback) {
+    public static void fetchMealData(Context context, String url, fetchMealDataCallback callback) {
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, response -> {
             try {
                 String message = response.getString("message");
                 JSONObject data = response.getJSONObject("data");
 
-                User user = new User(
-                        data.getInt("userID"),
-                        data.getString("firstName"),
-                        data.getString("lastName"),
-                        data.getInt("age"),
-                        data.getString("gender"),
-                        data.getInt("streak"));
-                callback.onSuccess(user, message);
+                Meal meal = new Meal(
+                        data.getString("mealName"),
+                        data.getString("calories"),
+                        data.getString("carbs"),
+                        data.getString("protein"));
+                callback.onSuccess(meal, message);
+
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -123,10 +140,10 @@ class NetworkUtils {
     }
 
     /**
-     * Modifies user data on the given URL with the given parameters
+     * Modifies meal data on the given URL with the given parameters
      * @param context the context
-     * @param url the URL to modify the user data on
-     * @param params the parameters to modify the user data with
+     * @param url the URL to modify the meal data on
+     * @param params the parameters to modify the meal data with
      */
     static void modifyData(Context context, String url, Map<String, String> params, callbackMessage callbackMessage) {
         JSONObject jsonObject = new JSONObject(params);
@@ -156,6 +173,7 @@ class NetworkUtils {
         void onSuccess(String message);
         void onError(String message);
     }
+
     static void deleteRequest(Context context, String url, callbackMessage callback) {
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.DELETE, url, null, response -> {
             try {
@@ -178,7 +196,7 @@ class NetworkUtils {
         VolleySingleton.getInstance(context).addToRequestQueue(jsonObjectRequest);
     }
 
-    static String errorResponse(VolleyError error) {
+    private static String errorResponse(VolleyError error) {
         int statusCode = error.networkResponse != null ? error.networkResponse.statusCode : -1;
         String errorMessage = "";
 
@@ -207,7 +225,9 @@ class NetworkUtils {
                 e.printStackTrace();
             }
         }
-         return "Error Code: " + statusCode;
+        return "Error Code: " + statusCode;
+
+
     }
 
 

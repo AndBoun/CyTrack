@@ -1,4 +1,4 @@
-package com.example.CyTrack;
+package com.example.CyTrack.Startup;
 
 import android.os.Bundle;
 import android.widget.Button;
@@ -10,6 +10,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+
+import com.example.CyTrack.R;
+import com.example.CyTrack.Utilities.FocusUtils;
+import com.example.CyTrack.Utilities.NetworkUtils;
 
 import java.util.HashMap;
 import java.util.Map;

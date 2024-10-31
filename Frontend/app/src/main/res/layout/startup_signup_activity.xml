@@ -5,7 +5,7 @@
     android:id="@+id/signUpScreen"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SignUpActivity">
+    tools:context=".Startup.SignUpActivity">
 
 
     <ImageView
@@ -16,7 +16,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/cy_clone" />
+        app:srcCompat="@drawable/general_cy_clone_picture" />
 
     <Button
         android:id="@+id/resetButton"

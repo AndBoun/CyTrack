@@ -1,4 +1,4 @@
-package com.example.CyTrack;
+package com.example.CyTrack.Workouts;
 
 class WorkoutObject {
     String exerciseType;
