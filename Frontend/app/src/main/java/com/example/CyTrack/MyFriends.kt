@@ -3,15 +3,26 @@ package com.example.CyTrack
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,23 +30,31 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-class MyFriends : ComponentActivity(){
+class MyFriends : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent() {
+        setContent {
             val user = intent.getSerializableExtra("user") as User?
             if (user != null) {
-                ProfileScreen(user.firstName, user.username, "temp")
+
             }
+
+            val list = ArrayList<User>()
+            list.add(User(1, "Doe", "John", "Doe", 20, "M", 2))
+            list.add(User(2, "Doe", "Jane", "Doe", 20, "F", 2))
+            list.add(User(3, "Doe", "John", "Doe", 20, "M", 2))
+            list.add(User(4, "Doe", "Jane", "Doe", 20, "F", 2))
+            list.add(User(5, "Doe", "John", "Doe", 20, "M", 2))
+            MyFriendsScreen(list)
         }
 
         StatusBarUtil.setStatusBarColor(this, R.color.CyRed)
@@ -56,12 +75,17 @@ fun ListProfileCard(name: String, username: String, img: String) {
     Surface(
         color = Color.White,
         shape = RoundedCornerShape(10.dp),
+        border = BorderStroke(1.dp, Color.Black),
+        modifier = Modifier.fillMaxWidth()
+//            .padding(horizontal = 32.dp)
     ) {
-        Row (
+        Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(10.dp)
+//            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier
+                .padding(10.dp)
                 .clickable(onClick = { /*TODO*/ })
-        ){
+        ) {
             Image(
                 painter = painterResource(id = R.drawable.generic_avatar),
                 contentDescription = "Profile Picture",
@@ -89,22 +113,160 @@ fun ListProfileCard(name: String, username: String, img: String) {
                 )
             }
 
-            Spacer(modifier = Modifier.width(200.dp))
+            // Right align more options button
+            Row(
+                horizontalArrangement = Arrangement.End,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.general_more_options_horizontal),
+                    contentDescription = "More Options",
+                    modifier = Modifier.size(24.dp),
+                    colorFilter = ColorFilter.tint(Color.Black),
+                    // TODO ADD ONCLICK
+                )
+            }
 
-            Image(
-                painter = painterResource(id = R.drawable.general_more_options_horizontal),
-                contentDescription = "More Options",
-                modifier = Modifier.size(24.dp),
-                colorFilter = ColorFilter.tint(Color.Black)
+        }
+    }
+}
+
+@Composable
+fun FriendsListProfileCard(
+    name: String,
+    username: String,
+    img: String,
+    onMessageClick: () -> Unit
+) {
+    Box {
+        ListProfileCard(name, username, img)
+
+
+        Button(
+            onClick = onMessageClick,
+            colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+            shape = RoundedCornerShape(6.dp),
+            border = BorderStroke(1.dp, Color(0xFFF1BE48)),
+            modifier = Modifier
+                .align(Alignment.CenterEnd)
+                .matchParentSize()
+                .height(25.dp)
+                .width(100.dp)
+                .offset(x = (-50).dp),
+            contentPadding = PaddingValues(0.dp) //remove padding so text fits
+
+        ) {
+            Text(
+                text = "Message",
+                fontFamily = getCustomFontFamily(),
+                color = Color.Black,
+                fontSize = 13.sp,
+                fontWeight = FontWeight.SemiBold,
             )
         }
     }
 }
 
-@Preview
+@Composable
+fun MyFriendsCardsLazyList(friendsList: List<User>) {
+    // LazyColumn to display a list of friends
+    Column(
+        modifier = Modifier
+            .fillMaxHeight()
+            .padding(horizontal = 32.dp)
+    ) {
+        for (friend in friendsList) {
+            FriendsListProfileCard(friend.firstName, friend.username, "temp", {})
+            Spacer(modifier = Modifier.height(10.dp))
+        }
+    }
+}
+
+//@Preview
 @Composable
 fun ListProfileCardPreview() {
     ListProfileCard("John Doe", "johndoe", "temp")
+}
+
+//@Preview
+@Composable
+fun FriendsListProfileCardPreview() {
+    FriendsListProfileCard("John Doe", "johndoe", "temp", {})
+}
+
+@Composable
+fun MyFriendsTopCard() {
+    Surface(
+        color = Color(LocalContext.current.resources.getColor(R.color.CyRed)),
+        border = BorderStroke(1.dp, Color.Black),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(121.dp)
+    ) {
+        Row(
+            verticalAlignment = Alignment.Bottom,
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier.fillMaxWidth()
+                .offset(y = (-10).dp)
+        ) {
+
+            IconButton(
+                onClick = {},
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.arrow_back),
+                    contentDescription = "Back arrow",
+                    modifier = Modifier.size(24.dp)
+                )
+            }
+
+
+            Image(
+                painter = painterResource(id = R.drawable.social_friends_header),
+                contentDescription = "Friends text",
+            )
+
+            IconButton(
+                onClick = {},
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.social_add_person),
+                    contentDescription = "Friends icon",
+                    modifier = Modifier.size(24.dp)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun MyFriendsScreen(friendsList: List<User>) {
+    Column {
+        MyFriendsTopCard()
+        Spacer(modifier = Modifier.height(20.dp))
+        MyFriendsCardsLazyList(friendsList)
+    }
+}
+
+@Preview
+@Composable
+fun MyFriendsCardsLazyListPreview() {
+    val list = ArrayList<User>()
+    list.add(User(1, "Doe", "John", "Doe", 20, "M", 2))
+    list.add(User(2, "Doe", "Jane", "Doe", 20, "F", 2))
+    list.add(User(3, "Doe", "John", "Doe", 20, "M", 2))
+    list.add(User(4, "Doe", "Jane", "Doe", 20, "F", 2))
+    list.add(User(5, "Doe", "John", "Doe", 20, "M", 2))
+    Surface {
+//        MyFriendsCardsLazyList(list)
+        MyFriendsScreen(list)
+    }
+}
+
+@Preview
+@Composable
+fun MyFriendsTopCardPreview() {
+    MyFriendsTopCard()
 }
 
 

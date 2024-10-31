@@ -4,7 +4,7 @@ import androidx.annotation.NonNull;
 
 import java.io.Serializable;
 
-class User implements Serializable {
+public class User implements Serializable {
     private final int ID;
 
     private String firstName;

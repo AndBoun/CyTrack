@@ -1,9 +1,11 @@
 package com.example.CyTrack
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,6 +25,7 @@ import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
@@ -39,7 +42,7 @@ class MyProfile : ComponentActivity(){
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent() {
+        setContent {
             val user = intent.getSerializableExtra("user") as User?
             if (user != null) {
                 ProfileScreen(user.firstName, user.username, "temp")
@@ -124,7 +127,7 @@ fun MainProfileCard(name: String, userName: String, imageUrl: String){
 @Composable
 fun FriendsButton(onClick: () -> Unit){
     Column(
-        horizontalAlignment = CenterHorizontally
+        horizontalAlignment = CenterHorizontally,
     ){
         Image(
             painter = painterResource(R.drawable.general_friends_icon),
@@ -145,9 +148,10 @@ fun FriendsButton(onClick: () -> Unit){
 }
 
 @Composable
-fun MessageButton(){
+fun MessageButton(onClick: () -> Unit){
     Column(
-        horizontalAlignment = CenterHorizontally
+        horizontalAlignment = CenterHorizontally,
+        modifier = Modifier.clickable(onClick = onClick)
     ){
         Image(
             painter = painterResource(R.drawable.general_message_icon),
@@ -169,6 +173,8 @@ fun MessageButton(){
 
 @Composable
 fun ProfileScreen(name: String, userName: String, imageUrl: String){
+    val context = LocalContext.current
+
     Surface(
         color = Color(0xFFC8102E)
     ) {
@@ -190,10 +196,13 @@ fun ProfileScreen(name: String, userName: String, imageUrl: String){
                     .padding(bottom = 5.dp)
             ){
                 FriendsButton{
-//                    val intent = Intent(activity, FriendsActivity::class.java)
-//                    activity.startActivity(intent)
+                    val intent = Intent(context, MyFriends::class.java)
+                    context.startActivity(intent)
                 }
-                MessageButton()
+                MessageButton{
+                    val intent = Intent(context, MyMessages::class.java)
+                    context.startActivity(intent)
+                }
             }
         }
     }
@@ -209,7 +218,7 @@ fun ProfileCardPreview(){
     ) {
          MainProfileCard(
             name = "Cati",
-            userName = "#cattack",
+            userName = "cattack",
             imageUrl = "https://thumbs.dreamstime.com/b/cute-cat-portrait-square-photo-beautiful-white-closeup-105311158.jpg"
         )
     }
@@ -233,7 +242,7 @@ fun MessageButtonPreview(){
     Surface(
         color = Color(0xFFC8102E)
     ) {
-        MessageButton()
+        MessageButton{}
     }
 }
 
@@ -242,7 +251,7 @@ fun MessageButtonPreview(){
 fun ProfileScreenPreview(){
     ProfileScreen(
         name = "Cati",
-        userName = "#cattack",
+        userName = "cattack",
         imageUrl = "https://thumbs.dreamstime.com/b/cute-cat-portrait-" +
                 "square-photo-beautiful-white-closeup-105311158.jpg"
     )

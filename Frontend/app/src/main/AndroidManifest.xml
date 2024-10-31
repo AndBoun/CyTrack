@@ -15,6 +15,20 @@
         android:theme="@style/Theme.FirstScreen"
         android:networkSecurityConfig="@xml/network_security_config"
         tools:targetApi="31">
+<!--        <activity android:name=".DirectMessage"-->
+<!--            android:exported="false"/>-->
+
+        <activity android:name=".DirectMessage"
+            android:exported="true"
+            >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity android:name=".MyMessages"
+            android:exported="false"/>
         <activity android:name=".MyFriends"
             android:exported="false"/>
         <activity android:name=".MyProfile"
