@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- Input for Author -->
+    <EditText
+        android:id="@+id/authorInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter Author Name" />
+
+    <!-- Input for Book -->
+    <EditText
+        android:id="@+id/bookInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter Book Title" />
+
+    <!-- Button to send Author and Book -->
+    <Button
+        android:id="@+id/sendButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Send Author and Book" />
+
+    <!-- Button to get list of Authors -->
+    <Button
+        android:id="@+id/getAuthorsButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Get Authors" />
+
+    <!-- Text Area to display list of Authors -->
+    <TextView
+        android:id="@+id/authorsTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp" />
+
+    <!-- Button to get list of Books and Authors -->
+    <Button
+        android:id="@+id/getBooksButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Get Books and Authors" />
+
+    <!-- Text Area to display list of Books and Authors -->
+    <TextView
+        android:id="@+id/booksTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp" />
+
+</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
