@@ -1,6 +1,11 @@
 package CyTrack.Entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -14,7 +19,26 @@ public class User {
     // One user can have many workouts
     @OneToMany(mappedBy = "user")
     private List<Workout> workouts;
-    // Username is unique
+
+    @OneToMany(mappedBy = "user")
+    private List<Meal> meals;
+
+    @ManyToMany
+    @JoinTable(
+            name = "friends",
+            joinColumns = @JoinColumn(name = "user1_id"),
+            inverseJoinColumns = @JoinColumn(name = "user2_id")
+    )
+    private List<Friends> friends = new ArrayList<>();
+
+    @OneToMany(mappedBy = "sender")
+    @JsonIgnoreProperties("sender")
+    private List<FriendRequest> sentRequests = new ArrayList<>();
+
+    @OneToMany(mappedBy = "receiver")
+    @JsonIgnoreProperties("receiver")
+    private List<FriendRequest> receivedRequests = new ArrayList<>();
+
     @Column(nullable = false, unique = true)
     private String username;
     private String firstName;
@@ -24,11 +48,11 @@ public class User {
     private int streak;
     private String gender;
 
-    // ========================= Constructor ========================= //
+
+    // ========================= Getter and Setter ========================= //
     public Long getUserID() {
         return userID;
     }
-    // ========================= Getter and Setter ========================= //
     public void setUserID(Long userID) {
         this.userID = userID;
     }
@@ -96,4 +120,37 @@ public class User {
     public void setWorkouts(List<Workout> workouts) {
         this.workouts = workouts;
     }
+
+    public List<Meal> getMeals() {return meals; }
+
+    public void setMeals(List<Meal> meals) {this.meals = meals; }
+
+    public List<Friends> getFriends() {
+        return friends;
+    }
+
+    public void setFriends(List<Friends> friends) {
+        this.friends = friends;
+    }
+
+    public List<FriendRequest> getSentRequests() {
+        return sentRequests;
+    }
+
+    public void setSentRequests(List<FriendRequest> sentRequests) {
+        this.sentRequests = sentRequests;
+    }
+
+    public List<FriendRequest> getReceivedRequests() {
+        return receivedRequests;
+    }
+
+    public void setReceivedRequests(List<FriendRequest> receivedRequests) {
+        this.receivedRequests = receivedRequests;
+    }
+
+
+
+
+
 }
