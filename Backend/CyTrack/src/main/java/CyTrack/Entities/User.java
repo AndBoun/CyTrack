@@ -20,6 +20,9 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<Workout> workouts;
 
+    @OneToMany
+    private List<Meal> meals;
+
     @ManyToMany
     @JoinTable(
             name = "friends",
@@ -117,6 +120,10 @@ public class User {
     public void setWorkouts(List<Workout> workouts) {
         this.workouts = workouts;
     }
+
+    public List<Meal> getMeals() {return meals; }
+
+    public void setMeals(List<Meal> meals) {this.meals = meals; }
 
     public List<Friends> getFriends() {
         return friends;
