@@ -55,8 +55,6 @@ public class Meal {
     // =============================== Getters and Setters for each field ================================== //
 
 
-
-
     public Long getMealId() {
         return mealID;
     }
@@ -69,9 +67,7 @@ public class Meal {
 
     public void setUser(User user) {this.user = user; }
 
-    public String getMealName() {
-        return mealName;
-    }
+    public String getMealName() {return mealName; }
 
     public void setMealName(String mealName) {this.mealName = mealName; }
 
