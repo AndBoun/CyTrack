@@ -93,4 +93,8 @@ public class FriendsService {
     public List<FriendRequest> getIncomingFriendRequests(Long userID) {
         return friendRequestRepository.findByReceiver_UserIDAndStatus(userID, FriendRequest.RequestStatus.PENDING);
     }
+
+    public List<FriendRequest> getOutgoingFriendRequests(Long userID) {
+        return friendRequestRepository.findBySender_UserIDAndStatus(userID, FriendRequest.RequestStatus.PENDING);
+    }
 }

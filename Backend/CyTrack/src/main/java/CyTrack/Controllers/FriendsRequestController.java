@@ -110,6 +110,24 @@ public class FriendsRequestController {
         return ResponseEntity.status(404).body(response);
     }
 
+    @GetMapping("/outgoing")
+    public ResponseEntity<?> getOutgoingFriendRequests(@PathVariable Long userID){
+        Optional<User> user = userService.findByUserID(userID);
+        if (user.isPresent()){
+            List<FriendRequest> friendRequests = friendsService.getOutgoingFriendRequests(userID);
+            List<FriendRequestResponse.FriendRequestData> friendRequestDataList = friendRequests.stream()
+                    .map(friendRequest -> new FriendRequestResponse.FriendRequestData(
+                            friendRequest.getReceiver().getUsername(),
+                            friendRequest.getFriendRequestID()
+                    ))
+                    .toList();
+            FriendRequestResponse response = new FriendRequestResponse("success", friendRequestDataList, "Outgoing friend requests found");
+            return ResponseEntity.status(200).body(response);
+        }
+        ErrorResponse response = new ErrorResponse("error", 404, "User not found", "User not found");
+        return ResponseEntity.status(404).body(response);
+    }
+
 
 
 }
