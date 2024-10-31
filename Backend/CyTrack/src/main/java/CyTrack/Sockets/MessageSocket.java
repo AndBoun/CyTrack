@@ -70,6 +70,8 @@ public class MessageSocket {
             if (receiverSession != null && receiverSession.isOpen()) {
                 receiverSession.getBasicRemote().sendText( senderUsername + ": " + messageText);
             }
+
+            session.getBasicRemote().sendText("You: " + messageText);
         } else {
             session.getBasicRemote().sendText("Error: You are not friends with this user");
         }
