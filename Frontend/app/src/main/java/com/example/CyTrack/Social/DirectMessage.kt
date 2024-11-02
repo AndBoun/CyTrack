@@ -45,6 +45,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -128,7 +130,10 @@ fun InputMessageBar(
 }
 
 @Composable
-fun ConversationMessageCard(msg: String){
+fun ConversationMessageCard(
+    msg: String,
+    modifier: Modifier = Modifier
+){
 
     // Get the screen width
     val configuration = LocalConfiguration.current
@@ -143,7 +148,7 @@ fun ConversationMessageCard(msg: String){
     ){
         Text(
             text = msg,
-            fontFamily = getCustomFontFamily(),
+            fontFamily = getCustomFontFamily("Inter", FontWeight.Normal, FontStyle.Normal),
             color = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier.padding(15.dp)
         )
@@ -159,7 +164,12 @@ fun ConversationLazyList(
 }
 
 @Composable
-fun DirectMessageTopCard(name: String, username : String , img : String){
+fun DirectMessageTopCard(
+    name: String,
+    username : String,
+    img : String,
+    modifier: Modifier = Modifier
+){
     Surface(
         color = Color(LocalContext.current.resources.getColor(R.color.CyRed)),
         modifier = Modifier.fillMaxWidth()
@@ -197,7 +207,7 @@ fun DirectMessageTopCard(name: String, username : String , img : String){
             Column{
                 Text(
                     text = name,
-                    fontFamily = getCustomFontFamily(),
+                    fontFamily = getCustomFontFamily("Inter", FontWeight.Normal, FontStyle.Normal),
                     color = Color.White,
                     fontSize = 16.sp
                 )
@@ -206,7 +216,7 @@ fun DirectMessageTopCard(name: String, username : String , img : String){
 
                 Text(
                     text = "#$username",
-                    fontFamily = getCustomFontFamily(),
+                    fontFamily = getCustomFontFamily("Inter", FontWeight.Normal, FontStyle.Normal),
                     color = Color(0xFFF1BE48),
                     fontSize = 12.sp
                 )
@@ -216,7 +226,11 @@ fun DirectMessageTopCard(name: String, username : String , img : String){
 }
 
 @Composable
-fun DirectMessageScreen(user: User, messageList : MutableList<String>) {
+fun DirectMessageScreen(
+    user: User,
+    messageList : MutableList<String>,
+    modifier: Modifier = Modifier
+) {
     val insets = WindowInsets.systemBars.asPaddingValues()
 
     Surface (

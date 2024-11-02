@@ -25,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
@@ -47,7 +48,12 @@ class MyMessages : ComponentActivity() {
 }
 
 @Composable
-fun ListMessageCard(name: String, message: String, img: String) {
+fun ListMessageCard(
+    name: String,
+    message: String,
+    img: String,
+    modifier: Modifier = Modifier
+) {
     Surface (
         modifier = Modifier.fillMaxWidth()
     ){
@@ -70,7 +76,7 @@ fun ListMessageCard(name: String, message: String, img: String) {
             ) { // Column for name and message
                 Text(
                     text = name,
-                    fontFamily = getCustomFontFamily(),
+                    fontFamily = getCustomFontFamily("Inter", FontWeight.SemiBold, FontStyle.Normal),
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 13.sp,
                     maxLines = 1
@@ -78,7 +84,7 @@ fun ListMessageCard(name: String, message: String, img: String) {
                 Spacer(modifier = Modifier.height(3.dp))
                 Text(
                     text = message,
-                    fontFamily = getCustomFontFamily(),
+                    fontFamily = getCustomFontFamily("Inter", FontWeight.Normal, FontStyle.Normal),
                     fontWeight = FontWeight.Normal,
                     fontSize = 11.sp,
                     maxLines = 1
@@ -89,7 +95,9 @@ fun ListMessageCard(name: String, message: String, img: String) {
 }
 
 @Composable
-fun MyMessageTopCard(){
+fun MyMessageTopCard(
+    modifier: Modifier = Modifier
+){
     Surface(
         modifier = Modifier.fillMaxWidth()
             .height(120.dp),

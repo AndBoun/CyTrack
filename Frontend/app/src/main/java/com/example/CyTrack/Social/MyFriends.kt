@@ -73,7 +73,12 @@ class MyFriends : ComponentActivity() {
  * @param img The URL or resource identifier for the user\`s image.
  */
 @Composable
-fun ListProfileCard(name: String, username: String, img: String) {
+fun ListProfileCard(
+    name: String,
+    username: String,
+    img: String,
+    modifier: Modifier = Modifier
+) {
     // Composable function to display a card with user information
     Surface(
         color = Color.White,
@@ -105,14 +110,14 @@ fun ListProfileCard(name: String, username: String, img: String) {
                     color = Color.Black,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
-                    fontFamily = getCustomFontFamily(),
+                    fontFamily = getCustomFontFamily("Inter", FontWeight.Bold, FontStyle.Normal)
                 )
                 Spacer(modifier = Modifier.padding(2.dp))
                 Text(
                     text = "#$username",
                     fontSize = 11.sp,
                     fontStyle = FontStyle.Italic,
-                    fontFamily = getCustomFontFamily(),
+                    fontFamily = getCustomFontFamily("Inter", FontWeight.Normal, FontStyle.Italic)
                 )
             }
 
@@ -139,7 +144,8 @@ fun FriendsListProfileCard(
     name: String,
     username: String,
     img: String,
-    onMessageClick: () -> Unit
+    onMessageClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Box {
         ListProfileCard(name, username, img)
@@ -161,7 +167,7 @@ fun FriendsListProfileCard(
         ) {
             Text(
                 text = "Message",
-                fontFamily = getCustomFontFamily(),
+                fontFamily = getCustomFontFamily("Inter", FontWeight.SemiBold, FontStyle.Normal),
                 color = Color.Black,
                 fontSize = 13.sp,
                 fontWeight = FontWeight.SemiBold,
@@ -171,7 +177,10 @@ fun FriendsListProfileCard(
 }
 
 @Composable
-fun MyFriendsCardsLazyList(friendsList: List<User>) {
+fun MyFriendsCardsLazyList(
+    friendsList: List<User>,
+    modifier: Modifier = Modifier
+) {
     // LazyColumn to display a list of friends
     Column(
         modifier = Modifier
@@ -185,20 +194,12 @@ fun MyFriendsCardsLazyList(friendsList: List<User>) {
     }
 }
 
-//@Preview
-@Composable
-fun ListProfileCardPreview() {
-    ListProfileCard("John Doe", "johndoe", "temp")
-}
 
-//@Preview
-@Composable
-fun FriendsListProfileCardPreview() {
-    FriendsListProfileCard("John Doe", "johndoe", "temp", {})
-}
 
 @Composable
-fun MyFriendsTopCard() {
+fun MyFriendsTopCard(
+    modifier: Modifier = Modifier
+) {
     Surface(
         color = Color(LocalContext.current.resources.getColor(R.color.CyRed)),
         border = BorderStroke(1.dp, Color.Black),
@@ -243,12 +244,28 @@ fun MyFriendsTopCard() {
 }
 
 @Composable
-fun MyFriendsScreen(friendsList: List<User>) {
+fun MyFriendsScreen(
+    friendsList: List<User>,
+    modifier: Modifier = Modifier
+) {
     Column {
         MyFriendsTopCard()
         Spacer(modifier = Modifier.height(20.dp))
         MyFriendsCardsLazyList(friendsList)
     }
+}
+
+
+//@Preview
+@Composable
+fun ListProfileCardPreview() {
+    ListProfileCard("John Doe", "johndoe", "temp")
+}
+
+//@Preview
+@Composable
+fun FriendsListProfileCardPreview() {
+    FriendsListProfileCard("John Doe", "johndoe", "temp", {})
 }
 
 @Preview

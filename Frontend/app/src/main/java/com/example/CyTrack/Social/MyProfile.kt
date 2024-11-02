@@ -56,27 +56,32 @@ class MyProfile : ComponentActivity(){
     }
 }
 
-fun getCustomFontFamily(): FontFamily {
+fun getCustomFontFamily(fontName: String, fontWeight: FontWeight, fontStyle: FontStyle): FontFamily {
     val provider = GoogleFont.Provider(
         providerAuthority = "com.google.android.gms.fonts",
         providerPackage = "com.google.android.gms",
         certificates = R.array.com_google_android_gms_fonts_certs
     )
-    val fontName = GoogleFont("inter")
+    val googleFont = GoogleFont(fontName)
 
     return FontFamily(
         Font(
-            googleFont = fontName,
+            googleFont = googleFont,
             fontProvider = provider,
-            weight = FontWeight.Bold,
-            style = FontStyle.Italic
+            weight = fontWeight,
+            style = fontStyle
         )
     )
 }
 
 
 @Composable
-fun MainProfileCard(name: String, userName: String, imageUrl: String){
+fun MainProfileCard(
+    name: String,
+    userName: String,
+    imageUrl: String,
+    modifier: Modifier = Modifier
+){
     Row(
         verticalAlignment = CenterVertically,
         modifier = Modifier.fillMaxWidth()
@@ -109,7 +114,7 @@ fun MainProfileCard(name: String, userName: String, imageUrl: String){
                     color = Color.White,
                     fontWeight = FontWeight.Bold,
                     fontSize = 32.sp,
-                    fontFamily = getCustomFontFamily()
+                    fontFamily = getCustomFontFamily("Inter", FontWeight.Bold, FontStyle.Normal)
                 )
 
                 Spacer(modifier = Modifier.height(7.dp))
@@ -119,7 +124,7 @@ fun MainProfileCard(name: String, userName: String, imageUrl: String){
                     color = Color(0xFFF1BE48),
                     fontWeight = FontWeight.Medium,
                     fontStyle = FontStyle.Italic,
-                    fontFamily = getCustomFontFamily()
+                    fontFamily = getCustomFontFamily("Inter", FontWeight.Medium, FontStyle.Normal)
                 )
             }
         }
@@ -128,7 +133,10 @@ fun MainProfileCard(name: String, userName: String, imageUrl: String){
 }
 
 @Composable
-fun FriendsButton(onClick: () -> Unit){
+fun FriendsButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+){
     Column(
         horizontalAlignment = CenterHorizontally,
         modifier = Modifier.clickable(onClick = onClick)
@@ -146,13 +154,16 @@ fun FriendsButton(onClick: () -> Unit){
             color = Color.White,
             fontWeight = FontWeight.SemiBold,
             fontSize = 13.sp,
-            fontFamily = getCustomFontFamily()
+            fontFamily = getCustomFontFamily("Inter", FontWeight.SemiBold, FontStyle.Normal)
         )
     }
 }
 
 @Composable
-fun MessageButton(onClick: () -> Unit){
+fun MessageButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+){
     Column(
         horizontalAlignment = CenterHorizontally,
         modifier = Modifier.clickable(onClick = onClick)
@@ -170,13 +181,18 @@ fun MessageButton(onClick: () -> Unit){
             color = Color.White,
             fontWeight = FontWeight.SemiBold,
             fontSize = 13.sp,
-            fontFamily = getCustomFontFamily()
+            fontFamily = getCustomFontFamily("Inter", FontWeight.SemiBold, FontStyle.Normal)
         )
     }
 }
 
 @Composable
-fun ProfileScreen(name: String, userName: String, imageUrl: String){
+fun ProfileScreen(
+    name: String,
+    userName: String,
+    imageUrl: String,
+    modifier: Modifier = Modifier
+){
     val context = LocalContext.current
 
     Surface(
@@ -199,14 +215,14 @@ fun ProfileScreen(name: String, userName: String, imageUrl: String){
                     .padding(horizontal = 80.dp)
                     .padding(bottom = 5.dp)
             ){
-                FriendsButton{
+                FriendsButton(onClick = {
                     val intent = Intent(context, MyFriends::class.java)
                     context.startActivity(intent)
-                }
-                MessageButton{
+                })
+                MessageButton(onClick = {
                     val intent = Intent(context, MyMessages::class.java)
                     context.startActivity(intent)
-                }
+                })
             }
         }
     }
@@ -234,9 +250,7 @@ fun FriendsButtonPreview(){
     Surface(
         color = Color(0xFFC8102E)
     ) {
-        FriendsButton{
-
-        }
+       FriendsButton(onClick = {})
     }
 }
 
@@ -246,7 +260,7 @@ fun MessageButtonPreview(){
     Surface(
         color = Color(0xFFC8102E)
     ) {
-        MessageButton{}
+        MessageButton(onClick = {})
     }
 }
 
