@@ -1,8 +1,16 @@
+import org.jetbrains.dokka.DokkaConfiguration.Visibility
+import org.jetbrains.dokka.gradle.DokkaTask
+import org.jetbrains.dokka.Platform
+import org.jetbrains.dokka.gradle.DokkaTaskPartial
+import java.net.URL
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    id("org.jetbrains.dokka") version "1.9.20"
 }
+
 
 android {
     namespace = "com.example.CyTrack"
@@ -89,6 +97,39 @@ androidComponents {
     }
 }
 
+tasks.withType<DokkaTask>().configureEach {
+    outputDirectory.set(layout.buildDirectory.dir("documentation/html"))
+    dokkaSourceSets {
+
+        named("main") {
+            sourceRoots.from(file("src/main/java"))
+            sourceRoots.from(file("src/main/kotlin"))
+        }
+        configureEach{
+            // Exclude inherited members
+            suppressInheritedMembers.set(true)
+
+            // Exclude specific packages, classes, or files if needed
+            // For example, exclude Android framework packages:
+            perPackageOption {
+                matchingRegex.set("android.*") // or "androidx.*" to exclude AndroidX classes too
+                suppress.set(true)
+            }
+
+            skipEmptyPackages.set(true)
+            documentedVisibilities.set(
+                setOf(
+                    Visibility.PUBLIC,
+                    Visibility.PROTECTED,
+                    Visibility.INTERNAL,
+                    Visibility.PRIVATE,
+                    Visibility.PACKAGE
+                )
+            )
+        }
+    }
+}
+
 
 dependencies {
     implementation(libs.appcompat)
@@ -110,5 +151,6 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.espresso.core)
     androidTestImplementation(libs.ext.junit)
+    dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.9.20")
 }
 

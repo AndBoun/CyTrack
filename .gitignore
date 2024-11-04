@@ -9,6 +9,10 @@
 .gradle/
 build/
 
+# Keep gradle-wrapper.jar
+gradle/
+!gradle/wrapper/gradle-wrapper.jar
+
 # Local configuration file (sdk path, etc)
 local.properties
 
