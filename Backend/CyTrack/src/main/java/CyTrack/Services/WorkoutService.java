@@ -58,6 +58,18 @@ public class WorkoutService {
         }
     }
 
+    //
+    public int getCaloriesByDate(Long userID, String date) {
+        List<Workout> workouts = getWorkoutsByDate(userID, date);
+        return workouts.stream().mapToInt(Workout::getCalories).sum();
+    }
+
+    public int getWorkoutTimeByDate(Long userID, String date) {
+        List<Workout> workouts = getWorkoutsByDate(userID, date);
+        return workouts.stream().mapToInt(Workout::getDuration).sum();
+    }
+
+
     // End a workout by setting the end time and calculating duration
     @Transactional
     public Workout endWorkout(Long workoutID) {
