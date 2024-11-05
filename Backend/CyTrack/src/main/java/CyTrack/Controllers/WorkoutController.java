@@ -129,7 +129,7 @@ public class WorkoutController {
         String date = workoutRequest.getDate();
         Optional<User> user = userService.findByUserID(userID);
         if (user.isPresent()) {
-            List<Workout> workouts = workoutService.getWorkoutsByDate(userID, date);
+            List<Workout> workouts = workoutService.getWorkoutsByUserIDAndDate(userID, date);
             List<WorkoutResponse.WorkoutData> workoutDataList = workouts.stream()
                     .map(workout -> new WorkoutResponse.WorkoutData(
                             workout.getExerciseType(),

@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import CyTrack.Entities.Workout;
 import CyTrack.Repositories.WorkoutRepository;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -42,7 +41,7 @@ public class WorkoutService {
     }
 
     //get all workouts for a given userID AND date
-    public List<Workout> getWorkoutsByDate(Long userID, String date) {
+    public List<Workout> getWorkoutsByUserIDAndDate(Long userID, String date) {
         return workoutRepository.findByUser_UserIDAndDate(userID, date);
     }
 
@@ -60,12 +59,12 @@ public class WorkoutService {
 
     //
     public int getCaloriesByDate(Long userID, String date) {
-        List<Workout> workouts = getWorkoutsByDate(userID, date);
+        List<Workout> workouts = getWorkoutsByUserIDAndDate(userID, date);
         return workouts.stream().mapToInt(Workout::getCalories).sum();
     }
 
     public int getWorkoutTimeByDate(Long userID, String date) {
-        List<Workout> workouts = getWorkoutsByDate(userID, date);
+        List<Workout> workouts = getWorkoutsByUserIDAndDate(userID, date);
         return workouts.stream().mapToInt(Workout::getDuration).sum();
     }
 

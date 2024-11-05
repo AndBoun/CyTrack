@@ -111,7 +111,7 @@ public class Workout {
         this.duration = (int) Duration.between(startTime, endTime).toMinutes();
     }
 
-    // Getters and setters
+
     public LocalDateTime getStartTime() {
         return startTime;
     }
