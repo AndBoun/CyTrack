@@ -1,10 +1,12 @@
 package com.example.CyTrack.Social
 
+import android.app.Activity
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -19,6 +21,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.ui.Alignment
@@ -30,6 +35,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import com.example.CyTrack.R
+import com.example.CyTrack.Utilities.ComposeUtils.Companion.getCustomFontFamily
 import com.example.CyTrack.Utilities.User
 import com.example.CyTrack.Utilities.StatusBarUtil
 
@@ -41,11 +47,28 @@ class MyMessages : ComponentActivity() {
             val user = intent.getSerializableExtra("user") as User?
             if (user != null) {
             }
+
+            Column {
+                MyMessageTopCard()
+                Spacer(modifier = Modifier.height(20.dp))
+                MessageCardLazyList(
+                    listOf(
+                        Message("generic_avatar", "John Doe", "Hello"),
+                        Message("generic_avatar", "Jane Doe", "Hi")
+                    )
+                )
+            }
         }
 
         StatusBarUtil.setStatusBarColor(this, R.color.CyRed)
     }
 }
+
+data class Message(
+    val imageUrl: String,
+    val name: String,
+    val body: String
+)
 
 @Composable
 fun ListMessageCard(
@@ -59,7 +82,7 @@ fun ListMessageCard(
     ){
         Row (
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(8.dp)
+            modifier = Modifier.padding(12.dp)
                 .fillMaxWidth()
         ){
             Image(
@@ -98,34 +121,47 @@ fun ListMessageCard(
 fun MyMessageTopCard(
     modifier: Modifier = Modifier
 ){
+    val context = LocalContext.current
+
     Surface(
         modifier = Modifier.fillMaxWidth()
             .height(120.dp),
-        color = Color(LocalContext.current.resources.getColor(R.color.CyRed)),
+        color = Color(context.resources.getColor(R.color.CyRed)),
     ){
-        Row(
-            verticalAlignment = Alignment.Bottom,
-            horizontalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxWidth()
-                .offset(y = (-4).dp)
-        ){
-          Image(
-              painter = painterResource(R.drawable.social_messages_header),
+        Box {
+            IconButton(
+                onClick = {
+                    (context as Activity).finish()
+                },
+                modifier = Modifier.align(Alignment.BottomStart)
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.general_back_arrow_button),
+                    contentDescription = "Back arrow",
+                    modifier = Modifier.size(24.dp)
+                )
+            }
+
+            Image(
+                painter = painterResource(R.drawable.social_messages_header),
                 contentDescription = "Messages",
-          )
+                modifier = Modifier.align(Alignment.BottomCenter)
+            )
         }
     }
 }
 
-//@Composable
-//fun MessageCardLazyList(messages: List<Message>) {
-//    Column {
-//        for (message in messages) {
-//            ListMessageCard(message.author, message.body, "generic_avatar")
-//            Spacer(modifier = Modifier.height(10.dp))
-//        }
-//    }
-//}
+@Composable
+fun MessageCardLazyList(messages: List<Message>) {
+    Column {
+        for (message in messages) {
+            ListMessageCard(message.name, message.body, "generic_avatar")
+            HorizontalDivider(thickness = 1.dp, color = Color.Gray)
+        }
+    }
+}
+
+
 
 @Preview
 @Composable
@@ -137,4 +173,34 @@ fun PreviewListMessageCard() {
 @Composable
 fun PreviewMyMessageTopCard() {
     MyMessageTopCard()
+}
+
+@Preview
+@Composable
+fun PreviewMessageCardLazyList() {
+    Surface {
+        MessageCardLazyList(
+            listOf(
+                Message("generic_avatar", "John Doe", "Hello"),
+                Message("generic_avatar", "Jane Doe", "Hi")
+            )
+        )
+    }
+}
+
+@Preview
+@Composable
+fun PreviewMyMessagesScreen() {
+    Surface {
+        Column {
+            MyMessageTopCard()
+            Spacer(modifier = Modifier.height(20.dp))
+            MessageCardLazyList(
+                listOf(
+                    Message("generic_avatar", "John Doe", "Hello"),
+                    Message("generic_avatar", "Jane Doe", "Hi")
+                )
+            )
+        }
+    }
 }

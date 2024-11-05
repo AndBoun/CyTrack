@@ -51,6 +51,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.CyTrack.R
+import com.example.CyTrack.Utilities.ComposeUtils.Companion.getCustomFontFamily
 import com.example.CyTrack.Utilities.User
 import com.example.CyTrack.Utilities.StatusBarUtil
 
@@ -142,7 +143,7 @@ fun ConversationMessageCard(
     Surface (
         color = Color.White,
         shape = RoundedCornerShape(4.dp),
-        modifier = Modifier.padding(8.dp)
+        modifier = modifier.padding(8.dp)
             .widthIn(max = screenWidth * 0.7f), // Set max width to 70% of screen width
         shadowElevation = 2.dp
     ){
@@ -155,12 +156,39 @@ fun ConversationMessageCard(
     }
 }
 
+//@Composable
+//fun ConversationLazyList(
+//    msg: List<String>,
+//    modifier: Modifier = Modifier
+//){
+//    LazyColumn { items(msg) { msg -> ConversationMessageCard(msg) } }
+//}
+
 @Composable
 fun ConversationLazyList(
     msg: List<String>,
     modifier: Modifier = Modifier
-){
-    LazyColumn { items(msg) { msg -> ConversationMessageCard(msg) } }
+) {
+    LazyColumn {
+        items(msg) { message ->
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                if (true) { // TODO : Check if message is sent by the user
+                    ConversationMessageCard(
+                        msg = message,
+                        modifier = Modifier.align(Alignment.TopStart)
+                    )
+                } else {
+                    ConversationMessageCard(
+                        msg = message,
+                        modifier = Modifier.align(Alignment.TopEnd)
+                    )
+                }
+            }
+        }
+    }
 }
 
 @Composable
