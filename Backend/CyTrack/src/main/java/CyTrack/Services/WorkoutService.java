@@ -41,6 +41,11 @@ public class WorkoutService {
         return workoutRepository.findByUser_UserID(userID);
     }
 
+    //get all workouts for a given userID AND date
+    public List<Workout> getWorkoutsByDate(Long userID, String date) {
+        return workoutRepository.findByUser_UserIDAndDate(userID, date);
+    }
+
     // Start a workout by setting the start time
     public Workout startWorkout(Long workoutID) {
         Optional<Workout> workoutOptional = workoutRepository.findByWorkoutID(workoutID);
