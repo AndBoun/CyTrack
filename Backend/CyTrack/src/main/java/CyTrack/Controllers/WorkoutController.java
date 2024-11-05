@@ -12,10 +12,11 @@ import java.util.List;
 import java.util.Optional;
 //Controller for Workout entity
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/workout")
 public class WorkoutController {
     private final WorkoutService workoutService;
     private final UserService userService;
+
     //Constructor
     @Autowired
     public WorkoutController(WorkoutService workoutService, UserService userService) {
@@ -36,7 +37,44 @@ public class WorkoutController {
         ErrorResponse response = new ErrorResponse("error", 404, "User not found", "User not found");
         return ResponseEntity.status(404).body(response);
     }
-    //Get all workouts by user ID
+
+    // Start a workout
+    @PostMapping("/{userID}/workout/{workoutID}/start")
+    public ResponseEntity<?> startWorkout(@PathVariable Long userID, @PathVariable Long workoutID) {
+        Optional<User> user = userService.findByUserID(userID);
+        if (user.isPresent()) {
+            Optional<Workout> workout = workoutService.findByWorkoutID(workoutID);
+            if (workout.isPresent()) {
+                Workout startedWorkout = workoutService.startWorkout(workoutID);
+                WorkoutIDResponse response = new WorkoutIDResponse("success", workoutID, "Workout started");
+                return ResponseEntity.status(200).body(response);
+            }
+            ErrorResponse response = new ErrorResponse("error", 404, "Workout not found", "Workout not found");
+            return ResponseEntity.status(404).body(response);
+        }
+        ErrorResponse response = new ErrorResponse("error", 404, "User not found", "User not found");
+        return ResponseEntity.status(404).body(response);
+    }
+
+    // End a workout
+    @PostMapping("/{userID}/workout/{workoutID}/end")
+    public ResponseEntity<?> endWorkout(@PathVariable Long userID, @PathVariable Long workoutID) {
+        Optional<User> user = userService.findByUserID(userID);
+        if (user.isPresent()) {
+            Optional<Workout> workout = workoutService.findByWorkoutID(workoutID);
+            if (workout.isPresent()) {
+                Workout endedWorkout = workoutService.endWorkout(workoutID);
+                WorkoutIDResponse response = new WorkoutIDResponse("success", workoutID, "Workout ended");
+                return ResponseEntity.status(200).body(response);
+            }
+            ErrorResponse response = new ErrorResponse("error", 404, "Workout not found", "Workout not found");
+            return ResponseEntity.status(404).body(response);
+        }
+        ErrorResponse response = new ErrorResponse("error", 404, "User not found", "User not found");
+        return ResponseEntity.status(404).body(response);
+    }
+
+    //List workouts by user ID
     @GetMapping("/{userID}/workout")
     public ResponseEntity<?> getAllWorkoutsByUserID(@PathVariable Long userID) {
         Optional<User> user = userService.findByUserID(userID);
@@ -57,9 +95,11 @@ public class WorkoutController {
         ErrorResponse response = new ErrorResponse("error", 404, "User not found", "User not found");
         return ResponseEntity.status(404).body(response);
     }
+
+
     //Get a workout by user ID and workout ID
     @GetMapping("/{userID}/workout/{workoutID}")
-    public ResponseEntity<?> getWorkout(@PathVariable Long userID, @PathVariable Long workoutID) {
+    public ResponseEntity<?> getWorkoutByUserIDAndWorkoutID(@PathVariable Long userID, @PathVariable Long workoutID) {
         Optional<User> user = userService.findByUserID(userID);
         if (user.isPresent()) {
             Optional<Workout> workout = workoutService.findByWorkoutID(workoutID);
@@ -80,6 +120,58 @@ public class WorkoutController {
         }
         ErrorResponse response = new ErrorResponse("error", 404, "User not found", "User not found");
         return ResponseEntity.status(404).body(response);
+    }
+
+    //List workouts for a specific user at a specific date
+    @GetMapping("/{userID}/workoutByDate")
+    public ResponseEntity<?> getWorkoutsByDate(@PathVariable Long userID,
+                                               @RequestBody WorkoutRequest workoutRequest) {
+        String date = workoutRequest.getDate();
+        Optional<User> user = userService.findByUserID(userID);
+        if (user.isPresent()) {
+            List<Workout> workouts = workoutService.getWorkoutsByUserIDAndDate(userID, date);
+            List<WorkoutResponse.WorkoutData> workoutDataList = workouts.stream()
+                    .map(workout -> new WorkoutResponse.WorkoutData(
+                            workout.getExerciseType(),
+                            workout.getDuration(),
+                            workout.getCalories(),
+                            workout.getDate(),
+                            workout.getWorkoutID()
+                    ))
+                    .toList();
+            WorkoutResponse response = new WorkoutResponse("success", workoutDataList, "Workouts found for " + date);
+            return ResponseEntity.status(200).body(response);
+        } else {
+            ErrorResponse response = new ErrorResponse("error", 404, "User not found", "User not found");
+            return ResponseEntity.status(404).body(response);
+        }
+    }
+
+    //Get total calories burned for a given date
+    @GetMapping("/{userID}/totalCalories/{date}")
+    public ResponseEntity<?> getTotalCaloriesByDate(@PathVariable Long userID, @PathVariable String date) {
+        Optional<User> user = userService.findByUserID(userID);
+        if (user.isPresent()) {
+            int totalCalories = workoutService.getCaloriesByDate(userID, date);
+            int totalWorkoutTime = workoutService.getWorkoutTimeByDate(userID, date); // Assuming you want to include workout time too
+            WorkoutSummaryResponse response = new WorkoutSummaryResponse("success", totalCalories, totalWorkoutTime, date, "Total calories burned for " + date);
+            return ResponseEntity.ok(response);
+        } else {
+            return ResponseEntity.status(404).body(new ErrorResponse("error", 404, "User not found", "User not found"));
+        }
+    }
+
+    //Get total workout time for a given date
+    @GetMapping("/{userID}/totalWorkoutTime/{date}")
+    public ResponseEntity<?> getTotalWorkoutTimeByDate(@PathVariable Long userID, @PathVariable String date) {
+        Optional<User> user = userService.findByUserID(userID);
+        if (user.isPresent()) {
+            int totalWorkoutTime = workoutService.getWorkoutTimeByDate(userID, date);
+            WorkoutSummaryResponse response = new WorkoutSummaryResponse("success", 0, totalWorkoutTime, date, "Total workout time for " + date); // totalCalories set to 0
+            return ResponseEntity.ok(response);
+        } else {
+            return ResponseEntity.status(404).body(new ErrorResponse("error", 404, "User not found", "User not found"));
+        }
     }
 
     //Update a workout
