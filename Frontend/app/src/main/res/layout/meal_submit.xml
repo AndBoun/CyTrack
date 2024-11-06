@@ -5,7 +5,7 @@
     android:id="@+id/MealLogActivity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MealLogActivity">
+    tools:context=".Meals.MealLogActivity">
 
     <ImageView
         android:id="@+id/CreateMealBackground"
@@ -15,7 +15,7 @@
         android:layout_marginTop="6dp"
         android:layout_marginEnd="122dp"
         android:layout_marginBottom="12dp"
-        android:src="@drawable/group_11__1_"
+        android:src="@drawable/meals_create_meals_backdrop"
         app:layout_constraintBottom_toTopOf="@+id/headerCard"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -68,7 +68,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0"
-        app:srcCompat="@drawable/notifications" />
+        app:srcCompat="@drawable/general_notification_button" />
 
     <ImageButton
         android:id="@+id/LogPageButton"
@@ -84,7 +84,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0"
-        app:srcCompat="@drawable/group_18" />
+        app:srcCompat="@drawable/meals_log_page_button" />
 
     <ImageButton
         android:id="@+id/MealsPageButton"
@@ -95,7 +95,7 @@
         android:layout_marginEnd="22dp"
         android:layout_marginBottom="519dp"
         android:background="@android:color/transparent"
-        android:src="@drawable/group_16"
+        android:src="@drawable/meals_meals_page_button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -111,7 +111,7 @@
         android:layout_marginTop="69dp"
         android:layout_marginEnd="102dp"
         android:layout_marginBottom="635dp"
-        android:src="@drawable/meal_tracking"
+        android:src="@drawable/meals_meal_tracking_text"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -134,7 +134,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0"
-        app:srcCompat="@drawable/generic_avatar" />
+        app:srcCompat="@drawable/general_generic_avatar" />
 
     <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/MealName"
@@ -201,7 +201,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="249dp"
         android:layout_marginBottom="589dp"
-        android:src="@drawable/group_21"
+        android:src="@drawable/meals_nutrition_header"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.248"
@@ -218,7 +218,7 @@
         android:layout_marginEnd="141dp"
         android:layout_marginBottom="146dp"
         android:background="@android:color/transparent"
-        android:src="@drawable/submit_button__1_"
+        android:src="@drawable/meals_submit_button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

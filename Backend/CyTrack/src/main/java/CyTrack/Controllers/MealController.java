@@ -88,6 +88,50 @@ public class MealController {
     }
 
     /**
+     * GET all meals by userID and date
+     */
+    @GetMapping("/{userID}/mealsByDate/{date}")
+    public ResponseEntity<?> getMealsByUserIDAndDate(@PathVariable Long userID, @PathVariable String date) {
+        Optional<User> user = userService.findByUserID(userID);
+        if (user.isPresent()) {
+            List<Meal> meals = mealService.getMealsByUserIDAndDate(userID, date);
+            List<MealResponse.MealData> mealDataList = meals.stream()
+                    .map(meal -> new MealResponse.MealData(
+                            meal.getMealId(),
+                            meal.getMealName(),
+                            meal.getCalories(),
+                            meal.getProtein(),
+                            meal.getCarbs(),
+                            meal.getTime(),
+                            meal.getDate()
+                    ))
+                    .toList();
+            MealResponse response = new MealResponse("success", mealDataList, "Meals found for date " + date);
+            return ResponseEntity.ok(response);
+        }
+        return ResponseEntity.status(404).body(new ErrorResponse("error", 404, "User not found", "Could not find user with given userID"));
+    }
+
+    /**
+     * GET total calories, protein, and carbs for a given userID and date
+     */
+    @GetMapping("/{userID}/nutrients/{date}")
+    public ResponseEntity<?> getTotalNutrientsForDate(@PathVariable Long userID, @PathVariable String date) {
+        Optional<User> user = userService.findByUserID(userID);
+        if (user.isPresent()) {
+            MealService.NutrientSummary nutrientSummary = mealService.calculateTotalNutrients(userID, date);
+            NutrientSummaryResponse response = new NutrientSummaryResponse(
+                    "success",
+                    nutrientSummary,
+                    "Total nutrients calculated for date " + date
+            );
+            return ResponseEntity.ok(response);
+        }
+        return ResponseEntity.status(404).body(new ErrorResponse("error", 404, "User not found", "Could not find user with given userID"));
+    }
+
+
+    /**
      * CREATE new meal entry
      *
      * @param meal we're attempting to add/create

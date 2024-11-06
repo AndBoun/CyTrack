@@ -4,13 +4,13 @@ import java.util.List;
 
 public class MealResponse {
     private String status;
-    private String message;
     private Data data;
+    private String message;
 
     public MealResponse(String status, List<MealData> meals, String message) {
         this.status = status;
-        this.message = message;
         this.data = new Data(meals);
+        this.message = message;
     }
 
     public String getStatus() {

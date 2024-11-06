@@ -5,16 +5,17 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-/*
- *@Author Kai Quach
- * Class for the Workout entity
- */
+
+import java.time.Duration;
+import java.time.LocalDateTime;
+
 @Entity
 public class Workout {
     // =============================== Fields ================================== //
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long workoutID;
+
     // Many workouts can belong to one user
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userID", nullable = false)
@@ -27,6 +28,10 @@ public class Workout {
     private int calories;
     private String date;
 
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
+
+
     // =============================== Constructors ================================== //
     public Workout() {}
 
@@ -37,6 +42,14 @@ public class Workout {
         this.calories = calories;
         this.date = date;
     }
+
+    // Constructor for initializing workout without time
+    public Workout(String exerciseType, int calories, String date) {
+        this.exerciseType = exerciseType;
+        this.calories = calories;
+        this.date = date;
+    }
+
 
     // =============================== Getters and Setters for each field ================================== //
     public Long getWorkoutID() {
@@ -86,5 +99,34 @@ public class Workout {
     public void setDate(String date) {
         this.date = date;
     }
+
+    // Method to start workout
+    public void startWorkout() {
+        this.startTime = LocalDateTime.now();
+    }
+
+    // Method to end workout and calculate duration
+    public void endWorkout() {
+        this.endTime = LocalDateTime.now();
+        this.duration = (int) Duration.between(startTime, endTime).toMinutes();
+    }
+
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public LocalDateTime getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
+    }
+
 
 }

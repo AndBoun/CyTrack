@@ -13,8 +13,15 @@ public interface MealRepository extends JpaRepository<Meal, Integer> {
 
     //method for finding Meal by name. Could be useful later on.
     Optional<Meal> findByMealName(String mealName);
-    List<Meal> findByUser_UserID(Long userID);
+
+    //find meal by ID
     Optional<Meal> findByMealID(Long mealID);
+
+    //list meals for given userID
+    List<Meal> findByUser_UserID(Long userID);
+
+    //list meals for given userID AND date
+    List<Meal> findByUser_UserIDAndDate(Long userID, String date);
 
     @Transactional
     void deleteByMealID(Long mealId);
