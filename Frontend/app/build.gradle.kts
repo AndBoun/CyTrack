@@ -151,6 +151,11 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.espresso.core)
     androidTestImplementation(libs.ext.junit)
+
+    implementation("io.coil-kt:coil-compose:2.7.0")
+    implementation("androidx.compose.ui:ui-text-google-fonts:1.7.4")
+    implementation("org.java-websocket:Java-WebSocket:1.5.2")
+
     dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.9.20")
 }
 

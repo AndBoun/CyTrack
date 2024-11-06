@@ -11,6 +11,7 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
+import com.example.CyTrack.Utilities.User;
 
 public class NetworkUtils {
 
@@ -98,6 +99,7 @@ public class NetworkUtils {
 
                 User user = new User(
                         data.getInt("userID"),
+                        data.getString("username"),
                         data.getString("firstName"),
                         data.getString("lastName"),
                         data.getInt("age"),
