@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.Box // A function arranging elements o
 // <!-- Adding Images --!>
 import androidx.compose.foundation.Image // Lays out a Format to display an image with modifiers
 import androidx.compose.foundation.border
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.ui.res.painterResource
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -29,14 +30,18 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 
 // Custom Theme Testing
-import com.example.compose.AppTheme
+import com.example.compose.AppTheme // Function for determining Theme
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
+import com.example.compose.primaryLight
+
 data class Message(val author: String, val body: String)
 
 class MainActivity : ComponentActivity() {
@@ -51,6 +56,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
 
 @Preview
 @Composable
@@ -69,30 +75,40 @@ fun PreviewMessageCard() {
 @Composable
 fun MessageCard(msg: Message) {
     // Add padding around our message
-    Row(modifier = Modifier.padding(all = 8.dp)) {
-        Image(
-            painter = painterResource(R.drawable.general_generic_avatar),
-            contentDescription = "Contact profile picture",
-            modifier = Modifier
-                // Set image size to 40 dp
-                .size(40.dp)
-                // Clip image to be shaped as a circle
-                .clip(CircleShape)
-                // An easy border implementation
-                .border(1.5.dp, MaterialTheme.colorScheme.primary, CircleShape)
-        )
+    AppTheme(
+        darkTheme = isSystemInDarkTheme()
+    ){
+        Row(modifier = Modifier.padding(all = 8.dp)) {
+            Image(
+                painter = painterResource(R.drawable.general_generic_avatar),
+                contentDescription = "Contact profile picture",
+                modifier = Modifier
+                    // Set image size to 40 dp
+                    .size(40.dp)
+                    // Clip image to be shaped as a circle
+                    .clip(CircleShape)
+                    // An easy border implementation
+                    .border(1.5.dp, MaterialTheme.colorScheme.primary, CircleShape)
+            )
 
-        // Add a horizontal space between the image and the column
-        Spacer(modifier = Modifier.width(8.dp))
+            // Add a horizontal space between the image and the column
+            Spacer(modifier = Modifier.width(8.dp))
 
-        Column { // A function arranging elements vertically
-            Text {
-
+            Column { // A function arranging elements vertically
+                Text(
+                    text = msg.author,
+                    color = MaterialTheme.colorScheme.primary,
+                    style = MaterialTheme.typography.titleSmall
+                )
+                // Add a vertical space between the author and message texts
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = msg.body,
+                    style = MaterialTheme.typography.bodyMedium
+                )
             }
-            // Add a vertical space between the author and message texts
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(text = msg.body)
         }
     }
+
 }
 // <!-- Adding Images END --!>
