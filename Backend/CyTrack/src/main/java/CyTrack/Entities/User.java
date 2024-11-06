@@ -17,13 +17,24 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long userID;
-    // One user can have many workouts
+
+    /**
+     * Workouts relationship and field
+     */
     @OneToMany(mappedBy = "user")
     private List<Workout> workouts;
 
+
+    /**
+     * Meals relationship and field
+     */
     @OneToMany(mappedBy = "user")
     private List<Meal> meals;
 
+
+    /**
+     * Friends relationship and field
+     */
     @ManyToMany
     @JoinTable(
             name = "friends",
@@ -32,7 +43,10 @@ public class User {
     )
     private List<Friends> friends = new ArrayList<>();
 
-    @ManyToMany
+    /**
+     * Badgees relationship and field
+     */
+    @ManyToMany(cascade = CascadeType.PERSIST)
     @JoinTable (
             name = "user_badges",
             joinColumns = @JoinColumn(name = "user_id"),
@@ -171,6 +185,7 @@ public class User {
     public void addBadge(Badge badge) {
         if (!this.badges.contains(badge)) {
             this.badges.add(badge);
+            badge.getUsers().add(this); // Maintain bidirectional relationship
         }
     }
 

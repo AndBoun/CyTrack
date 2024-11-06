@@ -19,14 +19,29 @@ public abstract class Badge {
     @ManyToMany(mappedBy = "badges")
     private List<User> users = new ArrayList<>();
 
-    // Getters and Setters for users
+    //=====CONSTRUCTOR=====//
+
+    /**
+     * This constructor simply adds an initial user to the list
+     * of User entities for our Badge entity
+     * @param user
+     */
+    public Badge(User user) {
+        addUser(user);
+    }
+
+    //=====GETTERS AND SETTERS=====//
+
+
     public List<User> getUsers() {
         return users;
     }
 
-    public void setUsers(List<User> users) {
-        this.users = users;
-    }
 
-    // Additional badge-specific fields and methods
+    public void addUser(User user) {
+        if (!this.users.contains(user)) {
+            this.users.add(user);
+            user.getBadges().add(this); // Ensure bidirectional consistency
+        }
+    }
 }

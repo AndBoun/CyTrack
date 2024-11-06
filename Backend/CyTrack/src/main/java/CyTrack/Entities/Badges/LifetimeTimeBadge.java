@@ -1,19 +1,31 @@
 package CyTrack.Entities.Badges;
 
+import CyTrack.Entities.User;
 import jakarta.persistence.Entity;
 
 @Entity
 public class LifetimeTimeBadge extends Badge{
-    private String description = "Spend a cumulative 50 hours working out";
-    private int cumulativeTimeRequired = 50; // hours
+    private final String badgeName = "Initiate Gymrat";
+    private final String description = "Spend a cumulative 50 hours working out";
+    //private final int cumulativeTimeRequired = 50; // hours
 
-    private boolean isEarned;
-
-
-    public LifetimeTimeBadge (){
-
+    // Constructor
+    public LifetimeTimeBadge(User user) {
+        super(user);
     }
 
-    //===GETTERS AND SETTERS===//
+    //=== GETTERS AND SETTERS ===//
+
+    public String getDescription() {
+        return description;
+    }
+
+    /*
+    public int getCumulativeTimeRequired() {
+        return cumulativeTimeRequired;
+    }
+    */
+
+
 
 }

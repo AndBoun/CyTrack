@@ -2,6 +2,7 @@ package CyTrack.Controllers;
 
 import CyTrack.Entities.User;
 import CyTrack.Entities.Workout;
+import CyTrack.Services.BadgeService;
 import CyTrack.Services.UserService;
 import CyTrack.Services.WorkoutService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,13 +17,17 @@ import java.util.Optional;
 public class WorkoutController {
     private final WorkoutService workoutService;
     private final UserService userService;
+    private final BadgeService badgeService;
 
     //Constructor
     @Autowired
-    public WorkoutController(WorkoutService workoutService, UserService userService) {
+    public WorkoutController(WorkoutService workoutService, UserService userService,
+                             BadgeService badgeService) {
         this.workoutService = workoutService;
         this.userService = userService;
+        this.badgeService = badgeService;
     }
+
     //Create a workout
     @PostMapping("/{userID}/workout")
     public ResponseEntity<?> createWorkout(@PathVariable Long userID, @RequestBody Workout workout) {
@@ -30,6 +35,8 @@ public class WorkoutController {
         if (user.isPresent()) {
             workout.setUser(user.get());
             Workout newWorkout = workoutService.createWorkout(workout);
+
+            badgeService.awardEligibleBadges(user.get());
 
             WorkoutIDResponse response = new WorkoutIDResponse("success", newWorkout.getWorkoutID(), "Workout created");
             return ResponseEntity.status(201).body(response);
@@ -195,6 +202,9 @@ public class WorkoutController {
                     updatedWorkout.setDate(workout.getDate());
                 }
                 workoutService.createWorkout(updatedWorkout);
+
+                badgeService.awardEligibleBadges(user.get());
+
                 WorkoutIDResponse response = new WorkoutIDResponse("success", workoutID, "Workout updated");
                 return ResponseEntity.status(200).body(response);
             }

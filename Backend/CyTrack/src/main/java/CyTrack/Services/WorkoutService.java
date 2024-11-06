@@ -1,5 +1,7 @@
 package CyTrack.Services;
 
+import CyTrack.Entities.User;
+import CyTrack.Repositories.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,10 +16,15 @@ import java.util.Optional;
 public class WorkoutService {
 
     private final WorkoutRepository workoutRepository;
+    private final UserRepository userRepository;
+    private final BadgeService badgeService;
 
     @Autowired
-    public WorkoutService(WorkoutRepository workoutRepository) {
+    public WorkoutService(WorkoutRepository workoutRepository, UserRepository userRepository,
+                          BadgeService badgeService) {
         this.workoutRepository = workoutRepository;
+        this.userRepository = userRepository;
+        this.badgeService = badgeService;
     }
 
     //Create workout
@@ -69,16 +76,58 @@ public class WorkoutService {
     }
 
 
-    // End a workout by setting the end time and calculating duration
     @Transactional
     public Workout endWorkout(Long workoutID) {
         Optional<Workout> workoutOptional = workoutRepository.findByWorkoutID(workoutID);
         if (workoutOptional.isPresent()) {
             Workout workout = workoutOptional.get();
-            workout.endWorkout(); // Call the endWorkout method on the entity to set end time and calculate duration
-            return workoutRepository.save(workout); // Persist changes to the database
+            workout.endWorkout(); // Sets end time and calculates duration
+
+            // Fetch the associated user and update total time
+            User user = workout.getUser();
+            int workoutDuration = workout.getDuration(); // Assuming duration is calculated in minutes
+            user.setTotalTime(user.getTotalTime() + workoutDuration);
+
+            userRepository.save(user); // Save user with updated total time
+
+            // Attempt to award the LifetimeTimeBadge based on the updated total time
+            badgeService.awardTimeBadge(user);
+
+            return workoutRepository.save(workout); // Save workout with end time and duration
         } else {
             throw new IllegalArgumentException("Workout not found");
+        }
+    }
+
+    /**
+     * Manually update total time for a user and attempt to award a badge.
+     *
+     * ===USED FOR TESTING AWARDING TIME BADGE WITHOUT NEEDING TO WAIT TO END A WORKOUT===
+     *
+     * @param userID    the ID of the user to update
+     * @param timeToAdd the amount of time to add to the user's total time (in minutes)
+     * @return the updated total time for the user
+     */
+    @Transactional
+    public int updateUserTotalTimeAndAwardBadge(Long userID, int timeToAdd) {
+        Optional<User> userOptional = userRepository.findById(userID);
+
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+
+            // Update total time
+            int updatedTotalTime = user.getTotalTime() + timeToAdd;
+            user.setTotalTime(updatedTotalTime);
+
+            // Save user with updated total time
+            userRepository.save(user);
+
+            // Attempt to award the LifetimeTimeBadge based on updated total time
+            badgeService.awardTimeBadge(user);
+
+            return updatedTotalTime; // Return updated total time for verification/testing purposes
+        } else {
+            throw new IllegalArgumentException("User not found");
         }
     }
 

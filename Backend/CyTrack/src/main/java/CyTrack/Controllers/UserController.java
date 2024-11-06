@@ -183,7 +183,8 @@ public class UserController {
         }
     }
 
-    // Award a badge to a user
+    /*
+    // Award a badge to a user -- IN PROGRESS
     @PostMapping("/{userId}/badges/{badgeId}")
     public ResponseEntity<?> awardBadge(@PathVariable Long userId, @PathVariable Long badgeId) {
         try {
@@ -199,5 +200,5 @@ public class UserController {
             return ResponseEntity.status(500).body(response);
         }
     }
-
+     */
 }

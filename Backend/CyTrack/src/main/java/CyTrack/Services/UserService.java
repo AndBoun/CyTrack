@@ -76,16 +76,5 @@ public class UserService {
         }
     }
 
-    public void awardTimeBadge(User user) {
-        int userTotalTime = user.getTotalTime();
 
-        // Example: award badge if user has 500 or more total workout minutes
-        if (userTotalTime >= 500) {
-            Badge lifetimeTimeBadge = badgeRepository.findByBadgeName("LifetimeTimeBadge");
-            if (lifetimeTimeBadge != null && !user.getBadges().contains(lifetimeTimeBadge)) {
-                user.addBadge(lifetimeTimeBadge);
-                userRepository.save(user); // save to persist changes
-            }
-        }
-    }
 }
