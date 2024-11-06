@@ -9,17 +9,10 @@ public class LifetimeTimeBadge extends Badge{
     private static final String description = "Spend a cumulative 50 hours working out";
 
     public LifetimeTimeBadge(User user) {
-        super(user);
-    }
-
-    @Override
-    public String getBadgeName() {
-        return badgeName;
-    }
-
-    @Override
-    public String getDescription() {
-        return description;
+        super("Initiate Gymrat",
+                "Spend a cumulative 50 hours working out",
+                user
+        );
     }
 
 

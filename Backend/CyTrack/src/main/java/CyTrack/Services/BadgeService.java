@@ -8,7 +8,6 @@ import CyTrack.Repositories.BadgeRepository;
 import CyTrack.Repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -32,7 +31,7 @@ public class BadgeService {
 
     // Find a badge by its ID
     public Optional<Badge> findByBadgeId(Long badgeID) {
-        return badgeRepository.findByID(badgeID);
+        return badgeRepository.findByBadgeID(badgeID);
     }
 
     // Get all badges a specific user has earned
@@ -69,11 +68,12 @@ public class BadgeService {
      * Otherwise, do nothing
      * @param user we're checking to see if badge criteria is met
      */
-    private void awardTimeBadge(User user) {
+    public void awardTimeBadge(User user) {
         int userTotalTime = user.getTotalTime();
 
         if (userTotalTime >= 500) {
-            Optional<Badge> lifetimeTimeBadgeOpt = badgeRepository.findByBadgeName("LifetimeTimeBadge");
+            // Try to find an existing LifetimeTimeBadge
+            Optional<Badge> lifetimeTimeBadgeOpt = badgeRepository.findByBadgeName("Initiate Gymrat");
 
             if (lifetimeTimeBadgeOpt.isPresent()) {
                 Badge lifetimeTimeBadge = lifetimeTimeBadgeOpt.get();
@@ -84,7 +84,7 @@ public class BadgeService {
                 }
             } else {
                 // Create the badge if it's missing
-                Badge lifetimeTimeBadge = new LifetimeTimeBadge(user);  // Assuming constructor exists
+                LifetimeTimeBadge lifetimeTimeBadge = new LifetimeTimeBadge(user);
                 badgeRepository.save(lifetimeTimeBadge);
                 user.getBadges().add(lifetimeTimeBadge);
                 userRepository.save(user);

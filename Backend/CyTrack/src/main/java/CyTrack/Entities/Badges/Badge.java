@@ -11,6 +11,8 @@ import java.util.List;
  * Interface detailing general implementation for our Badges
  */
 @Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "badge_type")
 public abstract class Badge {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,7 +21,17 @@ public abstract class Badge {
     @ManyToMany(mappedBy = "badges")
     private List<User> users = new ArrayList<>();
 
-    public Badge(User user) {
+
+    @Column(nullable = false, unique = true) // Ensure uniqueness for badge names
+    private String badgeName;
+
+    @Column(nullable = false)
+    private String description;
+
+
+    public Badge(String badgeName, String description, User user) {
+        this.badgeName = badgeName;
+        this.description = description;
         addUser(user);
     }
 
@@ -34,9 +46,13 @@ public abstract class Badge {
         }
     }
 
-    // Abstract methods to be implemented by subclasses
-    public abstract String getBadgeName();
-    public abstract String getDescription();
+    public String getBadgeName() {
+        return badgeName;
+    }
+
+    public String getDescription() {
+        return description;
+    }
 
     public Long getBadgeID() {
         return badgeID;
