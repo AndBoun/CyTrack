@@ -81,7 +81,7 @@ public class UserService {
 
         // Example: award badge if user has 500 or more total workout minutes
         if (userTotalTime >= 500) {
-            Badge lifetimeTimeBadge = badgeRepository.findByName("LifetimeTimeBadge");
+            Badge lifetimeTimeBadge = badgeRepository.findByBadgeName("LifetimeTimeBadge");
             if (lifetimeTimeBadge != null && !user.getBadges().contains(lifetimeTimeBadge)) {
                 user.addBadge(lifetimeTimeBadge);
                 userRepository.save(user); // save to persist changes
