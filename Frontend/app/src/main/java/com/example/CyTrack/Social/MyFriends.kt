@@ -1,6 +1,9 @@
 package com.example.CyTrack.Social
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
+import android.os.IBinder.DeathRecipient
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.BorderStroke
@@ -38,30 +41,62 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.CyTrack.R
+import com.example.CyTrack.Social.SocialUtils.Companion.messageUserScreen
+import com.example.CyTrack.Utilities.ComposeUtils.Companion.getCustomFontFamily
 import com.example.CyTrack.Utilities.User
 import com.example.CyTrack.Utilities.StatusBarUtil
 
 class MyFriends : ComponentActivity() {
 
+    /**
+     * The user whose profile is being displayed.
+     */
+    private lateinit var user: User
+
+    /**
+     * A list of friend requests for the user.
+     */
+    private var myFriends: MutableList<User> = mutableListOf()
+
+    private val URL = "temp"
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            val user = intent.getSerializableExtra("user") as User?
+            val user = intent.getSerializableExtra("user") as User
             if (user != null) {
 
             }
 
-            val list = ArrayList<User>()
-            list.add(User(1, "Doe", "John", "Doe", 20, "M", 2))
-            list.add(User(2, "Doe", "Jane", "Doe", 20, "F", 2))
-            list.add(User(3, "Doe", "John", "Doe", 20, "M", 2))
-            list.add(User(4, "Doe", "Jane", "Doe", 20, "F", 2))
-            list.add(User(5, "Doe", "John", "Doe", 20, "M", 2))
-            MyFriendsScreen(list)
+            SocialUtils.getListOfUsers(
+                this,
+                myFriends,
+                "temp",
+                "friends"
+            )
+
+            Column {
+                MyFriendsTopCard(onAddFriendsButton = {
+                    switchToAddFriends()
+                })
+                Spacer(modifier = Modifier.height(20.dp))
+                MyFriendsCardsLazyList(myFriends, onMessageClick = {
+                    messageUserScreen(user, it, Activity())
+                })
+            }
         }
 
         StatusBarUtil.setStatusBarColor(this, R.color.CyRed)
     }
+
+    private fun switchToAddFriends() {
+//        val intent = Intent(this, AddFriends::class.java).apply {
+//            putExtra("user", user)
+//        }
+//        startActivity(intent)
+    }
+
+
 
 }
 
@@ -84,7 +119,8 @@ fun ListProfileCard(
         color = Color.White,
         shape = RoundedCornerShape(10.dp),
         border = BorderStroke(1.dp, Color.Black),
-        modifier = Modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth()
+            .clickable(onClick = { /*TODO*/ })
 //            .padding(horizontal = 32.dp)
     ) {
         Row(
@@ -92,7 +128,6 @@ fun ListProfileCard(
 //            horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier
                 .padding(10.dp)
-                .clickable(onClick = { /*TODO*/ })
         ) {
             Image(
                 painter = painterResource(id = R.drawable.general_generic_avatar),
@@ -148,7 +183,7 @@ fun FriendsListProfileCard(
     modifier: Modifier = Modifier
 ) {
     Box {
-        ListProfileCard(name, username, img)
+        ListProfileCard(name, username, img, modifier)
 
 
         Button(
@@ -179,6 +214,7 @@ fun FriendsListProfileCard(
 @Composable
 fun MyFriendsCardsLazyList(
     friendsList: List<User>,
+    onMessageClick: (User) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     // LazyColumn to display a list of friends
@@ -188,7 +224,9 @@ fun MyFriendsCardsLazyList(
             .padding(horizontal = 32.dp)
     ) {
         for (friend in friendsList) {
-            FriendsListProfileCard(friend.firstName, friend.username, "temp", {})
+            FriendsListProfileCard(friend.firstName, friend.username, "temp", {
+                onMessageClick(friend)
+            })
             Spacer(modifier = Modifier.height(10.dp))
         }
     }
@@ -198,14 +236,17 @@ fun MyFriendsCardsLazyList(
 
 @Composable
 fun MyFriendsTopCard(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onAddFriendsButton: () -> Unit = {}
 ) {
+    val context = LocalContext.current
+
     Surface(
-        color = Color(LocalContext.current.resources.getColor(R.color.CyRed)),
+        color = Color(context.resources.getColor(R.color.CyRed)),
         border = BorderStroke(1.dp, Color.Black),
         modifier = Modifier
             .fillMaxWidth()
-            .height(121.dp)
+            .height(120.dp)
     ) {
         Row(
             verticalAlignment = Alignment.Bottom,
@@ -215,7 +256,9 @@ fun MyFriendsTopCard(
         ) {
 
             IconButton(
-                onClick = {},
+                onClick = {
+                    (context as Activity).finish()
+                },
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.general_back_arrow_button),
@@ -231,7 +274,7 @@ fun MyFriendsTopCard(
             )
 
             IconButton(
-                onClick = {},
+                onClick = onAddFriendsButton,
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.social_add_person),
