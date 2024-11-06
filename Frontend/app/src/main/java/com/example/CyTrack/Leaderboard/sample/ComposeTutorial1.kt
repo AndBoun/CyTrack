@@ -4,7 +4,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material3.Text
-import androidx.compose.material3
 
 import androidx.compose.runtime.Composable // Import For Compose
 import androidx.compose.ui.tooling.preview.Preview // Import for Previewing Compose
@@ -21,25 +20,30 @@ import androidx.compose.foundation.layout.Box // A function arranging elements o
 
 // <!-- Adding Images --!>
 import androidx.compose.foundation.Image // Lays out a Format to display an image with modifiers
+import androidx.compose.foundation.border
 import androidx.compose.ui.res.painterResource
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import com.example.CyTrack.Leaderboard.sample.Theme
 
+// Custom Theme Testing
+import com.example.compose.AppTheme
+data class Message(val author: String, val body: String)
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-             { // The Material Theme Created in the project
+            AppTheme {
                 Surface(modifier = Modifier.fillMaxSize()) {
                     MessageCard(Message("Android", "Jetpack Compose"))
                 }
@@ -48,17 +52,10 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-// <!-- Creating a Layout --!>
-// UI elements are hierarchical. Elements contain other elements.
-// Uses Column
-// A Hierarchy is built as comp functions call other comp functions.
-
-data class Message(val author: String, val body: String)
-
 @Preview
 @Composable
 fun PreviewMessageCard() {
-    ComposeTutorialTheme { // Allows our composable to inherit styles as defined in our app's theme
+    AppTheme { // Allows our composable to inherit styles as defined in our app's theme
         Surface {
             MessageCard(
                 msg = Message("Lexi", "Take a look at Jetpack Compose, it's great!")
@@ -89,9 +86,8 @@ fun MessageCard(msg: Message) {
         Spacer(modifier = Modifier.width(8.dp))
 
         Column { // A function arranging elements vertically
-            Text{
-                text = msg.author
-                color = MaterialTheme.colorScheme.secondary // .colorScheme is an easy way to style text from anywhere
+            Text {
+
             }
             // Add a vertical space between the author and message texts
             Spacer(modifier = Modifier.height(4.dp))
