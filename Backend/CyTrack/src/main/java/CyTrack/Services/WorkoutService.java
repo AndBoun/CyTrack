@@ -91,7 +91,7 @@ public class WorkoutService {
             userRepository.save(user); // Save user with updated total time
 
             // Attempt to award the LifetimeTimeBadge based on the updated total time
-            badgeService.awardTimeBadge(user);
+            badgeService.awardEligibleBadges(user);
 
             return workoutRepository.save(workout); // Save workout with end time and duration
         } else {
@@ -123,7 +123,7 @@ public class WorkoutService {
             userRepository.save(user);
 
             // Attempt to award the LifetimeTimeBadge based on updated total time
-            badgeService.awardTimeBadge(user);
+            badgeService.awardEligibleBadges(user);
 
             return updatedTotalTime; // Return updated total time for verification/testing purposes
         } else {

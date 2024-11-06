@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/badge")
@@ -25,30 +26,38 @@ public class BadgeController {
     }
 
     // Get all badges
-    @GetMapping("")
-    public ResponseEntity<List<Badge>> getAllBadges() {
+    @GetMapping("allBadges")
+    public ResponseEntity<?> getAllBadges() {
         List<Badge> badges = badgeService.getAllBadges();
-        return ResponseEntity.ok(badges);
+        List<BadgeResponse.BadgeData> badgeDataList = badges.stream()
+                .map(badge -> new BadgeResponse.BadgeData(badge.getBadgeID(), badge.getBadgeName(), badge.getDescription()))
+                .collect(Collectors.toList());
+        BadgeResponse response = new BadgeResponse("success", badgeDataList, "All badges retrieved");
+        return ResponseEntity.ok(response);
     }
 
     // Award a badge to a user
-    @PostMapping("/{userId}/award/{badgeId}")
-    public ResponseEntity<?> awardBadgeToUser(@PathVariable Long userId, @PathVariable Long badgeId) {
+    @PostMapping("/{userId}/award/{badgeName}")
+    public ResponseEntity<?> awardBadgeToUser(@PathVariable Long userId, @PathVariable String badgeName) {
         Optional<User> userOpt = userService.findByUserID(userId);
-        Optional<Badge> badgeOpt = badgeService.findByBadgeId(badgeId);
+        Optional<Badge> badgeOpt = badgeService.findByBadgeName(badgeName);
 
         if (userOpt.isEmpty()) {
-            return ResponseEntity.status(404).body("User not found");
+            ErrorResponse response = new ErrorResponse("error", 404, "User not found", "User with ID " + userId + " not found");
+            return ResponseEntity.status(404).body(response);
         }
         if (badgeOpt.isEmpty()) {
-            return ResponseEntity.status(404).body("Badge not found");
+            ErrorResponse response = new ErrorResponse("error", 404, "Badge not found", "Badge with name " + badgeName + " not found");
+            return ResponseEntity.status(404).body(response);
         }
 
         boolean awarded = badgeService.awardBadgeToUser(userOpt.get(), badgeOpt.get());
         if (awarded) {
-            return ResponseEntity.ok("Badge awarded successfully!");
+            BadgeResponse response = new BadgeResponse("success", null, "Badge awarded successfully!");
+            return ResponseEntity.ok(response);
         } else {
-            return ResponseEntity.status(409).body("Badge already awarded to user");
+            ErrorResponse response = new ErrorResponse("error", 409, "Conflict", "Badge already awarded to user");
+            return ResponseEntity.status(409).body(response);
         }
     }
 
@@ -59,10 +68,16 @@ public class BadgeController {
 
         if (userOpt.isPresent()) {
             List<Badge> userBadges = badgeService.getUserBadges(userOpt.get());
-            return ResponseEntity.ok(userBadges);
+            List<BadgeResponse.BadgeData> badgeDataList = userBadges.stream()
+                    .map(badge -> new BadgeResponse.BadgeData(badge.getBadgeID(), badge.getBadgeName(), badge.getDescription()))
+                    .collect(Collectors.toList());
+            BadgeResponse response = new BadgeResponse("success", badgeDataList, "User's earned badges retrieved");
+            return ResponseEntity.ok(response);
         } else {
-            return ResponseEntity.status(404).body("User not found");
+            ErrorResponse response = new ErrorResponse("error", 404, "User not found", "User with ID " + userId + " not found");
+            return ResponseEntity.status(404).body(response);
         }
     }
+
 
 }

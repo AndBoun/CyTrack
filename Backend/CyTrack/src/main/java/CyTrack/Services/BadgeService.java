@@ -91,4 +91,8 @@ public class BadgeService {
             }
         }
     }
+
+    public Optional<Badge> findByBadgeName(String badgeName) {
+        return badgeRepository.findByBadgeName(badgeName);
+    }
 }

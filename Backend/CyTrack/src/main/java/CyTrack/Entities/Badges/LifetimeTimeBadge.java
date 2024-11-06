@@ -5,26 +5,22 @@ import jakarta.persistence.Entity;
 
 @Entity
 public class LifetimeTimeBadge extends Badge{
-    private final String badgeName = "Initiate Gymrat";
-    private final String description = "Spend a cumulative 50 hours working out";
-    //private final int cumulativeTimeRequired = 50; // hours
+    private static final String badgeName = "Initiate Gymrat";
+    private static final String description = "Spend a cumulative 50 hours working out";
 
-    // Constructor
     public LifetimeTimeBadge(User user) {
         super(user);
     }
 
-    //=== GETTERS AND SETTERS ===//
+    @Override
+    public String getBadgeName() {
+        return badgeName;
+    }
 
+    @Override
     public String getDescription() {
         return description;
     }
-
-    /*
-    public int getCumulativeTimeRequired() {
-        return cumulativeTimeRequired;
-    }
-    */
 
 
 
