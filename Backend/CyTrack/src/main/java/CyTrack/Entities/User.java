@@ -1,5 +1,6 @@
 package CyTrack.Entities;
 
+import CyTrack.Entities.Badges.Badge;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -31,6 +32,14 @@ public class User {
     )
     private List<Friends> friends = new ArrayList<>();
 
+    @ManyToMany
+    @JoinTable (
+            name = "user_badges",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "badge_id")
+    )
+    private List<Badge> badges = new ArrayList<>();
+
     @OneToMany(mappedBy = "sender")
     @JsonIgnoreProperties("sender")
     private List<FriendRequest> sentRequests = new ArrayList<>();
@@ -46,6 +55,7 @@ public class User {
     private String password;
     private int age;
     private int streak;
+    private int totalTime;
     private String gender;
 
 
@@ -149,8 +159,27 @@ public class User {
         this.receivedRequests = receivedRequests;
     }
 
+    // Getters and Setters for badges
+    public List<Badge> getBadges() {
+        return badges;
+    }
+
+    public void setBadges(List<Badge> badges) {
+        this.badges = badges;
+    }
+
+    public void addBadge(Badge badge) {
+        if (!this.badges.contains(badge)) {
+            this.badges.add(badge);
+        }
+    }
 
 
+    public int getTotalTime() {
+        return totalTime;
+    }
 
-
+    public void setTotalTime(int totalTime) {
+        this.totalTime = totalTime;
+    }
 }

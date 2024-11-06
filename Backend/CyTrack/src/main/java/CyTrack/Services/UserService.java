@@ -1,7 +1,10 @@
 package CyTrack.Services;
 
+import CyTrack.Entities.Badges.Badge;
 import CyTrack.Entities.User;
+import CyTrack.Repositories.BadgeRepository;
 import CyTrack.Repositories.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,10 +19,12 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final BadgeRepository badgeRepository;
 
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, BadgeRepository badgeRepository) {
         this.userRepository = userRepository;
+        this.badgeRepository = badgeRepository;
     }
     // Register user, encrypt password
     public User registerUser(User user) throws NoSuchAlgorithmException {
@@ -68,6 +73,19 @@ public class UserService {
             return hexString.toString();
         } catch (NoSuchAlgorithmException e) {
             throw e;
+        }
+    }
+
+    public void awardTimeBadge(User user) {
+        int userTotalTime = user.getTotalTime();
+
+        // Example: award badge if user has 500 or more total workout minutes
+        if (userTotalTime >= 500) {
+            Badge lifetimeTimeBadge = badgeRepository.findByName("LifetimeTimeBadge");
+            if (lifetimeTimeBadge != null && !user.getBadges().contains(lifetimeTimeBadge)) {
+                user.addBadge(lifetimeTimeBadge);
+                userRepository.save(user); // save to persist changes
+            }
         }
     }
 }
