@@ -80,7 +80,9 @@ public class MessageSocket {
     @OnClose
     public void onClose(Session session) {
         Long userID = sessionUserMap.remove(session);
-        userSessionMap.remove(userID);
+        if (userID != null) {
+            userSessionMap.remove(userID);
+        }
     }
 
     @OnError

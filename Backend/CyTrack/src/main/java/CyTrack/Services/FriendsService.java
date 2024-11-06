@@ -68,6 +68,12 @@ public class FriendsService {
         friends.setFriendRequest(friendRequest);
         friendsRepository.save(friends);
     }
+
+    public void declineFriendRequest(FriendRequest friendRequest){
+        // Update the friend request status to declined
+        friendRequest.setStatus(FriendRequest.RequestStatus.DECLINED);
+        friendRequestRepository.save(friendRequest);
+    }
     private void sendNotification(Long receiverId, String senderUsername) {
         String message = "You have a new friend request from " + senderUsername;
         template.convertAndSendToUser(receiverId.toString(), "/queue/friendRequest", message);

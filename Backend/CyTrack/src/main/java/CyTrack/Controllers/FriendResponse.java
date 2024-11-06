@@ -54,10 +54,16 @@ public class FriendResponse {
     }
 
     public static class FriendsData {
+        private Long userID;
         private String username;
+        private String firstname;
+        private Long friendID;
 
-        public FriendsData(String username) {
+        public FriendsData(String firstname, String username, Long userID, Long friendID) {
             this.username = username;
+            this.firstname = firstname;
+            this.userID = userID;
+            this.friendID = friendID;
         }
 
         public String getUsername() {
@@ -67,5 +73,31 @@ public class FriendResponse {
         public void setUsername(String username) {
             this.username = username;
         }
+
+        public String getFirstname() {
+            return firstname;
+        }
+
+        public void setFirstname(String firstname) {
+            this.firstname = firstname;
+        }
+
+        public Long getUserID() {
+            return userID;
+        }
+
+        public void setUserID(Long userID) {
+            this.userID = userID;
+        }
+
+        public Long getFriendID() {
+            return friendID;
+        }
+
+        public void setFriendID(Long friendID) {
+            this.friendID = friendID;
+        }
+
+
     }
 }

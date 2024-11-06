@@ -105,9 +105,6 @@ public class UserController {
             if (updatedUser.getLastName() != null) {
                 existingUser.setLastName(updatedUser.getLastName());
             }
-            if (updatedUser.getPassword() != null) {
-                existingUser.setPassword(updatedUser.getPassword());
-            }
             if (updatedUser.getUsername() != null) {
                 existingUser.setUsername(updatedUser.getUsername());
             }

@@ -37,7 +37,10 @@ public class FriendsController {
         List<Friends> friends = friendsService.getAllFriends(userID);
         List<FriendResponse.FriendsData> friendsDataList = friends.stream()
                 .map(friend -> new FriendResponse.FriendsData(
-                        friend.getUser2().getUsername()
+                        friend.getUser2().getFirstName(),
+                        friend.getUser2().getUsername(),
+                        friend.getUser2().getUserID(),
+                        friend.getFriendID()
                 ))
                 .toList();
         FriendResponse response = new FriendResponse("success", friendsDataList, "Friends found");

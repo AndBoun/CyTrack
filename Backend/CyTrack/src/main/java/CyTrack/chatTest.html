@@ -27,7 +27,7 @@
   function connect() {
       var senderID = document.getElementById('senderID').value;
       var receiverID = document.getElementById('receiverID').value;
-      ws = new WebSocket("ws://localhost:8080/chat/" + senderID + "/" + receiverID);
+      ws = new WebSocket("ws://http://coms-3090-040.class.las.iastate.edu:8080/chat/" + senderID + "/" + receiverID);
 
       ws.onopen = function() {
           document.getElementById("chat").innerHTML += "<div>Connected</div>";

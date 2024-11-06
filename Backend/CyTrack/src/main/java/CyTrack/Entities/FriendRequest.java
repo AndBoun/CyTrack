@@ -13,7 +13,7 @@ import org.hibernate.annotations.OnDeleteAction;
 public class FriendRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "friend_request_id")
+    @Column(name = "friend_requestid")
     private Long friendRequestID;
 
 
