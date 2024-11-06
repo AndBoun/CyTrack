@@ -1,5 +1,9 @@
 package com.example.CyTrack.Social
 
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -50,34 +54,60 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.example.CyTrack.R
+import com.example.CyTrack.Social.MyFriends.Friends
 import com.example.CyTrack.Utilities.ComposeUtils.Companion.getCustomFontFamily
 import com.example.CyTrack.Utilities.User
 import com.example.CyTrack.Utilities.StatusBarUtil
+import kotlin.properties.Delegates
 
 
 class DirectMessage : ComponentActivity(){
 
+    /**
+     * The user whose profile is being displayed.
+     */
+    private lateinit var user: User
+
+    /**
+     * The recipient user.
+     */
+    private lateinit var recipientUser : Friends
+
+    private lateinit var conversationKey : String
+
+    private var messageList: MutableList<Msg> = mutableListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            val messageList = remember { mutableStateListOf<String>() }
-//            user = intent.getSerializableExtra("user") as User
+            messageList = remember { mutableStateListOf() }
+
+            user = intent.getSerializableExtra("user") as User
+            recipientUser = intent.getSerializableExtra("recipientUser") as Friends
+            conversationKey = "${user.id}_DM_${recipientUser.userID}"
+
+
 
             Box(
                 modifier = Modifier.fillMaxSize()
             ) {
                 Column {
-                    DirectMessageTopCard("John Doe", "johndoe", "generic_avatar")
+                    DirectMessageTopCard(recipientUser.firstName, recipientUser.username, "generic_avatar")
 
-                    ConversationLazyList(messageList)
+                    ConversationLazyList(messageList, messageAlignment = {
+                        it.senderID != user.id
+                    })
                 }
 
                 InputMessageBar(
                     messageList,
                     modifier = Modifier.align(Alignment.BottomCenter)
-                        .offset(y = (-50).dp)
+                        .offset(y = (-50).dp),
+                    onClickSend = {
+                        sendMessage(it)
+                    }
                 )
             }
 
@@ -86,12 +116,47 @@ class DirectMessage : ComponentActivity(){
         }
     }
 
+    data class Msg(
+        val message: String,
+        val senderID: Int
+    )
+
+    private fun sendMessage(message: String) {
+        val intent = Intent("SendWebSocketMessage").apply {
+            putExtra("key", conversationKey)
+            putExtra("message", message)
+        }
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
+        messageList.add(Msg(message, user.id))
+    }
+
+    private val messageReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            val key = intent?.getStringExtra("key")
+            if (conversationKey == key) {
+                val message = intent.getStringExtra("message").toString()
+                messageList.add(Msg(message, recipientUser.userID))
+            }
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        LocalBroadcastManager.getInstance(this).registerReceiver(messageReceiver, IntentFilter("SendWebSocketMessage"))
+    }
+
+    override fun onStop() {
+        super.onStop()
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(messageReceiver)
+    }
+
 }
 
 @Composable
 fun InputMessageBar(
-    messageList: MutableList<String>,
-    modifier: Modifier = Modifier
+    messageList: MutableList<DirectMessage.Msg>,
+    modifier: Modifier = Modifier,
+    onClickSend: (String) -> Unit = {}
 ) {
     var message by remember { mutableStateOf("") } // Message state
 
@@ -101,13 +166,15 @@ fun InputMessageBar(
         trailingIcon = {
             IconButton(
                 onClick = {
-                    // Handle message send
-                    if (message.isNotBlank()) {
-                        // Send message logic here
-                        messageList.add(message)
-
-                        message = "" // Clear the text field after sending
-                    }
+//                    // Handle message send
+//                    if (message.isNotBlank()) {
+//                        // Send message logic here
+//                        messageList.add(message)
+//
+//                        message = "" // Clear the text field after sending
+//                    }
+                    onClickSend(message)
+                    message = ""
                 },
 
             ) {
@@ -166,8 +233,9 @@ fun ConversationMessageCard(
 
 @Composable
 fun ConversationLazyList(
-    msg: List<String>,
-    modifier: Modifier = Modifier
+    msg: List<DirectMessage.Msg>,
+    modifier: Modifier = Modifier,
+    messageAlignment: (DirectMessage.Msg) -> Boolean = {false}
 ) {
     LazyColumn {
         items(msg) { message ->
@@ -175,14 +243,14 @@ fun ConversationLazyList(
                 modifier = Modifier
                     .fillMaxWidth()
             ) {
-                if (true) { // TODO : Check if message is sent by the user
+                if (messageAlignment(message)) { // TODO : Check if message is sent by the user
                     ConversationMessageCard(
-                        msg = message,
+                        msg = message.message,
                         modifier = Modifier.align(Alignment.TopStart)
                     )
                 } else {
                     ConversationMessageCard(
-                        msg = message,
+                        msg = message.message,
                         modifier = Modifier.align(Alignment.TopEnd)
                     )
                 }
@@ -198,6 +266,8 @@ fun DirectMessageTopCard(
     img : String,
     modifier: Modifier = Modifier
 ){
+    val context = LocalContext.current
+
     Surface(
         color = Color(LocalContext.current.resources.getColor(R.color.CyRed)),
         modifier = Modifier.fillMaxWidth()
@@ -211,7 +281,9 @@ fun DirectMessageTopCard(
                 .padding(top = 20.dp)
         ){
             IconButton(
-                onClick = { /* Handle back navigation */ },
+                onClick = {
+                    (context as ComponentActivity).finish()
+                },
                 modifier = Modifier.size(24.dp)
             ) {
                 Icon(
@@ -256,7 +328,7 @@ fun DirectMessageTopCard(
 @Composable
 fun DirectMessageScreen(
     user: User,
-    messageList : MutableList<String>,
+    messageList : MutableList<DirectMessage.Msg>,
     modifier: Modifier = Modifier
 ) {
     val insets = WindowInsets.systemBars.asPaddingValues()
@@ -275,10 +347,10 @@ fun DirectMessageScreen(
                 ConversationLazyList(messageList)
             }
 
-            InputMessageBar(
-                messageList = remember { mutableStateListOf<String>() },
-                modifier = Modifier.align(Alignment.BottomCenter)
-            )
+//            InputMessageBar(
+//                messageList = remember { mutableStateListOf<String>() },
+//                modifier = Modifier.align(Alignment.BottomCenter)
+//            )
         }
     }
 }
@@ -286,7 +358,7 @@ fun DirectMessageScreen(
 @Preview
 @Composable
 fun InputMessageBarPreview() {
-    InputMessageBar(mutableListOf("Hello, World!"))
+//    InputMessageBar(mutableListOf("Hello, World!"))
 }
 
 //@Preview
@@ -298,7 +370,7 @@ fun ConversationMessageCardPreview() {
 //@Preview
 @Composable
 fun PreviewConversationLazyList() {
-    ConversationLazyList(listOf("Hello, World!", "This is a test message", "This is another test message"))
+//    ConversationLazyList(listOf("Hello, World!", "This is a test message", "This is another test message"))
 }
 
 @Preview
@@ -319,18 +391,17 @@ fun PreviewMessageScreen(){
             Column {
                 DirectMessageTopCard("John Doe", "johndoe", "generic_avatar")
 
-                ConversationLazyList(
-                    listOf("Hello, World!", "This is a test message", "This is another test message"),
-//                    modifier = Modifier.align(Alignment.TopStart)
-                )
+//                ConversationLazyList(
+//                    listOf("Hello, World!", "This is a test message", "This is another test message"),
+//                )
             }
 
 
-            InputMessageBar(
-                messageList = mutableListOf("Hello, World!"),
-                modifier = Modifier.align(Alignment.BottomCenter)
-                    .offset(y = (-50).dp)
-            )
+//            InputMessageBar(
+//                messageList = mutableListOf("Hello, World!"),
+//                modifier = Modifier.align(Alignment.BottomCenter)
+//                    .offset(y = (-50).dp)
+//            )
         }
     }
 }

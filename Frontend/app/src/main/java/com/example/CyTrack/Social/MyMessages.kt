@@ -78,7 +78,7 @@ fun ListMessageCard(
     modifier: Modifier = Modifier
 ) {
     Surface (
-        modifier = Modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth()
     ){
         Row (
             verticalAlignment = Alignment.CenterVertically,

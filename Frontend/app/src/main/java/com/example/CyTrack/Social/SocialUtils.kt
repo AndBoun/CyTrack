@@ -2,13 +2,16 @@ package com.example.CyTrack.Social
 
 import android.app.Activity
 import android.content.Intent
+import android.util.Log
 import android.widget.Toast
 import androidx.core.content.ContextCompat.startActivity
 import com.android.volley.Request
 import com.android.volley.toolbox.JsonObjectRequest
 import com.example.CyTrack.Utilities.NetworkUtils
+import com.example.CyTrack.Utilities.UrlHolder
 import com.example.CyTrack.Utilities.User
 import com.example.CyTrack.Utilities.VolleySingleton
+import com.example.CyTrack.Utilities.WebSocketServiceUtil
 import org.json.JSONException
 
 class SocialUtils {
@@ -16,13 +19,45 @@ class SocialUtils {
 
     companion object {
         @JvmStatic
-        fun messageUserScreen(user: User, recipient: User, context: Activity) {
+        fun messageUserScreen(user: User, recipient: MyFriends.Friends, context: Activity) {
+            val serviceIntent = Intent(context, WebSocketServiceUtil::class.java).apply {
+                action = "CONNECT"
+                putExtra("key", "${user.id}_DM_${recipient.userID}")
+                putExtra("url", "${UrlHolder.wsURL}/chat/${user.id}/${recipient.userID}")
+
+//                Log.d("WebSocketServiceUtil", "Connecting to ${UrlHolder.wsURL}/chat/${user.id}/${recipient.userID}")
+            }
+            context.startService(serviceIntent)
+
+
+
             val intent = Intent(context, DirectMessage::class.java).apply {
                 putExtra("user", user)
-                putExtra("recipient", recipient)
+                putExtra("recipientUser", recipient)
             }
-            startActivity(context, intent, null)
+
+            context.startActivity(intent)
         }
+
+//        fun messageUserScreen(user: User, recipient: MyFriends.Friends, context: Context) {
+//            if (context == null) {
+//                throw IllegalArgumentException("Context cannot be null")
+//            }
+//
+//            val serviceIntent = Intent(context, WebSocketServiceUtil::class.java).apply {
+//                action = "CONNECT"
+//                putExtra("key", "${user.id}_DM_${recipient.userID}")
+//                putExtra("url", "${UrlHolder.wsURL}/chat/${user.id}/${recipient.userID}")
+//            }
+//            context.startService(serviceIntent)
+//
+//            val intent = Intent(context, DirectMessage::class.java).apply {
+//                putExtra("user", user)
+//                putExtra("recipientID", recipient)
+//            }
+//
+//            startActivity(context, intent, null)
+//        }
 
 
         @JvmStatic

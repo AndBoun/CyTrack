@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity{
                 return;
             }
             String serverUrl = serverEtx2.getText().toString() + usernameEtx2.getText().toString();
-
+"KE"
             // start Websocket service with key "chat2"
             Intent serviceIntent = new Intent(this, WebSocketService.class);
             serviceIntent.setAction("CONNECT");

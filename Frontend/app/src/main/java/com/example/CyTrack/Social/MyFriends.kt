@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.os.IBinder.DeathRecipient
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.BorderStroke
@@ -29,6 +30,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -40,11 +43,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.android.volley.Request
+import com.android.volley.toolbox.JsonObjectRequest
 import com.example.CyTrack.R
 import com.example.CyTrack.Social.SocialUtils.Companion.messageUserScreen
 import com.example.CyTrack.Utilities.ComposeUtils.Companion.getCustomFontFamily
+import com.example.CyTrack.Utilities.NetworkUtils
 import com.example.CyTrack.Utilities.User
 import com.example.CyTrack.Utilities.StatusBarUtil
+import com.example.CyTrack.Utilities.UrlHolder
+import com.example.CyTrack.Utilities.VolleySingleton
+import org.json.JSONException
+import java.io.Serializable
 
 class MyFriends : ComponentActivity() {
 
@@ -56,24 +66,21 @@ class MyFriends : ComponentActivity() {
     /**
      * A list of friend requests for the user.
      */
-    private var myFriends: MutableList<User> = mutableListOf()
+    private var myFriends: MutableList<Friends> = mutableListOf()
 
-    private val URL = "temp"
+    private val URL = UrlHolder.URL
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            val user = intent.getSerializableExtra("user") as User
+            user = intent.getSerializableExtra("user") as User
             if (user != null) {
 
             }
 
-            SocialUtils.getListOfUsers(
-                this,
-                myFriends,
-                "temp",
-                "friends"
-            )
+            myFriends = remember { mutableStateListOf() }
+
+            getFriends()
 
             Column {
                 MyFriendsTopCard(onAddFriendsButton = {
@@ -81,7 +88,7 @@ class MyFriends : ComponentActivity() {
                 })
                 Spacer(modifier = Modifier.height(20.dp))
                 MyFriendsCardsLazyList(myFriends, onMessageClick = {
-                    messageUserScreen(user, it, Activity())
+                    messageUserScreen(user, it, this@MyFriends)
                 })
             }
         }
@@ -89,13 +96,55 @@ class MyFriends : ComponentActivity() {
         StatusBarUtil.setStatusBarColor(this, R.color.CyRed)
     }
 
+    data class Friends(
+        val firstName: String,
+        val username: String,
+        val userID: Int,
+        val friendID: Int
+    ) : Serializable
+
     private fun switchToAddFriends() {
-//        val intent = Intent(this, AddFriends::class.java).apply {
-//            putExtra("user", user)
-//        }
-//        startActivity(intent)
+        val intent = Intent(this, AddFriends::class.java).apply {
+            putExtra("user", user)
+        }
+        startActivity(intent)
     }
 
+    private fun getFriends() {
+        
+        val getURL = "${URL}/${user.id}/friends"
+        val jsonObjectRequest = JsonObjectRequest(
+            Request.Method.GET,
+            getURL,
+            null,
+            { response ->
+                try {
+                    val message = response.getString("message")
+                    val data = response.getJSONObject("data").getJSONArray("friends")
+
+                    for (i in 0 until data.length()) {
+                        val friend = data.getJSONObject(i)
+                        myFriends.add(
+                            Friends(
+                                friend.getString("firstname"),
+                                friend.getString("username"),
+                                friend.getInt("userID"),
+                                friend.getInt("friendID")
+                            )
+                        )
+                    }
+                    myFriends.sortBy { it.firstName }
+                } catch (e: JSONException) {
+                    e.printStackTrace()
+                }
+            },
+            { error ->
+                // Handle error
+                Toast.makeText(this, NetworkUtils.errorResponse(error), Toast.LENGTH_LONG).show()
+            }
+        )
+        VolleySingleton.getInstance(this).addToRequestQueue(jsonObjectRequest)
+    }
 
 
 }
@@ -112,7 +161,8 @@ fun ListProfileCard(
     name: String,
     username: String,
     img: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onProfileClick: () -> Unit = {}
 ) {
     // Composable function to display a card with user information
     Surface(
@@ -120,8 +170,6 @@ fun ListProfileCard(
         shape = RoundedCornerShape(10.dp),
         border = BorderStroke(1.dp, Color.Black),
         modifier = modifier.fillMaxWidth()
-            .clickable(onClick = { /*TODO*/ })
-//            .padding(horizontal = 32.dp)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -161,13 +209,16 @@ fun ListProfileCard(
                 horizontalArrangement = Arrangement.End,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.general_more_options_horizontal),
-                    contentDescription = "More Options",
-                    modifier = Modifier.size(24.dp),
-                    colorFilter = ColorFilter.tint(Color.Black),
-                    // TODO ADD ONCLICK
-                )
+                IconButton(
+                    onClick = { onProfileClick() },
+                    modifier = Modifier.size(24.dp)
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.general_more_options_horizontal),
+                        contentDescription = "More Options",
+                        colorFilter = ColorFilter.tint(Color.Black)
+                    )
+                }
             }
 
         }
@@ -213,8 +264,8 @@ fun FriendsListProfileCard(
 
 @Composable
 fun MyFriendsCardsLazyList(
-    friendsList: List<User>,
-    onMessageClick: (User) -> Unit = {},
+    friendsList: List<MyFriends.Friends>,
+    onMessageClick: (MyFriends.Friends) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     // LazyColumn to display a list of friends
@@ -231,7 +282,6 @@ fun MyFriendsCardsLazyList(
         }
     }
 }
-
 
 
 @Composable
@@ -251,7 +301,8 @@ fun MyFriendsTopCard(
         Row(
             verticalAlignment = Alignment.Bottom,
             horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
                 .offset(y = (-10).dp)
         ) {
 
@@ -288,7 +339,7 @@ fun MyFriendsTopCard(
 
 @Composable
 fun MyFriendsScreen(
-    friendsList: List<User>,
+    friendsList: List<MyFriends.Friends>,
     modifier: Modifier = Modifier
 ) {
     Column {
@@ -305,7 +356,7 @@ fun ListProfileCardPreview() {
     ListProfileCard("John Doe", "johndoe", "temp")
 }
 
-//@Preview
+@Preview
 @Composable
 fun FriendsListProfileCardPreview() {
     FriendsListProfileCard("John Doe", "johndoe", "temp", {})
@@ -322,7 +373,7 @@ fun MyFriendsCardsLazyListPreview() {
     list.add(User(5, "Doe", "John", "Doe", 20, "M", 2))
     Surface {
 //        MyFriendsCardsLazyList(list)
-        MyFriendsScreen(list)
+//        MyFriendsScreen(list)
     }
 }
 

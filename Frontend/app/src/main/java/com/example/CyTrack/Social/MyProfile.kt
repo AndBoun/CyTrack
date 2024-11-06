@@ -3,6 +3,7 @@ package com.example.CyTrack.Social
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -17,7 +18,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -39,11 +39,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.googlefonts.Font
-import androidx.compose.ui.text.googlefonts.GoogleFont
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -55,8 +52,9 @@ import com.example.CyTrack.Utilities.StatusBarUtil
 import com.example.CyTrack.Utilities.VolleySingleton
 import com.android.volley.Request
 import com.example.CyTrack.Utilities.NetworkUtils
-import org.json.JSONArray
+import com.example.CyTrack.Utilities.UrlHolder
 import org.json.JSONException
+import org.json.JSONObject
 
 class MyProfile : ComponentActivity() {
 
@@ -68,20 +66,29 @@ class MyProfile : ComponentActivity() {
     /**
      * A list of friend requests for the user.
      */
-    private var friendRequests: MutableList<User> = mutableListOf()
+    private var friendRequests: MutableList<IncomingRequest> = mutableListOf()
 
-    private val URL: String = "https://7e68d300-a3cb-4835-bf2f-66cab084d974.mock.pstmn.io/friendRequests"
+    private val URL: String = "${UrlHolder.URL}"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             user = intent.getSerializableExtra("user") as User
             friendRequests = remember { mutableStateListOf() }
-            getFriendRequests(user!!.id)
+            getFriendRequests()
+
+
 
             Column {
                 if (user != null) {
-                    ProfileScreen(user.firstName, user.username, "temp")
+                    ProfileScreen(user.firstName, user.username, "temp",
+                        onClickMyFriends = {
+                            switchToMyFriends()
+                        },
+                        onClickMyMessages = {
+                            switchToMyMessages()
+                        }
+                    )
                 }
 
                 Spacer(modifier = Modifier.height(20.dp))
@@ -97,21 +104,47 @@ class MyProfile : ComponentActivity() {
         StatusBarUtil.setStatusBarColor(this, R.color.CyRed)
     }
 
+    data class IncomingRequest(
+        val firstName: String,
+        val userName: String,
+        val id: Int
+    )
 
-    private fun getFriendRequests(id: Int){
-        val getURL = "${URL}/${id}"
-        SocialUtils.getListOfUsers(this, friendRequests, getURL, "friendRequests")
+    private fun switchToMyFriends() {
+        val intent = Intent(this, MyFriends::class.java).apply {
+            putExtra("user", user)
+        }
+        startActivity(intent)
     }
 
-    private fun acceptFriendRequest(friend: User) {
-        val acceptURL = "${URL}/${user.id}/accept/${friend.id}"
+    private fun switchToMyMessages() {
+        val intent = Intent(this, MyMessages::class.java).apply {
+            putExtra("user", user)
+        }
+        startActivity(intent)
+    }
+
+    private fun getFriendRequests() {
+        val getURL = "${URL}/${user.id}/request/incoming"
+//        SocialUtils.getListOfUsers(this, friendRequests, getURL, "friendRequests")
 
         val jsonObjectRequest = JsonObjectRequest(
-            Request.Method.POST, acceptURL, null,
+            Request.Method.GET, getURL, null,
             { response ->
                 try {
                     val message = response.getString("message")
-                    friendRequests.remove(friend)
+                    val data = response.getJSONObject("data").getJSONArray("friendRequests")
+
+                    for (i in 0 until data.length()) {
+                        val tempUser = data.getJSONObject(i)
+                        friendRequests.add(
+                            IncomingRequest(
+                                tempUser.getString("firstname"),
+                                tempUser.getString("username"),
+                                tempUser.getInt("id")
+                            )
+                        )
+                    }
                 } catch (e: JSONException) {
                     e.printStackTrace()
                 }
@@ -123,8 +156,33 @@ class MyProfile : ComponentActivity() {
         VolleySingleton.getInstance(this).addToRequestQueue(jsonObjectRequest)
     }
 
-    private fun declineFriendRequest(friend: User) {
-        val declineURL = "${URL}/${user.id}/decline/${friend.id}"
+
+    private fun acceptFriendRequest(friend: IncomingRequest) {
+        val acceptURL = "${URL}/${user.id}/request"
+        val inputs = JSONObject().apply {
+            put("friendRequestID", friend.id)
+        }
+
+        val jsonObjectRequest = JsonObjectRequest(
+            Request.Method.PUT, acceptURL, inputs,
+            { response ->
+                try {
+                    val message = response.getString("message")
+                    friendRequests.remove(friend)
+                    Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+                } catch (e: JSONException) {
+                    e.printStackTrace()
+                }
+            },
+            { error ->
+                Toast.makeText(this, NetworkUtils.errorResponse(error), Toast.LENGTH_SHORT).show()
+            }
+        )
+        VolleySingleton.getInstance(this).addToRequestQueue(jsonObjectRequest)
+    }
+
+    private fun declineFriendRequest(friend: IncomingRequest) {
+        val declineURL = "${URL}/${user.id}/request/${friend.id}"
 
         val jsonObjectRequest = JsonObjectRequest(
             Request.Method.DELETE, declineURL, null,
@@ -132,6 +190,7 @@ class MyProfile : ComponentActivity() {
                 try {
                     val message = response.getString("message")
                     friendRequests.remove(friend)
+                    Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
                 } catch (e: JSONException) {
                     e.printStackTrace()
                 }
@@ -262,7 +321,9 @@ fun ProfileScreen(
     name: String,
     userName: String,
     imageUrl: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClickMyFriends: () -> Unit = {},
+    onClickMyMessages: () -> Unit = {}
 ) {
     val context = LocalContext.current
 
@@ -301,12 +362,10 @@ fun ProfileScreen(
                     .padding(bottom = 5.dp)
             ) {
                 FriendsButton(onClick = {
-                    val intent = Intent(context, MyFriends::class.java)
-                    context.startActivity(intent)
+                    onClickMyFriends()
                 })
                 MessageButton(onClick = {
-                    val intent = Intent(context, MyMessages::class.java)
-                    context.startActivity(intent)
+                    onClickMyMessages()
                 })
             }
         }
@@ -396,10 +455,10 @@ fun FriendRequestCard(
 
 @Composable
 fun FriendRequestCardLazyList(
-    friendRequests: List<User>,
+    friendRequests: List<MyProfile.IncomingRequest>,
     modifier: Modifier = Modifier,
-    onAccept: (User) -> Unit,
-    onDecline: (User) -> Unit
+    onAccept: (MyProfile.IncomingRequest) -> Unit,
+    onDecline: (MyProfile.IncomingRequest) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -407,7 +466,7 @@ fun FriendRequestCardLazyList(
             .padding(horizontal = 32.dp)
     ) {
         for (friend in friendRequests) {
-            FriendRequestCard(friend.firstName, friend.username, "temp", {
+            FriendRequestCard(friend.firstName, friend.userName, "temp", {
                 onAccept(friend)
             }, {
                 onDecline(friend)
@@ -485,7 +544,7 @@ fun ProfileScreenPreview() {
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            FriendRequestCardLazyList(list, onAccept = {}, onDecline = {})
+//            FriendRequestCardLazyList(list, onAccept = {}, onDecline = {})
         }
     }
 }
