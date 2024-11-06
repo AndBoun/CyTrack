@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>WebSocket Chat Room</title>
+</head>
+<body>
+<h2>WebSocket Chat Room</h2>
+<div>
+  <label for="senderID">Sender ID:</label>
+  <input type="text" id="senderID" value="1">
+</div>
+<div>
+  <label for="receiverID">Receiver ID:</label>
+  <input type="text" id="receiverID" value="2">
+</div>
+<div>
+  <label for="message">Message:</label>
+  <input type="text" id="message">
+</div>
+<button onclick="connect()">Connect</button>
+<button onclick="sendMessage()">Send Message</button>
+<div id="chat"></div>
+
+<script>
+  var ws = null;
+
+  function connect() {
+      var senderID = document.getElementById('senderID').value;
+      var receiverID = document.getElementById('receiverID').value;
+      ws = new WebSocket("ws://http://coms-3090-040.class.las.iastate.edu:8080/chat/" + senderID + "/" + receiverID);
+
+      ws.onopen = function() {
+          document.getElementById("chat").innerHTML += "<div>Connected</div>";
+      };
+
+      ws.onmessage = function(event) {
+          document.getElementById("chat").innerHTML += "<div>" + event.data + "</div>";
+      };
+
+      ws.onclose = function() {
+          document.getElementById("chat").innerHTML += "<div>Disconnected</div>";
+      };
+  }
+
+  function sendMessage() {
+      var message = document.getElementById('message').value;
+      ws.send(message);
+  }
+</script>
+</body>
+</html>

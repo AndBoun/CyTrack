@@ -31,6 +31,8 @@ public class FriendsService {
     }
 
 
+
+
     // Checks if two users are friends by seeing if there is an accepted friend request between them
     public boolean checkIfFriends(Long userID, Long friendID) {
         return friendsRepository.existsByUser1_UserIDAndUser2_UserID(userID, friendID) ||
@@ -45,8 +47,9 @@ public class FriendsService {
         if (checkIfRequestSent(userID, friendID) || checkIfRequestReceived(userID, friendID)) {
             throw new RuntimeException("Friend request already exists between these users");
         }
-
-        FriendRequest friendRequest = new FriendRequest(sender, receiver);
+        String senderUsername = sender.getUsername();
+        String receiverUsername = receiver.getUsername();
+        FriendRequest friendRequest = new FriendRequest(sender, senderUsername, receiver, receiverUsername);
         friendRequest.setStatus(FriendRequest.RequestStatus.PENDING);
         friendRequestRepository.save(friendRequest);
 
@@ -61,9 +64,15 @@ public class FriendsService {
         friendRequestRepository.save(friendRequest);
 
         // Create a new Friends record
-        Friends friends = new Friends(friendRequest.getSender(), friendRequest.getReceiver());
+        Friends friends = new Friends(friendRequest.getSender(), friendRequest.getSender().getUsername(), friendRequest.getReceiver(), friendRequest.getReceiver().getUsername());
         friends.setFriendRequest(friendRequest);
         friendsRepository.save(friends);
+    }
+
+    public void declineFriendRequest(FriendRequest friendRequest){
+        // Update the friend request status to declined
+        friendRequest.setStatus(FriendRequest.RequestStatus.DECLINED);
+        friendRequestRepository.save(friendRequest);
     }
     private void sendNotification(Long receiverId, String senderUsername) {
         String message = "You have a new friend request from " + senderUsername;
@@ -85,5 +94,13 @@ public class FriendsService {
 
     public Optional<FriendRequest> findFriendRequestByID(Long requestID) {
         return friendRequestRepository.findById(requestID);
+    }
+
+    public List<FriendRequest> getIncomingFriendRequests(Long userID) {
+        return friendRequestRepository.findByReceiver_UserIDAndStatus(userID, FriendRequest.RequestStatus.PENDING);
+    }
+
+    public List<FriendRequest> getOutgoingFriendRequests(Long userID) {
+        return friendRequestRepository.findBySender_UserIDAndStatus(userID, FriendRequest.RequestStatus.PENDING);
     }
 }

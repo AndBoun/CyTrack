@@ -5,6 +5,10 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+/*
+ *@Author Kai Quach
+ * Class for the Friends entity
+ */
 @Entity
 public class Friends {
     @Id
@@ -25,11 +29,16 @@ public class Friends {
     @JoinColumn(name = "friend_request_id")
     private FriendRequest friendRequest;
 
+    private String user1_username;
+    private String user2_username;
+
     public Friends() {}
 
-    public Friends(User user1, User user2) {
+    public Friends(User user1, String user1_username, User user2, String user2_username) {
         this.user1 = user1;
+        this.user1_username = user1_username;
         this.user2 = user2;
+        this.user2_username = user2_username;
     }
 
     public User getUser1() {

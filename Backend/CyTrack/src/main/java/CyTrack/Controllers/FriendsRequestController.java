@@ -9,19 +9,22 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/{userID}/friendsRequest")
+@RequestMapping("/{userID}/request")
 public class FriendsRequestController {
     private final UserService userService;
     private final FriendsService friendsService;
+
     @Autowired
     public FriendsRequestController(UserService userService, FriendsService friendsService) {
         this.userService = userService;
         this.friendsService = friendsService;
     }
+
     //Sends a friend request, by inputting a person's username.
     @PostMapping("")
     public ResponseEntity<?> sendFriendRequest(@PathVariable Long userID, @RequestBody Map<String, String> friendUser) {
@@ -38,7 +41,7 @@ public class FriendsRequestController {
                 return ResponseEntity.status(400).body(response);
             }
 
-            if (friendsService.checkIfFriends(userID,friend.get().getUserID())) {
+            if (friendsService.checkIfFriends(userID, friend.get().getUserID())) {
                 ErrorResponse response = new ErrorResponse("error", 400, "Already friends", "You are already friends with this user");
                 return ResponseEntity.status(400).body(response);
             }
@@ -63,7 +66,7 @@ public class FriendsRequestController {
     }
 
     @PutMapping("")
-    public ResponseEntity<?> acceptFriendRequest(@PathVariable Long userID, @RequestBody Map<String, Long> friendRequestID){
+    public ResponseEntity<?> acceptFriendRequest(@PathVariable Long userID, @RequestBody Map<String, Long> friendRequestID) {
         Long requestID = friendRequestID.get("friendRequestID");
         if (requestID == null) {
             ErrorResponse response = new ErrorResponse("error", 400, "Invalid request ID", "Request ID cannot be null");
@@ -72,10 +75,10 @@ public class FriendsRequestController {
 
         Optional<FriendRequest> friendRequest = friendsService.findFriendRequestByID(requestID);
 
-        if (friendRequest.isPresent()){
+        if (friendRequest.isPresent()) {
             FriendRequest friendRequest1 = friendRequest.get();
 
-            if (!friendRequest1.getStatus().equals(FriendRequest.RequestStatus.PENDING) || !friendRequest1.getReceiver().getUserID().equals(userID)){
+            if (!friendRequest1.getStatus().equals(FriendRequest.RequestStatus.PENDING) || !friendRequest1.getReceiver().getUserID().equals(userID)) {
                 ErrorResponse response = new ErrorResponse("error", 400, "Invalid request", "Friend request is not pending");
                 return ResponseEntity.status(400).body(response);
             }
@@ -91,7 +94,68 @@ public class FriendsRequestController {
         return ResponseEntity.status(404).body(response);
     }
 
+    @GetMapping("/incoming")
+    public ResponseEntity<?> getIncomingFriendRequests(@PathVariable Long userID){
+        Optional<User> user = userService.findByUserID(userID);
+        if (user.isPresent()){
+            List<FriendRequest> friendRequests = friendsService.getIncomingFriendRequests(userID);
+            List<FriendRequestResponse.FriendRequestData> friendRequestDataList = friendRequests.stream()
+                    .map(friendRequest -> new FriendRequestResponse.FriendRequestData(
+                            friendRequest.getSender().getFirstName(),
+                            friendRequest.getSender().getUsername(),
+                            friendRequest.getFriendRequestID()
+                    ))
+                    .toList();
+            FriendRequestResponse response = new FriendRequestResponse("success", friendRequestDataList, "Incoming friend requests found");
+            return ResponseEntity.status(200).body(response);
+        }
+        ErrorResponse response = new ErrorResponse("error", 404, "User not found", "User not found");
+        return ResponseEntity.status(404).body(response);
+    }
 
+    @GetMapping("/outgoing")
+    public ResponseEntity<?> getOutgoingFriendRequests(@PathVariable Long userID){
+        Optional<User> user = userService.findByUserID(userID);
+        if (user.isPresent()){
+            List<FriendRequest> friendRequests = friendsService.getOutgoingFriendRequests(userID);
+            List<FriendRequestResponse.FriendRequestData> friendRequestDataList = friendRequests.stream()
+                    .map(friendRequest -> new FriendRequestResponse.FriendRequestData(
+                            friendRequest.getReceiver().getFirstName(),
+                            friendRequest.getReceiver().getUsername(),
+                            friendRequest.getFriendRequestID()
+                    ))
+                    .toList();
+            FriendRequestResponse response = new FriendRequestResponse("success", friendRequestDataList, "Outgoing friend requests found");
+            return ResponseEntity.status(200).body(response);
+        }
+        ErrorResponse response = new ErrorResponse("error", 404, "User not found", "User not found");
+        return ResponseEntity.status(404).body(response);
+    }
 
+    @DeleteMapping("/{friendRequestID}")
+    public ResponseEntity<?> declineFriendRequest(@PathVariable Long userID, @PathVariable Long friendRequestID) {
+        if (friendRequestID == null) {
+            ErrorResponse response = new ErrorResponse("error", 400, "Invalid request ID", "Request ID cannot be null");
+            return ResponseEntity.status(400).body(response);
+        }
 
+        Optional<FriendRequest> friendRequest = friendsService.findFriendRequestByID(friendRequestID);
+
+        if (friendRequest.isPresent()) {
+            FriendRequest friendRequest1 = friendRequest.get();
+
+            if (!friendRequest1.getStatus().equals(FriendRequest.RequestStatus.PENDING) || !friendRequest1.getReceiver().getUserID().equals(userID)) {
+                ErrorResponse response = new ErrorResponse("error", 400, "Invalid request", "Friend request is not pending");
+                return ResponseEntity.status(400).body(response);
+            }
+
+            friendsService.declineFriendRequest(friendRequest1);
+
+            FriendRequestIDResponse response = new FriendRequestIDResponse("success", friendRequestID, "Friend request declined");
+            return ResponseEntity.status(200).body(response);
+
+        }
+        ErrorResponse response = new ErrorResponse("error", 404, "Friend request not found", "Friend request not found");
+        return ResponseEntity.status(404).body(response);
+    }
 }
