@@ -59,9 +59,6 @@ import com.example.compose.AppTheme
 
 // Animation Imports End
 
-/**
- * A list of friend requests for the user.
- */
 private var AllUsers: MutableList<User> = mutableListOf()
 private val SampleUser = LeaderboardData.UserSample
 
