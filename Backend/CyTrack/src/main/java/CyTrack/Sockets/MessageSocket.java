@@ -2,6 +2,8 @@ package CyTrack.Sockets;
 
 import CyTrack.Entities.Message;
 import CyTrack.Repositories.MessageRepository;
+import CyTrack.Responses.ChatMessageResponse;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.websocket.*;
 import jakarta.websocket.server.PathParam;
 import jakarta.websocket.server.ServerEndpoint;
@@ -92,12 +94,13 @@ public class MessageSocket {
 
     // Helper method to send chat history between two users when they connect
     private void sendChatHistory(Session session, Long senderID, Long receiverID) throws IOException {
-        // Fetch chat history between the sender and receiver
         var chatHistory = msgRepo.findBySenderIDAndReceiverIDOrReceiverIDAndSenderIDOrderByDateAsc(senderID, receiverID, senderID, receiverID);
         for (Message msg : chatHistory) {
-            String receiverUsername = userService.findByUserID(receiverID).get().getUsername();
-            String formattedMessage = (msg.getSenderID().equals(senderID) ? "You: " : receiverUsername +": ") + msg.getContent();
-            session.getBasicRemote().sendText("History: " + formattedMessage);
+            ChatMessageResponse chatMessage = new ChatMessageResponse("success",
+                    new ChatMessageResponse.Data(msg.getSenderID(), msg.getContent()),
+                    "Chat history loaded");
+            String jsonMessage = new ObjectMapper().writeValueAsString(chatMessage);
+            session.getBasicRemote().sendText(jsonMessage);
         }
     }
 }

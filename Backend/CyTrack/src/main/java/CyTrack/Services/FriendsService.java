@@ -1,8 +1,6 @@
 package CyTrack.Services;
 
-import CyTrack.Entities.FriendRequest;
-import CyTrack.Entities.Friends;
-import CyTrack.Entities.User;
+import CyTrack.Entities.*;
 import CyTrack.Repositories.FriendRequestRepository;
 import CyTrack.Repositories.FriendsRepository;
 import CyTrack.Repositories.UserRepository;
@@ -10,9 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
-
+import CyTrack.Repositories.UserConversationsRepository;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class FriendsService {
@@ -20,13 +19,15 @@ public class FriendsService {
     private final FriendsRepository friendsRepository;
     private final FriendRequestRepository friendRequestRepository;
     private final UserRepository userRepository;
+    private final UserConversationsRepository UserConversationsRepository;
     @Autowired
     private SimpMessagingTemplate template;
     @Autowired
-    public FriendsService(FriendsRepository friendsRepository, FriendRequestRepository friendRequestRepository, UserRepository userRepository) {
+    public FriendsService(FriendsRepository friendsRepository, FriendRequestRepository friendRequestRepository, UserRepository userRepository, UserConversationsRepository UserConversationsRepository) {
         this.friendsRepository = friendsRepository;
         this.friendRequestRepository = friendRequestRepository;
         this.userRepository = userRepository;
+        this.UserConversationsRepository = UserConversationsRepository;
 
     }
 
@@ -67,6 +68,10 @@ public class FriendsService {
         Friends friends = new Friends(friendRequest.getSender(), friendRequest.getSender().getUsername(), friendRequest.getReceiver(), friendRequest.getReceiver().getUsername());
         friends.setFriendRequest(friendRequest);
         friendsRepository.save(friends);
+
+        // Create a new UserConversations record
+        UserConversations userConversations = new UserConversations(friendRequest.getSender(), friendRequest.getSender().getUsername(), friendRequest.getReceiver(), friendRequest.getReceiver().getUsername());
+        UserConversationsRepository.save(userConversations);
     }
 
     public void declineFriendRequest(FriendRequest friendRequest){
@@ -103,4 +108,18 @@ public class FriendsService {
     public List<FriendRequest> getOutgoingFriendRequests(Long userID) {
         return friendRequestRepository.findBySender_UserIDAndStatus(userID, FriendRequest.RequestStatus.PENDING);
     }
+
+    public Optional<Friends> findByFriendID(Long friendID) {
+        return friendsRepository.findById(friendID);
+    }
+
+    public void removeFriend(Long friendID) {
+        friendsRepository.deleteById(friendID);
+
+    }
+    public List<UserConversations> getUserConversations(Long userID) {
+        return UserConversationsRepository.findByUser1_UserIDOrUser2_UserID(userID, userID);
+    }
+
+
 }

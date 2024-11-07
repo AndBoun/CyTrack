@@ -1,6 +1,7 @@
 package CyTrack.Services;
 
 import CyTrack.Entities.User;
+import CyTrack.Entities.UserConversations;
 import CyTrack.Repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,7 +35,6 @@ public class UserService {
         user.setPassword(hashPassword(newPassword));
         return userRepository.save(user);
     }
-
 
 
     public Optional<User> findByUserName(String username) {
