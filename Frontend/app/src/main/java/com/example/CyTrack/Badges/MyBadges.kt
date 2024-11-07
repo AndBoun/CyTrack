@@ -54,6 +54,7 @@ import androidx.compose.ui.unit.sp
 import com.example.CyTrack.R
 import com.example.CyTrack.Utilities.ComposeUtils.Companion.getCustomFontFamily
 import com.example.CyTrack.Utilities.User
+import com.example.CyTrack.Utilities.UrlHolder
 import com.example.compose.AppTheme
 
 // Animation Imports End
@@ -62,7 +63,7 @@ private var AllUsers: MutableList<User> = mutableListOf()
 private val SampleUser = BadgeData.BadgeSample
 
 private val data = SampleUser
-private val URL = "temp"
+private val URL = UrlHolder.URL
 
 class BadgesActivity : ComponentActivity(
 ) {

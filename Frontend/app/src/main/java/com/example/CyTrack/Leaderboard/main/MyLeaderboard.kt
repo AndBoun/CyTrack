@@ -16,6 +16,7 @@ package com.example.CyTrack.Leaderboard.main
 // Animation Imports
 import android.app.Activity
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.BorderStroke
@@ -41,6 +42,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -70,12 +73,12 @@ class LeaderboardActivity : ComponentActivity(
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            LeaderboardUtils.getListOfUsers(
-                this,
-                AllUsers,
-                URL,
-                "users"  //TODO: VERIFY ARRAY NAME
-            )
+            AllUsers = remember { mutableStateListOf() }
+
+            LeaderboardUtils.getListOfUsers(this, AllUsers, "${URL}/user", "users")//TODO: VERIFY ARRAY NAME
+            Log.d("Tag", "hi")
+            Log.d("Tag", "${AllUsers}")
+
             AppTheme { // Wraps our app in our custom theme
                 Surface(modifier = Modifier.fillMaxSize()) {
                     com.example.CyTrack.Leaderboard.main.LeaderboardScreen(data) // LeaderBoardData.UserSample
@@ -178,7 +181,7 @@ fun ProfileCard(
 // <!-- LazyColumn Lists --!>
 @Composable
 fun LBHierarchy(
-    user: List<User>,
+    user: MutableList<User>,
     onMessageClick: (User) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
@@ -253,7 +256,7 @@ fun LBTopCard(
 
 @Composable
 fun LeaderboardScreen(
-    UserList: List<User>,
+    UserList: MutableList<User>,
     modifier: Modifier = Modifier
 ) {
     Column {
