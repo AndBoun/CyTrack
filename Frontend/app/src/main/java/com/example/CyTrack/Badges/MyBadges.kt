@@ -69,31 +69,28 @@ private lateinit var user: User
 
 private var AllBadges: MutableList<BadgeObject> = mutableListOf()
 private val SampleUser = BadgeData.BadgeSample
-
 private val data = SampleUser
-//private val URL = "${UrlHolder.URL}/badge/${user.id}/earned"
-private val URL = "${UrlHolder.URL}/badge/2/earned"
+private val URL = UrlHolder.URL
+//private val URL = "${UrlHolder.URL}/badge/2/earned"
 
 class BadgesActivity : ComponentActivity(
 ) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+            user = intent.getSerializableExtra("user") as User
+
             AllBadges = remember { mutableStateListOf() }
             BadgeUtils.getListOfBadges(
                 this,
                 AllBadges,
-                URL,
+                "${URL}/badge/${user.id.toString()}/earned",
                 "badges"//TODO: VERIFY ARRAY NAME
             )
 
             AppTheme { // Wraps our app in our custom theme
                 Column {
-                    BGTopCard(
-                        onClickMyProfile = {
-                            switchToMyProfile()
-                        }
-                    )
+                    BGTopCard()
                     Spacer(modifier = Modifier.height(10.dp))
                     BGScreen(AllBadges)
                 }
@@ -101,12 +98,6 @@ class BadgesActivity : ComponentActivity(
 
         }
 
-    }
-    private fun switchToMyProfile() {
-        val intent = Intent(this, MyProfile::class.java).apply {
-            putExtra("user", user)
-        }
-        startActivity(intent)
     }
 
 }
@@ -173,27 +164,6 @@ fun BGProfileCard(
     }
 }
 
-@Composable
-fun ProfileButton(
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier.clickable(onClick = onClick)
-    ) {
-        Image(
-            painter = painterResource(R.drawable.general_back_arrow_button),
-            contentDescription = "Friends icon",
-            modifier = Modifier.size(24.dp)
-        )
-
-        Spacer(modifier = Modifier.height(3.dp))
-
-    }
-
-}
-
 // <!-- Adding Images END --!>
 @Composable
 fun BGCard(
@@ -255,14 +225,16 @@ fun BGTopCard(
                 .offset(y = (-10).dp)
         ) {
 
-            Row{
-                Spacer(modifier = modifier.width(10.dp))
-                Column {
-                    ProfileButton(
-                        onClick = { onClickMyProfile() }
-                    )
-                    Spacer(modifier = modifier.height(6.dp))
-                }
+            IconButton(
+                onClick = {
+                    (context as Activity).finish()
+                },
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.general_back_arrow_button),
+                    contentDescription = "Back arrow",
+                    modifier = Modifier.size(24.dp)
+                )
             }
 
             Image(

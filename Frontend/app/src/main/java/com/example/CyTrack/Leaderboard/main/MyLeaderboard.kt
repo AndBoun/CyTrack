@@ -70,14 +70,15 @@ private lateinit var user: User // Current User
 private var timeboard: MutableList<TimeBoardEntry> = mutableListOf()
 private var temp: MutableList<TimeBoardEntry> = mutableListOf()
 //private val URL = UrlHolder.URL
-//private val URL = "${UrlHolder.URL}/leaderboard/${user.id}"
-private val URL = "${UrlHolder.wsURL}/leaderboard/2"
+private val URL = "${UrlHolder.wsURL}/leaderboard/${user.id}"
+//private val URL = "${UrlHolder.wsURL}/leaderboard/2"
 
 class LeaderboardActivity : ComponentActivity(), WebSocketListener
 {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+            user = intent.getSerializableExtra("user") as User
             timeboard = remember { mutableStateListOf() }
             //LeaderboardUtils.getListOfUsers(this, leaderboard, "${URL}/user", "users")
             // WEBSOCKET SECTION
@@ -96,8 +97,8 @@ class LeaderboardActivity : ComponentActivity(), WebSocketListener
         }
 
     }
-    // WEBSOCKET SECTION
 
+    // WEBSOCKET SECTION
     private fun updateLeaderboard(entry: String) {
         try {
             Log.d("Task", "Starting Update")
