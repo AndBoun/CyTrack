@@ -1,6 +1,6 @@
 package com.example.CyTrack.Workouts;
 
-class WorkoutObject {
+public class WorkoutObject {
     String exerciseType;
 
     String duration;

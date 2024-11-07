@@ -19,6 +19,7 @@ import com.example.CyTrack.Social.MyProfile;
 import com.example.CyTrack.Leaderboard.TimeEntryBoard.LeaderboardActivity;
 import com.example.CyTrack.Utilities.User;
 import com.example.CyTrack.Utilities.StatusBarUtil;
+import com.example.CyTrack.Workouts.MyWorkouts;
 import com.example.CyTrack.Workouts.WorkoutActivity;
 
 public class MainDashboardActivity extends AppCompatActivity {
@@ -75,7 +76,8 @@ public class MainDashboardActivity extends AppCompatActivity {
 
         workOutTrackingButton.setOnClickListener(v -> {
             // Open Workout Tracking Activity
-            Intent intent = new Intent(this, WorkoutActivity.class);
+//            Intent intent = new Intent(this, WorkoutActivity.class);
+            Intent intent = new Intent(this, MyWorkouts.class);
             intent.putExtra("user", user);
             startActivity(intent);
         });
