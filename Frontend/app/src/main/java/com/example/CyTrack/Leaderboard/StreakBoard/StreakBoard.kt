@@ -1,4 +1,4 @@
-package com.example.CyTrack.Leaderboard.TimeEntryBoard
+package com.example.CyTrack.Leaderboard.StreakBoard
 
 // <!-- Creating a Layout --!>
 // UI elements are hierarchical. Elements contain other elements.
@@ -67,30 +67,30 @@ import org.java_websocket.handshake.ServerHandshake
 // Animation Imports End
 private lateinit var user: User // Current User
 
-private var timeboard: MutableList<TimeBoardEntry> = mutableListOf()
+private var StreakBoard: MutableList<User> = mutableListOf()
 //private val URL = UrlHolder.URL
 private val URL = UrlHolder.wsURL
 //private val URL = "${UrlHolder.wsURL}/leaderboard/2"
 
-class LeaderboardActivity : ComponentActivity(), WebSocketListener
+class StreakBoardActivity : ComponentActivity(), WebSocketListener
 {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             user = intent.getSerializableExtra("user") as User
-            timeboard = remember { mutableStateListOf() }
+            StreakBoard = remember { mutableStateListOf() }
 
             //LeaderboardUtils.getListOfUsers(this, leaderboard, "${URL}/user", "users")
             // WEBSOCKET SECTION
             Log.d("WebSocketServiceUtil", "Connecting to ${URL}/leaderboard/${user.id}")
             WebSocketManagerLeaderboard.getInstance().connectWebSocket("${URL}/leaderboard/${user.id}");
-            WebSocketManagerLeaderboard.getInstance().setWebSocketListener(this@LeaderboardActivity);
-            Log.d("List", "${timeboard}")
+            WebSocketManagerLeaderboard.getInstance().setWebSocketListener(this@StreakBoardActivity);
+            Log.d("List", "${StreakBoard}")
             // End WebSocket Section
 
             AppTheme { // Wraps our app in our custom theme
                 Surface(modifier = Modifier.fillMaxSize()) {
-                    LeaderboardScreen(timeboard) // LeaderBoardData.UserSample
+                    LeaderboardScreen(StreakBoard) // LeaderBoardData.UserSample
                 }
             }
 
@@ -103,8 +103,8 @@ class LeaderboardActivity : ComponentActivity(), WebSocketListener
         try {
             Log.d("Task", "Starting Update")
             Log.d("Import", "${entry}")
-            TimeboardUtils.getBoard(entry, timeboard)
-            Log.d("List", "${timeboard}")
+            LeaderboardUtils.getListOfUsers(entry, StreakBoard)
+            Log.d("List", "${StreakBoard}")
 
         } catch (e: Exception) {
             Log.d("ExceptionSendMessage:", e.message.toString())
@@ -225,8 +225,8 @@ fun ProfileCard(
 // <!-- LazyColumn Lists --!>
 @Composable
 fun LBHierarchy(
-    userlist: MutableList<TimeBoardEntry>,
-    onMessageClick: (TimeBoardEntry) -> Unit = {},
+    userlist: MutableList<User>,
+    onMessageClick: (User) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -241,7 +241,7 @@ fun LBHierarchy(
 //                Spacer(modifier = Modifier.height(10.dp))
 //            }
         items(userlist) { user -> // the items() child takes a list as a param
-            ProfileCard(user.name, user.id.toString(), user.time.toString(), "temp",{
+            ProfileCard(user.username, user.id.toString(), user.streak.toString(), "temp",{
                 onMessageClick(user)
             })  // Our message is then linked into our card and created
             Spacer(modifier = Modifier.height(10.dp))
@@ -304,7 +304,7 @@ fun LBTopCard(
 
 @Composable
 fun LeaderboardScreen(
-    UserList: MutableList<TimeBoardEntry>,
+    UserList: MutableList<User>,
     modifier: Modifier = Modifier
 ) {
     Column {
