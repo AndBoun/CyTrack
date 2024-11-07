@@ -68,7 +68,7 @@ import org.java_websocket.handshake.ServerHandshake
 private lateinit var user: User // Current User
 
 private var timeboard: MutableList<TimeBoardEntry> = mutableListOf()
-
+private var temp: MutableList<TimeBoardEntry> = mutableListOf()
 //private val URL = UrlHolder.URL
 //private val URL = "${UrlHolder.URL}/leaderboard/${user.id}"
 private val URL = "${UrlHolder.wsURL}/leaderboard/2"
@@ -84,15 +84,17 @@ class LeaderboardActivity : ComponentActivity(), WebSocketListener
             Log.d("WebSocketServiceUtil", "Connecting to ${URL}")
             WebSocketManagerLeaderboard.getInstance().connectWebSocket(URL);
             WebSocketManagerLeaderboard.getInstance().setWebSocketListener(this@LeaderboardActivity);
-
             Log.d("List", "${timeboard}")
             // End WebSocket Section
+
             AppTheme { // Wraps our app in our custom theme
                 Surface(modifier = Modifier.fillMaxSize()) {
                     LeaderboardScreen(timeboard) // LeaderBoardData.UserSample
                 }
             }
+
         }
+
     }
     // WEBSOCKET SECTION
 
@@ -100,8 +102,9 @@ class LeaderboardActivity : ComponentActivity(), WebSocketListener
         try {
             Log.d("Task", "Starting Update")
             Log.d("Import", "${entry}")
-            TimeboardUtils.getBoard(entry, timeboard)
+            TimeboardUtils.getBoard(entry, timeboard, temp)
             Log.d("List", "${timeboard}")
+
         } catch (e: Exception) {
             Log.d("ExceptionSendMessage:", e.message.toString())
             Toast.makeText(this, "Failed to Update", Toast.LENGTH_SHORT).show()
@@ -112,11 +115,14 @@ class LeaderboardActivity : ComponentActivity(), WebSocketListener
 
     // Updates the Leaderboard as it's changed
     override fun onWebSocketMessage(leaderboardupdate: String) {
-        Log.d("Message Success","Update Recieved")
-        try {
-            updateLeaderboard(leaderboardupdate)
-        } catch (e: Exception) {
-            Log.d("Exception", e.message.toString())
+        runOnUiThread{
+            Log.d("Message Success","Update Recieved")
+            try {
+                updateLeaderboard(leaderboardupdate)
+
+            } catch (e: Exception) {
+                Log.d("Exception", e.message.toString())
+            }
         }
     }
 
@@ -179,12 +185,7 @@ fun LBProfileCard(
                     fontFamily = getCustomFontFamily("Inter", FontWeight.Bold, FontStyle.Normal)
                 )
                 Spacer(modifier = Modifier.padding(2.dp))
-                Text(
-                    text = username,
-                    fontSize = 11.sp,
-                    fontStyle = FontStyle.Italic,
-                    fontFamily = getCustomFontFamily("Inter", FontWeight.Normal, FontStyle.Italic)
-                )
+
             }
 
             Row(
@@ -192,7 +193,7 @@ fun LBProfileCard(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    text = "Streak: " + streak
+                    text = "Total Time: " + streak
                 )
             }
 
@@ -223,12 +224,10 @@ fun ProfileCard(
 // <!-- LazyColumn Lists --!>
 @Composable
 fun LBHierarchy(
-    user: MutableList<TimeBoardEntry>,
+    userlist: MutableList<TimeBoardEntry>,
     onMessageClick: (TimeBoardEntry) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-    val userSorted = user.sortedByDescending { it.time }
-
     LazyColumn(
         modifier = Modifier
             .fillMaxHeight()
@@ -240,8 +239,8 @@ fun LBHierarchy(
 //                })  // Our message is then linked into our card and created
 //                Spacer(modifier = Modifier.height(10.dp))
 //            }
-        items(userSorted) { user -> // the items() child takes a list as a param
-            ProfileCard(user.name.toString(), user.id.toString(), user.time.toString(), "temp",{
+        items(userlist) { user -> // the items() child takes a list as a param
+            ProfileCard(user.name, user.id.toString(), user.time.toString(), "temp",{
                 onMessageClick(user)
             })  // Our message is then linked into our card and created
             Spacer(modifier = Modifier.height(10.dp))

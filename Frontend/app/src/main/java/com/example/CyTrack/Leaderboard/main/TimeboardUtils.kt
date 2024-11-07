@@ -14,6 +14,7 @@ import com.example.CyTrack.Utilities.User
 import com.example.CyTrack.Utilities.VolleySingleton
 import org.json.JSONArray
 import org.json.JSONObject
+import java.sql.Time
 
 
 class TimeboardUtils(){
@@ -22,13 +23,14 @@ class TimeboardUtils(){
         @JvmStatic
         fun getBoard(
             msg: String,
-            TimeEntryList: MutableList<TimeBoardEntry>
+            TimeEntryList: MutableList<TimeBoardEntry>,
+            Temp: MutableList<TimeBoardEntry>
         ) {
             try {
                 val data = JSONArray(msg)
+                TimeEntryList.clear()
                 for (i in 0 until data.length()) {
                     val entry = data.getJSONObject(i)
-
                     TimeEntryList.add(
                         TimeBoardEntry(
                             entry.getLong("userID"),
