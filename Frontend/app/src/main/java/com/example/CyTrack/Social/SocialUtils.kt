@@ -21,7 +21,6 @@ import org.json.JSONObject
 
 class SocialUtils {
 
-
     companion object {
         @JvmStatic
         fun messageUserScreen(user: User, recipient: Friend, context: Activity) {
