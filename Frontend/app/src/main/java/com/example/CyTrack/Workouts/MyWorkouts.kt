@@ -71,12 +71,13 @@ class MyWorkouts : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         user = intent.getSerializableExtra("user") as User
-        WorkoutUtils.getWorkouts(this, "${URL}/${user.id}/workoutByDate/${getDateAsString()}", workoutList)
+        WorkoutUtils.getWorkouts(
+            this,
+            "${URL}/${user.id}/workoutByDate/${getDateAsString()}",
+            workoutList
+        )
 
         setContent {
-//            caloriesBurned = remember { mutableIntStateOf(0) }
-//            workoutTime = remember { mutableIntStateOf(0) }
-
 
             Column(
                 verticalArrangement = Arrangement.Top,
@@ -115,7 +116,7 @@ class MyWorkouts : ComponentActivity() {
                 ) {
                     StartWorkoutButton(
                         onClick = {
-                           switchToStartWorkouts()
+                            switchToStartWorkouts()
                         }
                     )
                     AddWorkOutButton(
@@ -162,14 +163,14 @@ class MyWorkouts : ComponentActivity() {
 
     }
 
-    private fun switchToAddWorkouts(){
+    private fun switchToAddWorkouts() {
         val intent = Intent(this, WorkoutActivity::class.java).apply {
             putExtra("user", user)
         }
         startActivity(intent)
     }
 
-    private fun switchToStartWorkouts(){
+    private fun switchToStartWorkouts() {
         val intent = Intent(this, StartWorkout::class.java).apply {
             putExtra("user", user)
         }
@@ -366,8 +367,13 @@ fun DailyStatisticBox(
 }
 
 
+/**
+ * A composable function that displays a workout card.
+ *
+ * @param workout A WorkoutObject representing the workout details to be displayed.
+ */
 @Composable
-fun WorkoutCard(workout: WorkoutObject){
+fun WorkoutCard(workout: WorkoutObject) {
     Surface(
         shape = RoundedCornerShape(10.dp),
         modifier = Modifier
@@ -377,10 +383,10 @@ fun WorkoutCard(workout: WorkoutObject){
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
-        ){
+        ) {
             Column(
-                
-            ){
+
+            ) {
                 Text(
                     text = workout.exerciseType,
                     color = Color.Black,
@@ -435,15 +441,18 @@ fun WorkoutCard(workout: WorkoutObject){
             )
 
         }
-
-
     }
 }
 
+/**
+ * A composable function that displays a list of workouts using a LazyColumn.
+ *
+ * @param workoutList A list of WorkoutObject representing the workouts to be displayed.
+ */
 @Composable
-fun WorkoutsLazyList(workoutList: List<WorkoutObject>){
+fun WorkoutsLazyList(workoutList: List<WorkoutObject>) {
     LazyColumn {
-        items(workoutList.size){
+        items(workoutList.size) {
             WorkoutCard(workoutList[it])
             HorizontalDivider()
         }
@@ -452,7 +461,7 @@ fun WorkoutsLazyList(workoutList: List<WorkoutObject>){
 
 @Preview
 @Composable
-fun PreviewWorkoutCard(){
+fun PreviewWorkoutCard() {
     val workout = WorkoutObject("Running", "30", "200", "12-12-2021", 1)
     WorkoutCard(workout)
 }

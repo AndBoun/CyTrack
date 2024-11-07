@@ -41,14 +41,24 @@ import com.example.CyTrack.Utilities.NetworkUtils
 import com.example.CyTrack.Utilities.UrlHolder
 import com.example.CyTrack.Utilities.User
 import com.example.CyTrack.Utilities.VolleySingleton
+import com.example.compose.AppTheme
 import org.json.JSONObject
 
 class StartWorkout : ComponentActivity() {
 
+    /**
+     * The user object representing the current user.
+     */
     private lateinit var user: User
 
+    /**
+     * The base URL for workout-related API endpoints.
+     */
     private val URL = "${UrlHolder.URL}/workout"
 
+    /**
+     * The ID of the current workout.
+     */
     private var workoutID: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,27 +67,35 @@ class StartWorkout : ComponentActivity() {
             user = intent.getSerializableExtra("user") as User
 
 
-            Column(
-                modifier = Modifier.padding(16.dp)
-            ) {
-                CreateWorkoutForm(
-                    onCreateWorkout = { workout ->
-                        startWorkout(workout)
-                    }
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                EndWorkoutButton(
-                    onClick = {
-                        // Handle ending workout
-                        endWorkout()
-                    }
-                )
+            AppTheme {
+                Column(
+                    modifier = Modifier.padding(16.dp)
+                ) {
+                    CreateWorkoutForm(
+                        onCreateWorkout = { workout ->
+                            startWorkout(workout)
+                        }
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    EndWorkoutButton(
+                        onClick = {
+                            // Handle ending workout
+                            endWorkout()
+                        }
+                    )
+                }
             }
+
         }
 
     }
 
 
+    /**
+     * Starts a workout by sending a POST request to the server.
+     *
+     * @param workout The workout object containing details of the workout to be started.
+     */
     private fun startWorkout(workout: WorkoutObject) {
         val postURL = "${URL}/${user.id}/createAndStart"
 
@@ -107,7 +125,10 @@ class StartWorkout : ComponentActivity() {
         VolleySingleton.getInstance(this).addToRequestQueue(jsonObject)
     }
 
-    private fun endWorkout(){
+    /**
+     * Ends the current workout by sending a POST request to the server.
+     */
+    private fun endWorkout() {
         val postURL = "${URL}/${user.id}/workout/${workoutID}/end"
 
         val jsonObject = JsonObjectRequest(
@@ -129,6 +150,12 @@ class StartWorkout : ComponentActivity() {
 
 }
 
+/**
+ * A composable function that creates a button to end the workout.
+ *
+ * @param onClick The callback to be invoked when the button is clicked.
+ * @param modifier The modifier to be applied to the button.
+ */
 @Composable
 fun EndWorkoutButton(
     onClick: () -> Unit,
@@ -160,9 +187,14 @@ fun EndWorkoutButton(
             fontSize = 16.sp
         )
     }
-
 }
 
+/**
+ * A composable function that creates a form for starting a workout.
+ *
+ * @param onCreateWorkout The callback to be invoked when the workout is created.
+ * @param modifier The modifier to be applied to the form.
+ */
 @Composable
 fun CreateWorkoutForm(
     onCreateWorkout: (WorkoutObject) -> Unit,
