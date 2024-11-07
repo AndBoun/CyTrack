@@ -1,5 +1,6 @@
 package CyTrack.Entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import org.hibernate.annotations.OnDelete;
@@ -19,8 +20,9 @@ public class FriendRequest {
 
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JsonIgnoreProperties("sentRequests")
+    //@JsonIgnoreProperties("sentRequests")
     @JoinColumn(name = "sender_id")
+    @JsonIgnore
     private User sender;
 
 
@@ -28,8 +30,9 @@ public class FriendRequest {
 
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JsonIgnoreProperties("receivedRequests")
+    //@JsonIgnoreProperties(value = {"workouts", "meals", "friends", "badges", "sentRequests", "receivedRequests"})
     @JoinColumn(name = "receiver_id")
+    @JsonIgnore
     private User receiver;
 
     private String receiver_username;

@@ -8,9 +8,13 @@ import org.springframework.stereotype.Service;
 import CyTrack.Entities.Workout;
 import CyTrack.Repositories.WorkoutRepository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
 //Service for Workout entity
 @Service
 public class WorkoutService {
@@ -31,9 +35,46 @@ public class WorkoutService {
     public Workout createWorkout(Workout workout) {
         User userToAddWorkout = workout.getUser();
         userToAddWorkout.setTotalTime(userToAddWorkout.getTotalTime() + workout.getDuration());
+
+        //updateStreak(userToAddWorkout);
+
         return workoutRepository.save(workout);
 
     }
+
+    // Method to update the user's streak
+
+    /*
+    private void updateStreak(User user) {
+        // Sort workouts by date in ascending order
+        List<Workout> sortedWorkouts = user.getWorkouts().stream()
+                .sorted(Comparator.comparing(Workout::getDate))
+                .collect(Collectors.toList());
+
+        int currentStreak = 1;
+        int highestStreak = 1;
+
+        for (int i = 1; i < sortedWorkouts.size(); i++) {
+            LocalDate previousDate = LocalDate.parse(sortedWorkouts.get(i - 1).getDate());
+            LocalDate currentDate = LocalDate.parse(sortedWorkouts.get(i).getDate());
+
+            // Check if current date is the next consecutive day after the previous one
+            if (currentDate.isEqual(previousDate.plusDays(1))) {
+                currentStreak++;
+            } else {
+                currentStreak = 1; // reset streak
+            }
+
+            // Update highest streak if needed
+            if (currentStreak > highestStreak) {
+                highestStreak = currentStreak;
+            }
+        }
+
+// Update the user's streak values
+        user.setCurrentStreak(currentStreak);
+    }
+    */
 
     //find workout by ID
     public Optional<Workout> findByWorkoutID(Long workoutID) {
@@ -51,7 +92,7 @@ public class WorkoutService {
     }
 
     //get all workouts for a given userID AND date
-    public List<Workout> getWorkoutsByUserIDAndDate(Long userID, String date) {
+    public List<Workout> getWorkoutsByUserIDAndDate(Long userID, LocalDate date) {
         return workoutRepository.findByUser_UserIDAndDate(userID, date);
     }
 
@@ -68,12 +109,12 @@ public class WorkoutService {
     }
 
     //
-    public int getCaloriesByDate(Long userID, String date) {
+    public int getCaloriesByDate(Long userID, LocalDate date) {
         List<Workout> workouts = getWorkoutsByUserIDAndDate(userID, date);
         return workouts.stream().mapToInt(Workout::getCalories).sum();
     }
 
-    public int getWorkoutTimeByDate(Long userID, String date) {
+    public int getWorkoutTimeByDate(Long userID, LocalDate date) {
         List<Workout> workouts = getWorkoutsByUserIDAndDate(userID, date);
         return workouts.stream().mapToInt(Workout::getDuration).sum();
     }
@@ -101,6 +142,8 @@ public class WorkoutService {
             throw new IllegalArgumentException("Workout not found");
         }
     }
+
+
 
     /**
      * Manually update total time for a user and attempt to award a badge.

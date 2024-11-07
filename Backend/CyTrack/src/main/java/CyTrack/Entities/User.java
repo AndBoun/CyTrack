@@ -3,6 +3,7 @@ package CyTrack.Entities;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,7 +61,9 @@ public class User {
     private String lastName;
     private String password;
     private int age;
-    private int streak;
+    private int currentStreak;
+    private int highestStreak;
+
     private int totalTime;
     private String gender;
 
@@ -113,12 +116,20 @@ public class User {
         this.age = age;
     }
 
-    public int getStreak() {
-        return streak;
+    public int getCurrentStreak() {
+        return currentStreak;
     }
 
-    public void setStreak(int streak) {
-        this.streak = streak;
+    public void setCurrentStreak(int currentStreak) {
+        this.currentStreak = currentStreak;
+    }
+
+    public int getHighestStreak() {
+        return highestStreak;
+    }
+
+    public void setHighestStreak(int highestStreak) {
+        this.highestStreak = highestStreak;
     }
 
     public String getGender() {
@@ -196,4 +207,12 @@ public class User {
     public void setTotalTime(int totalTime) {
         this.totalTime = totalTime;
     }
+
+    public void updateHighestStreak () {
+        if (currentStreak > highestStreak) {
+            this.highestStreak = currentStreak;
+        }
+    }
+
+
 }

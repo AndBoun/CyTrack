@@ -1,5 +1,6 @@
 package CyTrack.Controllers;
 
+import java.time.LocalDate;
 import java.util.List;
 //Response for Workout
 public class WorkoutResponse {
@@ -56,10 +57,10 @@ public class WorkoutResponse {
         private String exerciseType;
         private int duration;
         private int calories;
-        private String date;
+        private LocalDate date;
         private Long workoutID;
 
-        public WorkoutData(String exerciseType, int duration, int calories, String date, Long workoutID) {
+        public WorkoutData(String exerciseType, int duration, int calories, LocalDate date, Long workoutID) {
             this.exerciseType = exerciseType;
             this.duration = duration;
             this.calories = calories;
@@ -91,11 +92,11 @@ public class WorkoutResponse {
             this.calories = calories;
         }
 
-        public String getDate() {
+        public LocalDate getDate() {
             return date;
         }
 
-        public void setDate(String date) {
+        public void setDate(LocalDate date) {
             this.date = date;
         }
 
