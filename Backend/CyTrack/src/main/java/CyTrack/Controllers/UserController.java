@@ -83,7 +83,7 @@ public class UserController {
                     foundUser.getLastName(),
                     foundUser.getAge(),
                     foundUser.getGender(),
-                    foundUser.getStreak(),
+                    foundUser.getCurrentStreak(),
                     "Resources sent successfully"
             );
             return ResponseEntity.status(201).body(response);

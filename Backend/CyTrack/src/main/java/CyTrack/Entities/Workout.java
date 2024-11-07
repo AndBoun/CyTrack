@@ -1,12 +1,16 @@
 package CyTrack.Entities;
 
+import CyTrack.Services.DeserializeDateService;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import jakarta.persistence.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.springframework.cglib.core.Local;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -26,7 +30,9 @@ public class Workout {
     private String exerciseType;
     private int duration;
     private int calories;
-    private String date;
+
+    @JsonDeserialize(using = DeserializeDateService.class)
+    private LocalDate date;
 
     private LocalDateTime startTime;
     private LocalDateTime endTime;
@@ -36,7 +42,7 @@ public class Workout {
     public Workout() {}
 
 
-    public Workout(String exerciseType, int duration, int calories, String date) {
+    public Workout(String exerciseType, int duration, int calories, LocalDate date) {
         this.exerciseType = exerciseType;
         this.duration = duration;
         this.calories = calories;
@@ -44,7 +50,7 @@ public class Workout {
     }
 
     // Constructor for initializing workout without time
-    public Workout(String exerciseType, int calories, String date) {
+    public Workout(String exerciseType, int calories, LocalDate date) {
         this.exerciseType = exerciseType;
         this.calories = calories;
         this.date = date;
@@ -92,11 +98,11 @@ public class Workout {
         this.calories = calories;
     }
 
-    public String getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 
