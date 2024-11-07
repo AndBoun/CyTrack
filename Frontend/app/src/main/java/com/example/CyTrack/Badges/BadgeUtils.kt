@@ -1,4 +1,4 @@
-package com.example.CyTrack.Leaderboard.main
+package com.example.CyTrack.Badges
 
 import android.app.Activity
 import android.content.Intent
@@ -14,18 +14,18 @@ import com.example.CyTrack.Utilities.NetworkUtils // Connection Imports
 import com.example.CyTrack.Utilities.User
 import com.example.CyTrack.Utilities.VolleySingleton
 
-class LeaderboardUtils(){
+class BadgeUtils(){
 
     companion object {
         @JvmStatic
-        fun LeaderBoardScreen(user: User, recipient: User context: Activity) {
+        fun LeaderBoardScreen(user: User, recipient: User, streak: User, context: Activity) {
             val intent = Intent(context, LeaderboardActivity::class.java).apply { // Create a card for each board entry
                 putExtra("user", user)
                 putExtra("recipient", recipient)
+                putExtra("streak", streak)
             }
             startActivity(context, intent, null)
         }
-
 
         @JvmStatic
         fun getListOfUsers(

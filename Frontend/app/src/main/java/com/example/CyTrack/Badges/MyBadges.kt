@@ -1,4 +1,6 @@
-package com.example.CyTrack.Leaderboard.main
+package com.example.CyTrack.Badges
+
+import com.example.CyTrack.Leaderboard.main.LeaderboardUtils
 
 import android.app.Activity
 import android.os.Bundle
@@ -82,12 +84,12 @@ import com.example.CyTrack.Utilities.User
  * A list of friend requests for the user.
  */
 private var AllUsers: MutableList<User> = mutableListOf()
-private val SampleUser = LeaderboardData.UserSample
+private val SampleUser = BadgeData.UserSample
 
 private val data = SampleUser
 private val URL = "temp"
 
-class LeaderboardActivity : ComponentActivity(
+class BadgesActivity : ComponentActivity(
 ) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -100,7 +102,7 @@ class LeaderboardActivity : ComponentActivity(
             )
             AppTheme { // Wraps our app in our custom theme
                 Surface(modifier = Modifier.fillMaxSize()) {
-                    com.example.CyTrack.Leaderboard.main.LeaderboardScreen(data) // LeaderBoardData.UserSample
+                    com.example.CyTrack.Badges.BGScreen(data) // LeaderBoardData.UserSample
                 }
             }
         }
@@ -115,7 +117,7 @@ class LeaderboardActivity : ComponentActivity(
  * @param img The URL or resource identifier for the user\`s image.
  */
 @Composable
-fun LBProfileCard(
+fun BGProfileCard(
     name: String,
     username: String,
     streak: String,
@@ -190,7 +192,7 @@ fun ProfileCard(
 ) {
     Row {
         Box {
-            LBProfileCard(name, username, streak, img, modifier)
+            BGProfileCard(name, username, streak, img, modifier)
             Spacer(modifier = Modifier.height(10.dp))
 
         }
@@ -222,7 +224,7 @@ fun LBHierarchy(
 
 // <!-- Top Card --!>
 @Composable
-fun LBTopCard(
+fun BGTopCard(
     modifier: Modifier = Modifier,
     onAddFriendsButton: () -> Unit = {}
 ) {
@@ -255,7 +257,7 @@ fun LBTopCard(
             }
 
             Image(
-                painter = painterResource(id = R.drawable.leaderboard_header),
+                painter = painterResource(id = R.drawable.my_badges),
                 contentDescription = "Leaderboard Header"
             )
 
@@ -274,12 +276,12 @@ fun LBTopCard(
 }
 
 @Composable
-fun LeaderboardScreen(
+fun BGScreen(
     UserList: List<User>,
     modifier: Modifier = Modifier
 ) {
     Column {
-        LBTopCard()
+        BGTopCard()
         Spacer(modifier = Modifier.height(20.dp))
         LBHierarchy(UserList)
     }
@@ -287,10 +289,9 @@ fun LeaderboardScreen(
 
 @Preview
 @Composable
-fun LBLazyListPreview() {
+fun BGLazyListPreview() {
     Surface {
-//        MyFriendsCardsLazyList(list)
-        LeaderboardScreen(data)
+        BGScreen(data)
     }
 }
 
@@ -304,6 +305,6 @@ fun PreviewConversation() {
 
 @Preview
 @Composable
-fun LBTopCardPreview() {
-    LBTopCard()
+fun BGTopCardPreview() {
+    BGTopCard()
 }
