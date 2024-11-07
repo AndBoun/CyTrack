@@ -1,8 +1,7 @@
 package CyTrack.Services;
 
 
-import CyTrack.Entities.Badges.Badge;
-import CyTrack.Entities.Badges.LifetimeTimeBadge;
+import CyTrack.Entities.Badge;
 import CyTrack.Entities.User;
 import CyTrack.Repositories.BadgeRepository;
 import CyTrack.Repositories.UserRepository;
@@ -58,7 +57,7 @@ public class BadgeService {
      * @param user we're checking to see if badge criteria are met
      */
     public void awardEligibleBadges(User user) {
-        awardTimeBadge(user);  // Add more badge checks here as needed
+        awardLifetimeBadge(user);  // Add more badge checks here as needed
     }
 
     /**
@@ -68,29 +67,41 @@ public class BadgeService {
      * Otherwise, do nothing
      * @param user we're checking to see if badge criteria is met
      */
-    public void awardTimeBadge(User user) {
+
+    /*
+    public void awardLifetimeBadge(User user) {
+        // Check if the user has already earned this badge
+        if (user.getBadges().stream().anyMatch(b -> b instanceof LifetimeTimeBadge)) {
+            return; // Badge already awarded
+        }
+
+        // Create and save the new badge
+        LifetimeTimeBadge badge = new LifetimeTimeBadge(user);
+        badgeRepository.save(badge);  // Persist the badge
+        userRepository.save(user);    // Update user with the new badge
+    }
+    *
+     */
+
+
+
+    public void awardLifetimeBadge(User user) {
         int userTotalTime = user.getTotalTime();
 
         if (userTotalTime >= 500) {
-            // Try to find an existing LifetimeTimeBadge
-            Optional<Badge> lifetimeTimeBadgeOpt = badgeRepository.findByBadgeName("Initiate Gymrat");
+            // Check if the user already has this badge
+            Optional<Badge> lifetimeTimeBadgeOpt = badgeRepository.findByUserAndBadgeName(user, "Initiate Gymrat");
 
-            if (lifetimeTimeBadgeOpt.isPresent()) {
-                Badge lifetimeTimeBadge = lifetimeTimeBadgeOpt.get();
-
-                if (!user.getBadges().contains(lifetimeTimeBadge)) {
-                    user.getBadges().add(lifetimeTimeBadge);
-                    userRepository.save(user);
-                }
-            } else {
-                // Create the badge if it's missing
-                LifetimeTimeBadge lifetimeTimeBadge = new LifetimeTimeBadge(user);
+            if (lifetimeTimeBadgeOpt.isEmpty()) {
+                // User does not have the badge, so create and assign it
+                Badge lifetimeTimeBadge = new Badge("Initiate Gymrat", "Achieved 500 hours", user);
                 badgeRepository.save(lifetimeTimeBadge);
                 user.getBadges().add(lifetimeTimeBadge);
                 userRepository.save(user);
             }
         }
     }
+
 
     public Optional<Badge> findByBadgeName(String badgeName) {
         return badgeRepository.findByBadgeName(badgeName);

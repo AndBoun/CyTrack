@@ -1,6 +1,6 @@
 package CyTrack.Controllers;
 
-import CyTrack.Entities.Badges.Badge;
+import CyTrack.Entities.Badge;
 import CyTrack.Entities.User;
 import CyTrack.Services.BadgeService;
 import CyTrack.Services.UserService;

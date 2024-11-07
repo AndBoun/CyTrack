@@ -1,10 +1,8 @@
 package CyTrack.Services;
 
-import CyTrack.Entities.Badges.Badge;
 import CyTrack.Entities.User;
 import CyTrack.Repositories.BadgeRepository;
 import CyTrack.Repositories.UserRepository;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -29,7 +29,8 @@ public class WorkoutService {
 
     //Create workout
     public Workout createWorkout(Workout workout) {
-        workout.getUser().setTotalTime(workout.getDuration());
+        User userToAddWorkout = workout.getUser();
+        userToAddWorkout.setTotalTime(userToAddWorkout.getTotalTime() + workout.getDuration());
         return workoutRepository.save(workout);
 
     }

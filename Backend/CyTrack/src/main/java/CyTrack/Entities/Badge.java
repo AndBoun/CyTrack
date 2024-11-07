@@ -1,8 +1,10 @@
-package CyTrack.Entities.Badges;
+package CyTrack.Entities;
 
 
-import CyTrack.Entities.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,41 +13,33 @@ import java.util.List;
  * Interface detailing general implementation for our Badges
  */
 @Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "badge_type")
-public abstract class Badge {
+public class Badge {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long badgeID;
 
-    @ManyToMany(mappedBy = "badges")
-    private List<User> users = new ArrayList<>();
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JsonIgnore
+    private User user;
 
 
-    @Column(nullable = false, unique = true) // Ensure uniqueness for badge names
+    @Column(nullable = false) // Ensure uniqueness for badge names
     private String badgeName;
 
     @Column(nullable = false)
     private String description;
 
+    public Badge() { }
 
     public Badge(String badgeName, String description, User user) {
         this.badgeName = badgeName;
         this.description = description;
-        addUser(user);
+        this.user = user;
     }
 
-    public List<User> getUsers() {
-        return users;
-    }
-
-    public void addUser(User user) {
-        if (!this.users.contains(user)) {
-            this.users.add(user);
-            user.getBadges().add(this);
-        }
-    }
-
+    // Getters and setters for badgeName, description, user, and badgeID
     public String getBadgeName() {
         return badgeName;
     }
@@ -56,5 +50,13 @@ public abstract class Badge {
 
     public Long getBadgeID() {
         return badgeID;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

@@ -1,9 +1,6 @@
 package CyTrack.Entities;
 
-import CyTrack.Entities.Badges.Badge;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -46,12 +43,7 @@ public class User {
     /**
      * Badgees relationship and field
      */
-    @ManyToMany(cascade = CascadeType.PERSIST)
-    @JoinTable (
-            name = "user_badges",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "badge_id")
-    )
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Badge> badges = new ArrayList<>();
 
     @OneToMany(mappedBy = "sender")
@@ -183,9 +175,16 @@ public class User {
     }
 
     public void addBadge(Badge badge) {
-        if (!this.badges.contains(badge)) {
-            this.badges.add(badge);
-            badge.getUsers().add(this); // Maintain bidirectional relationship
+        if (!badges.contains(badge)) {
+            badges.add(badge);
+            badge.setUser(this);
+        }
+    }
+
+    public void removeBadge(Badge badge) {
+        if (badges.contains(badge)) {
+            badges.remove(badge);
+            badge.setUser(null);
         }
     }
 
