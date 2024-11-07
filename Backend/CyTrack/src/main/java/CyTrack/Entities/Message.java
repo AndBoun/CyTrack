@@ -1,13 +1,11 @@
 package CyTrack.Entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.util.Date;
-/*
- *@Author Kai Quach
- * Class for the message entity
- */
+
 @Entity
 @Table(name = "message")
 public class Message {
@@ -16,28 +14,42 @@ public class Message {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Store IDs instead of names for sender and receiver
-    private Long senderID;
-    private Long receiverID;
-    private String senderName;
-    private String receiverName;
+    @ManyToOne
+    @JoinColumn(name = "sender_id", nullable = false)
+    @JsonIgnore
+    private User sender;
+
+    @ManyToOne
+    @JoinColumn(name = "receiver_id", nullable = false)
+    @JsonIgnore
+    private User receiver;
 
     private String content;
 
-    @CreationTimestamp // Automatically set timestamp at creation
+    @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     private Date date;
 
     // Constructors
     public Message() {}
 
-    public Message(Long senderID, Long receiverID, String senderName, String receiverName, String content) {
-        this.senderID = senderID;
-        this.receiverID = receiverID;
+    public Message(User sender, User receiver, String content) {
+        this.sender = sender;
+        this.receiver = receiver;
         this.content = content;
-        this.senderName = senderName;
-        this.receiverName = receiverName;
+    }
 
+    public Message(Long senderID, Long receiverID, String senderName, String receiverName, String content) {
+        this.sender = new User();
+        this.sender.setUserID(senderID);
+        this.sender.setUsername(senderName);
+
+        this.receiver = new User();
+        this.receiver.setUserID(receiverID);
+        this.receiver.setUsername(receiverName);
+
+        this.content = content;
+        this.date = new Date(); // Set the date to the current timestamp
     }
 
     // Getters and Setters
@@ -49,20 +61,20 @@ public class Message {
         this.id = id;
     }
 
-    public Long getSenderID() {
-        return senderID;
+    public User getSender() {
+        return sender;
     }
 
-    public void setSenderID(Long senderID) {
-        this.senderID = senderID;
+    public void setSender(User sender) {
+        this.sender = sender;
     }
 
-    public Long getReceiverID() {
-        return receiverID;
+    public User getReceiver() {
+        return receiver;
     }
 
-    public void setReceiverID(Long receiverID) {
-        this.receiverID = receiverID;
+    public void setReceiver(User receiver) {
+        this.receiver = receiver;
     }
 
     public String getContent() {
@@ -81,20 +93,7 @@ public class Message {
         this.date = date;
     }
 
-    public String getSenderName() {
-        return senderName;
+    public Long getSenderID() {
+        return sender.getUserID();
     }
-
-    public void setSenderName(String senderName) {
-        this.senderName = senderName;
-    }
-
-    public String getReceiverName() {
-        return receiverName;
-    }
-
-    public void setReceiverName(String receiverName) {
-        this.receiverName = receiverName;
-    }
-
 }

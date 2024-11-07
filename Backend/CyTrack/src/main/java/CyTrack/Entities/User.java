@@ -42,7 +42,7 @@ public class User {
     private List<Friends> friends = new ArrayList<>();
 
     /**
-     * Badgees relationship and field
+     * Badge relationship and field
      */
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Badge> badges = new ArrayList<>();
@@ -66,6 +66,19 @@ public class User {
 
     private int totalTime;
     private String gender;
+
+    // ========================= Constructors ========================= //
+
+    public User() {}
+
+    public User(String username, String firstName, String lastName, String password, int currentStreak) {
+        this.username = username;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.password = password;
+        this.currentStreak = currentStreak;
+        this.highestStreak = currentStreak;
+    }
 
 
     // ========================= Getter and Setter ========================= //

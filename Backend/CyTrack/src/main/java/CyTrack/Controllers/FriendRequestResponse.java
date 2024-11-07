@@ -58,12 +58,14 @@ public class FriendRequestResponse {
     public static class FriendRequestData {
         private String username;
         private String firstname;
-        private Long id;
+        private Long userID;
+        private Long friendID;
 
-        public FriendRequestData(String username, String firstname, Long id) {
+        public FriendRequestData(String username, String firstname,Long userID, Long friendID) {
             this.username = username;
             this.firstname = firstname;
-            this.id = id;
+            this.userID = userID;
+            this.friendID = friendID;
         }
 
         public String getUsername() {
@@ -82,13 +84,21 @@ public class FriendRequestResponse {
             this.firstname = firstname;
         }
 
-
-        public Long getId() {
-            return id;
+        public Long getUserID() {
+            return userID;
         }
 
-        public void setId(Long id) {
-            this.id = id;
+        public void setUserID(Long userID) {
+            this.userID = userID;
+        }
+
+
+        public Long getFriendID() {
+            return friendID;
+        }
+
+        public void setfriendID(Long friendID) {
+            this.friendID = friendID;
         }
 
 

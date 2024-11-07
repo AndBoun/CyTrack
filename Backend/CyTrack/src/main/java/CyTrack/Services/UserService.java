@@ -11,6 +11,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 //Service for User entity
 @Service
@@ -75,4 +76,12 @@ public class UserService {
     }
 
 
+    public List<User> getAllUsersSortedByTotalTimeDescending() {
+        List<User> allUsers = userRepository.findAll();
+
+        // Sort users by totalTime in descending order and return the sorted list
+        return allUsers.stream()
+                .sorted((u1, u2) -> Long.compare(u2.getTotalTime(), u1.getTotalTime())) // Descending order
+                .collect(Collectors.toList());
+    }
 }

@@ -103,6 +103,7 @@ public class FriendsRequestController {
                     .map(friendRequest -> new FriendRequestResponse.FriendRequestData(
                             friendRequest.getSender().getFirstName(),
                             friendRequest.getSender().getUsername(),
+                            friendRequest.getSender().getUserID(),
                             friendRequest.getFriendRequestID()
                     ))
                     .toList();
@@ -122,6 +123,7 @@ public class FriendsRequestController {
                     .map(friendRequest -> new FriendRequestResponse.FriendRequestData(
                             friendRequest.getReceiver().getFirstName(),
                             friendRequest.getReceiver().getUsername(),
+                            friendRequest.getReceiver().getUserID(),
                             friendRequest.getFriendRequestID()
                     ))
                     .toList();
