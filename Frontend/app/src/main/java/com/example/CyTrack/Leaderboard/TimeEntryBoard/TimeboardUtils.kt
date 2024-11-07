@@ -13,7 +13,6 @@ class TimeboardUtils(){
         fun getBoard(
             msg: String,
             TimeEntryList: MutableList<TimeBoardEntry>,
-            Temp: MutableList<TimeBoardEntry>
         ) {
             try {
                 val data = JSONArray(msg)
