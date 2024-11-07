@@ -1,6 +1,7 @@
 package CyTrack.Repositories;
 
 import CyTrack.Entities.Message;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,8 +15,8 @@ import java.util.Optional;
 @Repository
 public interface MessageRepository extends JpaRepository<Message, Long> {
 
-    @Query("SELECT m FROM Message m WHERE (m.senderID = :userID AND m.receiverID = :friendUserID) OR (m.senderID = :friendUserID AND m.receiverID = :userID) ORDER BY m.date DESC")
-    Optional<Message> findLatestMessage(@Param("userID") Long userID, @Param("friendUserID") Long friendUserID);
-
-    List<Message> findBySenderIDAndReceiverIDOrReceiverIDAndSenderIDOrderByDateAsc(Long user1ID, Long user2ID, Long user2ID1, Long user1ID1);
+    @Query("SELECT m FROM Message m WHERE (m.sender.id = :senderID AND m.receiver.id = :receiverID) OR (m.sender.id = :receiverID AND m.receiver.id = :senderID) ORDER BY m.date DESC")
+    List<Message> findLatestMessage(@Param("senderID") Long senderID, @Param("receiverID") Long receiverID, Pageable pageable);
+    @Query("SELECT m FROM Message m WHERE (m.sender.id = :senderID AND m.receiver.id = :receiverID) OR (m.sender.id = :receiverID AND m.receiver.id = :senderID) ORDER BY m.date ASC")
+    List<Message> findBySenderIDAndReceiverIDOrReceiverIDAndSenderIDOrderByDateAsc(@Param("senderID") Long senderID, @Param("receiverID") Long receiverID);
 }

@@ -92,9 +92,8 @@ public class MessageSocket {
         System.err.println("WebSocket error: " + throwable.getMessage());
     }
 
-    // Helper method to send chat history between two users when they connect
     private void sendChatHistory(Session session, Long senderID, Long receiverID) throws IOException {
-        var chatHistory = msgRepo.findBySenderIDAndReceiverIDOrReceiverIDAndSenderIDOrderByDateAsc(senderID, receiverID, senderID, receiverID);
+        var chatHistory = msgRepo.findBySenderIDAndReceiverIDOrReceiverIDAndSenderIDOrderByDateAsc(senderID, receiverID);
         for (Message msg : chatHistory) {
             ChatMessageResponse chatMessage = new ChatMessageResponse("success",
                     new ChatMessageResponse.Data(msg.getSenderID(), msg.getContent()),

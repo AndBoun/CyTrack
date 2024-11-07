@@ -20,7 +20,7 @@ public class MessageService {
     }
 
     public Message getMostRecentMessage(Long user1ID, Long user2ID) {
-        List<Message> messages = messageRepository.findBySenderIDAndReceiverIDOrReceiverIDAndSenderIDOrderByDateAsc(user1ID, user2ID, user2ID, user1ID);
+        List<Message> messages = messageRepository.findBySenderIDAndReceiverIDOrReceiverIDAndSenderIDOrderByDateAsc(user1ID, user2ID);
         return messages.isEmpty() ? null : messages.get(messages.size() - 1);
     }
 

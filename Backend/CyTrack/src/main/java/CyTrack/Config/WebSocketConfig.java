@@ -27,7 +27,6 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         registry.addEndpoint("/conversations/{userID}")
                 .setAllowedOriginPatterns("*") // Use allowedOriginPatterns instead of allowedOrigins
                 .withSockJS();
-
     }
 
     @Bean

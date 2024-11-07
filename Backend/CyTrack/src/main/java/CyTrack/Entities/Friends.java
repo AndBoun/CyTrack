@@ -1,5 +1,6 @@
 package CyTrack.Entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import org.hibernate.annotations.OnDelete;
@@ -18,11 +19,13 @@ public class Friends {
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonProperty("user1_id")
+    @JsonIgnore
     private User user1;
 
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonProperty("user2_id")
+
     private User user2;
 
     @OneToOne
