@@ -42,7 +42,7 @@ public class WorkoutActivity extends AppCompatActivity implements WorkoutRecycle
 
     private User user;
 
-    private String URL = UrlHolder.URL + "/user/";
+    private String URL = UrlHolder.URL + "/workout/";
 
 
     ImageButton addWorkoutButton, backButton;
