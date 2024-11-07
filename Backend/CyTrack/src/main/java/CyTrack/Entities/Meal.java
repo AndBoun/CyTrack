@@ -1,6 +1,9 @@
 package CyTrack.Entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 /**
  *@author Eduardo Barboza-Campos
@@ -18,44 +21,55 @@ public class Meal {
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long mealId;
+    private Long mealID;
+
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "userID", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JsonIgnore
+    private User user;
 
     private String mealName;
     private Integer calories;
     private Integer protein;
     private Integer carbs;
     private String time;
+    private String date;
 
     // =============================== Constructors ================================== //
 
+    //Default constructor
     public Meal(){}
 
-    public Meal(String name, int calories, int protein, int carbs, String time) {
+    //Constructor with fields
+    public Meal(String name, int calories, int protein, int carbs, String time, String date) {
         this.mealName = name;
         this.calories = calories;
         this.protein = protein;
         this.carbs = carbs;
         this.time = time;
+        this.date = date;
     }
 
     // =============================== Getters and Setters for each field ================================== //
 
 
-    public Long getId() {
-        return mealId;
+    public Long getMealId() {
+        return mealID;
     }
 
-    public void setId(Long id) {
-        this.mealId = id;
+    public void setMealId(Long id) {
+        this.mealID = id;
     }
 
-    public String getMealName() {
-        return mealName;
-    }
+    public User getUser() {return user; }
 
-    public void setMealName(String mealName) {
-        this.mealName = mealName;
-    }
+    public void setUser(User user) {this.user = user; }
+
+    public String getMealName() {return mealName; }
+
+    public void setMealName(String mealName) {this.mealName = mealName; }
 
     public Integer getCalories() {
         return calories;
@@ -84,4 +98,8 @@ public class Meal {
     public String getTime() {return time; }
 
     public void setTime(String time) {this.time = time; }
+
+    public String getDate() {return date; }
+
+    public void setDate(String date) {this.date = date; }
 }

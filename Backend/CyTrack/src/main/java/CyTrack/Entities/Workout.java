@@ -6,12 +6,17 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+
 @Entity
 public class Workout {
+    // =============================== Fields ================================== //
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)  // Auto-incremented primary key
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long workoutID;
 
+    // Many workouts can belong to one user
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userID", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
@@ -23,10 +28,14 @@ public class Workout {
     private int calories;
     private String date;
 
-    // Default constructor
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
+
+
+    // =============================== Constructors ================================== //
     public Workout() {}
 
-    // Constructor with fields
+
     public Workout(String exerciseType, int duration, int calories, String date) {
         this.exerciseType = exerciseType;
         this.duration = duration;
@@ -34,7 +43,15 @@ public class Workout {
         this.date = date;
     }
 
-    // Getters and setters
+    // Constructor for initializing workout without time
+    public Workout(String exerciseType, int calories, String date) {
+        this.exerciseType = exerciseType;
+        this.calories = calories;
+        this.date = date;
+    }
+
+
+    // =============================== Getters and Setters for each field ================================== //
     public Long getWorkoutID() {
         return workoutID;
     }
@@ -82,5 +99,34 @@ public class Workout {
     public void setDate(String date) {
         this.date = date;
     }
+
+    // Method to start workout
+    public void startWorkout() {
+        this.startTime = LocalDateTime.now();
+    }
+
+    // Method to end workout and calculate duration
+    public void endWorkout() {
+        this.endTime = LocalDateTime.now();
+        this.duration = (int) Duration.between(startTime, endTime).toMinutes();
+    }
+
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public LocalDateTime getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
+    }
+
 
 }

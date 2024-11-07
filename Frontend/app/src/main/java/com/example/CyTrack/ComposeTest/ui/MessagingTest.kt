@@ -1,6 +1,5 @@
 package com.example.CyTrack.ComposeTest.ui
 
-import android.content.res.Configuration
 import android.os.Bundle
 import android.os.PersistableBundle
 import androidx.activity.ComponentActivity
@@ -8,7 +7,6 @@ import androidx.activity.compose.setContent
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -53,7 +51,7 @@ data class Message(val author: String, val body: String)
 fun MessageCard(msg: Message){
     Row {
         Image(
-            painter = painterResource(R.drawable.generic_avatar),
+            painter = painterResource(R.drawable.general_generic_avatar),
             contentDescription = "Contact profile picture",
             modifier = Modifier
                 .size(40.dp)

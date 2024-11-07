@@ -1,6 +1,7 @@
 package CyTrack.Services;
 
 import CyTrack.Entities.User;
+import CyTrack.Repositories.BadgeRepository;
 import CyTrack.Repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,19 +11,20 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
+//Service for User entity
 @Service
 public class UserService {
 
     private final UserRepository userRepository;
+    private final BadgeRepository badgeRepository;
 
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, BadgeRepository badgeRepository) {
         this.userRepository = userRepository;
+        this.badgeRepository = badgeRepository;
     }
-
+    // Register user, encrypt password
     public User registerUser(User user) throws NoSuchAlgorithmException {
         if (user.getPassword() == null) {
             throw new IllegalArgumentException("Password cannot be null");
@@ -30,7 +32,7 @@ public class UserService {
         user.setPassword(hashPassword(user.getPassword()));
         return userRepository.save(user);
     }
-
+    //When user resets password, encrypt new password
     public User resetPassword(User user, String newPassword) throws NoSuchAlgorithmException {
         user.setPassword(hashPassword(newPassword));
         return userRepository.save(user);
@@ -53,10 +55,11 @@ public class UserService {
         userRepository.delete(user);
     }
 
-
+    //Check if password is correct
     public boolean checkPassword(User user, String rawPassword) throws NoSuchAlgorithmException {
         return user.getPassword().equals(hashPassword(rawPassword));
     }
+
     private String hashPassword(String password) throws NoSuchAlgorithmException {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
@@ -70,4 +73,6 @@ public class UserService {
             throw e;
         }
     }
+
+
 }
