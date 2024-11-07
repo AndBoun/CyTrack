@@ -57,35 +57,20 @@ public class BadgeService {
      * @param user we're checking to see if badge criteria are met
      */
     public void awardEligibleBadges(User user) {
-        awardLifetimeBadge(user);  // Add more badge checks here as needed
+
+        awardInitiateBadge(user);  // Add more badge checks here as needed
+        awardStreakBadge(user);
     }
 
     /**
-     * Awards LifeTimeTimeBadge if condition is met.
+     * Awards Initiate badge if condition is met.
      * Checks a user's total time.
      * If total time >= 500 (minutes), award badge
      * Otherwise, do nothing
      * @param user we're checking to see if badge criteria is met
      */
 
-    /*
-    public void awardLifetimeBadge(User user) {
-        // Check if the user has already earned this badge
-        if (user.getBadges().stream().anyMatch(b -> b instanceof LifetimeTimeBadge)) {
-            return; // Badge already awarded
-        }
-
-        // Create and save the new badge
-        LifetimeTimeBadge badge = new LifetimeTimeBadge(user);
-        badgeRepository.save(badge);  // Persist the badge
-        userRepository.save(user);    // Update user with the new badge
-    }
-    *
-     */
-
-
-
-    public void awardLifetimeBadge(User user) {
+    private void awardInitiateBadge(User user) {
         int userTotalTime = user.getTotalTime();
 
         if (userTotalTime >= 500) {
@@ -97,6 +82,22 @@ public class BadgeService {
                 Badge lifetimeTimeBadge = new Badge("Initiate Gymrat", "Achieved 500 hours", user);
                 badgeRepository.save(lifetimeTimeBadge);
                 user.getBadges().add(lifetimeTimeBadge);
+                userRepository.save(user);
+            }
+        }
+    }
+
+    private void awardStreakBadge(User user) {
+        int highestStreak = user.getHighestStreak();
+
+        if (highestStreak >= 30) {
+            Optional<Badge> streakBadgeOpt = badgeRepository.findByUserAndBadgeName(user, "One Month");
+
+            if (streakBadgeOpt.isEmpty()) {
+
+                Badge streakBadge = new Badge("One Month", "Work out for 1 month straight", user);
+                badgeRepository.save(streakBadge);
+                user.getBadges().add(streakBadge);
                 userRepository.save(user);
             }
         }
