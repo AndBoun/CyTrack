@@ -20,6 +20,7 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.CyTrack.R;
 import com.example.CyTrack.Utilities.FocusUtils;
 import com.example.CyTrack.Utilities.NetworkUtils;
+import com.example.CyTrack.Utilities.UrlHolder;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,7 +28,7 @@ import java.util.Map;
 public class SignUpActivity extends AppCompatActivity {
 
 //    private final String URL = "https://7e68d300-a3cb-4835-bf2f-66cab084d974.mock.pstmn.io/user";
-    private final String URL = "http://10.90.72.246:8080/user";
+    private final String URL = UrlHolder.URL + "/user";
     private Button signUpButton, backButton;
     private EditText usernameEditText, passwordEditText, passwordAgainEditText,
             firstNameEditText, lastNameEditText, emailEditText, phoneEditText,
