@@ -1,81 +1,62 @@
 package com.example.CyTrack.Leaderboard.main
 
-import android.app.Activity
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.compose.material3.Text
-
-import androidx.compose.runtime.Composable // Import For Compose
-import androidx.compose.ui.tooling.preview.Preview // Import for Previewing Compose
-import com.example.CyTrack.R // R equals Resource Files
-
 // <!-- Creating a Layout --!>
 // UI elements are hierarchical. Elements contain other elements.
 // Uses Column
 // A Hierarchy is built as comp functions call other comp functions.
 
-import androidx.compose.foundation.layout.Column // A function arranging elements vertically
-import androidx.compose.foundation.layout.Row // A function arranging elements horizontally
-
 // <!-- Adding Images --!>
-import androidx.compose.foundation.Image // Lays out a Format to display an image with modifiers
-import androidx.compose.foundation.border
-import androidx.compose.ui.res.painterResource
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Surface
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.unit.dp
 
 // Custom Theme Testing
-import com.example.compose.AppTheme // Function for determining Theme
-import androidx.compose.material3.MaterialTheme
-import android.content.res.Configuration
-import android.provider.ContactsContract.Profile
 // Custom Themes
 
 // Creating Lists
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 // Creating Lists End
 
 // Animation Imports
-import androidx.compose.foundation.clickable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.animateContentSize
+import android.app.Activity
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.CyTrack.Social.SocialUtils.Companion.messageUserScreen
+import com.example.CyTrack.R
 import com.example.CyTrack.Utilities.ComposeUtils.Companion.getCustomFontFamily
+import com.example.CyTrack.Utilities.UrlHolder
 import com.example.CyTrack.Utilities.User
+import com.example.compose.AppTheme
+
 // Animation Imports End
 
 /**
@@ -84,8 +65,8 @@ import com.example.CyTrack.Utilities.User
 private var AllUsers: MutableList<User> = mutableListOf()
 private val SampleUser = LeaderboardData.UserSample
 
-private val data = SampleUser
-private val URL = "temp"
+private val data = AllUsers
+private val URL = UrlHolder.URL
 
 class LeaderboardActivity : ComponentActivity(
 ) {
@@ -264,7 +245,7 @@ fun LBTopCard(
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.general_generic_avatar),
-                    contentDescription = "Friends icon",
+                    contentDescription = "Profile Button",
                     modifier = Modifier.size(24.dp)
                 )
             }

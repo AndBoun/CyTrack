@@ -18,7 +18,7 @@ class LeaderboardUtils(){
 
     companion object {
         @JvmStatic
-        fun LeaderBoardScreen(user: User, recipient: User context: Activity) {
+        fun LeaderBoardScreen(user: User, recipient: User, context: Activity) {
             val intent = Intent(context, LeaderboardActivity::class.java).apply { // Create a card for each board entry
                 putExtra("user", user)
                 putExtra("recipient", recipient)
