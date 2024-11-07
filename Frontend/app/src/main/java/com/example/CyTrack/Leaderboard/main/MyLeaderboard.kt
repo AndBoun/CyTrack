@@ -82,7 +82,9 @@ import com.example.CyTrack.Utilities.User
  * A list of friend requests for the user.
  */
 private var AllUsers: MutableList<User> = mutableListOf()
+private val SampleUser = LeaderboardData.UserSample
 
+private val data = SampleUser
 private val URL = "temp"
 
 class LeaderboardActivity : ComponentActivity(
@@ -98,7 +100,7 @@ class LeaderboardActivity : ComponentActivity(
             )
             AppTheme { // Wraps our app in our custom theme
                 Surface(modifier = Modifier.fillMaxSize()) {
-                    com.example.CyTrack.Leaderboard.main.LeaderboardScreen(AllUsers)
+                    com.example.CyTrack.Leaderboard.main.LeaderboardScreen(data) // LeaderBoardData.UserSample
                 }
             }
         }
@@ -236,7 +238,7 @@ fun LBProfileCard(
                 )
                 Spacer(modifier = Modifier.padding(2.dp))
                 Text(
-                    text = "#$username",
+                    text = username,
                     fontSize = 11.sp,
                     fontStyle = FontStyle.Italic,
                     fontFamily = getCustomFontFamily("Inter", FontWeight.Normal, FontStyle.Italic)
@@ -244,7 +246,7 @@ fun LBProfileCard(
             }
 
             Row(
-                horizontalArrangement = Arrangement.Center,
+                horizontalArrangement = Arrangement.End,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
@@ -369,7 +371,7 @@ fun LeaderboardScreen(
 fun LBLazyListPreview() {
     Surface {
 //        MyFriendsCardsLazyList(list)
-        LeaderboardScreen(LeaderboardData.UserSample)
+        LeaderboardScreen(data)
     }
 }
 
@@ -377,7 +379,7 @@ fun LBLazyListPreview() {
 @Composable
 fun PreviewConversation() {
     AppTheme {
-        com.example.CyTrack.Leaderboard.main.LBHierarchy(LeaderboardData.UserSample)
+        com.example.CyTrack.Leaderboard.main.LBHierarchy(data)
     }
 }
 
