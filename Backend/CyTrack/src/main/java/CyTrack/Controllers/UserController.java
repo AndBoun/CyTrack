@@ -2,6 +2,7 @@ package CyTrack.Controllers;
 
 import CyTrack.Entities.User;
 import CyTrack.Services.UserService;
+import CyTrack.Sockets.LeaderBoardSocket;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -36,6 +37,8 @@ public class UserController {
             }
             else {
                 User registeredUser = userService.registerUser(user);
+                LeaderBoardSocket.updateLeaderboard(user.getUserID());
+
                 LoginResponse response = new LoginResponse("success", registeredUser.getUserID(), "User registered" );
                 return ResponseEntity.status(201).body(response);
             }

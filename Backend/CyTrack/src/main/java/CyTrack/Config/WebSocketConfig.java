@@ -23,7 +23,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         registry.addEndpoint("/chat/{senderID}/{receiverID}")
                 .setAllowedOriginPatterns("*") // Use allowedOriginPatterns instead of allowedOrigins
                 .withSockJS();
-        registry.addEndpoint("/leaderboard")
+        registry.addEndpoint("/leaderboard/{userID}")
                 .setAllowedOriginPatterns("*")
                 .withSockJS();
     }
