@@ -1,6 +1,7 @@
 package CyTrack.Controllers;
 
 import CyTrack.Entities.User;
+import CyTrack.Services.BadgeService;
 import CyTrack.Services.UserService;
 import CyTrack.Sockets.LeaderBoardSocket;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,10 +18,13 @@ public class UserController {
 
 
     private final UserService userService;
+    private final BadgeService badgeService;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, BadgeService badgeService) {
+
         this.userService = userService;
+        this.badgeService = badgeService;
     }
 
 
@@ -37,7 +41,9 @@ public class UserController {
             }
             else {
                 User registeredUser = userService.registerUser(user);
+
                 LeaderBoardSocket.updateLeaderboard(user.getUserID());
+                badgeService.awardEligibleBadges(registeredUser);
 
                 LoginResponse response = new LoginResponse("success", registeredUser.getUserID(), "User registered" );
                 return ResponseEntity.status(201).body(response);

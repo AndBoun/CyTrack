@@ -59,6 +59,8 @@ public class BadgeService {
     public void awardEligibleBadges(User user) {
 
         awardInitiateBadge(user);  // Add more badge checks here as needed
+        awardIntermediatBadge(user);
+        awardAdvancedBadge(user);
         awardStreakBadge(user);
     }
 
@@ -69,7 +71,6 @@ public class BadgeService {
      * Otherwise, do nothing
      * @param user we're checking to see if badge criteria is met
      */
-
     private void awardInitiateBadge(User user) {
         int userTotalTime = user.getTotalTime();
 
@@ -80,6 +81,52 @@ public class BadgeService {
             if (lifetimeTimeBadgeOpt.isEmpty()) {
                 // User does not have the badge, so create and assign it
                 Badge lifetimeTimeBadge = new Badge("Initiate Gymrat", "Achieved 500 hours", user);
+                badgeRepository.save(lifetimeTimeBadge);
+                user.getBadges().add(lifetimeTimeBadge);
+                userRepository.save(user);
+            }
+        }
+    }
+
+    private void awardIntermediatBadge(User user) {
+        int userTotalTime = user.getTotalTime();
+
+        if (userTotalTime >= 750) {
+            if (user.getAge() >= 14 && user.getAge() <= 18) {
+                // Check if the user already has this badge
+                Optional<Badge> earlyBeginnings = badgeRepository.findByUserAndBadgeName(user, "Early Beginnings");
+
+                if (earlyBeginnings.isEmpty()) {
+                    // User does not have the badge, so create and assign it
+                    Badge lifetimeTimeBadge = new Badge("Intermediate Gymrat", "Achieved 750 hours", user);
+                    badgeRepository.save(lifetimeTimeBadge);
+                    user.getBadges().add(lifetimeTimeBadge);
+                    userRepository.save(user);
+                }
+            }
+            // Check if the user already has this badge
+            Optional<Badge> lifetimeTimeBadgeOpt = badgeRepository.findByUserAndBadgeName(user, "Intermediate Gymrat");
+
+            if (lifetimeTimeBadgeOpt.isEmpty()) {
+                // User does not have the badge, so create and assign it
+                Badge lifetimeTimeBadge = new Badge("Intermediate Gymrat", "Achieved 750 hours", user);
+                badgeRepository.save(lifetimeTimeBadge);
+                user.getBadges().add(lifetimeTimeBadge);
+                userRepository.save(user);
+            }
+        }
+    }
+
+    private void awardAdvancedBadge(User user) {
+        int userTotalTime = user.getTotalTime();
+
+        if (userTotalTime >= 1000) {
+            // Check if the user already has this badge
+            Optional<Badge> lifetimeTimeBadgeOpt = badgeRepository.findByUserAndBadgeName(user, "Advanced Gymrat");
+
+            if (lifetimeTimeBadgeOpt.isEmpty()) {
+                // User does not have the badge, so create and assign it
+                Badge lifetimeTimeBadge = new Badge("Advanced Gymrat", "Achieved 1000 hours", user);
                 badgeRepository.save(lifetimeTimeBadge);
                 user.getBadges().add(lifetimeTimeBadge);
                 userRepository.save(user);
