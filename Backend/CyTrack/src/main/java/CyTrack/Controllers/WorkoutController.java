@@ -5,10 +5,13 @@ import CyTrack.Entities.Workout;
 import CyTrack.Services.BadgeService;
 import CyTrack.Services.UserService;
 import CyTrack.Services.WorkoutService;
+import CyTrack.Sockets.LeaderBoardSocket;
+import CyTrack.Sockets.WorkoutTrackingSocket;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -21,15 +24,20 @@ public class WorkoutController {
     private final WorkoutService workoutService;
     private final UserService userService;
     private final BadgeService badgeService;
+
     private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("MM-dd-yyyy");
+
+    private final WorkoutTrackingSocket workoutTrackingSocket;
 
     //Constructor
     @Autowired
     public WorkoutController(WorkoutService workoutService, UserService userService,
-                             BadgeService badgeService) {
+                             BadgeService badgeService,
+                             WorkoutTrackingSocket workoutTrackingSocket) {
         this.workoutService = workoutService;
         this.userService = userService;
         this.badgeService = badgeService;
+        this.workoutTrackingSocket = workoutTrackingSocket;
     }
 
     //Create a workout
@@ -42,7 +50,40 @@ public class WorkoutController {
 
             badgeService.awardEligibleBadges(user.get());
 
+            //Notify leaderboard socket about potential update in total time
+            LeaderBoardSocket.updateLeaderboardStatic();
+
             WorkoutIDResponse response = new WorkoutIDResponse("success", newWorkout.getWorkoutID(), "Workout created");
+            return ResponseEntity.status(201).body(response);
+        }
+        ErrorResponse response = new ErrorResponse("error", 404, "User not found", "User not found");
+        return ResponseEntity.status(404).body(response);
+    }
+
+    //create and start workout
+    @PostMapping("/{userID}/createAndStart")
+    public ResponseEntity<?> createAndStart(@PathVariable Long userID, @RequestBody Workout workout) {
+        Optional<User> user = userService.findByUserID(userID);
+        if (user.isPresent()) {
+            workout.setUser(user.get());
+
+            //create workout
+            Workout newWorkout = workoutService.createWorkout(workout);
+
+            //start workout and initialize timer (simple)
+            Workout startedWorkout = workoutService.startWorkout(newWorkout.getWorkoutID());
+
+            try {
+                // Notify WebSocket about workout start
+                workoutTrackingSocket.notifyWorkoutStarted(userID);
+            } catch (IOException e) {
+                ErrorResponse response = new ErrorResponse("error", 500, "Notification error", "Failed to notify workout start");
+                return ResponseEntity.status(500).body(response);
+            }
+
+            badgeService.awardEligibleBadges(user.get());
+
+            WorkoutIDResponse response = new WorkoutIDResponse("success", startedWorkout.getWorkoutID(), "workout created and started");
             return ResponseEntity.status(201).body(response);
         }
         ErrorResponse response = new ErrorResponse("error", 404, "User not found", "User not found");
@@ -75,6 +116,18 @@ public class WorkoutController {
             Optional<Workout> workout = workoutService.findByWorkoutID(workoutID);
             if (workout.isPresent()) {
                 Workout endedWorkout = workoutService.endWorkout(workoutID);
+
+                //notify websocket about workout end
+                try {
+                    // Notify WebSocket about workout end
+                    workoutTrackingSocket.notifyWorkoutEnded(userID);
+                } catch (IOException e) {
+                    ErrorResponse response = new ErrorResponse("error", 500, "Notification error", "Failed to notify workout end");
+                    return ResponseEntity.status(500).body(response);
+                }
+
+                LeaderBoardSocket.updateLeaderboardStatic();
+
                 WorkoutIDResponse response = new WorkoutIDResponse("success", workoutID, "Workout ended");
                 return ResponseEntity.status(200).body(response);
             }

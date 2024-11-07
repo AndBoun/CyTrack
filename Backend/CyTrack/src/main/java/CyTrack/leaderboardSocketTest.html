@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Leaderboard Test</title>
+    <style>
+        #leaderboard {
+            font-family: Arial, sans-serif;
+            margin-top: 20px;
+        }
+        #leaderboard div {
+            padding: 5px 0;
+        }
+    </style>
+</head>
+<body>
+<h2>Live Leaderboard</h2>
+
+<div>
+    <label for="userID">User ID:</label>
+    <input type="text" id="userID" value="1">
+</div>
+
+<button onclick="connect()">Connect to Leaderboard</button>
+<button onclick="disconnect()">Disconnect</button>
+
+<div id="leaderboard">
+    <h3>Leaderboard:</h3>
+    <div id="leaderboardContent">No data yet.</div>
+</div>
+
+<script>
+    let ws = null;
+
+    function connect() {
+        const userID = document.getElementById('userID').value;
+        ws = new WebSocket("ws://localhost:8080/leaderboard");
+
+        ws.onopen = function() {
+            document.getElementById("leaderboardContent").innerHTML = "<div>Connected to leaderboard server.</div>";
+        };
+
+        ws.onmessage = function(event) {
+            // Display leaderboard data
+            document.getElementById("leaderboardContent").innerHTML = `<pre>${event.data}</pre>`;
+        };
+
+        ws.onclose = function() {
+            document.getElementById("leaderboardContent").innerHTML += "<div>Disconnected from leaderboard server.</div>";
+        };
+
+        ws.onerror = function(error) {
+            console.error("WebSocket error:", error);
+            document.getElementById("leaderboardContent").innerHTML += "<div>Error: Unable to connect to server.</div>";
+        };
+    }
+
+    function disconnect() {
+        if (ws) {
+            ws.close();
+        }
+    }
+</script>
+</body>
+</html>
