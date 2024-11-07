@@ -1,8 +1,6 @@
 package CyTrack.Entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -16,13 +14,24 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long userID;
-    // One user can have many workouts
+
+    /**
+     * Workouts relationship and field
+     */
     @OneToMany(mappedBy = "user")
     private List<Workout> workouts;
 
+
+    /**
+     * Meals relationship and field
+     */
     @OneToMany(mappedBy = "user")
     private List<Meal> meals;
 
+
+    /**
+     * Friends relationship and field
+     */
     @ManyToMany
     @JoinTable(
             name = "friends",
@@ -30,6 +39,12 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "user2_id")
     )
     private List<Friends> friends = new ArrayList<>();
+
+    /**
+     * Badgees relationship and field
+     */
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Badge> badges = new ArrayList<>();
 
     @OneToMany(mappedBy = "sender")
     @JsonIgnoreProperties("sender")
@@ -46,6 +61,7 @@ public class User {
     private String password;
     private int age;
     private int streak;
+    private int totalTime;
     private String gender;
 
 
@@ -149,8 +165,35 @@ public class User {
         this.receivedRequests = receivedRequests;
     }
 
+    // Getters and Setters for badges
+    public List<Badge> getBadges() {
+        return badges;
+    }
+
+    public void setBadges(List<Badge> badges) {
+        this.badges = badges;
+    }
+
+    public void addBadge(Badge badge) {
+        if (!badges.contains(badge)) {
+            badges.add(badge);
+            badge.setUser(this);
+        }
+    }
+
+    public void removeBadge(Badge badge) {
+        if (badges.contains(badge)) {
+            badges.remove(badge);
+            badge.setUser(null);
+        }
+    }
 
 
+    public int getTotalTime() {
+        return totalTime;
+    }
 
-
+    public void setTotalTime(int totalTime) {
+        this.totalTime = totalTime;
+    }
 }

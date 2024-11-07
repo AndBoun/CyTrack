@@ -1,6 +1,7 @@
 package CyTrack.Services;
 
 import CyTrack.Entities.User;
+import CyTrack.Repositories.BadgeRepository;
 import CyTrack.Repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,10 +17,12 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final BadgeRepository badgeRepository;
 
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, BadgeRepository badgeRepository) {
         this.userRepository = userRepository;
+        this.badgeRepository = badgeRepository;
     }
     // Register user, encrypt password
     public User registerUser(User user) throws NoSuchAlgorithmException {
@@ -70,4 +73,6 @@ public class UserService {
             throw e;
         }
     }
+
+
 }
