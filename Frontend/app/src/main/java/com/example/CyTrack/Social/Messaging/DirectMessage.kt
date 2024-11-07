@@ -1,10 +1,8 @@
-package com.example.CyTrack.Social
+package com.example.CyTrack.Social.Messaging
 
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -26,6 +24,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Send
@@ -37,6 +36,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -54,16 +54,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.example.CyTrack.R
-import com.example.CyTrack.Social.MyFriends.Friends
+import com.example.CyTrack.Social.Friends.Friend
+import com.example.CyTrack.Social.SocialUtils
+import com.example.CyTrack.Social.WebSockets.WebSocketManagerMessages
 import com.example.CyTrack.Utilities.ComposeUtils.Companion.getCustomFontFamily
-import com.example.CyTrack.Utilities.User
 import com.example.CyTrack.Utilities.StatusBarUtil
-import kotlin.properties.Delegates
+import com.example.CyTrack.Utilities.UrlHolder
+import com.example.CyTrack.Utilities.User
+import com.example.CyTrack.Utilities.WebSocketListener
+import org.java_websocket.handshake.ServerHandshake
 
 
-class DirectMessage : ComponentActivity(){
+class DirectMessage : ComponentActivity(), WebSocketListener {
 
     /**
      * The user whose profile is being displayed.
@@ -73,9 +76,9 @@ class DirectMessage : ComponentActivity(){
     /**
      * The recipient user.
      */
-    private lateinit var recipientUser : Friends
+    private lateinit var recipientUser: Friend
 
-    private lateinit var conversationKey : String
+    private lateinit var conversationKey: String
 
     private var messageList: MutableList<Msg> = mutableListOf()
 
@@ -85,16 +88,27 @@ class DirectMessage : ComponentActivity(){
             messageList = remember { mutableStateListOf() }
 
             user = intent.getSerializableExtra("user") as User
-            recipientUser = intent.getSerializableExtra("recipientUser") as Friends
+            recipientUser = intent.getSerializableExtra("recipientUser") as Friend
             conversationKey = "${user.id}_DM_${recipientUser.userID}"
 
+
+            val serverUrl = "${UrlHolder.wsURL}/chat/${user.id}/${recipientUser.userID}"
+            Log.d("WebSocketServiceUtil", "Connecting to $serverUrl")
+            WebSocketManagerMessages.getInstance().connectWebSocket(serverUrl);
+            WebSocketManagerMessages.getInstance().setWebSocketListener(this@DirectMessage);
 
 
             Box(
                 modifier = Modifier.fillMaxSize()
             ) {
-                Column {
-                    DirectMessageTopCard(recipientUser.firstName, recipientUser.username, "generic_avatar")
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                ) {
+                    DirectMessageTopCard(
+                        recipientUser.firstName,
+                        recipientUser.username,
+                        "generic_avatar"
+                    )
 
                     ConversationLazyList(messageList, messageAlignment = {
                         it.senderID != user.id
@@ -103,7 +117,8 @@ class DirectMessage : ComponentActivity(){
 
                 InputMessageBar(
                     messageList,
-                    modifier = Modifier.align(Alignment.BottomCenter)
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
                         .offset(y = (-50).dp),
                     onClickSend = {
                         sendMessage(it)
@@ -122,32 +137,50 @@ class DirectMessage : ComponentActivity(){
     )
 
     private fun sendMessage(message: String) {
-        val intent = Intent("SendWebSocketMessage").apply {
-            putExtra("key", conversationKey)
-            putExtra("message", message)
+        if (message.isBlank()) return
+        try {
+            WebSocketManagerMessages.getInstance().sendMessage(message)
+            messageList.add(Msg(message, user.id))
+        } catch (e: Exception) {
+            Log.d("ExceptionSendMessage:", e.message.toString())
+            Toast.makeText(this, "Failed to send message", Toast.LENGTH_SHORT).show()
         }
-        LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
-        messageList.add(Msg(message, user.id))
     }
 
-    private val messageReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
-            val key = intent?.getStringExtra("key")
-            if (conversationKey == key) {
-                val message = intent.getStringExtra("message").toString()
-                messageList.add(Msg(message, recipientUser.userID))
+
+    override fun onWebSocketOpen(handshakedata: ServerHandshake) {}
+
+    override fun onWebSocketMessage(message: String) {
+        Log.d("MessageReceived", message)
+
+        try {
+            if (message.substring(0, 4) == "You:") {
+                return
+            } else if (message.substring(
+                    0,
+                    recipientUser.username.length + 1
+                ) == "${recipientUser.username}:"
+            ) {
+                messageList.add(Msg(message.substring(recipientUser.username.length + 1).trim(), recipientUser.userID))
+            } else {
+                // Handle message received
+                val tempMsg = SocialUtils.processMessage(message)
+                messageList.add(tempMsg)
             }
+        } catch (e: Exception) {
+            Log.d("Exception", e.message.toString())
         }
+
+
     }
 
-    override fun onStart() {
-        super.onStart()
-        LocalBroadcastManager.getInstance(this).registerReceiver(messageReceiver, IntentFilter("SendWebSocketMessage"))
+
+    override fun onWebSocketClose(code: Int, reason: String?, remote: Boolean) {
+        val closedBy = if (remote) "Server" else "Client"
+        Toast.makeText(this, "Connection closed by $closedBy", Toast.LENGTH_SHORT).show()
     }
 
-    override fun onStop() {
-        super.onStop()
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(messageReceiver)
+    override fun onWebSocketError(ex: Exception?) {
     }
 
 }
@@ -166,18 +199,11 @@ fun InputMessageBar(
         trailingIcon = {
             IconButton(
                 onClick = {
-//                    // Handle message send
-//                    if (message.isNotBlank()) {
-//                        // Send message logic here
-//                        messageList.add(message)
-//
-//                        message = "" // Clear the text field after sending
-//                    }
                     onClickSend(message)
                     message = ""
                 },
 
-            ) {
+                ) {
                 Icon(
                     imageVector = Icons.Default.Send,
                     contentDescription = null,
@@ -201,19 +227,20 @@ fun InputMessageBar(
 fun ConversationMessageCard(
     msg: String,
     modifier: Modifier = Modifier
-){
+) {
 
     // Get the screen width
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp.dp
 
-    Surface (
+    Surface(
         color = Color.White,
         shape = RoundedCornerShape(4.dp),
-        modifier = modifier.padding(8.dp)
+        modifier = modifier
+            .padding(8.dp)
             .widthIn(max = screenWidth * 0.7f), // Set max width to 70% of screen width
         shadowElevation = 2.dp
-    ){
+    ) {
         Text(
             text = msg,
             fontFamily = getCustomFontFamily("Inter", FontWeight.Normal, FontStyle.Normal),
@@ -235,9 +262,13 @@ fun ConversationMessageCard(
 fun ConversationLazyList(
     msg: List<DirectMessage.Msg>,
     modifier: Modifier = Modifier,
-    messageAlignment: (DirectMessage.Msg) -> Boolean = {false}
+    messageAlignment: (DirectMessage.Msg) -> Boolean = { false }
 ) {
-    LazyColumn {
+
+
+    LazyColumn(
+        modifier = Modifier.padding(bottom = 100.dp)
+    ) {
         items(msg) { message ->
             Box(
                 modifier = Modifier
@@ -262,24 +293,26 @@ fun ConversationLazyList(
 @Composable
 fun DirectMessageTopCard(
     name: String,
-    username : String,
-    img : String,
+    username: String,
+    img: String,
     modifier: Modifier = Modifier
-){
+) {
     val context = LocalContext.current
 
     Surface(
         color = Color(LocalContext.current.resources.getColor(R.color.CyRed)),
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
             .padding(bottom = 20.dp)
-        
+
     )
     {
         Row(
             verticalAlignment = CenterVertically,
-            modifier = Modifier.padding(8.dp)
+            modifier = Modifier
+                .padding(8.dp)
                 .padding(top = 20.dp)
-        ){
+        ) {
             IconButton(
                 onClick = {
                     (context as ComponentActivity).finish()
@@ -303,8 +336,8 @@ fun DirectMessageTopCard(
             )
 
             Spacer(modifier = Modifier.width(20.dp))
-            
-            Column{
+
+            Column {
                 Text(
                     text = name,
                     fontFamily = getCustomFontFamily("Inter", FontWeight.Normal, FontStyle.Normal),
@@ -328,14 +361,14 @@ fun DirectMessageTopCard(
 @Composable
 fun DirectMessageScreen(
     user: User,
-    messageList : MutableList<DirectMessage.Msg>,
+    messageList: MutableList<DirectMessage.Msg>,
     modifier: Modifier = Modifier
 ) {
     val insets = WindowInsets.systemBars.asPaddingValues()
 
-    Surface (
+    Surface(
         modifier = Modifier.fillMaxSize()
-    ){
+    ) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -375,33 +408,60 @@ fun PreviewConversationLazyList() {
 
 @Preview
 @Composable
-fun DirectMessageTopCardPreview(){
+fun DirectMessageTopCardPreview() {
     DirectMessageTopCard("John Doe", "johndoe", "generic_avatar")
 }
 
 @Preview
 @Composable
-fun PreviewMessageScreen(){
+fun PreviewMessageScreen() {
+    var messageList = remember {
+        mutableStateListOf<DirectMessage.Msg>(
+            DirectMessage.Msg("Hello", 1),
+            DirectMessage.Msg("Hi", 2),
+            DirectMessage.Msg("Hello", 1),
+            DirectMessage.Msg("Hi", 2),
+            DirectMessage.Msg("Hello", 1),
+            DirectMessage.Msg("Hello", 1),
+            DirectMessage.Msg("Hi", 2),
+            DirectMessage.Msg("Hello", 1),
+            DirectMessage.Msg("Hi", 2),
+            DirectMessage.Msg("Hello", 1),
+            DirectMessage.Msg("Hello", 1),
+            DirectMessage.Msg("Hi", 2),
+            DirectMessage.Msg("Hello", 1),
+            DirectMessage.Msg("Hi", 2),
+            DirectMessage.Msg("Hello", 1),
+        )
+    }
+
     Surface(
         modifier = Modifier.fillMaxSize()
-    ){
+    ) {
         Box(
             modifier = Modifier.fillMaxSize()
         ) {
-            Column {
-                DirectMessageTopCard("John Doe", "johndoe", "generic_avatar")
+            Column(
+                modifier = Modifier.fillMaxSize(),
+            ) {
+                DirectMessageTopCard("John", "Doe", "generic_avatar")
 
-//                ConversationLazyList(
-//                    listOf("Hello, World!", "This is a test message", "This is another test message"),
-//                )
+                ConversationLazyList(messageList, messageAlignment = {
+                    it.senderID != 1
+                })
+
             }
 
+            InputMessageBar(
+                messageList,
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .offset(y = (-50).dp),
+                onClickSend = {
+                }
+            )
 
-//            InputMessageBar(
-//                messageList = mutableListOf("Hello, World!"),
-//                modifier = Modifier.align(Alignment.BottomCenter)
-//                    .offset(y = (-50).dp)
-//            )
+
         }
     }
 }

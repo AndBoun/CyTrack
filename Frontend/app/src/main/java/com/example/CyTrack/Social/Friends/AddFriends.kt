@@ -1,19 +1,20 @@
-package com.example.CyTrack.Social
+package com.example.CyTrack.Social.Friends
 
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Send
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -54,7 +55,7 @@ class AddFriends : ComponentActivity() {
     /**
      * A list of users from search.
      */
-    private var searchList: MutableList<User> = mutableListOf()
+    private var searchList: MutableList<Friend> = mutableListOf()
 
 
     private val URL: String = UrlHolder.URL;
@@ -67,16 +68,37 @@ class AddFriends : ComponentActivity() {
             searchList = remember { mutableStateListOf() }
 
 
-            Column {
-                Spacer(modifier = Modifier.height(20.dp))
-                Surface(
-                    color = Color(context.resources.getColor(R.color.CyRed)),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(80.dp)
-                ) {
+            Surface(
+                color = Color(context.resources.getColor(R.color.CyRed)),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(120.dp)
+            ) {
+                Column(
+                    verticalArrangement = Arrangement.Bottom
+                ){
+                    IconButton(
+                        onClick = {
+                            (context as ComponentActivity).finish()
+                        },
+                        modifier = Modifier.align(Alignment.Start)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowBack,
+                            contentDescription = "Back arrow",
+                            tint = Color.White,
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
+
+//                    Spacer(modifier = Modifier.height(4.dp))
+
                     SearchBar(
-                        searchList,
+                        searchList = mutableListOf(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .heightIn(min = 56.dp)
+                            .align(Alignment.CenterHorizontally),
                         onClickSearch = {
                             addUser(it)
                         }
@@ -89,13 +111,14 @@ class AddFriends : ComponentActivity() {
     }
 
     private fun addUser(username: String) {
+        val addURL = "${URL}/${user.id}/request"
+
         val inputs = JSONObject().apply {
             put("friendUsername", username)
         }
 
         Log.d("AddFriends", inputs.toString())
 
-        val addURL = "${URL}/${user.id}/request"
 
         val jsonObjectRequest = JsonObjectRequest(
             Request.Method.POST,
@@ -126,6 +149,7 @@ class AddFriends : ComponentActivity() {
 @Preview
 @Composable
 fun AddFriendsTopCard(
+    onClickSearch: (String) -> Unit = {}
 ) {
     val context = LocalContext.current
 
@@ -133,25 +157,43 @@ fun AddFriendsTopCard(
         color = Color(context.resources.getColor(R.color.CyRed)),
         modifier = Modifier
             .fillMaxWidth()
-            .height(80.dp)
+            .height(120.dp)
     ) {
-        Box() {
-            SearchBar(
-                searchList = mutableListOf(),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .heightIn(min = 56.dp)
-                    .align(Alignment.BottomCenter),
-                onClickSearch = {}
-            )
-        }
+       Column(
+           verticalArrangement = Arrangement.Bottom
+       ){
+           IconButton(
+               onClick = {
+                   (context as ComponentActivity).finish()
+               },
+               modifier = Modifier.align(Alignment.Start)
+           ) {
+               Icon(
+                   imageVector = Icons.Default.ArrowBack,
+                   contentDescription = "Back arrow",
+                   tint = Color.White,
+                   modifier = Modifier.size(24.dp)
+               )
+           }
+            
+           Spacer(modifier = Modifier.height(8.dp))
+
+           SearchBar(
+               searchList = mutableListOf(),
+               modifier = Modifier
+                   .fillMaxWidth()
+                   .heightIn(min = 56.dp)
+                   .align(Alignment.CenterHorizontally),
+               onClickSearch = onClickSearch
+           )
+       }
     }
 
 }
 
 @Composable
 fun SearchBar(
-    searchList: MutableList<User>,
+    searchList: MutableList<Friend>,
     modifier: Modifier = Modifier,
     onClickSearch: (String) -> Unit = {}
 ) {
@@ -167,7 +209,7 @@ fun SearchBar(
                 }
             ) {
                 Icon(
-                    imageVector = Icons.Default.Search,
+                    imageVector = Icons.Default.Add,
                     contentDescription = null,
                 )
             }

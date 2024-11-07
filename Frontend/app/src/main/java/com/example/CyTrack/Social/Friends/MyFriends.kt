@@ -1,10 +1,7 @@
-package com.example.CyTrack.Social
+package com.example.CyTrack.Social.Friends
 
 import android.app.Activity
-import android.content.Intent
 import android.os.Bundle
-import android.os.IBinder.DeathRecipient
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.BorderStroke
@@ -26,12 +23,17 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -43,18 +45,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.android.volley.Request
-import com.android.volley.toolbox.JsonObjectRequest
 import com.example.CyTrack.R
+import com.example.CyTrack.Social.SocialUtils
 import com.example.CyTrack.Social.SocialUtils.Companion.messageUserScreen
+import com.example.CyTrack.Social.SocialUtils.Companion.switchToAddFriends
+import com.example.CyTrack.Social.SocialUtils.Companion.switchToFriendProfile
 import com.example.CyTrack.Utilities.ComposeUtils.Companion.getCustomFontFamily
-import com.example.CyTrack.Utilities.NetworkUtils
 import com.example.CyTrack.Utilities.User
 import com.example.CyTrack.Utilities.StatusBarUtil
 import com.example.CyTrack.Utilities.UrlHolder
-import com.example.CyTrack.Utilities.VolleySingleton
-import org.json.JSONException
-import java.io.Serializable
 
 class MyFriends : ComponentActivity() {
 
@@ -66,7 +65,7 @@ class MyFriends : ComponentActivity() {
     /**
      * A list of friend requests for the user.
      */
-    private var myFriends: MutableList<Friends> = mutableListOf()
+    private var myFriends: MutableList<Friend> = mutableListOf()
 
     private val URL = UrlHolder.URL
 
@@ -74,9 +73,7 @@ class MyFriends : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             user = intent.getSerializableExtra("user") as User
-            if (user != null) {
 
-            }
 
             myFriends = remember { mutableStateListOf() }
 
@@ -84,85 +81,54 @@ class MyFriends : ComponentActivity() {
 
             Column {
                 MyFriendsTopCard(onAddFriendsButton = {
-                    switchToAddFriends()
+                    switchToAddFriends(this@MyFriends, user)
                 })
                 Spacer(modifier = Modifier.height(20.dp))
-                MyFriendsCardsLazyList(myFriends, onMessageClick = {
-                    messageUserScreen(user, it, this@MyFriends)
-                })
+                MyFriendsCardsLazyList(myFriends,
+                    onMessageClick = {
+                        messageUserScreen(user, it, this@MyFriends)
+                    },
+                    onProfileClick = {
+                        switchToFriendProfile(this@MyFriends, user, it)
+                    },
+                    onDeleteClick = {
+                        deleteFriend(it)
+                    }
+                )
             }
         }
 
         StatusBarUtil.setStatusBarColor(this, R.color.CyRed)
     }
 
-    data class Friends(
-        val firstName: String,
-        val username: String,
-        val userID: Int,
-        val friendID: Int
-    ) : Serializable
-
-    private fun switchToAddFriends() {
-        val intent = Intent(this, AddFriends::class.java).apply {
-            putExtra("user", user)
-        }
-        startActivity(intent)
-    }
 
     private fun getFriends() {
-        
         val getURL = "${URL}/${user.id}/friends"
-        val jsonObjectRequest = JsonObjectRequest(
-            Request.Method.GET,
-            getURL,
-            null,
-            { response ->
-                try {
-                    val message = response.getString("message")
-                    val data = response.getJSONObject("data").getJSONArray("friends")
 
-                    for (i in 0 until data.length()) {
-                        val friend = data.getJSONObject(i)
-                        myFriends.add(
-                            Friends(
-                                friend.getString("firstname"),
-                                friend.getString("username"),
-                                friend.getInt("userID"),
-                                friend.getInt("friendID")
-                            )
-                        )
-                    }
-                    myFriends.sortBy { it.firstName }
-                } catch (e: JSONException) {
-                    e.printStackTrace()
-                }
-            },
-            { error ->
-                // Handle error
-                Toast.makeText(this, NetworkUtils.errorResponse(error), Toast.LENGTH_LONG).show()
-            }
-        )
-        VolleySingleton.getInstance(this).addToRequestQueue(jsonObjectRequest)
+        SocialUtils.getListOfFriends(this, myFriends, getURL, "friends", onComplete = {
+            myFriends.sortBy { it.firstName }
+        })
     }
 
+    private fun deleteFriend(friend: Friend) {
+        val delURL = "${URL}/${user.id}/friends/${friend.friendID}"
+
+        SocialUtils.deleteFriend(this, delURL, onComplete = {
+            myFriends.remove(friend)
+        })
+    }
 
 }
 
-/**
- * Composable function to display a basic profile card to be in a list.
- *
- * @param name The name of the user.
- * @param username The username of the user.
- * @param img The URL or resource identifier for the user\`s image.
- */
+
 @Composable
 fun ListProfileCard(
     name: String,
     username: String,
     img: String,
     modifier: Modifier = Modifier,
-    onProfileClick: () -> Unit = {}
+    onProfileClick: () -> Unit = {},
+    dropDownButton: @Composable () -> Unit = {}
 ) {
     // Composable function to display a card with user information
     Surface(
@@ -173,14 +139,15 @@ fun ListProfileCard(
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-//            horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier
                 .padding(10.dp)
         ) {
             Image(
                 painter = painterResource(id = R.drawable.general_generic_avatar),
                 contentDescription = "Profile Picture",
-                modifier = Modifier.size(40.dp),
+                modifier = Modifier
+                    .size(40.dp)
+                    .clickable(onClick = onProfileClick)
             )
 
             Spacer(modifier = Modifier.width(10.dp))
@@ -209,18 +176,40 @@ fun ListProfileCard(
                 horizontalArrangement = Arrangement.End,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                IconButton(
-                    onClick = { onProfileClick() },
-                    modifier = Modifier.size(24.dp)
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.general_more_options_horizontal),
-                        contentDescription = "More Options",
-                        colorFilter = ColorFilter.tint(Color.Black)
-                    )
-                }
+                dropDownButton()
             }
 
+        }
+    }
+}
+
+@Composable
+fun MoreOptionsButtonMyFriends(onDeleteFriend: () -> Unit) {
+    var expanded by remember { mutableStateOf(false) }
+
+    Box {
+        IconButton(
+            onClick = { expanded = true },
+            modifier = Modifier.size(24.dp)
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.general_more_options_horizontal),
+                contentDescription = "More Options",
+                colorFilter = ColorFilter.tint(Color.Black)
+            )
+        }
+
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            DropdownMenuItem(
+                text = { Text("Delete Friend") },
+                onClick = {
+                    expanded = false
+                    onDeleteFriend()
+                }
+            )
         }
     }
 }
@@ -231,10 +220,16 @@ fun FriendsListProfileCard(
     username: String,
     img: String,
     onMessageClick: () -> Unit,
+    onProfileClick: () -> Unit = {},
+    dropDownButton: @Composable () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     Box {
-        ListProfileCard(name, username, img, modifier)
+        ListProfileCard(
+            name, username, img, modifier,
+            onProfileClick = onProfileClick,
+            dropDownButton = dropDownButton,
+        )
 
 
         Button(
@@ -253,7 +248,11 @@ fun FriendsListProfileCard(
         ) {
             Text(
                 text = "Message",
-                fontFamily = getCustomFontFamily("Inter", FontWeight.SemiBold, FontStyle.Normal),
+                fontFamily = getCustomFontFamily(
+                    "Inter",
+                    FontWeight.SemiBold,
+                    FontStyle.Normal
+                ),
                 color = Color.Black,
                 fontSize = 13.sp,
                 fontWeight = FontWeight.SemiBold,
@@ -262,22 +261,32 @@ fun FriendsListProfileCard(
     }
 }
 
+
 @Composable
 fun MyFriendsCardsLazyList(
-    friendsList: List<MyFriends.Friends>,
-    onMessageClick: (MyFriends.Friends) -> Unit = {},
+    friendsList: List<Friend>,
+    onMessageClick: (Friend) -> Unit = {},
+    onProfileClick: (Friend) -> Unit = {},
+    onDeleteClick: (Friend) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     // LazyColumn to display a list of friends
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxHeight()
             .padding(horizontal = 32.dp)
     ) {
         for (friend in friendsList) {
             FriendsListProfileCard(friend.firstName, friend.username, "temp", {
                 onMessageClick(friend)
-            })
+            }, {
+                onProfileClick(friend)
+            }, {
+                MoreOptionsButtonMyFriends {
+                    onDeleteClick(friend)
+                }
+            }
+            )
             Spacer(modifier = Modifier.height(10.dp))
         }
     }
@@ -337,44 +346,19 @@ fun MyFriendsTopCard(
     }
 }
 
-@Composable
-fun MyFriendsScreen(
-    friendsList: List<MyFriends.Friends>,
-    modifier: Modifier = Modifier
-) {
-    Column {
-        MyFriendsTopCard()
-        Spacer(modifier = Modifier.height(20.dp))
-        MyFriendsCardsLazyList(friendsList)
-    }
-}
 
 
-//@Preview
-@Composable
-fun ListProfileCardPreview() {
-    ListProfileCard("John Doe", "johndoe", "temp")
-}
 
 @Preview
 @Composable
 fun FriendsListProfileCardPreview() {
-    FriendsListProfileCard("John Doe", "johndoe", "temp", {})
-}
-
-@Preview
-@Composable
-fun MyFriendsCardsLazyListPreview() {
-    val list = ArrayList<User>()
-    list.add(User(1, "Doe", "John", "Doe", 20, "M", 2))
-    list.add(User(2, "Doe", "Jane", "Doe", 20, "F", 2))
-    list.add(User(3, "Doe", "John", "Doe", 20, "M", 2))
-    list.add(User(4, "Doe", "Jane", "Doe", 20, "F", 2))
-    list.add(User(5, "Doe", "John", "Doe", 20, "M", 2))
-    Surface {
-//        MyFriendsCardsLazyList(list)
-//        MyFriendsScreen(list)
-    }
+    FriendsListProfileCard("John Doe", "johndoe", "temp", {},
+        dropDownButton = {
+            MoreOptionsButtonMyFriends {
+                // Delete friend
+            }
+        }
+    )
 }
 
 @Preview

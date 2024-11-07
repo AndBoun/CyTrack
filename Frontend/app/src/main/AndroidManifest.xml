@@ -18,13 +18,15 @@
 
         <service android:name=".Utilities.WebSocketServiceUtil" />
 
-        <activity android:name=".Social.AddFriends"
+        <activity android:name=".Social.Friends.FriendProfile"
             android:exported="false"/>
-        <activity android:name=".Social.DirectMessage"
+        <activity android:name=".Social.Friends.AddFriends"
             android:exported="false"/>
-        <activity android:name=".Social.MyMessages"
+        <activity android:name=".Social.Messaging.DirectMessage"
             android:exported="false"/>
-        <activity android:name=".Social.MyFriends"
+        <activity android:name=".Social.Messaging.MyMessages"
+            android:exported="false"/>
+        <activity android:name=".Social.Friends.MyFriends"
             android:exported="false"/>
         <activity android:name=".Social.MyProfile"
             android:exported="false"/>
