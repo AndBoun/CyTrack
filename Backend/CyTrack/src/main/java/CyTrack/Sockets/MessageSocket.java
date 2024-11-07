@@ -14,7 +14,6 @@ import CyTrack.Services.UserService;
 import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Map;
-import java.util.Optional;
 
 @Controller
 @ServerEndpoint("/chat/{senderID}/{receiverID}")
@@ -23,13 +22,14 @@ public class MessageSocket {
     private static MessageRepository msgRepo;
     private static FriendsService friendsService;
     private static UserService userService;
-
+    private static UserConversationsSocket userConversationsSocket;
 
     @Autowired
-    public MessageSocket(MessageRepository msgRepo, FriendsService friendsService, UserService userService) {
+    public MessageSocket(MessageRepository msgRepo, FriendsService friendsService, UserService userService, UserConversationsSocket userConversationsSocket) {
         MessageSocket.msgRepo = msgRepo;
         MessageSocket.friendsService = friendsService;
         MessageSocket.userService = userService;
+        MessageSocket.userConversationsSocket = userConversationsSocket;
     }
 
     public MessageSocket() {
@@ -40,29 +40,21 @@ public class MessageSocket {
 
     @OnOpen
     public void onOpen(Session session, @PathParam("senderID") Long senderID, @PathParam("receiverID") Long receiverID) throws IOException {
-        // Check if the sender and receiver are friends
         if (friendsService.checkIfFriends(senderID, receiverID)) {
             sessionUserMap.put(session, senderID);
             userSessionMap.put(senderID, session);
-
-            // Send chat history to the user when they connect
             sendChatHistory(session, senderID, receiverID);
         } else {
-            // Close session if users are not friends
-            session.close(new CloseReason(
-                    CloseReason.CloseCodes.VIOLATED_POLICY,
-                    "You are not friends with this user"));
+            session.close(new CloseReason(CloseReason.CloseCodes.VIOLATED_POLICY, "You are not friends with this user"));
         }
     }
 
     @OnMessage
     public void onMessage(Session session, @PathParam("receiverID") Long receiverID, String messageText) throws IOException {
         Long senderID = sessionUserMap.get(session);
-        if (senderID == null) return;  // Ignore if session is not mapped correctly
+        if (senderID == null) return;
 
-        // Check if the sender and receiver are friends
         if (friendsService.checkIfFriends(senderID, receiverID)) {
-            // Create and save message
             String senderUsername = userService.findByUserID(senderID).get().getUsername();
             String receiverUsername = userService.findByUserID(receiverID).get().getUsername();
             Message message = new Message(senderID, receiverID, senderUsername, receiverUsername, messageText);
@@ -70,10 +62,14 @@ public class MessageSocket {
 
             Session receiverSession = userSessionMap.get(receiverID);
             if (receiverSession != null && receiverSession.isOpen()) {
-                receiverSession.getBasicRemote().sendText( senderUsername + ": " + messageText);
+                receiverSession.getBasicRemote().sendText(senderUsername + ": " + messageText);
             }
 
             session.getBasicRemote().sendText("You: " + messageText);
+
+            // Update conversations for both sender and receiver
+            userConversationsSocket.updateConversations(senderID);
+            userConversationsSocket.updateConversations(receiverID);
         } else {
             session.getBasicRemote().sendText("Error: You are not friends with this user");
         }
@@ -95,9 +91,7 @@ public class MessageSocket {
     private void sendChatHistory(Session session, Long senderID, Long receiverID) throws IOException {
         var chatHistory = msgRepo.findBySenderIDAndReceiverIDOrReceiverIDAndSenderIDOrderByDateAsc(senderID, receiverID);
         for (Message msg : chatHistory) {
-            ChatMessageResponse chatMessage = new ChatMessageResponse("success",
-                    new ChatMessageResponse.Data(msg.getSenderID(), msg.getContent()),
-                    "Chat history loaded");
+            ChatMessageResponse chatMessage = new ChatMessageResponse("success", new ChatMessageResponse.Data(msg.getSenderID(), msg.getContent()), "Chat history loaded");
             String jsonMessage = new ObjectMapper().writeValueAsString(chatMessage);
             session.getBasicRemote().sendText(jsonMessage);
         }

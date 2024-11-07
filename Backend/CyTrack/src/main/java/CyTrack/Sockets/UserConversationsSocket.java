@@ -78,10 +78,6 @@ public class UserConversationsSocket {
         // Update the conversation list for both users
         updateConversations(senderID);
         updateConversations(receiverID);
-
-        // Send updated conversation data to both users
-        sendUpdatedConversations(senderID);
-        sendUpdatedConversations(receiverID);
     }
 
     @OnClose
@@ -115,41 +111,7 @@ public class UserConversationsSocket {
         }
     }
 
-    private void updateConversations(Long userID) throws IOException {
-        List<UserConversations> conversations = friendsService.getUserConversations(userID);
-        List<UserConversationsResponse.UserConversationsData> conversationData = conversations.stream().map(conversation -> {
-            Long friendEntityID = conversation.getConversationID();
-            Long friendUserID = conversation.getUser1().getUserID().equals(userID) ? conversation.getUser2().getUserID() : conversation.getUser1().getUserID();
-            List<Message> latestMessages = messageRepository.findLatestMessage(userID, friendUserID, PageRequest.of(0, 1));
-            Message latestMessage = latestMessages.isEmpty() ? null : latestMessages.get(0);
-            String content = latestMessage != null ? latestMessage.getContent() : "";
-            String time = latestMessage != null ? new SimpleDateFormat("HH:mm:ss").format(latestMessage.getDate()) : null;
-
-            return new UserConversationsResponse.UserConversationsData(
-                    friendUserID.equals(conversation.getUser1().getUserID()) ? conversation.getUser1_username() : conversation.getUser2_username(),
-                    friendUserID.equals(conversation.getUser1().getUserID()) ? conversation.getUser1().getFirstName() : conversation.getUser2().getFirstName(),
-                    content,
-                    time,
-                    friendUserID,
-                    friendEntityID,
-                    conversation.getConversationID()
-            );
-        }).collect(Collectors.toList());
-
-        UserConversationsResponse response = new UserConversationsResponse("success", conversationData, "User conversations updated");
-        String jsonResponse = new ObjectMapper().writeValueAsString(response);
-
-        List<Session> sessions = userSessionMap.get(userID);
-        if (sessions != null) {
-            for (Session userSession : sessions) {
-                if (userSession.isOpen()) {
-                    userSession.getBasicRemote().sendText(jsonResponse);
-                }
-            }
-        }
-    }
-
-    private void sendUpdatedConversations(Long userID) throws IOException {
+    public static void updateConversations(Long userID) throws IOException {
         List<UserConversations> conversations = friendsService.getUserConversations(userID);
         List<UserConversationsResponse.UserConversationsData> conversationData = conversations.stream().map(conversation -> {
             Long friendEntityID = conversation.getConversationID();
