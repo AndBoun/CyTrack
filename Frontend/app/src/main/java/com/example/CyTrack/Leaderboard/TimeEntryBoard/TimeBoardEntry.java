@@ -1,4 +1,4 @@
-package com.example.CyTrack.Leaderboard.main;
+package com.example.CyTrack.Leaderboard.TimeEntryBoard;
 
 public class TimeBoardEntry {
     Long id;

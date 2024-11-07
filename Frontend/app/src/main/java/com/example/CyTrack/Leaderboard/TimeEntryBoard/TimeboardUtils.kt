@@ -1,20 +1,9 @@
-package com.example.CyTrack.Leaderboard.main
+package com.example.CyTrack.Leaderboard.TimeEntryBoard
 
-import android.app.Activity
 import android.util.Log
-import android.widget.Toast
-import com.android.volley.Request
-import com.android.volley.toolbox.JsonArrayRequest
-import com.example.CyTrack.Badges.BadgeObject
-import com.example.CyTrack.Social.Messaging.DirectMessage
 import org.json.JSONException
 
-import com.example.CyTrack.Utilities.NetworkUtils // Connection Imports
-import com.example.CyTrack.Utilities.User
-import com.example.CyTrack.Utilities.VolleySingleton
 import org.json.JSONArray
-import org.json.JSONObject
-import java.sql.Time
 
 
 class TimeboardUtils(){

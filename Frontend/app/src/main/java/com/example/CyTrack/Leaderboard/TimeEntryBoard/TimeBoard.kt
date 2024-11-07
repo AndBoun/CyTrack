@@ -1,4 +1,4 @@
-package com.example.CyTrack.Leaderboard.main
+package com.example.CyTrack.Leaderboard.TimeEntryBoard
 
 // <!-- Creating a Layout --!>
 // UI elements are hierarchical. Elements contain other elements.
@@ -70,19 +70,21 @@ private lateinit var user: User // Current User
 private var timeboard: MutableList<TimeBoardEntry> = mutableListOf()
 private var temp: MutableList<TimeBoardEntry> = mutableListOf()
 //private val URL = UrlHolder.URL
-//private val URL = "${UrlHolder.URL}/leaderboard/${user.id}"
-private val URL = "${UrlHolder.wsURL}/leaderboard/2"
+private val URL = UrlHolder.wsURL
+//private val URL = "${UrlHolder.wsURL}/leaderboard/2"
 
 class LeaderboardActivity : ComponentActivity(), WebSocketListener
 {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+            user = intent.getSerializableExtra("user") as User
             timeboard = remember { mutableStateListOf() }
+
             //LeaderboardUtils.getListOfUsers(this, leaderboard, "${URL}/user", "users")
             // WEBSOCKET SECTION
-            Log.d("WebSocketServiceUtil", "Connecting to ${URL}")
-            WebSocketManagerLeaderboard.getInstance().connectWebSocket(URL);
+            Log.d("WebSocketServiceUtil", "Connecting to ${URL}/leaderboard/${user.id}")
+            WebSocketManagerLeaderboard.getInstance().connectWebSocket("${URL}/leaderboard/${user.id}");
             WebSocketManagerLeaderboard.getInstance().setWebSocketListener(this@LeaderboardActivity);
             Log.d("List", "${timeboard}")
             // End WebSocket Section
@@ -96,8 +98,8 @@ class LeaderboardActivity : ComponentActivity(), WebSocketListener
         }
 
     }
-    // WEBSOCKET SECTION
 
+    // WEBSOCKET SECTION
     private fun updateLeaderboard(entry: String) {
         try {
             Log.d("Task", "Starting Update")

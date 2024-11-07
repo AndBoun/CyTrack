@@ -11,13 +11,12 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
-import androidx.core.view.WindowInsetsControllerCompat;
 
 import com.example.CyTrack.Meals.MealTrackingMain;
 import com.example.CyTrack.R;
 import com.example.CyTrack.Social.MyProfile;
+import com.example.CyTrack.Leaderboard.TimeEntryBoard.LeaderboardActivity;
 import com.example.CyTrack.Utilities.User;
 import com.example.CyTrack.Utilities.StatusBarUtil;
 import com.example.CyTrack.Workouts.MyWorkouts;
@@ -25,7 +24,7 @@ import com.example.CyTrack.Workouts.WorkoutActivity;
 
 public class MainDashboardActivity extends AppCompatActivity {
 
-    private ImageButton profileSettingsButton, notificationButton, mealTrackingButton, workOutTrackingButton, exerciseTrackingButton;
+    private ImageButton profileSettingsButton, notificationButton, mealTrackingButton, workOutTrackingButton, exerciseTrackingButton, leaderboardButton;
     private TextView userNameTextView, userStreakTextView;
 
     private User user;
@@ -49,11 +48,14 @@ public class MainDashboardActivity extends AppCompatActivity {
         mealTrackingButton = findViewById(R.id.mealTrackingButton);
         workOutTrackingButton = findViewById(R.id.workOutTrackingButton);
         exerciseTrackingButton = findViewById(R.id.exerciseTrackingButton);
+        leaderboardButton = findViewById(R.id.LBbutton);
+
         userNameTextView = findViewById(R.id.helloTextView);
         userStreakTextView = findViewById(R.id.streakTextView);
 
         userNameTextView.setText("Hi, " + user.getFirstName());
         userStreakTextView.setText("Streak: " + user.getStreak());
+
 
         profileSettingsButton.setOnClickListener(v -> {
             // Open Profile Settings Activity
@@ -79,6 +81,14 @@ public class MainDashboardActivity extends AppCompatActivity {
             intent.putExtra("user", user);
             startActivity(intent);
         });
+
+        leaderboardButton.setOnClickListener(v -> {
+            Intent intent = new Intent(this, LeaderboardActivity.class);
+            intent.putExtra("user", user);
+            startActivity(intent);
+        });
+
+
 
         Button myProfileButton = findViewById(R.id.myProfileButton);
         myProfileButton.setOnClickListener(v -> {
