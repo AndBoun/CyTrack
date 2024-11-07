@@ -20,8 +20,9 @@ public class FriendRequest {
 
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JsonIgnore
+    //@JsonIgnoreProperties("sentRequests")
     @JoinColumn(name = "sender_id")
+    @JsonIgnore
     private User sender;
 
 
@@ -29,8 +30,9 @@ public class FriendRequest {
 
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JsonIgnore
+    //@JsonIgnoreProperties(value = {"workouts", "meals", "friends", "badges", "sentRequests", "receivedRequests"})
     @JoinColumn(name = "receiver_id")
+    @JsonIgnore
     private User receiver;
 
     private String receiver_username;

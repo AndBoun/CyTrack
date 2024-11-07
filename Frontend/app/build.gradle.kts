@@ -157,5 +157,14 @@ dependencies {
     implementation("org.java-websocket:Java-WebSocket:1.5.2")
 
     dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.9.20")
+
+    implementation(platform("androidx.compose:compose-bom:2024.09.03")) // Testing For Top App Bar
+
+    implementation ("androidx.compose.material3:material3:1.3.1")
+    implementation ("androidx.compose.material3:material3-window-size-class:1.3.1")
+    implementation ("androidx.compose.material3:material3-adaptive-navigation-suite:1.3.1")
+
+    implementation ("androidx.compose.material:material-icons-extended:$1.3.1")
+
 }
 

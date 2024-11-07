@@ -1,9 +1,21 @@
-package com.example.CyTrack.Social
+package com.example.CyTrack.Leaderboard.main
 
+// <!-- Creating a Layout --!>
+// UI elements are hierarchical. Elements contain other elements.
+// Uses Column
+// A Hierarchy is built as comp functions call other comp functions.
+
+// <!-- Adding Images --!>
+
+// Custom Theme Testing
+// Custom Themes
+
+// Creating Lists
+// Creating Lists End
+
+// Animation Imports
 import android.app.Activity
-import android.content.Intent
 import android.os.Bundle
-import android.os.IBinder.DeathRecipient
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.BorderStroke
@@ -12,19 +24,19 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -32,7 +44,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
@@ -41,63 +52,37 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.CyTrack.R
-import com.example.CyTrack.Social.SocialUtils.Companion.messageUserScreen
 import com.example.CyTrack.Utilities.ComposeUtils.Companion.getCustomFontFamily
+import com.example.CyTrack.Utilities.UrlHolder
 import com.example.CyTrack.Utilities.User
-import com.example.CyTrack.Utilities.StatusBarUtil
+import com.example.compose.AppTheme
 
-class MyFriends : ComponentActivity() {
+// Animation Imports End
 
-    /**
-     * The user whose profile is being displayed.
-     */
-    private lateinit var user: User
+private var AllUsers: MutableList<User> = mutableListOf()
+private val SampleUser = LeaderboardData.UserSample
 
-    /**
-     * A list of friend requests for the user.
-     */
-    private var myFriends: MutableList<User> = mutableListOf()
+private val data = AllUsers
+private val URL = UrlHolder.URL
 
-    private val URL = "temp"
-
+class LeaderboardActivity : ComponentActivity(
+) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            val user = intent.getSerializableExtra("user") as User
-            if (user != null) {
-
-            }
-
-            SocialUtils.getListOfUsers(
+            LeaderboardUtils.getListOfUsers(
                 this,
-                myFriends,
-                "temp",
-                "friends"
+                AllUsers,
+                URL,
+                "users"  //TODO: VERIFY ARRAY NAME
             )
-
-            Column {
-                MyFriendsTopCard(onAddFriendsButton = {
-                    switchToAddFriends()
-                })
-                Spacer(modifier = Modifier.height(20.dp))
-                MyFriendsCardsLazyList(myFriends, onMessageClick = {
-                    messageUserScreen(user, it, Activity())
-                })
+            AppTheme { // Wraps our app in our custom theme
+                Surface(modifier = Modifier.fillMaxSize()) {
+                    com.example.CyTrack.Leaderboard.main.LeaderboardScreen(data) // LeaderBoardData.UserSample
+                }
             }
         }
-
-        StatusBarUtil.setStatusBarColor(this, R.color.CyRed)
     }
-
-    private fun switchToAddFriends() {
-//        val intent = Intent(this, AddFriends::class.java).apply {
-//            putExtra("user", user)
-//        }
-//        startActivity(intent)
-    }
-
-
-
 }
 
 /**
@@ -108,9 +93,10 @@ class MyFriends : ComponentActivity() {
  * @param img The URL or resource identifier for the user\`s image.
  */
 @Composable
-fun ListProfileCard(
+fun LBProfileCard(
     name: String,
     username: String,
+    streak: String,
     img: String,
     modifier: Modifier = Modifier
 ) {
@@ -149,93 +135,72 @@ fun ListProfileCard(
                 )
                 Spacer(modifier = Modifier.padding(2.dp))
                 Text(
-                    text = "#$username",
+                    text = username,
                     fontSize = 11.sp,
                     fontStyle = FontStyle.Italic,
                     fontFamily = getCustomFontFamily("Inter", FontWeight.Normal, FontStyle.Italic)
                 )
             }
 
-            // Right align more options button
             Row(
                 horizontalArrangement = Arrangement.End,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.general_more_options_horizontal),
-                    contentDescription = "More Options",
-                    modifier = Modifier.size(24.dp),
-                    colorFilter = ColorFilter.tint(Color.Black),
-                    // TODO ADD ONCLICK
+                Text(
+                    text = "Streak: " + streak
                 )
             }
+
 
         }
     }
 }
 
+// <!-- Adding Images END --!>
 @Composable
-fun FriendsListProfileCard(
+fun ProfileCard(
     name: String,
     username: String,
+    streak: String,
     img: String,
     onMessageClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Box {
-        ListProfileCard(name, username, img, modifier)
+    Row {
+        Box {
+            LBProfileCard(name, username, streak, img, modifier)
+            Spacer(modifier = Modifier.height(10.dp))
 
-
-        Button(
-            onClick = onMessageClick,
-            colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
-            shape = RoundedCornerShape(6.dp),
-            border = BorderStroke(1.dp, Color(0xFFF1BE48)),
-            modifier = Modifier
-                .align(Alignment.CenterEnd)
-                .matchParentSize()
-                .height(25.dp)
-                .width(100.dp)
-                .offset(x = (-50).dp),
-            contentPadding = PaddingValues(0.dp) //remove padding so text fits
-
-        ) {
-            Text(
-                text = "Message",
-                fontFamily = getCustomFontFamily("Inter", FontWeight.SemiBold, FontStyle.Normal),
-                color = Color.Black,
-                fontSize = 13.sp,
-                fontWeight = FontWeight.SemiBold,
-            )
         }
+
     }
 }
-
+// <!-- LazyColumn Lists --!>
 @Composable
-fun MyFriendsCardsLazyList(
-    friendsList: List<User>,
+fun LBHierarchy(
+    user: List<User>,
     onMessageClick: (User) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-    // LazyColumn to display a list of friends
-    Column(
+    val userSorted = user.sortedByDescending { it.streak }
+
+    LazyColumn(
         modifier = Modifier
             .fillMaxHeight()
             .padding(horizontal = 32.dp)
-    ) {
-        for (friend in friendsList) {
-            FriendsListProfileCard(friend.firstName, friend.username, "temp", {
-                onMessageClick(friend)
-            })
+    ){
+        items(userSorted) { user -> // the items() child takes a list as a param
+            ProfileCard(user.firstName, user.username, user.streak.toString(), "temp",{
+                onMessageClick(user)
+            })  // Our message is then linked into our card and created
             Spacer(modifier = Modifier.height(10.dp))
         }
     }
 }
 
-
-
+// <!-- Top Card --!>
 @Composable
-fun MyFriendsTopCard(
+fun LBTopCard(
     modifier: Modifier = Modifier,
     onAddFriendsButton: () -> Unit = {}
 ) {
@@ -267,70 +232,56 @@ fun MyFriendsTopCard(
                 )
             }
 
-
             Image(
-                painter = painterResource(id = R.drawable.social_friends_header),
-                contentDescription = "Friends text",
+                painter = painterResource(id = R.drawable.leaderboard_header),
+                contentDescription = "Leaderboard Header"
             )
 
             IconButton(
                 onClick = onAddFriendsButton,
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.social_add_person),
-                    contentDescription = "Friends icon",
+                    painter = painterResource(id = R.drawable.general_generic_avatar),
+                    contentDescription = "Profile Button",
                     modifier = Modifier.size(24.dp)
                 )
             }
+
         }
     }
 }
 
 @Composable
-fun MyFriendsScreen(
-    friendsList: List<User>,
+fun LeaderboardScreen(
+    UserList: List<User>,
     modifier: Modifier = Modifier
 ) {
     Column {
-        MyFriendsTopCard()
+        LBTopCard()
         Spacer(modifier = Modifier.height(20.dp))
-        MyFriendsCardsLazyList(friendsList)
+        LBHierarchy(UserList)
     }
-}
-
-
-//@Preview
-@Composable
-fun ListProfileCardPreview() {
-    ListProfileCard("John Doe", "johndoe", "temp")
-}
-
-//@Preview
-@Composable
-fun FriendsListProfileCardPreview() {
-    FriendsListProfileCard("John Doe", "johndoe", "temp", {})
 }
 
 @Preview
 @Composable
-fun MyFriendsCardsLazyListPreview() {
-    val list = ArrayList<User>()
-    list.add(User(1, "Doe", "John", "Doe", 20, "M", 2))
-    list.add(User(2, "Doe", "Jane", "Doe", 20, "F", 2))
-    list.add(User(3, "Doe", "John", "Doe", 20, "M", 2))
-    list.add(User(4, "Doe", "Jane", "Doe", 20, "F", 2))
-    list.add(User(5, "Doe", "John", "Doe", 20, "M", 2))
+fun LBLazyListPreview() {
     Surface {
 //        MyFriendsCardsLazyList(list)
-        MyFriendsScreen(list)
+        LeaderboardScreen(data)
     }
 }
 
 @Preview
 @Composable
-fun MyFriendsTopCardPreview() {
-    MyFriendsTopCard()
+fun PreviewConversation() {
+    AppTheme {
+        com.example.CyTrack.Leaderboard.main.LBHierarchy(data)
+    }
 }
 
-
-
+@Preview
+@Composable
+fun LBTopCardPreview() {
+    LBTopCard()
+}

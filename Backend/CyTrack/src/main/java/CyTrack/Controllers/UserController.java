@@ -83,7 +83,7 @@ public class UserController {
                     foundUser.getLastName(),
                     foundUser.getAge(),
                     foundUser.getGender(),
-                    foundUser.getStreak(),
+                    foundUser.getCurrentStreak(),
                     "Resources sent successfully"
             );
             return ResponseEntity.status(201).body(response);
@@ -180,4 +180,22 @@ public class UserController {
         }
     }
 
+    /*
+    // Award a badge to a user -- IN PROGRESS
+    @PostMapping("/{userId}/badges/{badgeId}")
+    public ResponseEntity<?> awardBadge(@PathVariable Long userId, @PathVariable Long badgeId) {
+        try {
+            boolean badgeAwarded = userService.awardBadgeToUser(userId, badgeId);
+            if (badgeAwarded) {
+                return ResponseEntity.ok("Badge awarded successfully!");
+            } else {
+                ErrorResponse response = new ErrorResponse("error", 404, "User or Badge not found", "The user or badge with the specified ID does not exist.");
+                return ResponseEntity.status(404).body(response);
+            }
+        } catch (Exception e) {
+            ErrorResponse response = new ErrorResponse("error", 500, "Internal server error", "An unexpected error occurred.");
+            return ResponseEntity.status(500).body(response);
+        }
+    }
+     */
 }

@@ -2,12 +2,16 @@ package CyTrack.Controllers;
 
 import CyTrack.Entities.User;
 import CyTrack.Entities.Workout;
+import CyTrack.Services.BadgeService;
 import CyTrack.Services.UserService;
 import CyTrack.Services.WorkoutService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Optional;
 //Controller for Workout entity
@@ -16,13 +20,18 @@ import java.util.Optional;
 public class WorkoutController {
     private final WorkoutService workoutService;
     private final UserService userService;
+    private final BadgeService badgeService;
+    private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("MM-dd-yyyy");
 
     //Constructor
     @Autowired
-    public WorkoutController(WorkoutService workoutService, UserService userService) {
+    public WorkoutController(WorkoutService workoutService, UserService userService,
+                             BadgeService badgeService) {
         this.workoutService = workoutService;
         this.userService = userService;
+        this.badgeService = badgeService;
     }
+
     //Create a workout
     @PostMapping("/{userID}/workout")
     public ResponseEntity<?> createWorkout(@PathVariable Long userID, @RequestBody Workout workout) {
@@ -30,6 +39,8 @@ public class WorkoutController {
         if (user.isPresent()) {
             workout.setUser(user.get());
             Workout newWorkout = workoutService.createWorkout(workout);
+
+            badgeService.awardEligibleBadges(user.get());
 
             WorkoutIDResponse response = new WorkoutIDResponse("success", newWorkout.getWorkoutID(), "Workout created");
             return ResponseEntity.status(201).body(response);
@@ -123,13 +134,22 @@ public class WorkoutController {
     }
 
     //List workouts for a specific user at a specific date
-    @GetMapping("/{userID}/workoutByDate")
+    @GetMapping("/{userID}/workoutByDate/{date}")
     public ResponseEntity<?> getWorkoutsByDate(@PathVariable Long userID,
-                                               @RequestBody WorkoutRequest workoutRequest) {
-        String date = workoutRequest.getDate();
+                                               @PathVariable String date) {
+        // Parse the date from "MM-DD-YYYY" format to LocalDate
+        LocalDate parsedDate;
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy");
+            parsedDate = LocalDate.parse(date, formatter);
+        } catch (DateTimeParseException e) {
+            ErrorResponse response = new ErrorResponse("error", 400, "Invalid date format", "Date format must be MM-DD-YYYY");
+            return ResponseEntity.status(400).body(response);
+        }
+
         Optional<User> user = userService.findByUserID(userID);
         if (user.isPresent()) {
-            List<Workout> workouts = workoutService.getWorkoutsByUserIDAndDate(userID, date);
+            List<Workout> workouts = workoutService.getWorkoutsByUserIDAndDate(userID, parsedDate);
             List<WorkoutResponse.WorkoutData> workoutDataList = workouts.stream()
                     .map(workout -> new WorkoutResponse.WorkoutData(
                             workout.getExerciseType(),
@@ -152,10 +172,15 @@ public class WorkoutController {
     public ResponseEntity<?> getTotalCaloriesByDate(@PathVariable Long userID, @PathVariable String date) {
         Optional<User> user = userService.findByUserID(userID);
         if (user.isPresent()) {
-            int totalCalories = workoutService.getCaloriesByDate(userID, date);
-            int totalWorkoutTime = workoutService.getWorkoutTimeByDate(userID, date); // Assuming you want to include workout time too
-            WorkoutSummaryResponse response = new WorkoutSummaryResponse("success", totalCalories, totalWorkoutTime, date, "Total calories burned for " + date);
-            return ResponseEntity.ok(response);
+            try {
+                LocalDate localDate = LocalDate.parse(date, dateFormatter);
+                int totalCalories = workoutService.getCaloriesByDate(userID, localDate);
+                int totalWorkoutTime = workoutService.getWorkoutTimeByDate(userID, localDate);
+                WorkoutSummaryResponse response = new WorkoutSummaryResponse("success", totalCalories, totalWorkoutTime, date, "Total calories burned for " + date);
+                return ResponseEntity.ok(response);
+            } catch (DateTimeParseException e) {
+                return ResponseEntity.badRequest().body(new ErrorResponse("error", 400, "Invalid date format", "Please use MM-DD-YYYY format for the date"));
+            }
         } else {
             return ResponseEntity.status(404).body(new ErrorResponse("error", 404, "User not found", "User not found"));
         }
@@ -166,9 +191,14 @@ public class WorkoutController {
     public ResponseEntity<?> getTotalWorkoutTimeByDate(@PathVariable Long userID, @PathVariable String date) {
         Optional<User> user = userService.findByUserID(userID);
         if (user.isPresent()) {
-            int totalWorkoutTime = workoutService.getWorkoutTimeByDate(userID, date);
-            WorkoutSummaryResponse response = new WorkoutSummaryResponse("success", 0, totalWorkoutTime, date, "Total workout time for " + date); // totalCalories set to 0
-            return ResponseEntity.ok(response);
+            try {
+                LocalDate localDate = LocalDate.parse(date, dateFormatter);
+                int totalWorkoutTime = workoutService.getWorkoutTimeByDate(userID, localDate);
+                WorkoutSummaryResponse response = new WorkoutSummaryResponse("success", 0, totalWorkoutTime, date, "Total workout time for " + date);
+                return ResponseEntity.ok(response);
+            } catch (DateTimeParseException e) {
+                return ResponseEntity.badRequest().body(new ErrorResponse("error", 400, "Invalid date format", "Please use MM-DD-YYYY format for the date"));
+            }
         } else {
             return ResponseEntity.status(404).body(new ErrorResponse("error", 404, "User not found", "User not found"));
         }
@@ -195,6 +225,9 @@ public class WorkoutController {
                     updatedWorkout.setDate(workout.getDate());
                 }
                 workoutService.createWorkout(updatedWorkout);
+
+                badgeService.awardEligibleBadges(user.get());
+
                 WorkoutIDResponse response = new WorkoutIDResponse("success", workoutID, "Workout updated");
                 return ResponseEntity.status(200).body(response);
             }

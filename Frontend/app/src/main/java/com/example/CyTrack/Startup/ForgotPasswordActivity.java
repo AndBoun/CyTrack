@@ -14,15 +14,15 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.CyTrack.R;
 import com.example.CyTrack.Utilities.FocusUtils;
 import com.example.CyTrack.Utilities.NetworkUtils;
+import com.example.CyTrack.Utilities.UrlHolder;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class ForgotPasswordActivity extends AppCompatActivity {
 
-    private final String URL_RESET_PASSWORD = "https://7e68d300-a3cb-4835-bf2f-66cab084d974.mock.pstmn.io/user/resetPassword";
 
-//    private final String URL_RESET_PASSWORD = "http://10.90.72.246:8080/user/resetPassword";
+    private final String URL_RESET_PASSWORD = UrlHolder.URL + "/user/resetPassword";
 
     private EditText usernameEditText, passwordEditText, passwordAgainEditText;
 
