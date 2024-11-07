@@ -1,13 +1,14 @@
 package com.example.CyTrack.Badges;
 
 public class BadgeObject {
+    Long id;
     String name;
     String desc;
 
-    BadgeObject(String title, String info) {
+    BadgeObject(Long id, String title, String info) {
+        this.id = id;
         name = title;
         desc = info;
-
     }
 
     public String getBadgeName() {

@@ -2,6 +2,7 @@ package com.example.CyTrack.Badges
 
 import android.app.Activity
 import android.content.Intent
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.material3.Badge
 import androidx.core.content.ContextCompat.startActivity
@@ -15,6 +16,7 @@ import com.example.CyTrack.Leaderboard.main.LeaderboardActivity // Main Kotlin U
 import com.example.CyTrack.Utilities.NetworkUtils // Connection Imports
 import com.example.CyTrack.Utilities.User
 import com.example.CyTrack.Utilities.VolleySingleton
+import kotlin.math.log
 
 class BadgeUtils(){
 
@@ -23,7 +25,6 @@ class BadgeUtils(){
         fun getListOfBadges(
             context: Activity,
             BadgeList: MutableList<BadgeObject>,
-            usermain: User,
             url: String,
             arrName: String,
         ) {
@@ -35,16 +36,17 @@ class BadgeUtils(){
                         val data = response.getJSONObject("data").getJSONArray(arrName)
 
                         for (i in 0 until data.length()) {
-                            val user = data.getJSONObject(i)
-                            val id = user.getInt("userID")
-                            if (id == usermain.id) {
-                                BadgeList.add(
-                                    BadgeObject(
-                                        user.getString("username"),
-                                        user.getString("firstName"),
-                                    )
+                            val badge = data.getJSONObject(i)
+
+                            BadgeList.add(
+                                BadgeObject(
+                                    badge.getLong("badgeID"),
+                                    badge.getString("badgeName"),
+                                    badge.getString("description"),
                                 )
-                            }
+                            )
+                            Log.d("Tag","${badge.getLong("badgeID")} ID");
+                            Log.d("Tag","${BadgeList} Hello");
                         }
                     } catch (e: JSONException) {
                         e.printStackTrace()

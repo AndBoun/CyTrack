@@ -42,6 +42,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -69,19 +71,20 @@ private var AllBadges: MutableList<BadgeObject> = mutableListOf()
 private val SampleUser = BadgeData.BadgeSample
 
 private val data = SampleUser
-private val URL = "${UrlHolder.URL}/badge/${user.id}/earned"
+//private val URL = "${UrlHolder.URL}/badge/${user.id}/earned"
+private val URL = "${UrlHolder.URL}/badge/1/earned"
 
 class BadgesActivity : ComponentActivity(
 ) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+            AllBadges = remember { mutableStateListOf() }
             BadgeUtils.getListOfBadges(
                 this,
                 AllBadges,
-                user,
                 URL,
-                "users"//TODO: VERIFY ARRAY NAME
+                "badges"//TODO: VERIFY ARRAY NAME
             )
 
             AppTheme { // Wraps our app in our custom theme
@@ -92,7 +95,7 @@ class BadgesActivity : ComponentActivity(
                         }
                     )
                     Spacer(modifier = Modifier.height(10.dp))
-                    BGScreen(data)
+                    BGScreen(AllBadges)
                 }
             }
 
