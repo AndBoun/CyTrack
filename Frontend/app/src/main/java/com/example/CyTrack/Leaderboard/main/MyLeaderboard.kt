@@ -75,13 +75,14 @@ class LeaderboardActivity : ComponentActivity(
         setContent {
             AllUsers = remember { mutableStateListOf() }
 
-            LeaderboardUtils.getListOfUsers(this, AllUsers, "${URL}/user", "users")//TODO: VERIFY ARRAY NAME
+            LeaderboardUtils.getListOfUsers(this, AllUsers, "${URL}/user", "users")
+
             Log.d("Tag", "hi")
             Log.d("Tag", "${AllUsers}")
 
             AppTheme { // Wraps our app in our custom theme
                 Surface(modifier = Modifier.fillMaxSize()) {
-                    com.example.CyTrack.Leaderboard.main.LeaderboardScreen(data) // LeaderBoardData.UserSample
+                    com.example.CyTrack.Leaderboard.main.LeaderboardScreen(AllUsers) // LeaderBoardData.UserSample
                 }
             }
         }

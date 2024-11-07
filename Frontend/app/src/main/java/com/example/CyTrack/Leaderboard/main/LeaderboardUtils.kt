@@ -64,6 +64,7 @@ class LeaderboardUtils(){
                         }
                         userList.sortBy { it.streak }
                         Log.d("Tag", "${userList}")
+
                     } catch (e: JSONException) {
                         e.printStackTrace()
                     }
