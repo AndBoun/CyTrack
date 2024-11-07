@@ -15,6 +15,7 @@ package com.example.CyTrack.Badges
 
 // Animation Imports
 import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -27,7 +28,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -52,12 +52,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.CyTrack.R
+import com.example.CyTrack.Social.MyProfile
 import com.example.CyTrack.Utilities.ComposeUtils.Companion.getCustomFontFamily
-import com.example.CyTrack.Utilities.User
 import com.example.CyTrack.Utilities.UrlHolder
+import com.example.CyTrack.Utilities.User
 import com.example.compose.AppTheme
 
 // Animation Imports End
+/**
+ * The user whose profile is being displayed.
+ */
+private lateinit var user: User
 
 private var AllUsers: MutableList<User> = mutableListOf()
 private val SampleUser = BadgeData.BadgeSample
@@ -78,12 +83,27 @@ class BadgesActivity : ComponentActivity(
             )
 
             AppTheme { // Wraps our app in our custom theme
-                Surface(modifier = Modifier.fillMaxSize()) {
-                    com.example.CyTrack.Badges.BGScreen(data) // LeaderBoardData.UserSample
+                Column {
+                    BGTopCard(
+                        onClickMyProfile = {
+                            switchToMyProfile()
+                        }
+                    )
+                    Spacer(modifier = Modifier.height(10.dp))
+                    BGScreen(data)
                 }
             }
+
         }
+
     }
+    private fun switchToMyProfile() {
+        val intent = Intent(this, MyProfile::class.java).apply {
+            putExtra("user", user)
+        }
+        startActivity(intent)
+    }
+
 }
 
 /**
@@ -156,6 +176,19 @@ fun BGProfileCard(
     }
 }
 
+@Composable
+fun ProfileButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Image(
+        painter = painterResource(R.drawable.general_generic_avatar),
+        contentDescription = "Profile icon",
+        modifier = Modifier.size(24.dp)
+    )
+
+}
+
 // <!-- Adding Images END --!>
 @Composable
 fun BGCard(
@@ -199,7 +232,7 @@ fun BGHierarchy(
 @Composable
 fun BGTopCard(
     modifier: Modifier = Modifier,
-    onAddFriendsButton: () -> Unit = {}
+    onClickMyProfile: () -> Unit = {}
 ) {
     val context = LocalContext.current
 
@@ -231,17 +264,19 @@ fun BGTopCard(
 
             Image(
                 painter = painterResource(id = R.drawable.my_badges),
-                contentDescription = "Leaderboard Header"
+                contentDescription = "Badge Header"
             )
 
-            IconButton(
-                onClick = onAddFriendsButton,
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.general_generic_avatar),
-                    contentDescription = "Friends icon",
-                    modifier = Modifier.size(24.dp)
-                )
+            Row {
+                Column {
+                    ProfileButton(
+                        onClick = { onClickMyProfile() }
+                    )
+                    Spacer(modifier = modifier.height(10.dp))
+                }
+
+                Spacer(modifier = Modifier.width(20.dp))
+
             }
 
         }
@@ -254,8 +289,6 @@ fun BGScreen(
     modifier: Modifier = Modifier
 ) {
     Column {
-        BGTopCard()
-        Spacer(modifier = Modifier.height(20.dp))
         BGHierarchy(BGList)
     }
 }
@@ -264,7 +297,11 @@ fun BGScreen(
 @Composable
 fun BGLazyListPreview() {
     Surface {
-        BGScreen(data)
+        Column{
+            BGTopCardPreview()
+            Spacer(modifier = Modifier.height(20.dp))
+            BGScreen(data)
+        }
     }
 }
 

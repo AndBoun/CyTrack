@@ -18,7 +18,7 @@
 
         <service android:name=".Utilities.WebSocketServiceUtil" />
         <activity android:name=".Badges.BadgesActivity"
-            android:exported="false"/>
+            android:exported="true"/>
         <activity android:name=".Leaderboard.main.LeaderboardActivity"
             android:exported="true"/>
         <activity android:name=".Social.Friends.FriendProfile"

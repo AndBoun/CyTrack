@@ -3,6 +3,7 @@ package com.example.CyTrack.Social
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.provider.ContactsContract.Profile
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -22,6 +23,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Badge
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.IconButton
@@ -54,6 +56,7 @@ import com.example.CyTrack.Social.Friends.Friend
 import com.example.CyTrack.Social.Friends.ListProfileCard
 import com.example.CyTrack.Social.Friends.MyFriends
 import com.example.CyTrack.Social.Messaging.MyMessages
+import com.example.CyTrack.Badges.BadgesActivity
 import com.example.CyTrack.Utilities.NetworkUtils
 import com.example.CyTrack.Utilities.UrlHolder
 import org.json.JSONException
@@ -89,6 +92,9 @@ class MyProfile : ComponentActivity() {
                     },
                     onClickMyMessages = {
                         switchToMyMessages()
+                    },
+                    onClickMyBadges = {
+                        switchToMyBadges()
                     }
                 )
 
@@ -115,6 +121,13 @@ class MyProfile : ComponentActivity() {
 
     private fun switchToMyMessages() {
         val intent = Intent(this, MyMessages::class.java).apply {
+            putExtra("user", user)
+        }
+        startActivity(intent)
+    }
+
+    private fun switchToMyBadges() {
+        val intent = Intent(this, BadgesActivity::class.java).apply {
             putExtra("user", user)
         }
         startActivity(intent)
@@ -318,13 +331,41 @@ fun MessageButton(
 }
 
 @Composable
+fun BadgesButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        horizontalAlignment = CenterHorizontally,
+        modifier = modifier.clickable(onClick = onClick)
+    ) {
+        Image(
+            painter = painterResource(R.drawable.badge_button),
+            contentDescription = "Badge icon",
+            modifier = Modifier.size(30.dp)
+        )
+
+        Text(
+            text = "Badges",
+            color = Color.White,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 13.sp,
+            fontFamily = getCustomFontFamily("Inter", FontWeight.SemiBold, FontStyle.Normal)
+        )
+    }
+}
+
+
+
+@Composable
 fun ProfileScreen(
     name: String,
     userName: String,
     imageUrl: String,
     modifier: Modifier = Modifier,
     onClickMyFriends: () -> Unit = {},
-    onClickMyMessages: () -> Unit = {}
+    onClickMyMessages: () -> Unit = {},
+    onClickMyBadges: () -> Unit = {}
 ) {
     val context = LocalContext.current
 
@@ -367,6 +408,9 @@ fun ProfileScreen(
                 })
                 MessageButton(onClick = {
                     onClickMyMessages()
+                })
+                BadgesButton(onClick = {
+                    onClickMyBadges()
                 })
             }
         }
@@ -522,6 +566,16 @@ fun MessageButtonPreview() {
         color = Color(0xFFC8102E)
     ) {
         MessageButton(onClick = {})
+    }
+}
+
+@Preview
+@Composable
+fun BadgeButtonPreview() {
+    Surface(
+        color = Color(0xFFC8102E)
+    ) {
+        BadgesButton(onClick = {})
     }
 }
 

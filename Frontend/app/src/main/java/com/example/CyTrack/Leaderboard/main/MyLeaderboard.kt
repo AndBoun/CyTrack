@@ -55,12 +55,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.CyTrack.R
+import com.example.CyTrack.Social.MyProfile
 import com.example.CyTrack.Utilities.ComposeUtils.Companion.getCustomFontFamily
 import com.example.CyTrack.Utilities.UrlHolder
 import com.example.CyTrack.Utilities.User
 import com.example.compose.AppTheme
 
 // Animation Imports End
+private lateinit var user: User // Current User
 
 private var AllUsers: MutableList<User> = mutableListOf()
 private val SampleUser = LeaderboardData.UserSample
@@ -206,7 +208,7 @@ fun LBHierarchy(
 @Composable
 fun LBTopCard(
     modifier: Modifier = Modifier,
-    onAddFriendsButton: () -> Unit = {}
+    onClickMyProfile: () -> Unit = {}
 ) {
     val context = LocalContext.current
 
@@ -242,7 +244,7 @@ fun LBTopCard(
             )
 
             IconButton(
-                onClick = onAddFriendsButton,
+                onClick = onClickMyProfile
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.general_generic_avatar),
