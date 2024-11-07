@@ -64,6 +64,7 @@ import com.example.CyTrack.Utilities.UrlHolder
 import com.example.CyTrack.Utilities.User
 import com.example.CyTrack.Utilities.WebSocketListener
 import org.java_websocket.handshake.ServerHandshake
+import kotlin.math.log
 
 
 class DirectMessage : ComponentActivity(), WebSocketListener {
@@ -151,33 +152,34 @@ class DirectMessage : ComponentActivity(), WebSocketListener {
     override fun onWebSocketOpen(handshakedata: ServerHandshake) {}
 
     override fun onWebSocketMessage(message: String) {
-        Log.d("MessageReceived", message)
-
-        try {
-            if (message.substring(0, 4) == "You:") {
-                return
-            } else if (message.substring(
-                    0,
-                    recipientUser.username.length + 1
-                ) == "${recipientUser.username}:"
-            ) {
-                messageList.add(Msg(message.substring(recipientUser.username.length + 1).trim(), recipientUser.userID))
-            } else {
-                // Handle message received
-                val tempMsg = SocialUtils.processMessage(message)
-                messageList.add(tempMsg)
+        runOnUiThread(Runnable {
+            Log.d("MessageReceived", message)
+            try {
+                if (message.substring(0, 4) == "You:") {
+                    Log.d("MessageReceived", "You: $message")
+                } else if (message.substring(
+                        0,
+                        recipientUser.username.length + 1
+                    ) == "${recipientUser.username}:"
+                ) {
+                    messageList.add(Msg(message.substring(recipientUser.username.length + 1).trim(), recipientUser.userID))
+                } else {
+                    // Handle message received
+                    val tempMsg = SocialUtils.processMessage(message)
+                    messageList.add(tempMsg)
+                }
+            } catch (e: Exception) {
+                Log.d("Exception", e.message.toString())
             }
-        } catch (e: Exception) {
-            Log.d("Exception", e.message.toString())
-        }
-
-
+        })
     }
 
 
     override fun onWebSocketClose(code: Int, reason: String?, remote: Boolean) {
-        val closedBy = if (remote) "Server" else "Client"
-        Toast.makeText(this, "Connection closed by $closedBy", Toast.LENGTH_SHORT).show()
+        runOnUiThread(Runnable {
+            val closedBy = if (remote) "Server" else "Client"
+            Toast.makeText(this, "Connection closed by $closedBy", Toast.LENGTH_SHORT).show()
+        })
     }
 
     override fun onWebSocketError(ex: Exception?) {
