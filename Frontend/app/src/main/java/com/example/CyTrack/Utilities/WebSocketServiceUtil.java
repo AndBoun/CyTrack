@@ -28,9 +28,16 @@ public class WebSocketServiceUtil extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent != null) {
             String action = intent.getAction();
+            Log.d("WebSocketServiceUtil", "onStartCommand action: " + action);
+
             if ("CONNECT".equals(action)) {
                 String url = intent.getStringExtra("url");      // eg, "ws://localhost:8080/chat/1/uname"
-                String key = intent.getStringExtra("key");      // eg, "chat1" - refer to MainActivity where this Intent was called
+                String key = intent.getStringExtra("key");
+
+
+                Log.d("WebSocketServiceUtil", "Connecting to WebSocket URL: " + url);
+
+               // eg, "chat1" - refer to MainActivity where this Intent was called
                 connectWebSocket(key, url);                           // Initialize WebSocket connection
             } else if ("DISCONNECT".equals(action)) {
                 String key = intent.getStringExtra("key");

@@ -43,7 +43,7 @@ public class ChatActivity1 extends AppCompatActivity {
             // tag it with the key - to specify which WebSocketClient (connection) to send
             // in this case: "chat1"
             Intent intent = new Intent("SendWebSocketMessage");
-            intent.putExtra("key", "chat1");
+            intent.putExtra(    "key", "chat1");
             intent.putExtra("message", msgEtx.getText().toString());
             LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
             msgEtx.setText(""); // clear the input field

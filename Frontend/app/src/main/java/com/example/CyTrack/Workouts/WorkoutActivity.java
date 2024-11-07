@@ -21,6 +21,7 @@ import com.android.volley.Request;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.example.CyTrack.Utilities.NetworkUtils;
 import com.example.CyTrack.R;
+import com.example.CyTrack.Utilities.UrlHolder;
 import com.example.CyTrack.Utilities.User;
 import com.example.CyTrack.Utilities.VolleySingleton;
 
@@ -39,11 +40,9 @@ public class WorkoutActivity extends AppCompatActivity implements WorkoutRecycle
 
     private final ArrayList<WorkoutObject> workoutList = new ArrayList<>();
 
-    private String URL = "https://7e68d300-a3cb-4835-bf2f-66cab084d974.mock.pstmn.io/user/";
-
     private User user;
 
-//    private String URL = "http://10.90.72.246:8080/user/";
+    private String URL = UrlHolder.URL + "/user/";
 
 
     ImageButton addWorkoutButton, backButton;
