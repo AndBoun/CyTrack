@@ -147,6 +147,7 @@ dependencies {
     implementation(platform(libs.compose.bom))
     implementation(libs.activity.compose)
     implementation(libs.accompanist.themeadapter.material3)
+    implementation(libs.androidx.compose.material)
     debugImplementation(libs.androidx.ui.tooling)
     testImplementation(libs.junit)
     androidTestImplementation(libs.espresso.core)

@@ -179,7 +179,7 @@ public class WorkoutActivity extends AppCompatActivity implements WorkoutRecycle
 
 
     private String getCurrentDate() {
-        SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yy");
+        SimpleDateFormat formatter = new SimpleDateFormat("MM-dd-yyyy");
         Date date = new Date();
         return formatter.format(date);
     }

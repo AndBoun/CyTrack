@@ -232,15 +232,11 @@ class SocialUtils {
 
         fun processMessageCardData(msg: String, cardList: MutableList<MessageCardData>) {
             try {
+                cardList.clear()
                 val tempMsg = msg.removePrefix("Received message: ")
                 val jsonObject = JSONObject(tempMsg)
                 val data = jsonObject.getJSONObject("data").getJSONArray("userConversations")
 
-
-//                val inputFormat = SimpleDateFormat("HH:mm:ss")
-//                inputFormat.format
-
-                cardList.clear()
 
                 for (i in 0 until data.length()) {
 

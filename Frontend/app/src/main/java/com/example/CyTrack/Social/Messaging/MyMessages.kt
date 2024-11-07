@@ -84,12 +84,6 @@ class MyMessages : ComponentActivity(), WebSocketListener {
     }
 
 
-//    private fun getMessageCards() {
-//        val getURL = "${URL}/${user.id}"
-//
-//        SocialUtils.getConversations(this, getURL, messageCards)
-//    }
-
     private fun switchToMessagePage(friend: Friend) {
         SocialUtils.messageUserScreen(user, friend, this)
     }
@@ -98,8 +92,10 @@ class MyMessages : ComponentActivity(), WebSocketListener {
     }
 
     override fun onWebSocketMessage(message: String) {
-//        messageCards.clear()
-        processMessageCardData(message, messageCards)
+        runOnUiThread(Runnable {
+            Log.d("Mymessages", "Message: $message")
+            processMessageCardData(message, messageCards)
+        })
     }
 
     override fun onWebSocketClose(code: Int, reason: String?, remote: Boolean) {

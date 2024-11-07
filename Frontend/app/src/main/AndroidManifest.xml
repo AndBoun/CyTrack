@@ -22,6 +22,10 @@
 
         <service android:name=".Utilities.WebSocketServiceUtil" />
 
+        <activity android:name=".Workouts.StartWorkout"
+            android:exported="false"/>
+        <activity android:name=".Workouts.MyWorkouts"
+            android:exported="false"/>
         <activity android:name=".Social.Friends.FriendProfile"
             android:exported="false"/>
         <activity android:name=".Social.Friends.AddFriends"
