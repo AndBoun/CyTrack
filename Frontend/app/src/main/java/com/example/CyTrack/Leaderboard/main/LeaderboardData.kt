@@ -3,7 +3,7 @@ import android.app.Activity
 import com.example.CyTrack.Utilities.User
 
 object LeaderboardData {
-    val UserSample = listOf(
+    val UserSample = mutableListOf(
         User(1, "Ventrixq", "Ethan", "Cabelin", 32, "M", 23),
         User(2, "Breadstick", "Eduardo", "Barboza", 32, "M", 24),
         User(3, "kaaiq", "Kai", "Quach", 32, "M", 25),

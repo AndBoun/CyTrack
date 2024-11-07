@@ -16,6 +16,8 @@ package com.example.CyTrack.Leaderboard.main
 // Animation Imports
 import android.app.Activity
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.BorderStroke
@@ -41,6 +43,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -51,38 +55,85 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.CyTrack.Leaderboard.Websocket.WebSocketManagerLeaderboard
 import com.example.CyTrack.R
 import com.example.CyTrack.Utilities.ComposeUtils.Companion.getCustomFontFamily
 import com.example.CyTrack.Utilities.UrlHolder
 import com.example.CyTrack.Utilities.User
+import com.example.CyTrack.Utilities.WebSocketListener
 import com.example.compose.AppTheme
+import org.java_websocket.handshake.ServerHandshake
 
 // Animation Imports End
+private lateinit var user: User // Current User
 
-private var AllUsers: MutableList<User> = mutableListOf()
-private val SampleUser = LeaderboardData.UserSample
+private var timeboard: MutableList<TimeBoardEntry> = mutableListOf()
+private var temp: MutableList<TimeBoardEntry> = mutableListOf()
+//private val URL = UrlHolder.URL
+//private val URL = "${UrlHolder.URL}/leaderboard/${user.id}"
+private val URL = "${UrlHolder.wsURL}/leaderboard/2"
 
-private val data = AllUsers
-private val URL = UrlHolder.URL
-
-class LeaderboardActivity : ComponentActivity(
-) {
+class LeaderboardActivity : ComponentActivity(), WebSocketListener
+{
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            LeaderboardUtils.getListOfUsers(
-                this,
-                AllUsers,
-                URL,
-                "users"  //TODO: VERIFY ARRAY NAME
-            )
+            timeboard = remember { mutableStateListOf() }
+            //LeaderboardUtils.getListOfUsers(this, leaderboard, "${URL}/user", "users")
+            // WEBSOCKET SECTION
+            Log.d("WebSocketServiceUtil", "Connecting to ${URL}")
+            WebSocketManagerLeaderboard.getInstance().connectWebSocket(URL);
+            WebSocketManagerLeaderboard.getInstance().setWebSocketListener(this@LeaderboardActivity);
+            Log.d("List", "${timeboard}")
+            // End WebSocket Section
+
             AppTheme { // Wraps our app in our custom theme
                 Surface(modifier = Modifier.fillMaxSize()) {
-                    com.example.CyTrack.Leaderboard.main.LeaderboardScreen(data) // LeaderBoardData.UserSample
+                    LeaderboardScreen(timeboard) // LeaderBoardData.UserSample
                 }
+            }
+
+        }
+
+    }
+    // WEBSOCKET SECTION
+
+    private fun updateLeaderboard(entry: String) {
+        try {
+            Log.d("Task", "Starting Update")
+            Log.d("Import", "${entry}")
+            TimeboardUtils.getBoard(entry, timeboard, temp)
+            Log.d("List", "${timeboard}")
+
+        } catch (e: Exception) {
+            Log.d("ExceptionSendMessage:", e.message.toString())
+            Toast.makeText(this, "Failed to Update", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    override fun onWebSocketOpen(handshakedata: ServerHandshake) {}
+
+    // Updates the Leaderboard as it's changed
+    override fun onWebSocketMessage(leaderboardupdate: String) {
+        runOnUiThread{
+            Log.d("Message Success","Update Recieved")
+            try {
+                updateLeaderboard(leaderboardupdate)
+
+            } catch (e: Exception) {
+                Log.d("Exception", e.message.toString())
             }
         }
     }
+
+    override fun onWebSocketClose(code: Int, reason: String?, remote: Boolean) {
+        val closedBy = if (remote) "Server" else "Client"
+        Toast.makeText(this, "Connection closed by $closedBy", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onWebSocketError(ex: Exception?) {
+    }
+    // WEBSOCKET SECTION END
 }
 
 /**
@@ -134,12 +185,7 @@ fun LBProfileCard(
                     fontFamily = getCustomFontFamily("Inter", FontWeight.Bold, FontStyle.Normal)
                 )
                 Spacer(modifier = Modifier.padding(2.dp))
-                Text(
-                    text = username,
-                    fontSize = 11.sp,
-                    fontStyle = FontStyle.Italic,
-                    fontFamily = getCustomFontFamily("Inter", FontWeight.Normal, FontStyle.Italic)
-                )
+
             }
 
             Row(
@@ -147,7 +193,7 @@ fun LBProfileCard(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    text = "Streak: " + streak
+                    text = "Total Time: " + streak
                 )
             }
 
@@ -178,19 +224,23 @@ fun ProfileCard(
 // <!-- LazyColumn Lists --!>
 @Composable
 fun LBHierarchy(
-    user: List<User>,
-    onMessageClick: (User) -> Unit = {},
+    userlist: MutableList<TimeBoardEntry>,
+    onMessageClick: (TimeBoardEntry) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-    val userSorted = user.sortedByDescending { it.streak }
-
     LazyColumn(
         modifier = Modifier
             .fillMaxHeight()
             .padding(horizontal = 32.dp)
     ){
-        items(userSorted) { user -> // the items() child takes a list as a param
-            ProfileCard(user.firstName, user.username, user.streak.toString(), "temp",{
+//            items(userSorted) { user -> // the items() child takes a list as a param
+//                ProfileCard(user.firstName, user.username, user.streak.toString(), "temp",{
+//                    onMessageClick(user)
+//                })  // Our message is then linked into our card and created
+//                Spacer(modifier = Modifier.height(10.dp))
+//            }
+        items(userlist) { user -> // the items() child takes a list as a param
+            ProfileCard(user.name, user.id.toString(), user.time.toString(), "temp",{
                 onMessageClick(user)
             })  // Our message is then linked into our card and created
             Spacer(modifier = Modifier.height(10.dp))
@@ -202,7 +252,7 @@ fun LBHierarchy(
 @Composable
 fun LBTopCard(
     modifier: Modifier = Modifier,
-    onAddFriendsButton: () -> Unit = {}
+    onClickMyProfile: () -> Unit = {}
 ) {
     val context = LocalContext.current
 
@@ -238,7 +288,7 @@ fun LBTopCard(
             )
 
             IconButton(
-                onClick = onAddFriendsButton,
+                onClick = onClickMyProfile
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.general_generic_avatar),
@@ -253,7 +303,7 @@ fun LBTopCard(
 
 @Composable
 fun LeaderboardScreen(
-    UserList: List<User>,
+    UserList: MutableList<TimeBoardEntry>,
     modifier: Modifier = Modifier
 ) {
     Column {
@@ -268,7 +318,7 @@ fun LeaderboardScreen(
 fun LBLazyListPreview() {
     Surface {
 //        MyFriendsCardsLazyList(list)
-        LeaderboardScreen(data)
+        //LeaderboardScreen()
     }
 }
 
@@ -276,7 +326,7 @@ fun LBLazyListPreview() {
 @Composable
 fun PreviewConversation() {
     AppTheme {
-        com.example.CyTrack.Leaderboard.main.LBHierarchy(data)
+        //com.example.CyTrack.Leaderboard.main.LBHierarchy(data)
     }
 }
 
