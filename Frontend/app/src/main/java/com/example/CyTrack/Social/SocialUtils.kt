@@ -2,6 +2,7 @@ package com.example.CyTrack.Social
 
 import android.app.Activity
 import android.content.Intent
+import android.util.Log
 import android.widget.Toast
 import com.android.volley.Request
 import com.android.volley.toolbox.JsonObjectRequest
@@ -15,6 +16,7 @@ import com.example.CyTrack.Utilities.User
 import com.example.CyTrack.Utilities.VolleySingleton
 import org.json.JSONException
 import org.json.JSONObject
+import java.text.SimpleDateFormat
 
 class SocialUtils {
 
@@ -168,7 +170,10 @@ class SocialUtils {
          */
         fun processMessage(msg: String): DirectMessage.Msg {
             try {
-                val jsonObject = JSONObject(msg)
+                val tempMsg = msg.removePrefix("Received message: ")
+
+
+                val jsonObject = JSONObject(tempMsg)
                 val data = jsonObject.getJSONObject("data")
 
                 val userID = data.getInt("userID")
@@ -223,6 +228,41 @@ class SocialUtils {
 
             )
             VolleySingleton.getInstance(context).addToRequestQueue(jsonObjectRequest)
+        }
+
+        fun processMessageCardData(msg: String, cardList: MutableList<MessageCardData>) {
+            try {
+                val tempMsg = msg.removePrefix("Received message: ")
+                val jsonObject = JSONObject(tempMsg)
+                val data = jsonObject.getJSONObject("data").getJSONArray("userConversations")
+
+
+//                val inputFormat = SimpleDateFormat("HH:mm:ss")
+//                inputFormat.format
+
+                cardList.clear()
+
+                for (i in 0 until data.length()) {
+
+                    val messageCardContent = data.getJSONObject(i)
+
+                    Log.d("MessageCardData", messageCardContent.getInt("userID").toString())
+
+                    cardList.add(
+                        MessageCardData(
+                            messageCardContent.getString("username"),
+                            messageCardContent.getString("firstName"),
+                            messageCardContent.getString("content"),
+                            messageCardContent.getString("time"),
+                            messageCardContent.getInt("userID"),
+                            messageCardContent.getInt("friendEntityID"),
+                            messageCardContent.getInt("conversationID")
+                        )
+                    )
+                }
+            } catch (e: JSONException) {
+                e.printStackTrace()
+            }
         }
 
     }
