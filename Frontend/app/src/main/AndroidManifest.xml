@@ -18,11 +18,7 @@
         
         <activity android:name=".Leaderboard.main.LeaderboardActivity"
             android:exported="false"/>
-        <activity android:name=".Social.DirectMessage"
-            android:exported="false"/>
-        <activity android:name=".Social.MyMessages"
-            android:exported="false"/>
-        <activity android:name=".Social.MyFriends"
+
 
         <service android:name=".Utilities.WebSocketServiceUtil" />
 
