@@ -13,7 +13,6 @@ import org.json.JSONException
 
 class SocialUtils {
 
-
     companion object {
         @JvmStatic
         fun messageUserScreen(user: User, recipient: User, context: Activity) {
