@@ -17,6 +17,7 @@ package com.example.CyTrack.Badges
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Space
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.BorderStroke
@@ -64,20 +65,21 @@ import com.example.compose.AppTheme
  */
 private lateinit var user: User
 
-private var AllUsers: MutableList<User> = mutableListOf()
+private var AllBadges: MutableList<BadgeObject> = mutableListOf()
 private val SampleUser = BadgeData.BadgeSample
 
 private val data = SampleUser
-private val URL = UrlHolder.URL
+private val URL = "${UrlHolder.URL}/badge/${user.id}/earned"
 
 class BadgesActivity : ComponentActivity(
 ) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            BadgeUtils.getListOfUsers(
+            BadgeUtils.getListOfBadges(
                 this,
-                AllUsers,
+                AllBadges,
+                user,
                 URL,
                 "users"//TODO: VERIFY ARRAY NAME
             )
@@ -126,8 +128,7 @@ fun BGProfileCard(
         shape = RoundedCornerShape(10.dp),
         border = BorderStroke(1.dp, Color.Black),
         modifier = modifier.fillMaxWidth()
-            .clickable(onClick = { /*TODO*/ })
-//            .padding(horizontal = 32.dp)
+
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -153,13 +154,6 @@ fun BGProfileCard(
                     fontWeight = FontWeight.Bold,
                     fontFamily = getCustomFontFamily("Inter", FontWeight.Bold, FontStyle.Normal)
                 )
-                Spacer(modifier = Modifier.padding(2.dp))
-                Text(
-                    text = name,
-                    fontSize = 11.sp,
-                    fontStyle = FontStyle.Italic,
-                    fontFamily = getCustomFontFamily("Inter", FontWeight.Normal, FontStyle.Italic)
-                )
             }
 
             Row(
@@ -181,11 +175,19 @@ fun ProfileButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Image(
-        painter = painterResource(R.drawable.general_generic_avatar),
-        contentDescription = "Profile icon",
-        modifier = Modifier.size(24.dp)
-    )
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier.clickable(onClick = onClick)
+    ) {
+        Image(
+            painter = painterResource(R.drawable.general_back_arrow_button),
+            contentDescription = "Friends icon",
+            modifier = Modifier.size(24.dp)
+        )
+
+        Spacer(modifier = Modifier.height(3.dp))
+
+    }
 
 }
 
@@ -250,16 +252,14 @@ fun BGTopCard(
                 .offset(y = (-10).dp)
         ) {
 
-            IconButton(
-                onClick = {
-                    (context as Activity).finish()
-                },
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.general_back_arrow_button),
-                    contentDescription = "Back arrow",
-                    modifier = Modifier.size(24.dp)
-                )
+            Row{
+                Spacer(modifier = modifier.width(10.dp))
+                Column {
+                    ProfileButton(
+                        onClick = { onClickMyProfile() }
+                    )
+                    Spacer(modifier = modifier.height(6.dp))
+                }
             }
 
             Image(
@@ -267,17 +267,8 @@ fun BGTopCard(
                 contentDescription = "Badge Header"
             )
 
-            Row {
-                Column {
-                    ProfileButton(
-                        onClick = { onClickMyProfile() }
-                    )
-                    Spacer(modifier = modifier.height(10.dp))
-                }
+            Spacer(modifier = Modifier.width(20.dp))
 
-                Spacer(modifier = Modifier.width(20.dp))
-
-            }
 
         }
     }
