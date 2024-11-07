@@ -72,7 +72,7 @@ private val SampleUser = BadgeData.BadgeSample
 
 private val data = SampleUser
 //private val URL = "${UrlHolder.URL}/badge/${user.id}/earned"
-private val URL = "${UrlHolder.URL}/badge/1/earned"
+private val URL = "${UrlHolder.URL}/badge/2/earned"
 
 class BadgesActivity : ComponentActivity(
 ) {
