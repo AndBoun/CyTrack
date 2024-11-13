@@ -4,6 +4,7 @@ import CyTrack.Entities.User;
 import CyTrack.Services.BadgeService;
 import CyTrack.Services.UserService;
 import CyTrack.Sockets.LeaderBoardSocket;
+import CyTrack.Sockets.UserSocket;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -42,7 +43,10 @@ public class UserController {
             else {
                 User registeredUser = userService.registerUser(user);
 
+                //update our websockets
                 LeaderBoardSocket.updateLeaderboard(user.getUserID());
+                UserSocket.updateUserList();
+
                 badgeService.awardEligibleBadges(registeredUser);
 
                 LoginResponse response = new LoginResponse("success", registeredUser.getUserID(), "User registered" );
@@ -182,6 +186,9 @@ public class UserController {
         if (foundUser.isPresent()) {
             userService.deleteUser(foundUser.get());
             DeleteResponse response = new DeleteResponse("success", 200, "User deleted");
+
+            UserSocket.updateUserList();
+
             return ResponseEntity.ok(response);
         } else {
             ErrorResponse response = new ErrorResponse("error", 404, "User not found", "User not found");
