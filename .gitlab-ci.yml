@@ -1,3 +1,7 @@
+stages:
+  - androidbuild
+  - androidtest 
+
 android-build:
   image: afirefly/android-ci:java17
   stage: androidbuild
