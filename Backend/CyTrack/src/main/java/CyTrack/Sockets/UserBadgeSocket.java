@@ -3,6 +3,7 @@ package CyTrack.Sockets;
 import CyTrack.Entities.Badge;
 import CyTrack.Entities.User;
 import CyTrack.Services.UserService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.websocket.*;
 import jakarta.websocket.server.PathParam;
 import jakarta.websocket.server.ServerEndpoint;
@@ -17,9 +18,10 @@ import java.util.concurrent.ConcurrentHashMap;
 @ServerEndpoint("/badgeSocket/{displayerID}/{viewerID}")
 public class UserBadgeSocket {
 
-    private static final Map<Session, Long> sessionViewerMap = new ConcurrentHashMap<>(); // Maps sessions to viewerID
-    private static final Map<Long, List<Session>> displayerSessionMap = new ConcurrentHashMap<>(); // Maps displayerID to list of viewer sessions
+    private static Map<Session, Long> sessionViewerMap = new ConcurrentHashMap<>(); // Maps sessions to viewerID
+    private static Map<Long, List<Session>> displayerSessionMap = new ConcurrentHashMap<>(); // Maps displayerID to list of viewer sessions
     private static UserService userService;
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
     @Autowired
     public UserBadgeSocket(UserService userService) {
@@ -31,7 +33,7 @@ public class UserBadgeSocket {
     @OnOpen
     public void onOpen(Session session, @PathParam("displayerID") Long displayerID, @PathParam("viewerID") Long viewerID) throws IOException {
         Optional<User> displayerUser = userService.findByUserID(displayerID);
-        if (!displayerUser.isPresent()) {
+        if (displayerUser.isEmpty()) {
             session.close(new CloseReason(CloseReason.CloseCodes.CANNOT_ACCEPT, "User not found"));
             return;
         }
@@ -45,15 +47,20 @@ public class UserBadgeSocket {
     }
 
     @OnMessage
-    public void onMessage(Session session, String message) throws IOException {
-        System.out.println("Message received: " + message);
+    public void onMessage(Session session, String message) {
+        System.out.println("Message received from viewer: " + message);
         // Optional: Handle specific messages from viewers here if needed
     }
 
     @OnClose
     public void onClose(Session session) {
         Long viewerID = sessionViewerMap.remove(session);
-        displayerSessionMap.forEach((displayerID, sessions) -> sessions.remove(session));
+        displayerSessionMap.forEach((displayerID, sessions) -> {
+            sessions.remove(session);
+            if (sessions.isEmpty()) {
+                displayerSessionMap.remove(displayerID);
+            }
+        });
         System.out.println("WebSocket closed for viewerID: " + viewerID);
     }
 
@@ -78,28 +85,11 @@ public class UserBadgeSocket {
 
     // Sends the badge list of a displayer to a specific viewer
     private static void sendBadgeListToViewer(Session session, Long displayerID) throws IOException {
-        Optional<User> displayerUser = userService.findByUserID(displayerID);
+        Optional<User> displayerUser = userService.findByUserIDWithBadges(displayerID);
         if (displayerUser.isPresent()) {
             List<Badge> badges = displayerUser.get().getBadges();
-            String badgeData = generateBadgeData(badges);
+            String badgeData = objectMapper.writeValueAsString(badges);
             session.getBasicRemote().sendText(badgeData);
         }
-    }
-
-    // Converts badge data to a JSON-like string for transmission
-    private static String generateBadgeData(List<Badge> badges) {
-        StringBuilder badgeJson = new StringBuilder("[");
-        for (Badge badge : badges) {
-            badgeJson.append("{")
-                    .append("\"badgeID\":").append(badge.getBadgeID()).append(",")
-                    .append("\"badgeName\":\"").append(badge.getBadgeName()).append("\",")
-                    .append("\"description\":\"").append(badge.getDescription()).append("\"")
-                    .append("},");
-        }
-        if (badgeJson.length() > 1) {
-            badgeJson.deleteCharAt(badgeJson.length() - 1); // Remove last comma
-        }
-        badgeJson.append("]");
-        return badgeJson.toString();
     }
 }
