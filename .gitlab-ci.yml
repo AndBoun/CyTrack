@@ -1,17 +1,13 @@
-stages:
-  - androidbuild
-  - androidtest 
-  
 android-build:
   image: afirefly/android-ci:java17
   stage: androidbuild
   tags:
-   - andrew_tag                   
-  before_script:                 
+    - andrew_tag
+  before_script:
     - export GRADLE_USER_HOME=`pwd`/.gradle
     - chmod +x ./Frontend/gradlew
   script:
-    - cd Frontend                  
+    - cd Frontend
     - ./gradlew build
   only:
     refs:
@@ -23,12 +19,12 @@ android-test:
   image: afirefly/android-ci:java17
   stage: androidtest
   tags:
-    - andrew_tag                 
-  before_script:                   
+    - andrew_tag
+  before_script:
     - export GRADLE_USER_HOME=`pwd`/.gradle
     - chmod +x ./Frontend/gradlew
   script:
-    - cd Frontend                  
+    - cd Frontend
     - ./gradlew test
   only:
     refs:
