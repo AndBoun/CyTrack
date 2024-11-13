@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Badge WebSocket Test</title>
+    <style>
+        #badgeList {
+            font-family: Arial, sans-serif;
+            margin-top: 20px;
+        }
+        #badgeList div {
+            padding: 5px 0;
+        }
+    </style>
+</head>
+<body>
+<h2>User Badge Viewer</h2>
+
+<div>
+    <label for="displayerID">Displayer ID:</label>
+    <input type="text" id="displayerID" value="1">
+</div>
+<div>
+    <label for="viewerID">Viewer ID:</label>
+    <input type="text" id="viewerID" value="1">
+</div>
+
+<button onclick="connect()">Connect to BadgeSocket</button>
+<button onclick="disconnect()">Disconnect</button>
+
+<div id="badgeList">
+    <h3>Badges:</h3>
+    <div id="badgeContent">No data yet.</div>
+</div>
+
+<script>
+    let ws = null;
+
+    // Function to connect to the WebSocket server
+    function connect() {
+        const displayerID = document.getElementById('displayerID').value;
+        const viewerID = document.getElementById('viewerID').value;
+        const url = `ws://coms-3090-040.class.las.iastate.edu:8080/badgeSocket/${displayerID}/${viewerID}`;
+        ws = new WebSocket(url);
+
+        ws.onopen = function() {
+            document.getElementById("badgeContent").innerHTML = "<div>Connected to badge server.</div>";
+        };
+
+        ws.onmessage = function(event) {
+            // Parse and display the badge data
+            try {
+                const badges = JSON.parse(event.data);
+                let badgeHtml = '<div>';
+                badges.forEach(badge => {
+                    badgeHtml += `
+                        <div>
+                            <strong>${badge.badgeName}</strong> - Description: ${badge.description}
+                        </div>
+                    `;
+                });
+                badgeHtml += '</div>';
+                document.getElementById("badgeContent").innerHTML = badgeHtml;
+            } catch (e) {
+                console.error("Error parsing badge data:", e);
+                document.getElementById("badgeContent").innerHTML = "<div>Error parsing badge data.</div>";
+            }
+        };
+
+        ws.onclose = function() {
+            document.getElementById("badgeContent").innerHTML += "<div>Disconnected from badge server.</div>";
+        };
+
+        ws.onerror = function(error) {
+            console.error("WebSocket error:", error);
+            document.getElementById("badgeContent").innerHTML += "<div>Error: Unable to connect to server.</div>";
+        };
+    }
+
+    // Function to disconnect from the WebSocket server
+    function disconnect() {
+        if (ws) {
+            ws.close();
+        }
+    }
+</script>
+</body>
+</html>
