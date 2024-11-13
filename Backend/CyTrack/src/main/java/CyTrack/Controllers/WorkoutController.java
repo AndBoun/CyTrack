@@ -48,6 +48,7 @@ public class WorkoutController {
             workout.setUser(user.get());
             Workout newWorkout = workoutService.createWorkout(workout);
 
+            //award badges
             badgeService.awardEligibleBadges(user.get());
 
             //Notify leaderboard socket about potential update in total time
@@ -279,7 +280,11 @@ public class WorkoutController {
                 }
                 workoutService.createWorkout(updatedWorkout);
 
+                //award any badges + update BadgeSocket
                 badgeService.awardEligibleBadges(user.get());
+
+                //update leaderboard
+                LeaderBoardSocket.updateLeaderboard(user.get().getUserID());
 
                 WorkoutIDResponse response = new WorkoutIDResponse("success", workoutID, "Workout updated");
                 return ResponseEntity.status(200).body(response);

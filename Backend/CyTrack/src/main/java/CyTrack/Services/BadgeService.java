@@ -5,6 +5,7 @@ import CyTrack.Entities.Badge;
 import CyTrack.Entities.User;
 import CyTrack.Repositories.BadgeRepository;
 import CyTrack.Repositories.UserRepository;
+import CyTrack.Sockets.UserBadgeSocket;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -62,6 +63,7 @@ public class BadgeService {
         awardIntermediatBadge(user);
         awardAdvancedBadge(user);
         awardStreakBadge(user);
+        UserBadgeSocket.updateBadgeList(user.getUserID());
     }
 
     /**
