@@ -5,7 +5,7 @@ import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.stereotype.Controller;
 
 @Controller
-public class FriendsNotificationSocket {
+public class NotificationSocket {
 
     @MessageMapping("/sendFriendRequest")
     @SendToUser("/queue/friendRequest")
