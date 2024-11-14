@@ -31,7 +31,7 @@ public class LeaderBoardSocket {
     public void onOpen(Session session, @PathParam("userID") Long userID) throws IOException {
         Optional<User> user = userService.findByUserID(userID);
         if (!user.isPresent()) {
-            session.close(new CloseReason(CloseReason.CloseCodes.CANNOT_ACCEPT, "User not found"));
+            session.close(new CloseReason(CloseReason.CloseCodes.CANNOT_ACCEPT, "User not found."));
             return;
         }
 
