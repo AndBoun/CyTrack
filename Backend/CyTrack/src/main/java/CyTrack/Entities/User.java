@@ -6,7 +6,6 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import io.swagger.v3.oas.annotations.media.Schema;
 
 @Entity
 @Table(name = "user")
@@ -15,7 +14,6 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    @Schema(description="ID of the user", name="userID", required=true, example="1")
     private Long userID;
 
     /**
@@ -58,15 +56,10 @@ public class User {
     private List<FriendRequest> receivedRequests = new ArrayList<>();
 
     @Column(nullable = false, unique = true)
-    @Schema(description="Username of the user", name="username", required=true, example="user1")
     private String username;
-    @Schema(description="First name of the user", name="firstName", required=true, example="John")
     private String firstName;
-    @Schema(description="Last name of the user", name="lastName", required=true, example="Doe")
     private String lastName;
-    @Schema(description="Password of the user", name="password", required=true, example="password")
     private String password;
-    @Schema(description="Age of the user", name="age", required=true, example="21")
     private int age;
     private int currentStreak;
     private int highestStreak;

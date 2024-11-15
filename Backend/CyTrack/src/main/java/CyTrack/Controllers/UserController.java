@@ -4,13 +4,6 @@ import CyTrack.Entities.User;
 import CyTrack.Services.BadgeService;
 import CyTrack.Services.UserService;
 import CyTrack.Sockets.LeaderBoardSocket;
-import CyTrack.Sockets.UserSocket;
-
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +11,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Optional;
 
-@Tag(name = "User Controller", description = "REST APIs related to Users")
+
 @RestController
 @RequestMapping("/user")
 public class UserController {
@@ -36,26 +29,6 @@ public class UserController {
 
 
     // Register user
-    @Operation(
-            summary = "Register user",
-            responses = {
-                    @ApiResponse(
-                            description = "User registered",
-                            responseCode = "201",
-                            content = @Content(schema = @Schema(implementation = LoginResponse.class))
-                    ),
-                    @ApiResponse(
-                            description = "Username already exists",
-                            responseCode = "409",
-                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
-                    ),
-                    @ApiResponse(
-                            description = "Internal server error",
-                            responseCode = "500",
-                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
-                    )
-            }
-    )
     @PostMapping("")
     public ResponseEntity<?> registerUser(@RequestBody User user) {
         try {
@@ -69,10 +42,7 @@ public class UserController {
             else {
                 User registeredUser = userService.registerUser(user);
 
-                //update our websockets
                 LeaderBoardSocket.updateLeaderboard(user.getUserID());
-                UserSocket.updateUserList();
-
                 badgeService.awardEligibleBadges(registeredUser);
 
                 LoginResponse response = new LoginResponse("success", registeredUser.getUserID(), "User registered" );
@@ -85,26 +55,6 @@ public class UserController {
     }
 
     // Login user
-    @Operation(
-            summary = "Login user",
-            responses = {
-                    @ApiResponse(
-                            description = "Login successful",
-                            responseCode = "201",
-                            content = @Content(schema = @Schema(implementation = LoginResponse.class))
-                    ),
-                    @ApiResponse(
-                            description = "Account Does Not Exist",
-                            responseCode = "401",
-                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
-                    ),
-                    @ApiResponse(
-                            description = "Internal server error",
-                            responseCode = "500",
-                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
-                    )
-            }
-    )
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody User user) {
         try {
@@ -123,38 +73,12 @@ public class UserController {
     }
 
     // Get all users
-    @Operation(
-            summary = "Get all users",
-            responses = {
-                    @ApiResponse(
-                            description = "Users found",
-                            responseCode = "200",
-                            content = @Content(schema = @Schema(implementation = User.class))
-                    )
-            }
-    )
     @GetMapping("")
     public ResponseEntity<List<User>> getAllUsers() {
         List<User> users = userService.getAllUsers();
         return ResponseEntity.ok(users);
     }
 
-    // Get user by userID
-    @Operation(
-            summary = "Get user by userID",
-            responses = {
-                    @ApiResponse(
-                            description = "User found",
-                            responseCode = "201",
-                            content = @Content(schema = @Schema(implementation = LoginResponse.class))
-                    ),
-                    @ApiResponse(
-                            description = "User not found",
-                            responseCode = "404",
-                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
-                    )
-            }
-    )
     @GetMapping("/{userID}")
     public ResponseEntity<?> getUserByUserID(@PathVariable Long userID) {
         Optional<User> user = userService.findByUserID(userID);
@@ -179,21 +103,6 @@ public class UserController {
     }
 
     // Update user information
-    @Operation(
-            summary = "Update user information",
-            responses = {
-                    @ApiResponse(
-                            description = "User updated",
-                            responseCode = "200",
-                            content = @Content(schema = @Schema(implementation = LoginResponse.class))
-                    ),
-                    @ApiResponse(
-                            description = "User not found",
-                            responseCode = "404",
-                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
-                    )
-            }
-    )
     @PutMapping("/{userID}")
     public ResponseEntity<?> updateUser(@PathVariable Long userID, @RequestBody User updatedUser) {
         Optional<User> user = userService.findByUserID(userID);
@@ -226,31 +135,6 @@ public class UserController {
     /*
     Post request check if the user exists and if the password matches the current password
      */
-    @Operation(
-            summary = "Check if user exists and password matches",
-            responses = {
-                    @ApiResponse(
-                            description = "Password matches",
-                            responseCode = "200",
-                            content = @Content(schema = @Schema(implementation = passwordResponse.class))
-                    ),
-                    @ApiResponse(
-                            description = "Password does not match",
-                            responseCode = "200",
-                            content = @Content(schema = @Schema(implementation = passwordResponse.class))
-                    ),
-                    @ApiResponse(
-                            description = "User not found",
-                            responseCode = "404",
-                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
-                    ),
-                    @ApiResponse(
-                            description = "Internal server error",
-                            responseCode = "500",
-                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
-                    )
-            }
-    )
     @PostMapping("/resetPassword")
     public ResponseEntity<?> SendUserIDForPassReset(@RequestBody User user) {
         Optional<User> foundUser = userService.findByUserName(user.getUsername());
@@ -274,26 +158,6 @@ public class UserController {
     }
 
     // Resets password by userID
-    @Operation(
-            summary = "Reset password by userID",
-            responses = {
-                    @ApiResponse(
-                            description = "Password reset",
-                            responseCode = "200",
-                            content = @Content(schema = @Schema(implementation = passwordResponse.class))
-                    ),
-                    @ApiResponse(
-                            description = "User not found",
-                            responseCode = "404",
-                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
-                    ),
-                    @ApiResponse(
-                            description = "Internal server error",
-                            responseCode = "500",
-                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
-                    )
-            }
-    )
     @PutMapping("/resetPassword/{userID}")
     public ResponseEntity<?> resetPasswordByUserID(@PathVariable Long userID, @RequestBody User user) {
         Optional<User> foundUser = userService.findByUserID(userID);
@@ -312,30 +176,12 @@ public class UserController {
         }
     }
     // Delete user
-    @Operation(
-            summary = "Delete user",
-            responses = {
-                    @ApiResponse(
-                            description = "User deleted",
-                            responseCode = "200",
-                            content = @Content(schema = @Schema(implementation = DeleteResponse.class))
-                    ),
-                    @ApiResponse(
-                            description = "User not found",
-                            responseCode = "404",
-                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
-                    )
-            }
-    )
     @DeleteMapping("/{userID}")
     public ResponseEntity<?> deleteUser(@PathVariable Long userID) {
         Optional<User> foundUser = userService.findByUserID(userID);
         if (foundUser.isPresent()) {
             userService.deleteUser(foundUser.get());
             DeleteResponse response = new DeleteResponse("success", 200, "User deleted");
-
-            UserSocket.updateUserList();
-
             return ResponseEntity.ok(response);
         } else {
             ErrorResponse response = new ErrorResponse("error", 404, "User not found", "User not found");

@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import io.swagger.v3.oas.annotations.media.Schema;
+
 /*
  *@Author Kai Quach
  * Class for the FriendRequests entity
@@ -15,7 +15,6 @@ public class FriendRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "friend_requestid")
-    @Schema(description = "ID of the friend request", name = "friendRequestID", required = true, example = "1")
     private Long friendRequestID;
 
 
@@ -24,10 +23,9 @@ public class FriendRequest {
     //@JsonIgnoreProperties("sentRequests")
     @JoinColumn(name = "sender_id")
     @JsonIgnore
-    @Schema(description = "ID of the sender", name = "sender", required = true, example = "1")
     private User sender;
 
-    @Schema(description = "Username of the sender", name = "sender_username", required = true, example = "user1")
+
     private String sender_username;
 
     @ManyToOne
@@ -35,14 +33,11 @@ public class FriendRequest {
     //@JsonIgnoreProperties(value = {"workouts", "meals", "friends", "badges", "sentRequests", "receivedRequests"})
     @JoinColumn(name = "receiver_id")
     @JsonIgnore
-    @Schema(description = "ID of the receiver", name = "receiver", required = true, example = "2")
     private User receiver;
 
-    @Schema(description = "Username of the receiver", name = "receiver_username", required = true, example = "user2")
     private String receiver_username;
 
     @Enumerated(EnumType.STRING)
-    @Schema(description = "Status of the friend request", name = "status", required = true, example = "PENDING")
     private RequestStatus status;
 
     // Default constructor

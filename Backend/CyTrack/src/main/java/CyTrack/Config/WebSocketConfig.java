@@ -32,13 +32,6 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                 .setAllowedOriginPatterns("*")
                 .withSockJS();
 
-        registry.addEndpoint("/userSocket/{userID}")
-                .setAllowedOriginPatterns("*")
-                .withSockJS();
-        registry.addEndpoint("/badgeSocket/{displayerID}/{viewerID}")
-                .setAllowedOriginPatterns("*")
-                .withSockJS();
-
     }
 
     @Bean
