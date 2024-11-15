@@ -2,18 +2,26 @@ package CyTrack.Controllers;
 
 import CyTrack.Entities.Meal;
 import CyTrack.Entities.User;
-import CyTrack.Entities.Workout;
-import CyTrack.Repositories.MealRepository;
+
 import CyTrack.Services.MealService;
 import CyTrack.Services.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
 
+@Tag(name = "Meal Controller", description = "REST APIs related to Meal")
 @RestController
 @RequestMapping("/meal")
 public class MealController {
@@ -32,6 +40,25 @@ public class MealController {
      *
      * @return list of all meals given that belong to a given user
      */
+    @Operation(
+            summary = "List All Meals for a User",
+            description = "Get a list of all meals for a specified user.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Meals found",
+                            content = @Content(schema = @Schema(implementation = MealResponse.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "User not found",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+                    )
+            }
+    )
+    @Parameters({
+            @Parameter(name = "userID", description = "ID of the user to retrieve meals for", required = true, example = "1")
+    })
     @GetMapping("/{userID}/meal")
     public ResponseEntity<?> getAllMealsByUserID(@PathVariable Long userID) {
         Optional<User> user = userService.findByUserID(userID);
@@ -61,6 +88,26 @@ public class MealController {
      * @param mealId of meal to return
      * @return individual meal object
      */
+    @Operation(
+            summary = "Get Meal by ID",
+            description = "Retrieve details of a meal by meal ID for a specific user.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Meal found",
+                            content = @Content(schema = @Schema(implementation = MealResponse.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "User or meal not found",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+                    )
+            }
+    )
+    @Parameters({
+            @Parameter(name = "userID", description = "ID of the user", required = true, example = "1"),
+            @Parameter(name = "mealId", description = "ID of the meal to retrieve", required = true, example = "100")
+    })
     @GetMapping("/{mealId}/meal/{mealID}")
     public ResponseEntity<?> getMealById(@PathVariable Long userID, @PathVariable Long mealId) {
         Optional<User> user = userService.findByUserID(userID);
@@ -90,6 +137,26 @@ public class MealController {
     /**
      * GET all meals by userID and date
      */
+    @Operation(
+            summary = "Get Meals by Date",
+            description = "Get all meals logged by a user on a specified date.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Meals found for date",
+                            content = @Content(schema = @Schema(implementation = MealResponse.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "User not found",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+                    )
+            }
+    )
+    @Parameters({
+            @Parameter(name = "userID", description = "ID of the user", required = true, example = "1"),
+            @Parameter(name = "date", description = "Date to retrieve meals for, in format YYYY-MM-DD", required = true, example = "2024-11-13")
+    })
     @GetMapping("/{userID}/mealsByDate/{date}")
     public ResponseEntity<?> getMealsByUserIDAndDate(@PathVariable Long userID, @PathVariable String date) {
         Optional<User> user = userService.findByUserID(userID);
@@ -115,6 +182,26 @@ public class MealController {
     /**
      * GET total calories, protein, and carbs for a given userID and date
      */
+    @Operation(
+            summary = "Calculate Total Nutrients by Date",
+            description = "Calculate total calories, protein, and carbs consumed by a user on a specific date.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Total nutrients calculated",
+                            content = @Content(schema = @Schema(implementation = NutrientSummaryResponse.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "User not found",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+                    )
+            }
+    )
+    @Parameters({
+            @Parameter(name = "userID", description = "ID of the user", required = true, example = "1"),
+            @Parameter(name = "date", description = "Date to calculate nutrients for, in format YYYY-MM-DD", required = true, example = "2024-11-13")
+    })
     @GetMapping("/{userID}/nutrients/{date}")
     public ResponseEntity<?> getTotalNutrientsForDate(@PathVariable Long userID, @PathVariable String date) {
         Optional<User> user = userService.findByUserID(userID);
@@ -137,6 +224,26 @@ public class MealController {
      * @param meal we're attempting to add/create
      * @return response indicating whether meal was added or not
      */
+    @Operation(
+            summary = "Create a Meal Entry",
+            description = "Add a new meal entry for a user.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "201",
+                            description = "Meal created",
+                            content = @Content(schema = @Schema(implementation = MealIDResponse.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "User not found",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+                    )
+            }
+    )
+    @Parameters({
+            @Parameter(name = "userID", description = "ID of the user to add the meal for", required = true, example = "1"),
+            @Parameter(name = "meal", description = "JSON body representing the meal details", required = true, schema = @Schema(implementation = Meal.class))
+    })
     @PostMapping("/{userID}/meal")
     public ResponseEntity<?> createMeal(@PathVariable Long userID, @RequestBody Meal meal) {
         Optional<User> user = userService.findByUserID(userID);
@@ -154,6 +261,26 @@ public class MealController {
     /**
      * DELETE a meal row based on a given input
      */
+    @Operation(
+            summary = "Delete a Meal Entry",
+            description = "Delete a meal entry by meal ID for a specified user.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Meal deleted",
+                            content = @Content(schema = @Schema(implementation = MealIDResponse.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "User or meal not found",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+                    )
+            }
+    )
+    @Parameters({
+            @Parameter(name = "userID", description = "ID of the user", required = true, example = "1"),
+            @Parameter(name = "mealID", description = "ID of the meal to delete", required = true, example = "100")
+    })
     @DeleteMapping("/{userID}/meal/{mealID}")
     ResponseEntity<?> deleteMeal(@PathVariable Long userID, @PathVariable Long mealID) {
         Optional<User> user = userService.findByUserID(userID);
@@ -178,6 +305,27 @@ public class MealController {
      * @param newMeal Meal object (from JSON) containing info for updating
      * @return response status indicating success or failure
      */
+    @Operation(
+            summary = "Update a Meal Entry",
+            description = "Update an existing meal entry with new details.",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Meal updated",
+                            content = @Content(schema = @Schema(implementation = MealIDResponse.class))
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "User or meal not found",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+                    )
+            }
+    )
+    @Parameters({
+            @Parameter(name = "userID", description = "ID of the user", required = true, example = "1"),
+            @Parameter(name = "mealID", description = "ID of the meal to update", required = true, example = "100"),
+            @Parameter(name = "newMeal", description = "JSON body with updated meal details", required = true, schema = @Schema(implementation = Meal.class))
+    })
     @PutMapping("/{userID}/meal/{mealID}")
     public ResponseEntity<?> updateMeal(@PathVariable Long userID, @PathVariable Long mealID, @RequestBody Meal newMeal) {
         Optional<User> user = userService.findByUserID(userID);
