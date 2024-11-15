@@ -4,6 +4,8 @@ import CyTrack.Entities.User;
 import CyTrack.Repositories.BadgeRepository;
 import CyTrack.Repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
@@ -45,6 +47,11 @@ public class UserService {
         return userRepository.findByUsername(username);
     }
     public Optional<User> findByUserID(Long userID){ return userRepository.findByUserID(userID);}
+
+    // Method to fetch User with badges
+    public Optional<User> findByUserIDWithBadges(Long userID) {
+        return userRepository.findByUserIDWithBadges(userID);
+    }
 
     public User updateUser(User user) {
         return userRepository.save(user);
