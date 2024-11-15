@@ -1,0 +1,200 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > Calculation</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.coms3090.calculator.entity</a>
+</div>
+
+<h1>Coverage Summary for Class: Calculation (com.coms3090.calculator.entity)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Calculation</td>
+<td class="coverageStat">
+  <span class="percent">
+    7.7%
+  </span>
+  <span class="absValue">
+    (1/13)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    5.6%
+  </span>
+  <span class="absValue">
+    (1/18)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">Calculation$HibernateInstantiator$rmlGLzZE</td>
+  </tr>
+  <tr>
+    <td class="name">Calculation$HibernateProxy$t86WOpGV</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    7.7%
+  </span>
+  <span class="absValue">
+    (1/13)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    5.6%
+  </span>
+  <span class="absValue">
+    (1/18)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.coms3090.calculator.entity;
+&nbsp;
+&nbsp;import jakarta.persistence.Entity;
+&nbsp;import jakarta.persistence.GeneratedValue;
+&nbsp;import jakarta.persistence.GenerationType;
+&nbsp;import jakarta.persistence.Id;
+&nbsp;
+&nbsp;@Entity
+&nbsp;public class Calculation {
+&nbsp;    @Id
+&nbsp;    @GeneratedValue(strategy = GenerationType.AUTO)
+&nbsp;    private Long id;
+&nbsp;
+&nbsp;    private String operation;
+&nbsp;    private double operand1;
+&nbsp;    private double operand2;
+&nbsp;    private double result;
+&nbsp;    // Default constructor
+&nbsp;
+<b class="fc">&nbsp;    public Calculation() {</b>
+&nbsp;    }
+&nbsp;
+<b class="nc">&nbsp;    public Calculation(Long id, String operation, double operand1, double operand2, double result) {</b>
+<b class="nc">&nbsp;        this.id = id;</b>
+<b class="nc">&nbsp;        this.operation = operation;</b>
+<b class="nc">&nbsp;        this.operand1 = operand1;</b>
+<b class="nc">&nbsp;        this.operand2 = operand2;</b>
+<b class="nc">&nbsp;        this.result = result;</b>
+&nbsp;    }
+&nbsp;    // Getters and setters
+&nbsp;
+&nbsp;
+&nbsp;    public Long getId() {
+<b class="nc">&nbsp;        return id;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setId(Long id) {
+<b class="nc">&nbsp;        this.id = id;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getOperation() {
+<b class="nc">&nbsp;        return operation;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setOperation(String operation) {
+<b class="nc">&nbsp;        this.operation = operation;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public double getOperand1() {
+<b class="nc">&nbsp;        return operand1;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setOperand1(double operand1) {
+<b class="nc">&nbsp;        this.operand1 = operand1;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public double getOperand2() {
+<b class="nc">&nbsp;        return operand2;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setOperand2(double operand2) {
+<b class="nc">&nbsp;        this.operand2 = operand2;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public double getResult() {
+<b class="nc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setResult(double result) {
+<b class="nc">&nbsp;        this.result = result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public String toString() {
+<b class="nc">&nbsp;        return &quot;Calculation{&quot; +</b>
+&nbsp;                &quot;id=&quot; + id +
+&nbsp;                &quot;, operation=&#39;&quot; + operation + &#39;\&#39;&#39; +
+&nbsp;                &quot;, operand1=&quot; + operand1 +
+&nbsp;                &quot;, operand2=&quot; + operand2 +
+&nbsp;                &quot;, result=&quot; + result +
+&nbsp;                &#39;}&#39;;
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-11-13 22:45</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+    <h1>Calculator</h1>
+    <input type="number" id="operand1" placeholder="Enter number1">
+    <input type="number" id="operand2" placeholder="Enter number2">
+    <button onclick="executeCalculator('add')">Add</button>
+    <button onclick="executeCalculator('multiply')">Multiply</button>
+
+    <div id="result"></div>
+
+    <script>
+        function executeCalculator(operator){
+            const op1 = document.getElementById("operand1").value;
+            const op2 = document.getElementById("operand2").value;
+            console.log("In executeCalculator ...");
+            console.log("Operands :",op1," and :",op2)
+
+            if (operator === 'add') {
+                fetch(`http://localhost:8080/add?a=${op1}&b=${op2}`)
+                .then(response => response.json())
+                .then(data => showResult(operator, data))
+                .catch(error => console.error('Error fetching data:', error));
+            } else {
+                fetch(`http://localhost:8080/multiply?a=${op1}&b=${op2}`)
+                .then(response => response.json())
+                .then(data => showResult(operator,data))
+                .catch(error => console.error('Error fetching data:', error));
+            }
+            function showResult(operator,data) {
+                console.log(data);
+                const resultContainer = document.getElementById("result");
+                const newParagraph = document.createElement("p");
+                newParagraph.textContent = `Result: (${operator})  ${data.result}`;  // Display the result
+                resultContainer.appendChild(newParagraph);
+            }
+        }
+    </script>
+</body>
+
+</html>
