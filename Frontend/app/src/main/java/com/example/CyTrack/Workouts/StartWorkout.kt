@@ -44,6 +44,9 @@ import com.example.CyTrack.Utilities.VolleySingleton
 import com.example.compose.AppTheme
 import org.json.JSONObject
 
+/**
+ * Activity to start and end a workout.
+ */
 class StartWorkout : ComponentActivity() {
 
     /**
@@ -61,11 +64,14 @@ class StartWorkout : ComponentActivity() {
      */
     private var workoutID: Int = 0
 
+    /**
+     * Called when the activity is starting.
+     * @param savedInstanceState If the activity is being re-initialized after previously being shut down then this Bundle contains the data it most recently supplied in onSaveInstanceState(Bundle).
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             user = intent.getSerializableExtra("user") as User
-
 
             AppTheme {
                 Column(
@@ -85,11 +91,8 @@ class StartWorkout : ComponentActivity() {
                     )
                 }
             }
-
         }
-
     }
-
 
     /**
      * Starts a workout by sending a POST request to the server.
@@ -260,6 +263,9 @@ fun CreateWorkoutForm(
     }
 }
 
+/**
+ * @suppress
+ */
 @Preview
 @Composable
 fun CreateWorkoutFormPreview() {
@@ -270,6 +276,9 @@ fun CreateWorkoutFormPreview() {
     }
 }
 
+/**
+ * @suppress
+ */
 @Preview
 @Composable
 fun EndWorkoutButtonPreview() {

@@ -14,30 +14,35 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Utility class for handling meal-related network operations.
+ */
 class MealUtils {
 
     /**
-     * Posts meal data to the given URL with the given parameters
-     * @param context the context
-     * @param url the URL to post the user data to
-     * @param params the parameters to post the user data with
+     * Posts meal data to the given URL with the given parameters.
+     *
+     * @param context  the context
+     * @param url      the URL to post the user data to
+     * @param params   the parameters to post the user data with
+     * @param callBack the callback to handle success or error response
      */
     static void postMeal(Context context, String url, Map<String, Object> params, callbackMessage callBack) {
         JSONObject jsonObject = new JSONObject(params);
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, jsonObject, response ->{
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, jsonObject, response -> {
             try {
                 // TEST 1
-                Log.d("MealUtils",  " Headers Processing (PostMeal 1)");
+                Log.d("MealUtils", " Headers Processing (PostMeal 1)");
                 callBack.onSuccess("Success");
             } catch (Exception e) {
                 // TEST 2
-                Log.d("MealUtils",  e + " Headers Processing (PostMeal 2)");
+                Log.d("MealUtils", e + " Headers Processing (PostMeal 2)");
                 e.printStackTrace();
             }
         }, error -> {
             String errorMessage = errorResponse(error);
             // Test 3
-            Log.d("MealUtils",  errorMessage + " Headers Processing (PostMeal 3)");
+            Log.d("MealUtils", errorMessage + " Headers Processing (PostMeal 3)");
             callBack.onError(errorMessage);
         }) {
             @Override
@@ -45,7 +50,7 @@ class MealUtils {
                 Map<String, String> headers = new HashMap<>();
                 headers.put("Content-Type", "application/json");
                 // Test 4
-                Log.d("MealUtils",  headers + " Headers Processing (PostMeal 4)");
+                Log.d("MealUtils", headers + " Headers Processing (PostMeal 4)");
 
                 return headers;
             }
@@ -55,11 +60,23 @@ class MealUtils {
 
     }
 
+    /**
+     * Callback interface for handling the response of posting meal data and getting an ID.
+     */
     interface postMealAndGetIDCallback {
         void onSuccess(int id, String message);
+
         void onError(String message);
     }
 
+    /**
+     * Posts meal data to the given URL with the given parameters and retrieves an ID.
+     *
+     * @param context  the context
+     * @param url      the URL to post the user data to
+     * @param params   the parameters to post the user data with
+     * @param callback the callback to handle success or error response
+     */
     static void postMealAndGetID(Context context, String url, Map<String, String> params, postMealAndGetIDCallback callback) {
         JSONObject jsonObject = new JSONObject(params);
 
@@ -96,17 +113,20 @@ class MealUtils {
     }
 
     /**
-     * Callback interface for fetching meal data, to be used with {@link MealUtils#fetchMealData(Context, String, fetchMealDataCallback)}
+     * Callback interface for fetching meal data.
+     * To be used with {@link MealUtils#fetchMealData(Context, String, fetchMealDataCallback)}
      */
     interface fetchMealDataCallback {
         void onSuccess(Meal meal, String message);
+
         void onError(String message);
     }
 
     /**
-     * Fetches meal data from the given URL and calls the appropriate callback method
-     * @param context the context
-     * @param url the URL to fetch the meal data from
+     * Fetches meal data from the given URL and calls the appropriate callback method.
+     *
+     * @param context  the context
+     * @param url      the URL to fetch the meal data from
      * @param callback the callback to call when the data is fetched
      */
     public static void fetchMealData(Context context, String url, fetchMealDataCallback callback) {
@@ -140,15 +160,17 @@ class MealUtils {
     }
 
     /**
-     * Modifies meal data on the given URL with the given parameters
-     * @param context the context
-     * @param url the URL to modify the meal data on
-     * @param params the parameters to modify the meal data with
+     * Modifies meal data on the given URL with the given parameters.
+     *
+     * @param context         the context
+     * @param url             the URL to modify the meal data on
+     * @param params          the parameters to modify the meal data with
+     * @param callbackMessage the callback to handle success or error response
      */
     static void modifyData(Context context, String url, Map<String, String> params, callbackMessage callbackMessage) {
         JSONObject jsonObject = new JSONObject(params);
 
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.PUT, url, jsonObject, response ->{
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.PUT, url, jsonObject, response -> {
             try {
                 String message = response.getString("message");
                 callbackMessage.onSuccess(message);
@@ -169,11 +191,22 @@ class MealUtils {
         VolleySingleton.getInstance(context).addToRequestQueue(jsonObjectRequest);
     }
 
+    /**
+     * Callback interface for handling success or error messages.
+     */
     interface callbackMessage {
         void onSuccess(String message);
+
         void onError(String message);
     }
 
+    /**
+     * Sends a DELETE request to the given URL.
+     *
+     * @param context  the context
+     * @param url      the URL to send the DELETE request to
+     * @param callback the callback to handle success or error response
+     */
     static void deleteRequest(Context context, String url, callbackMessage callback) {
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.DELETE, url, null, response -> {
             try {
@@ -196,6 +229,12 @@ class MealUtils {
         VolleySingleton.getInstance(context).addToRequestQueue(jsonObjectRequest);
     }
 
+    /**
+     * Handles error responses from Volley requests.
+     *
+     * @param error the VolleyError object
+     * @return the error message
+     */
     private static String errorResponse(VolleyError error) {
         int statusCode = error.networkResponse != null ? error.networkResponse.statusCode : -1;
         String errorMessage = "";
@@ -226,9 +265,5 @@ class MealUtils {
             }
         }
         return "Error Code: " + statusCode;
-
-
     }
-
-
 }

@@ -18,16 +18,72 @@ import com.example.CyTrack.Utilities.FocusUtils;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Activity for submitting meal information.
+ */
 public class MealSubmitActivity extends AppCompatActivity {
 
-    private EditText MealName, MealCalories, MealProtein, MealCarbs;
-    private ImageButton profileSettingsButton, notificationButton, MealsPageButton, LogPageButton, SubmitMeal;
+    /**
+     * EditText field for meal name input.
+     */
+    private EditText MealName;
 
+    /**
+     * EditText field for meal calories input.
+     */
+    private EditText MealCalories;
+
+    /**
+     * EditText field for meal protein input.
+     */
+    private EditText MealProtein;
+
+    /**
+     * EditText field for meal carbohydrates input.
+     */
+    private EditText MealCarbs;
+
+    /**
+     * ImageButton for profile settings.
+     */
+    private ImageButton profileSettingsButton;
+
+    /**
+     * ImageButton for notifications.
+     */
+    private ImageButton notificationButton;
+
+    /**
+     * ImageButton to navigate to Meals Page.
+     */
+    private ImageButton MealsPageButton;
+
+    /**
+     * ImageButton to navigate to Log Page.
+     */
+    private ImageButton LogPageButton;
+
+    /**
+     * ImageButton to submit the meal.
+     */
+    private ImageButton SubmitMeal;
+
+    /**
+     * Meal object to hold meal data.
+     */
     private Meal meal;
 
-    // TODO: Find proper URL to submit hashmap over
+    /**
+     * URL to submit meal data.
+     * TODO: Find proper URL to submit hashmap over
+     */
     private final String URL = "http://10.90.72.246:8080/meal";
 
+    /**
+     * Called when the activity is first created.
+     *
+     * @param savedInstanceState If the activity is being re-initialized after previously being shut down then this Bundle contains the data it most recently supplied in onSaveInstanceState(Bundle).
+     */
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
@@ -87,7 +143,14 @@ public class MealSubmitActivity extends AppCompatActivity {
 
     }
 
-    // MEAL SUBMISSION
+    /**
+     * Submits the meal data to the server.
+     *
+     * @param mealnm      The name of the meal.
+     * @param mealcals    The calories of the meal.
+     * @param mealprotein The protein content of the meal.
+     * @param mealcarbs   The carbohydrate content of the meal.
+     */
     private void mealsubmit(String mealnm, String mealcals, String mealprotein, String mealcarbs) {
         // TODO: Verify if input is done properly
         Integer cals = Integer.parseInt(mealcals);
@@ -107,13 +170,20 @@ public class MealSubmitActivity extends AppCompatActivity {
             public void onSuccess(String response) {
                 Toast.makeText(getApplicationContext(), "Submitting Meal", Toast.LENGTH_LONG).show();
             }
+
             @Override
             public void onError(String error) {
                 Toast.makeText(getApplicationContext(), error, Toast.LENGTH_LONG).show();
-            }});
+            }
+        });
 
     }
 
+    /**
+     * Fetches meal data from the server.
+     *
+     * @param url The URL to fetch the meal data from.
+     */
     private void fetchMealData(String url) {
         MealUtils.fetchMealData(this, url, new MealUtils.fetchMealDataCallback() {
             @Override
@@ -130,7 +200,10 @@ public class MealSubmitActivity extends AppCompatActivity {
         });
     }
 
-    private void clearHintOnFocus(){
+    /**
+     * Clears the hint text on focus for the meal input fields.
+     */
+    private void clearHintOnFocus() {
         FocusUtils.clearHintOnFocus(MealName, "Meal Name");
         FocusUtils.clearHintOnFocus(MealCalories, "Meal Calories");
         FocusUtils.clearHintOnFocus(MealProtein, "Meal Protein");
@@ -138,4 +211,3 @@ public class MealSubmitActivity extends AppCompatActivity {
     }
 
 }
-

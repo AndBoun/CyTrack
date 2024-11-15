@@ -17,13 +17,26 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Service to manage WebSocket connections.
+ * Allows multiple WebSocket connections identified by a unique key.
+ */
 public class WebSocketServiceUtil extends Service {
 
     // key to WebSocketClient obj mapping - for multiple WebSocket connections
     private final Map<String, WebSocketClient> webSockets = new HashMap<>();
 
-    public WebSocketServiceUtil() {}
+    public WebSocketServiceUtil() {
+    }
 
+    /**
+     * Handles the start command for the service.
+     *
+     * @param intent  The intent that started the service.
+     * @param flags   Additional data about the start request.
+     * @param startId A unique integer representing this specific request to start.
+     * @return The sticky mode for the service.
+     */
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent != null) {
@@ -34,10 +47,9 @@ public class WebSocketServiceUtil extends Service {
                 String url = intent.getStringExtra("url");      // eg, "ws://localhost:8080/chat/1/uname"
                 String key = intent.getStringExtra("key");
 
-
                 Log.d("WebSocketServiceUtil", "Connecting to WebSocket URL: " + url);
 
-               // eg, "chat1" - refer to MainActivity where this Intent was called
+                // eg, "chat1" - refer to MainActivity where this Intent was called
                 connectWebSocket(key, url);                           // Initialize WebSocket connection
             } else if ("DISCONNECT".equals(action)) {
                 String key = intent.getStringExtra("key");
@@ -47,16 +59,24 @@ public class WebSocketServiceUtil extends Service {
         return START_STICKY;
     }
 
+    /**
+     * Called when the service is created.
+     * Registers a BroadcastReceiver to listen for messages from Activities.
+     */
     @Override
-    public void onCreate() {    // Register BroadcastReceiver to listen for messages from Activities
+    public void onCreate() {
         super.onCreate();
         LocalBroadcastManager
                 .getInstance(this)
                 .registerReceiver(messageReceiver, new IntentFilter("SendWebSocketMessage"));
     }
 
+    /**
+     * Called when the service is destroyed.
+     * Closes all WebSocket connections to prevent memory leaks.
+     */
     @Override
-    public void onDestroy() {   // Close WebSocket connection to prevent memory leaks
+    public void onDestroy() {
         super.onDestroy();
         for (WebSocketClient client : webSockets.values()) {
             client.close();
@@ -69,9 +89,13 @@ public class WebSocketServiceUtil extends Service {
         return null;
     }
 
-    // Initialize WebSocket client and define callback for message reception
+    /**
+     * Initializes a WebSocket client and defines callbacks for message reception.
+     *
+     * @param key The unique key identifying the WebSocket connection.
+     * @param url The URL of the WebSocket server.
+     */
     private void connectWebSocket(String key, String url) {
-
         try {
             URI serverUri = URI.create(url);
             WebSocketClient webSocketClient = new WebSocketClient(serverUri) {
@@ -82,7 +106,6 @@ public class WebSocketServiceUtil extends Service {
 
                 @Override
                 public void onMessage(String message) {
-
                     // whenever a message is received for this WebSocketClient obj
                     // broadcast the message internally (within the app) with its corresponding key
                     // only the Activities who care about this message will act accordingly
@@ -111,8 +134,10 @@ public class WebSocketServiceUtil extends Service {
         }
     }
 
-    // Listen to the messages from Activities
-    // Send the message to its designated Websocket connection
+    /**
+     * BroadcastReceiver to listen to messages from Activities.
+     * Sends the message to its designated WebSocket connection.
+     */
     private BroadcastReceiver messageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -126,6 +151,11 @@ public class WebSocketServiceUtil extends Service {
         }
     };
 
+    /**
+     * Disconnects the WebSocket connection identified by the given key.
+     *
+     * @param key The unique key identifying the WebSocket connection.
+     */
     private void disconnectWebSocket(String key) {
         if (webSockets.containsKey(key))
             webSockets.get(key).close();

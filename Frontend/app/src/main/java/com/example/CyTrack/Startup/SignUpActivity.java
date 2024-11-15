@@ -25,16 +25,74 @@ import com.example.CyTrack.Utilities.UrlHolder;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Activity for user sign-up.
+ */
 public class SignUpActivity extends AppCompatActivity {
 
-//    private final String URL = "https://7e68d300-a3cb-4835-bf2f-66cab084d974.mock.pstmn.io/user";
+    /**
+     * URL for user sign-up endpoint.
+     */
     private final String URL = UrlHolder.URL + "/user";
-    private Button signUpButton, backButton;
-    private EditText usernameEditText, passwordEditText, passwordAgainEditText,
-            firstNameEditText, lastNameEditText, emailEditText, phoneEditText,
-            ageEditText;
 
+    /**
+     * Button for sign-up action.
+     */
+    private Button signUpButton;
+
+    /**
+     * Button to go back to the previous screen.
+     */
+    private Button backButton;
+
+    /**
+     * EditText for entering the username.
+     */
+    private EditText usernameEditText;
+
+    /**
+     * EditText for entering the password.
+     */
+    private EditText passwordEditText;
+
+    /**
+     * EditText for confirming the password.
+     */
+    private EditText passwordAgainEditText;
+
+    /**
+     * EditText for entering the first name.
+     */
+    private EditText firstNameEditText;
+
+    /**
+     * EditText for entering the last name.
+     */
+    private EditText lastNameEditText;
+
+    /**
+     * EditText for entering the email.
+     */
+    private EditText emailEditText;
+
+    /**
+     * EditText for entering the phone number.
+     */
+    private EditText phoneEditText;
+
+    /**
+     * EditText for entering the age.
+     */
+    private EditText ageEditText;
+
+    /**
+     * Selected gender of the user.
+     */
     private String gender;
+
+    /**
+     * Spinner for selecting the gender.
+     */
     private Spinner genderSpinner;
 
     @Override
@@ -74,8 +132,6 @@ public class SignUpActivity extends AppCompatActivity {
             }
         });
 
-
-
         signUpButton.setOnClickListener(v -> {
             String username = usernameEditText.getText().toString();
             String password = passwordEditText.getText().toString();
@@ -100,10 +156,19 @@ public class SignUpActivity extends AppCompatActivity {
             finish();
         });
 
-
         clearHintOnFocus();
     }
 
+    /**
+     * Sends sign-up data to the server.
+     *
+     * @param username  the username
+     * @param password  the password
+     * @param firstName the first name
+     * @param lastName  the last name
+     * @param age       the age
+     * @param gender    the gender
+     */
     private void signUpUser(String username, String password, String firstName, String lastName, String age, String gender) {
         Map<String, String> params = new HashMap<>();
         params.put("username", username);
@@ -119,31 +184,49 @@ public class SignUpActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "Signed Up", Toast.LENGTH_LONG).show();
                 navigateToLogin();
             }
+
             @Override
             public void onError(String error) {
                 Toast.makeText(getApplicationContext(), error, Toast.LENGTH_LONG).show();
-            }});
+            }
+        });
 
         Log.d("SignUpActivity", "Request added to queue");
     }
 
-    private void clearHintOnFocus(){
+    /**
+     * Clears hint text when EditText fields gain focus.
+     */
+    private void clearHintOnFocus() {
         FocusUtils.clearHintOnFocus(usernameEditText, "Username");
         FocusUtils.clearHintOnFocus(passwordEditText, "Password");
         FocusUtils.clearHintOnFocus(passwordAgainEditText, "Password Again");
     }
 
-    private void navigateToLogin(){
+    /**
+     * Navigates to the login activity.
+     */
+    private void navigateToLogin() {
         Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
         startActivity(intent);
         finish();
     }
 
+    /**
+     * Validates if the password and confirm password fields match.
+     *
+     * @return true if passwords match, false otherwise
+     */
     private boolean validatePassword() {
         return passwordEditText.getText().toString().equals(passwordAgainEditText.getText().toString());
     }
 
-    private boolean validateFields(){
+    /**
+     * Validates if all required fields are filled.
+     *
+     * @return true if all fields are filled, false otherwise
+     */
+    private boolean validateFields() {
         return !usernameEditText.getText().toString().isEmpty() &&
                 !passwordEditText.getText().toString().isEmpty() &&
                 !passwordAgainEditText.getText().toString().isEmpty() &&

@@ -10,6 +10,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.core.splashscreen.SplashScreen;
+
 import android.widget.Button;
 
 import android.widget.Toast;
@@ -25,19 +26,56 @@ import java.util.HashMap;
 import java.util.Map;
 
 
+/**
+ * LoginActivity handles the login process for the application.
+ */
 public class LoginActivity extends AppCompatActivity {
 
-    private EditText usernameEditText, passwordEditText;
-    private Button signUpButton, loginButton, forgotPasswordButton;
+    /**
+     * EditText field for the username input.
+     */
+    private EditText usernameEditText;
 
+    /**
+     * EditText field for the password input.
+     */
+    private EditText passwordEditText;
+
+    /**
+     * Button to navigate to the sign-up activity.
+     */
+    private Button signUpButton;
+
+    /**
+     * Button to initiate the login process.
+     */
+    private Button loginButton;
+
+    /**
+     * Button to navigate to the forgot password activity.
+     */
+    private Button forgotPasswordButton;
+
+    /**
+     * User object to store the logged-in user's information.
+     */
     private User user;
 
-//    private final String URL_LOGIN = "https://e8d89384-93d7-4dee-b704-f1103033e07d.mock.pstmn.io/user/login";
-//    private final String URL_GET_USER = "https://7e68d300-a3cb-4835-bf2f-66cab084d974.mock.pstmn.io/user";
-
+    /**
+     * URL for the login endpoint.
+     */
     private final String URL_LOGIN = UrlHolder.URL + "/user/login";
+
+    /**
+     * URL for fetching user data.
+     */
     private final String URL_GET_USER = UrlHolder.URL + "/user";
 
+    /**
+     * Called when the activity is first created.
+     *
+     * @param savedInstanceState If the activity is being re-initialized after previously being shut down then this Bundle contains the data it most recently supplied in onSaveInstanceState(Bundle).
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         SplashScreen splashScreen = SplashScreen.installSplashScreen(this);
@@ -55,7 +93,6 @@ public class LoginActivity extends AppCompatActivity {
         signUpButton = findViewById(R.id.signUp_button);
         loginButton = findViewById(R.id.login_button);
         forgotPasswordButton = findViewById(R.id.forgotPassword_button);
-
 
         loginButton.setOnClickListener(v -> {
             String username = usernameEditText.getText().toString();
@@ -79,9 +116,15 @@ public class LoginActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-       clearHintOnFocus();
+        clearHintOnFocus();
     }
 
+    /**
+     * Initiates the login process by sending the username and password to the server.
+     *
+     * @param username The username entered by the user.
+     * @param password The password entered by the user.
+     */
     private void login(String username, String password) {
         Map<String, String> params = new HashMap<>();
         params.put("username", username);
@@ -91,7 +134,6 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onSuccess(int id, String message) {
                 if (id != 0) fetchUserData(URL_GET_USER + "/" + id);
-
             }
 
             @Override
@@ -101,6 +143,11 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Fetches user data from the server using the provided URL.
+     *
+     * @param url The URL to fetch user data from.
+     */
     private void fetchUserData(String url) {
         NetworkUtils.fetchUserData(this, url, new NetworkUtils.fetchUserDataCallback() {
             @Override
@@ -117,14 +164,20 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    private void navigateToMainDashboard(){
+    /**
+     * Navigates to the main dashboard activity.
+     */
+    private void navigateToMainDashboard() {
         Intent intent = new Intent(LoginActivity.this, MainDashboardActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         intent.putExtra("user", user);
         startActivity(intent);
     }
 
-    private void clearHintOnFocus(){
+    /**
+     * Clears the hint text when the EditText fields gain focus.
+     */
+    private void clearHintOnFocus() {
         FocusUtils.clearHintOnFocus(usernameEditText, "Username");
         FocusUtils.clearHintOnFocus(passwordEditText, "Password");
     }

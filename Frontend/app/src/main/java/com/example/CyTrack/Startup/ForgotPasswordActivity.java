@@ -19,16 +19,46 @@ import com.example.CyTrack.Utilities.UrlHolder;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Activity for handling the forgot password functionality.
+ */
 public class ForgotPasswordActivity extends AppCompatActivity {
 
-
+    /**
+     * URL for resetting the password.
+     */
     private final String URL_RESET_PASSWORD = UrlHolder.URL + "/user/resetPassword";
 
-    private EditText usernameEditText, passwordEditText, passwordAgainEditText;
+    /**
+     * EditText fields for username.
+     */
+    private EditText usernameEditText;
 
-    private Button resetButton, backButton;
+    /**
+     * EditText fields for password.
+     */
+    private EditText passwordEditText;
 
+    /**
+     * EditText fields for password confirmation.
+     */
+    private EditText passwordAgainEditText;
 
+    /**
+     * Button for resetting the password.
+     */
+    private Button resetButton;
+
+    /**
+     * Button for going back.
+     */
+    private Button backButton;
+
+    /**
+     * Called when the activity is first created.
+     *
+     * @param savedInstanceState If the activity is being re-initialized after previously being shut down then this Bundle contains the data it most recently supplied in onSaveInstanceState(Bundle).
+     */
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
@@ -44,7 +74,6 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         passwordAgainEditText = findViewById(R.id.InputPasswordAgain);
         backButton = findViewById(R.id.backButton);
         resetButton = findViewById(R.id.resetButton);
-
 
         resetButton.setOnClickListener(v -> {
             String username = usernameEditText.getText().toString();
@@ -65,12 +94,16 @@ public class ForgotPasswordActivity extends AppCompatActivity {
 
         backButton.setOnClickListener(v -> finish());
 
-
         clearHintOnFocus();
     }
 
-
-    private void checkUsernameAndPassword(String username, String password) { //  username must already exist, password must not be the same as old password
+    /**
+     * Checks the username and password, and initiates the password reset process.
+     *
+     * @param username The username entered by the user.
+     * @param password The new password entered by the user.
+     */
+    private void checkUsernameAndPassword(String username, String password) {
         Map<String, String> params = new HashMap<>();
         params.put("username", username);
         params.put("password", password);
@@ -78,7 +111,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         NetworkUtils.postUserAndGetID(getApplicationContext(), URL_RESET_PASSWORD, params, new NetworkUtils.postUserAndGetIDCallback() {
             @Override
             public void onSuccess(int userID, String message) {
-                if (userID != 0) resetPassword(URL_RESET_PASSWORD +  "/" + userID, password);
+                if (userID != 0) resetPassword(URL_RESET_PASSWORD + "/" + userID, password);
             }
 
             @Override
@@ -88,6 +121,12 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Resets the password for the user.
+     *
+     * @param url      The URL for resetting the password.
+     * @param password The new password to be set.
+     */
     private void resetPassword(String url, String password) {
         Map<String, String> params = new HashMap<>();
         params.put("password", password);
@@ -99,6 +138,7 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "Password Reset", Toast.LENGTH_LONG).show();
                 switchToLogin();
             }
+
             @Override
             public void onError(String error) {
                 Toast.makeText(getApplicationContext(), error, Toast.LENGTH_LONG).show();
@@ -106,13 +146,19 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         });
     }
 
-    private void clearHintOnFocus(){
+    /**
+     * Clears the hint text when the EditText fields gain focus.
+     */
+    private void clearHintOnFocus() {
         FocusUtils.clearHintOnFocus(usernameEditText, "Username");
         FocusUtils.clearHintOnFocus(passwordEditText, "Password");
         FocusUtils.clearHintOnFocus(passwordAgainEditText, "Password Again");
     }
 
-    private void switchToLogin(){
+    /**
+     * Switches the activity to the login screen.
+     */
+    private void switchToLogin() {
         finish();
     }
 }

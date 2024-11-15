@@ -18,8 +18,14 @@ import org.json.JSONException
 import org.json.JSONObject
 import java.text.SimpleDateFormat
 
+/**
+ * Utility class for social-related functionalities.
+ */
 class SocialUtils {
 
+    /**
+     * Companion object to hold static methods.
+     */
     companion object {
 
         /**
@@ -189,6 +195,13 @@ class SocialUtils {
         }
 
 
+        /**
+         * Fetches a list of conversations from the server and updates the provided cardList.
+         *
+         * @param context The activity context.
+         * @param url The URL to fetch the conversations from.
+         * @param cardList The list to be updated with conversations.
+         */
         fun getConversations(
             context: Activity,
             url: String,
@@ -230,6 +243,12 @@ class SocialUtils {
             VolleySingleton.getInstance(context).addToRequestQueue(jsonObjectRequest)
         }
 
+        /**
+         * Processes a JSON message string and updates the provided cardList with MessageCardData objects.
+         *
+         * @param msg The JSON message string to be processed.
+         * @param cardList The list to be updated with MessageCardData objects.
+         */
         fun processMessageCardData(msg: String, cardList: MutableList<MessageCardData>) {
             try {
                 cardList.clear()

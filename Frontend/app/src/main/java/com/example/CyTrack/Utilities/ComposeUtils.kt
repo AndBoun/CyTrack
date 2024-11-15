@@ -13,6 +13,9 @@ import com.example.CyTrack.R
  */
 class ComposeUtils {
 
+    /**
+     * Companion object to hold static methods and properties.
+     */
     companion object {
         /**
          * Returns a custom FontFamily using Google Fonts.

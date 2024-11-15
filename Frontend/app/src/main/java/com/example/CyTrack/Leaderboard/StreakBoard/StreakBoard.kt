@@ -65,76 +65,112 @@ import com.example.compose.AppTheme
 import org.java_websocket.handshake.ServerHandshake
 
 // Animation Imports End
+
+/**
+ * The current user of the application.
+ */
 private lateinit var user: User // Current User
 
+/**
+ * A mutable list to store the streak board users.
+ */
 private var StreakBoard: MutableList<User> = mutableListOf()
-//private val URL = UrlHolder.URL
-private val URL = UrlHolder.wsURL
-//private val URL = "${UrlHolder.wsURL}/leaderboard/2"
 
-class StreakBoardActivity : ComponentActivity(), WebSocketListener
-{
+/**
+ * The URL for the WebSocket connection.
+ */
+private val URL = UrlHolder.wsURL
+
+/**
+ * Activity to display the streak board and handle WebSocket connections.
+ */
+class StreakBoardActivity : ComponentActivity(), WebSocketListener {
+    /**
+     * Called when the activity is starting. This is where most initialization should go.
+     *
+     * @param savedInstanceState If the activity is being re-initialized after previously being shut down then this Bundle contains the data it most recently supplied in onSaveInstanceState(Bundle).
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             user = intent.getSerializableExtra("user") as User
             StreakBoard = remember { mutableStateListOf() }
 
-            //LeaderboardUtils.getListOfUsers(this, leaderboard, "${URL}/user", "users")
-            // WEBSOCKET SECTION
+            // Connect to WebSocket
             Log.d("WebSocketServiceUtil", "Connecting to ${URL}/leaderboard/${user.id}")
-            WebSocketManagerLeaderboard.getInstance().connectWebSocket("${URL}/leaderboard/${user.id}");
-            WebSocketManagerLeaderboard.getInstance().setWebSocketListener(this@StreakBoardActivity);
+            WebSocketManagerLeaderboard.getInstance()
+                .connectWebSocket("${URL}/leaderboard/${user.id}")
+            WebSocketManagerLeaderboard.getInstance()
+                .setWebSocketListener(this@StreakBoardActivity)
             Log.d("List", "${StreakBoard}")
-            // End WebSocket Section
 
-            AppTheme { // Wraps our app in our custom theme
+            // Set the content view with the custom theme
+            AppTheme {
                 Surface(modifier = Modifier.fillMaxSize()) {
-                    LeaderboardScreen(StreakBoard) // LeaderBoardData.UserSample
+                    LeaderboardScreen(StreakBoard)
                 }
             }
-
         }
-
     }
 
-    // WEBSOCKET SECTION
+    /**
+     * Updates the leaderboard with the given entry.
+     *
+     * @param entry The new leaderboard entry as a JSON string.
+     */
     private fun updateLeaderboard(entry: String) {
         try {
             Log.d("Task", "Starting Update")
             Log.d("Import", "${entry}")
             LeaderboardUtils.getListOfUsers(entry, StreakBoard)
             Log.d("List", "${StreakBoard}")
-
         } catch (e: Exception) {
             Log.d("ExceptionSendMessage:", e.message.toString())
             Toast.makeText(this, "Failed to Update", Toast.LENGTH_SHORT).show()
         }
     }
 
+    /**
+     * Called when the WebSocket connection is opened.
+     *
+     * @param handshakedata The handshake data.
+     */
     override fun onWebSocketOpen(handshakedata: ServerHandshake) {}
 
-    // Updates the Leaderboard as it's changed
+    /**
+     * Called when a message is received from the WebSocket.
+     *
+     * @param leaderboardupdate The new leaderboard data as a JSON string.
+     */
     override fun onWebSocketMessage(leaderboardupdate: String) {
-        runOnUiThread{
-            Log.d("Message Success","Update Recieved")
+        runOnUiThread {
+            Log.d("Message Success", "Update Recieved")
             try {
                 updateLeaderboard(leaderboardupdate)
-
             } catch (e: Exception) {
                 Log.d("Exception", e.message.toString())
             }
         }
     }
 
+    /**
+     * Called when the WebSocket connection is closed.
+     *
+     * @param code The closure code.
+     * @param reason The reason for closure.
+     * @param remote Whether the closure was initiated by the remote peer.
+     */
     override fun onWebSocketClose(code: Int, reason: String?, remote: Boolean) {
         val closedBy = if (remote) "Server" else "Client"
         Toast.makeText(this, "Connection closed by $closedBy", Toast.LENGTH_SHORT).show()
     }
 
-    override fun onWebSocketError(ex: Exception?) {
-    }
-    // WEBSOCKET SECTION END
+    /**
+     * Called when an error occurs on the WebSocket.
+     *
+     * @param ex The exception that occurred.
+     */
+    override fun onWebSocketError(ex: Exception?) {}
 }
 
 /**
@@ -142,7 +178,9 @@ class StreakBoardActivity : ComponentActivity(), WebSocketListener
  *
  * @param name The name of the user.
  * @param username The username of the user.
- * @param img The URL or resource identifier for the user\`s image.
+ * @param streak The streak of the user.
+ * @param img The URL or resource identifier for the user's image.
+ * @param modifier The modifier to be applied to the layout.
  */
 @Composable
 fun LBProfileCard(
@@ -157,7 +195,8 @@ fun LBProfileCard(
         color = Color.White,
         shape = RoundedCornerShape(10.dp),
         border = BorderStroke(1.dp, Color.Black),
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier
+            .fillMaxWidth()
             .clickable(onClick = { /*TODO*/ })
 //            .padding(horizontal = 32.dp)
     ) {
@@ -203,7 +242,16 @@ fun LBProfileCard(
     }
 }
 
-// <!-- Adding Images END --!>
+/**
+ * Composable function to display a profile card with a message click action.
+ *
+ * @param name The name of the user.
+ * @param username The username of the user.
+ * @param streak The streak of the user.
+ * @param img The URL or resource identifier for the user's image.
+ * @param onMessageClick The action to perform when the message is clicked.
+ * @param modifier The modifier to be applied to the layout.
+ */
 @Composable
 fun ProfileCard(
     name: String,
@@ -222,7 +270,14 @@ fun ProfileCard(
 
     }
 }
-// <!-- LazyColumn Lists --!>
+
+/**
+ * Composable function to display a list of users in a LazyColumn.
+ *
+ * @param userlist The list of users to display.
+ * @param onMessageClick The action to perform when a user is clicked.
+ * @param modifier The modifier to be applied to the layout.
+ */
 @Composable
 fun LBHierarchy(
     userlist: MutableList<User>,
@@ -233,7 +288,7 @@ fun LBHierarchy(
         modifier = Modifier
             .fillMaxHeight()
             .padding(horizontal = 32.dp)
-    ){
+    ) {
 //            items(userSorted) { user -> // the items() child takes a list as a param
 //                ProfileCard(user.firstName, user.username, user.streak.toString(), "temp",{
 //                    onMessageClick(user)
@@ -241,7 +296,7 @@ fun LBHierarchy(
 //                Spacer(modifier = Modifier.height(10.dp))
 //            }
         items(userlist) { user -> // the items() child takes a list as a param
-            ProfileCard(user.username, user.id.toString(), user.streak.toString(), "temp",{
+            ProfileCard(user.username, user.id.toString(), user.streak.toString(), "temp", {
                 onMessageClick(user)
             })  // Our message is then linked into our card and created
             Spacer(modifier = Modifier.height(10.dp))
@@ -249,7 +304,12 @@ fun LBHierarchy(
     }
 }
 
-// <!-- Top Card --!>
+/**
+ * Composable function to display the top card of the leaderboard.
+ *
+ * @param modifier The modifier to be applied to the layout.
+ * @param onClickMyProfile The action to perform when the profile button is clicked.
+ */
 @Composable
 fun LBTopCard(
     modifier: Modifier = Modifier,
@@ -267,7 +327,8 @@ fun LBTopCard(
         Row(
             verticalAlignment = Alignment.Bottom,
             horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
                 .offset(y = (-10).dp)
         ) {
 
@@ -302,6 +363,12 @@ fun LBTopCard(
     }
 }
 
+/**
+ * Composable function to display the leaderboard screen.
+ *
+ * @param UserList The list of users to display on the leaderboard.
+ * @param modifier The modifier to be applied to the layout.
+ */
 @Composable
 fun LeaderboardScreen(
     UserList: MutableList<User>,
@@ -314,6 +381,9 @@ fun LeaderboardScreen(
     }
 }
 
+/**
+ * @suppress
+ */
 @Preview
 @Composable
 fun LBLazyListPreview() {
@@ -323,6 +393,9 @@ fun LBLazyListPreview() {
     }
 }
 
+/**
+ * @suppress
+ */
 @Preview
 @Composable
 fun PreviewConversation() {
@@ -331,6 +404,9 @@ fun PreviewConversation() {
     }
 }
 
+/**
+ * @suppress
+ */
 @Preview
 @Composable
 fun LBTopCardPreview() {

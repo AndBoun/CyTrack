@@ -13,9 +13,21 @@ import com.example.CyTrack.Utilities.User
 import com.example.CyTrack.Utilities.VolleySingleton
 import org.json.JSONArray
 
-class LeaderboardUtils(){
+/**
+ * Utility class for handling leaderboard-related operations.
+ */
+class LeaderboardUtils() {
 
+    /**
+     * Companion object to hold static methods and properties for LeaderboardUtils.
+     */
     companion object {
+        /**
+         * Parses a JSON string to extract user information and populate the provided user list.
+         *
+         * @param msg The JSON string containing user data.
+         * @param userList The list to be populated with User objects.
+         */
         @JvmStatic
         fun getListOfUsers(
             msg: String,
@@ -40,9 +52,8 @@ class LeaderboardUtils(){
                         )
                         userList.sortBy { it.streak }
                         Log.d("Tag", "${userList}")
-                        Log.d("Tag","${user.getString("firstName")}");
-                    }
-                    catch (e: Exception) {
+                        Log.d("Tag", "${user.getString("firstName")}");
+                    } catch (e: Exception) {
                         e.printStackTrace()
                     }
                 }
