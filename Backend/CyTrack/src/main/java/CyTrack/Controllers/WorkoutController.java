@@ -233,7 +233,7 @@ public class WorkoutController {
                 WorkoutSummaryResponse response = new WorkoutSummaryResponse("success", totalCalories, totalWorkoutTime, date, "Total calories burned for " + date);
                 return ResponseEntity.ok(response);
             } catch (DateTimeParseException e) {
-                return ResponseEntity.badRequest().body(new ErrorResponse("error", 400, "Invalid date format", "Please use MM-DD-YYYY format for the date"));
+                return ResponseEntity.badRequest().body(new ErrorResponse("error", 400, "Invalid date format", "Please use MM-DD-YYYY format for the date."));
             }
         } else {
             return ResponseEntity.status(404).body(new ErrorResponse("error", 404, "User not found", "User not found"));
