@@ -11,10 +11,52 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.CyTrack.Dashboard.MainDashboardActivity;
 import com.example.CyTrack.R;
 
+/**
+ * Main activity for meal tracking.
+ */
 public class MealTrackingMain extends AppCompatActivity {
 
-    private ImageButton profileSettingsButton, notificationButton, backbutton, MealsPageButton, LogPageButton, CreateMealButton, AddMealButton;
 
+    /**
+     * ImageButton for profile settings.
+     */
+    private ImageButton profileSettingsButton;
+
+    /**
+     * ImageButton for notifications.
+     */
+    private ImageButton notificationButton;
+
+    /**
+     * ImageButton for navigating back.
+     */
+    private ImageButton backbutton;
+
+    /**
+     * ImageButton for navigating to the Meals Page.
+     */
+    private ImageButton MealsPageButton;
+
+    /**
+     * ImageButton for navigating to the Log Page.
+     */
+    private ImageButton LogPageButton;
+
+    /**
+     * ImageButton for creating a new meal.
+     */
+    private ImageButton CreateMealButton;
+
+    /**
+     * ImageButton for adding a meal.
+     */
+    private ImageButton AddMealButton;
+
+    /**
+     * Called when the activity is first created.
+     *
+     * @param savedInstanceState If the activity is being re-initialized after previously being shut down then this Bundle contains the data it most recently supplied in onSaveInstanceState(Bundle).
+     */
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
@@ -26,7 +68,7 @@ public class MealTrackingMain extends AppCompatActivity {
         notificationButton = findViewById(R.id.notificationButton);
         backbutton = findViewById(R.id.backbutton);
 
-        // Button Input Listeners
+        // Set click listeners for top buttons
         profileSettingsButton.setOnClickListener(v -> {
             // Open Profile Settings Activity
         });
@@ -44,13 +86,12 @@ public class MealTrackingMain extends AppCompatActivity {
         CreateMealButton = findViewById(R.id.CreateMealButton);
         AddMealButton = findViewById(R.id.AddMealButton);
 
-        // Button Input Listeners
+        // Set click listeners for left main function buttons
         CreateMealButton.setOnClickListener(v -> {
             //TODO: Display Pop-Up Window
             //TODO: Submit User Data
             Intent Navigate = new Intent(MealTrackingMain.this, MealSubmitActivity.class);
             startActivity(Navigate);
-
         });
 
         AddMealButton.setOnClickListener(v -> {
@@ -61,11 +102,10 @@ public class MealTrackingMain extends AppCompatActivity {
         MealsPageButton = findViewById(R.id.MealsPageButton);
         LogPageButton = findViewById(R.id.LogPageButton);
 
-        // Button Input Listeners
+        // Set click listeners for right main function buttons
         MealsPageButton.setOnClickListener(v -> {
             //TODO: Send to MealPage
             // UNNEEDED
-
         });
 
         LogPageButton.setOnClickListener(v -> {
@@ -73,8 +113,6 @@ public class MealTrackingMain extends AppCompatActivity {
             Intent Navigate = new Intent(MealTrackingMain.this, MealLogActivity.class);
             startActivity(Navigate);
         });
-
-
 
         // Handle back press
         OnBackPressedCallback callback = new OnBackPressedCallback(true) {
@@ -85,5 +123,4 @@ public class MealTrackingMain extends AppCompatActivity {
         };
         getOnBackPressedDispatcher().addCallback(this, callback);
     }
-
 }

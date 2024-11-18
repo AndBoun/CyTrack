@@ -67,6 +67,9 @@ import org.java_websocket.handshake.ServerHandshake
 import kotlin.math.log
 
 
+/**
+ * Activity for handling direct messages between users.
+ */
 class DirectMessage : ComponentActivity(), WebSocketListener {
 
     /**
@@ -79,10 +82,20 @@ class DirectMessage : ComponentActivity(), WebSocketListener {
      */
     private lateinit var recipientUser: Friend
 
+    /**
+     * The key for the conversation.
+     */
     private lateinit var conversationKey: String
 
+    /**
+     * List of messages in the conversation.
+     */
     private var messageList: MutableList<Msg> = mutableListOf()
 
+    /**
+     * Called when the activity is starting.
+     * @param savedInstanceState If the activity is being re-initialized after previously being shut down then this Bundle contains the data it most recently supplied in onSaveInstanceState(Bundle).
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -92,12 +105,10 @@ class DirectMessage : ComponentActivity(), WebSocketListener {
             recipientUser = intent.getSerializableExtra("recipientUser") as Friend
             conversationKey = "${user.id}_DM_${recipientUser.userID}"
 
-
             val serverUrl = "${UrlHolder.wsURL}/chat/${user.id}/${recipientUser.userID}"
             Log.d("WebSocketServiceUtil", "Connecting to $serverUrl")
-            WebSocketManagerMessages.getInstance().connectWebSocket(serverUrl);
-            WebSocketManagerMessages.getInstance().setWebSocketListener(this@DirectMessage);
-
+            WebSocketManagerMessages.getInstance().connectWebSocket(serverUrl)
+            WebSocketManagerMessages.getInstance().setWebSocketListener(this@DirectMessage)
 
             Box(
                 modifier = Modifier.fillMaxSize()
@@ -128,15 +139,23 @@ class DirectMessage : ComponentActivity(), WebSocketListener {
             }
 
             StatusBarUtil.setStatusBarColor(this, R.color.CyRed)
-
         }
     }
 
+    /**
+     * Data class representing a message.
+     * @param message The content of the message.
+     * @param senderID The ID of the sender.
+     */
     data class Msg(
         val message: String,
         val senderID: Int
     )
 
+    /**
+     * Sends a message.
+     * @param message The content of the message to be sent.
+     */
     private fun sendMessage(message: String) {
         if (message.isBlank()) return
         try {
@@ -148,9 +167,16 @@ class DirectMessage : ComponentActivity(), WebSocketListener {
         }
     }
 
-
+    /**
+     * Called when the WebSocket connection is opened.
+     * @param handshakedata The handshake data.
+     */
     override fun onWebSocketOpen(handshakedata: ServerHandshake) {}
 
+    /**
+     * Called when a message is received from the WebSocket.
+     * @param message The message received.
+     */
     override fun onWebSocketMessage(message: String) {
         runOnUiThread(Runnable {
             Log.d("MessageReceived", message)
@@ -162,7 +188,12 @@ class DirectMessage : ComponentActivity(), WebSocketListener {
                         recipientUser.username.length + 1
                     ) == "${recipientUser.username}:"
                 ) {
-                    messageList.add(Msg(message.substring(recipientUser.username.length + 1).trim(), recipientUser.userID))
+                    messageList.add(
+                        Msg(
+                            message.substring(recipientUser.username.length + 1).trim(),
+                            recipientUser.userID
+                        )
+                    )
                 } else {
                     // Handle message received
                     val tempMsg = SocialUtils.processMessage(message)
@@ -174,7 +205,12 @@ class DirectMessage : ComponentActivity(), WebSocketListener {
         })
     }
 
-
+    /**
+     * Called when the WebSocket connection is closed.
+     * @param code The close code.
+     * @param reason The reason for the closure.
+     * @param remote Whether the closure was initiated by the remote peer.
+     */
     override fun onWebSocketClose(code: Int, reason: String?, remote: Boolean) {
         runOnUiThread(Runnable {
             val closedBy = if (remote) "Server" else "Client"
@@ -182,11 +218,20 @@ class DirectMessage : ComponentActivity(), WebSocketListener {
         })
     }
 
+    /**
+     * Called when an error occurs on the WebSocket.
+     * @param ex The exception that occurred.
+     */
     override fun onWebSocketError(ex: Exception?) {
     }
-
 }
 
+/**
+ * Composable function for the input message bar.
+ * @param messageList The list of messages.
+ * @param modifier The modifier to be applied to the layout.
+ * @param onClickSend The callback to be invoked when the send button is clicked.
+ */
 @Composable
 fun InputMessageBar(
     messageList: MutableList<DirectMessage.Msg>,
@@ -204,8 +249,7 @@ fun InputMessageBar(
                     onClickSend(message)
                     message = ""
                 },
-
-                ) {
+            ) {
                 Icon(
                     imageVector = Icons.Default.Send,
                     contentDescription = null,
@@ -225,12 +269,16 @@ fun InputMessageBar(
     )
 }
 
+/**
+ * Composable function for displaying a conversation message card.
+ * @param msg The message to be displayed.
+ * @param modifier The modifier to be applied to the layout.
+ */
 @Composable
 fun ConversationMessageCard(
     msg: String,
     modifier: Modifier = Modifier
 ) {
-
     // Get the screen width
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp.dp
@@ -252,22 +300,18 @@ fun ConversationMessageCard(
     }
 }
 
-//@Composable
-//fun ConversationLazyList(
-//    msg: List<String>,
-//    modifier: Modifier = Modifier
-//){
-//    LazyColumn { items(msg) { msg -> ConversationMessageCard(msg) } }
-//}
-
+/**
+ * Composable function for displaying a list of conversation messages.
+ * @param msg The list of messages.
+ * @param modifier The modifier to be applied to the layout.
+ * @param messageAlignment A lambda function to determine the alignment of the message.
+ */
 @Composable
 fun ConversationLazyList(
     msg: List<DirectMessage.Msg>,
     modifier: Modifier = Modifier,
     messageAlignment: (DirectMessage.Msg) -> Boolean = { false }
 ) {
-
-
     LazyColumn(
         modifier = Modifier.padding(bottom = 100.dp)
     ) {
@@ -276,7 +320,7 @@ fun ConversationLazyList(
                 modifier = Modifier
                     .fillMaxWidth()
             ) {
-                if (messageAlignment(message)) { // TODO : Check if message is sent by the user
+                if (messageAlignment(message)) { // Check if message is sent by the user
                     ConversationMessageCard(
                         msg = message.message,
                         modifier = Modifier.align(Alignment.TopStart)
@@ -292,6 +336,13 @@ fun ConversationLazyList(
     }
 }
 
+/**
+ * Composable function for displaying the top card of the direct message screen.
+ * @param name The name of the recipient.
+ * @param username The username of the recipient.
+ * @param img The image resource for the recipient's avatar.
+ * @param modifier The modifier to be applied to the layout.
+ */
 @Composable
 fun DirectMessageTopCard(
     name: String,
@@ -306,9 +357,7 @@ fun DirectMessageTopCard(
         modifier = Modifier
             .fillMaxWidth()
             .padding(bottom = 20.dp)
-
-    )
-    {
+    ) {
         Row(
             verticalAlignment = CenterVertically,
             modifier = Modifier
@@ -360,6 +409,12 @@ fun DirectMessageTopCard(
     }
 }
 
+/**
+ * Composable function for displaying the direct message screen.
+ * @param user The user whose profile is being displayed.
+ * @param messageList The list of messages in the conversation.
+ * @param modifier The modifier to be applied to the layout.
+ */
 @Composable
 fun DirectMessageScreen(
     user: User,
@@ -381,39 +436,39 @@ fun DirectMessageScreen(
 
                 ConversationLazyList(messageList)
             }
-
-//            InputMessageBar(
-//                messageList = remember { mutableStateListOf<String>() },
-//                modifier = Modifier.align(Alignment.BottomCenter)
-//            )
         }
     }
 }
 
+/**
+ * @suppress
+ */
 @Preview
 @Composable
 fun InputMessageBarPreview() {
-//    InputMessageBar(mutableListOf("Hello, World!"))
 }
 
-//@Preview
+/**
+ * @suppress
+ */
+@Preview
 @Composable
 fun ConversationMessageCardPreview() {
     ConversationMessageCard("Hello, World!")
 }
 
-//@Preview
-@Composable
-fun PreviewConversationLazyList() {
-//    ConversationLazyList(listOf("Hello, World!", "This is a test message", "This is another test message"))
-}
-
+/**
+ * @suppress
+ */
 @Preview
 @Composable
 fun DirectMessageTopCardPreview() {
     DirectMessageTopCard("John Doe", "johndoe", "generic_avatar")
 }
 
+/**
+ * @suppress
+ */
 @Preview
 @Composable
 fun PreviewMessageScreen() {
@@ -451,7 +506,6 @@ fun PreviewMessageScreen() {
                 ConversationLazyList(messageList, messageAlignment = {
                     it.senderID != 1
                 })
-
             }
 
             InputMessageBar(
@@ -462,8 +516,6 @@ fun PreviewMessageScreen() {
                 onClickSend = {
                 }
             )
-
-
         }
     }
 }

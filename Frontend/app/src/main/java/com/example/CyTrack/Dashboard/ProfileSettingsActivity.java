@@ -18,18 +18,46 @@ import com.example.CyTrack.Utilities.UrlHolder;
 import com.example.CyTrack.Utilities.User;
 import com.example.CyTrack.Utilities.NetworkUtils;
 
+/**
+ * Activity for managing profile settings.
+ */
 public class ProfileSettingsActivity extends AppCompatActivity {
 
+    /**
+     * TextView for displaying the user's name.
+     */
     private TextView nameTextView;
 
-    private ImageButton deleteButton, backButton, logOutButton;
+    /**
+     * ImageButton for deleting the user account.
+     */
+    private ImageButton deleteButton;
 
+    /**
+     * ImageButton for navigating back.
+     */
+    private ImageButton backButton;
+
+    /**
+     * ImageButton for logging out.
+     */
+    private ImageButton logOutButton;
+
+    /**
+     * User object representing the current user.
+     */
     private User user;
 
-
+    /**
+     * URL for deleting the user account.
+     */
     private final String DELETE_URL = UrlHolder.URL + "/user";
 
-
+    /**
+     * Called when the activity is first created.
+     *
+     * @param savedInstanceState If the activity is being re-initialized after previously being shut down then this Bundle contains the data it most recently supplied in onSaveInstanceState(Bundle).
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,12 +91,18 @@ public class ProfileSettingsActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Switches to the LoginActivity.
+     */
     private void switchToLoginActivity() {
         Intent intent = new Intent(this, LoginActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }
 
+    /**
+     * Deletes the user account and handles the response.
+     */
     private void deleteUser() {
         NetworkUtils.deleteRequest(getApplicationContext(), DELETE_URL + "/" + user.getID(), new NetworkUtils.callbackMessage() {
             @Override

@@ -22,13 +22,63 @@ import com.example.CyTrack.Utilities.StatusBarUtil;
 import com.example.CyTrack.Workouts.MyWorkouts;
 import com.example.CyTrack.Workouts.WorkoutActivity;
 
+/**
+ * MainDashboardActivity is the main screen of the application where users can navigate
+ * to different sections such as Profile Settings, Notifications, Meal Tracking, Workout Tracking,
+ * Exercise Tracking, and Leaderboard.
+ */
 public class MainDashboardActivity extends AppCompatActivity {
 
-    private ImageButton profileSettingsButton, notificationButton, mealTrackingButton, workOutTrackingButton, exerciseTrackingButton, leaderboardButton;
-    private TextView userNameTextView, userStreakTextView;
+    /**
+     * ImageButton for navigating to Profile Settings
+     */
+    private ImageButton profileSettingsButton;
 
+    /**
+     * ImageButton for opening Notifications
+     */
+    private ImageButton notificationButton;
+
+    /**
+     * ImageButton for navigating to Meal Tracking
+     */
+    private ImageButton mealTrackingButton;
+
+    /**
+     * ImageButton for navigating to Workout Tracking
+     */
+    private ImageButton workOutTrackingButton;
+
+    /**
+     * ImageButton for navigating to Exercise Tracking
+     */
+    private ImageButton exerciseTrackingButton;
+
+    /**
+     * ImageButton for navigating to Leaderboard
+     */
+    private ImageButton leaderboardButton;
+
+    /**
+     * TextView to display the user's name
+     */
+    private TextView userNameTextView;
+
+    /**
+     * TextView to display the user's streak
+     */
+    private TextView userStreakTextView;
+
+    /**
+     * User object to hold the current user's data
+     */
     private User user;
 
+    /**
+     * Called when the activity is first created.
+     *
+     * @param savedInstanceState If the activity is being re-initialized after previously being shut down then this Bundle contains the data it most recently supplied in onSaveInstanceState(Bundle).
+     */
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
@@ -56,7 +106,6 @@ public class MainDashboardActivity extends AppCompatActivity {
         userNameTextView.setText("Hi, " + user.getFirstName());
         userStreakTextView.setText("Streak: " + user.getStreak());
 
-
         profileSettingsButton.setOnClickListener(v -> {
             // Open Profile Settings Activity
             Intent intent = new Intent(this, ProfileSettingsActivity.class);
@@ -76,7 +125,6 @@ public class MainDashboardActivity extends AppCompatActivity {
 
         workOutTrackingButton.setOnClickListener(v -> {
             // Open Workout Tracking Activity
-//            Intent intent = new Intent(this, WorkoutActivity.class);
             Intent intent = new Intent(this, MyWorkouts.class);
             intent.putExtra("user", user);
             startActivity(intent);
@@ -88,8 +136,6 @@ public class MainDashboardActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-
-
         Button myProfileButton = findViewById(R.id.myProfileButton);
         myProfileButton.setOnClickListener(v -> {
             // Open My Profile Activity
@@ -97,7 +143,6 @@ public class MainDashboardActivity extends AppCompatActivity {
             intent.putExtra("user", user);
             startActivity(intent);
         });
-
 
         // Handle back press
         OnBackPressedCallback callback = new OnBackPressedCallback(true) {

@@ -3,12 +3,21 @@ import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.dokka.Platform
 import org.jetbrains.dokka.gradle.DokkaTaskPartial
 import java.net.URL
+import org.jetbrains.dokka.base.DokkaBase
+import org.jetbrains.dokka.base.DokkaBaseConfiguration
+
 
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     id("org.jetbrains.dokka") version "1.9.20"
+}
+
+buildscript {
+    dependencies {
+        classpath("org.jetbrains.dokka:dokka-base:1.9.20")
+    }
 }
 
 
@@ -106,12 +115,26 @@ androidComponents {
 }
 
 tasks.withType<DokkaTask>().configureEach {
+
+    pluginConfiguration<DokkaBase, DokkaBaseConfiguration> {
+//        customAssets = listOf(file("my-image.png"))
+//        customStyleSheets = listOf(file("my-styles.css"))
+        footerMessage = "(c) 2024 CyTrack"
+        separateInheritedMembers = false
+//        templatesDir = file("dokka/templates")
+        mergeImplicitExpectActualDeclarations = false
+    }
+
     outputDirectory.set(layout.buildDirectory.dir("documentation/html"))
     dokkaSourceSets {
 
         named("main") {
             sourceRoots.from(file("src/main/java"))
             sourceRoots.from(file("src/main/kotlin"))
+            perPackageOption {
+                matchingRegex.set("com.example.compose.*")
+                suppress.set(true)
+            }
         }
         configureEach {
             // Exclude inherited members

@@ -55,18 +55,40 @@ import com.example.CyTrack.Utilities.UrlHolder
 import com.example.CyTrack.Utilities.User
 
 
+/**
+ * Activity class for displaying the user's workouts.
+ */
 class MyWorkouts : ComponentActivity() {
 
+    /**
+     * The user object representing the current user.
+     */
     private lateinit var user: User
 
+    /**
+     * A mutable list of workout objects.
+     */
     private var workoutList = mutableStateListOf<WorkoutObject>()
 
+    /**
+     * The base URL for workout-related API calls.
+     */
     private val URL = "${UrlHolder.URL}/workout"
 
+    /**
+     * The total calories burned, stored as a mutable state.
+     */
     private var caloriesBurned = mutableIntStateOf(0)
 
+    /**
+     * The total workout time, stored as a mutable state.
+     */
     private var workoutTime = mutableIntStateOf(0)
 
+    /**
+     * Called when the activity is starting. This is where most initialization should go.
+     * @param savedInstanceState If the activity is being re-initialized after previously being shut down then this Bundle contains the data it most recently supplied.
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -137,11 +159,18 @@ class MyWorkouts : ComponentActivity() {
         }
     }
 
+    /**
+     * Returns the current date as a string in the format MM-dd-yyyy.
+     * @return The current date as a string.
+     */
     private fun getDateAsString(): String {
         val dateFormat = java.text.SimpleDateFormat("MM-dd-yyyy", java.util.Locale.getDefault())
         return dateFormat.format(java.util.Date())
     }
 
+    /**
+     * Fetches the total calories burned for the current date and updates the state.
+     */
     private fun getDailyCaloriesBurned() {
         val getURL = "${URL}/${user.id}/totalCalories/${getDateAsString()}"
 //        var calories = 0
@@ -153,7 +182,9 @@ class MyWorkouts : ComponentActivity() {
 
     }
 
-
+    /**
+     * Fetches the total workout time for the current date and updates the state.
+     */
     private fun getDailyWorkoutTime() {
         val getURL = "${URL}/${user.id}/totalWorkoutTime/${getDateAsString()}"
 
@@ -163,6 +194,9 @@ class MyWorkouts : ComponentActivity() {
 
     }
 
+    /**
+     * Switches to the Add Workouts activity.
+     */
     private fun switchToAddWorkouts() {
         val intent = Intent(this, WorkoutActivity::class.java).apply {
             putExtra("user", user)
@@ -170,6 +204,9 @@ class MyWorkouts : ComponentActivity() {
         startActivity(intent)
     }
 
+    /**
+     * Switches to the Start Workouts activity.
+     */
     private fun switchToStartWorkouts() {
         val intent = Intent(this, StartWorkout::class.java).apply {
             putExtra("user", user)
@@ -177,9 +214,11 @@ class MyWorkouts : ComponentActivity() {
         startActivity(intent)
     }
 
-
 }
 
+/**
+ * Composable function that displays the top card of the My Workouts screen.
+ */
 @Composable
 fun MyWorkoutsTopCard() {
     val context = LocalContext.current
@@ -215,12 +254,20 @@ fun MyWorkoutsTopCard() {
     }
 }
 
+/**
+ * @suppress
+ */
 @Preview
 @Composable
 fun PreviewMyWorkoutsTopCard() {
     MyWorkoutsTopCard()
 }
 
+/**
+ * Composable function that displays a button to add a workout.
+ * @param onClick The action to perform when the button is clicked.
+ * @param modifier The modifier to be applied to the button.
+ */
 @Composable
 fun AddWorkOutButton(
     onClick: () -> Unit = {},
@@ -264,7 +311,9 @@ fun AddWorkOutButton(
     }
 }
 
-
+/**
+ * @suppress
+ */
 @Preview
 @Composable
 fun PreviewAddWorkOutButton() {
@@ -273,7 +322,11 @@ fun PreviewAddWorkOutButton() {
     }
 }
 
-
+/**
+ * Composable function that displays a button to start a workout.
+ * @param onClick The action to perform when the button is clicked.
+ * @param modifier The modifier to be applied to the button.
+ */
 @Composable
 fun StartWorkoutButton(
     onClick: () -> Unit = {},
@@ -307,7 +360,12 @@ fun StartWorkoutButton(
     }
 }
 
-
+/**
+ * Composable function that displays a box with daily statistics.
+ * @param displayText The text to display.
+ * @param displayValue The value to display.
+ * @param modifier The modifier to be applied to the box.
+ */
 @Composable
 fun DailyStatisticBox(
     displayText: String,
@@ -366,10 +424,8 @@ fun DailyStatisticBox(
     }
 }
 
-
 /**
- * A composable function that displays a workout card.
- *
+ * Composable function that displays a workout card.
  * @param workout A WorkoutObject representing the workout details to be displayed.
  */
 @Composable
@@ -445,8 +501,7 @@ fun WorkoutCard(workout: WorkoutObject) {
 }
 
 /**
- * A composable function that displays a list of workouts using a LazyColumn.
- *
+ * Composable function that displays a list of workouts using a LazyColumn.
  * @param workoutList A list of WorkoutObject representing the workouts to be displayed.
  */
 @Composable
@@ -459,6 +514,9 @@ fun WorkoutsLazyList(workoutList: List<WorkoutObject>) {
     }
 }
 
+/**
+ * @suppress
+ */
 @Preview
 @Composable
 fun PreviewWorkoutCard() {
@@ -466,7 +524,9 @@ fun PreviewWorkoutCard() {
     WorkoutCard(workout)
 }
 
-
+/**
+ * @suppress
+ */
 @Preview
 @Composable
 fun PreviewMyWorkoutsPage() {

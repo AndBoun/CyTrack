@@ -6,9 +6,21 @@ import org.json.JSONException
 import org.json.JSONArray
 
 
-class TimeboardUtils(){
+/**
+ * Utility class for handling operations related to the Timeboard.
+ */
+class TimeboardUtils() {
 
+    /**
+     * Companion object to hold static methods and properties.
+     */
     companion object {
+        /**
+         * Parses a JSON string and populates the provided list with TimeBoardEntry objects.
+         *
+         * @param msg The JSON string containing the timeboard data.
+         * @param TimeEntryList The list to be populated with TimeBoardEntry objects.
+         */
         @JvmStatic
         fun getBoard(
             msg: String,
@@ -26,7 +38,7 @@ class TimeboardUtils(){
                             entry.getInt("totalTime"),
                         )
                     )
-                    Log.d("Tag","${entry.getLong("userID")} ID");
+                    Log.d("Tag", "${entry.getLong("userID")} ID");
                     //Log.d("Tag","${TimeEntryList} ID");
                 }
 

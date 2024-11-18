@@ -24,16 +24,30 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.CyTrack.R
 import com.example.CyTrack.Social.MainProfileCard
 
+/**
+ * Activity representing a friend's profile.
+ */
 class FriendProfile : ComponentActivity() {
 
+    /**
+     * The user object representing the current user.
+     */
     private lateinit var user: User
 
+    /**
+     * The friend object representing the friend's profile being viewed.
+     */
+    private lateinit var friend: Friend
+
+    /**
+     * Called when the activity is starting. Initializes the user and sets the content view.
+     *
+     * @param savedInstanceState If the activity is being re-initialized after previously being shut down then this Bundle contains the data it most recently supplied in onSaveInstanceState(Bundle).
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             user = intent.getSerializableExtra("user") as User
-            if (user != null) {
-            }
 
             Column {
                 FriendProfileTopCard(user.firstName, user.username, "generic_avatar")
@@ -41,11 +55,16 @@ class FriendProfile : ComponentActivity() {
 
         }
     }
-
-
 }
 
-
+/**
+ * Composable function to display the top card of a friend's profile.
+ *
+ * @param name The name of the friend.
+ * @param username The username of the friend.
+ * @param img The image resource identifier for the friend's avatar.
+ * @param modifier The modifier to be applied to the layout.
+ */
 @Composable
 fun FriendProfileTopCard(
     name: String,
@@ -87,6 +106,9 @@ fun FriendProfileTopCard(
     }
 }
 
+/**
+ * @suppress
+ */
 @Preview
 @Composable
 fun PreviewFriendProfileTopCard() {

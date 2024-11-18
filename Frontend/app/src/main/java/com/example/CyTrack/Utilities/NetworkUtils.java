@@ -11,20 +11,23 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import com.example.CyTrack.Utilities.User;
 
 public class NetworkUtils {
 
     /**
-     * Posts user data to the given URL with the given parameters
-     * @param context the context
-     * @param url the URL to post the user data to
-     * @param params the parameters to post the user data with
+     * Posts user data to the given URL with the given parameters.
+     *
+     * @param context  the context
+     * @param url      the URL to post the user data to
+     * @param params   the parameters to post the user data with
+     * @param callBack the callback to handle the response
      */
     public static void postData(Context context, String url, Map<String, String> params, callbackMessage callBack) {
         JSONObject jsonObject = new JSONObject(params);
 
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, jsonObject, response ->{
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, jsonObject, response -> {
             try {
                 String message = response.getString("message");
                 callBack.onSuccess(message);
@@ -46,11 +49,23 @@ public class NetworkUtils {
         VolleySingleton.getInstance(context).addToRequestQueue(jsonObjectRequest);
     }
 
+    /**
+     * Callback interface for posting user data and getting the user ID.
+     */
     public interface postUserAndGetIDCallback {
         void onSuccess(int id, String message);
+
         void onError(String message);
     }
 
+    /**
+     * Posts user data to the given URL and retrieves the user ID.
+     *
+     * @param context  the context
+     * @param url      the URL to post the user data to
+     * @param params   the parameters to post the user data with
+     * @param callback the callback to handle the response
+     */
     public static void postUserAndGetID(Context context, String url, Map<String, String> params, postUserAndGetIDCallback callback) {
         JSONObject jsonObject = new JSONObject(params);
 
@@ -78,17 +93,19 @@ public class NetworkUtils {
     }
 
     /**
-     * Callback interface for fetching user data, to be used with {@link NetworkUtils#fetchUserData(Context, String, fetchUserDataCallback)}
+     * Callback interface for fetching user data.
      */
     public interface fetchUserDataCallback {
         void onSuccess(User user, String message);
+
         void onError(String message);
     }
 
     /**
-     * Fetches user data from the given URL and calls the appropriate callback method
-     * @param context the context
-     * @param url the URL to fetch the user data from
+     * Fetches user data from the given URL and calls the appropriate callback method.
+     *
+     * @param context  the context
+     * @param url      the URL to fetch the user data from
      * @param callback the callback to call when the data is fetched
      */
     public static void fetchUserData(Context context, String url, fetchUserDataCallback callback) {
@@ -124,15 +141,17 @@ public class NetworkUtils {
     }
 
     /**
-     * Modifies user data on the given URL with the given parameters
-     * @param context the context
-     * @param url the URL to modify the user data on
-     * @param params the parameters to modify the user data with
+     * Modifies user data on the given URL with the given parameters.
+     *
+     * @param context         the context
+     * @param url             the URL to modify the user data on
+     * @param params          the parameters to modify the user data with
+     * @param callbackMessage the callback to handle the response
      */
     public static void modifyData(Context context, String url, Map<String, String> params, callbackMessage callbackMessage) {
         JSONObject jsonObject = new JSONObject(params);
 
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.PUT, url, jsonObject, response ->{
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.PUT, url, jsonObject, response -> {
             try {
                 String message = response.getString("message");
                 callbackMessage.onSuccess(message);
@@ -153,10 +172,22 @@ public class NetworkUtils {
         VolleySingleton.getInstance(context).addToRequestQueue(jsonObjectRequest);
     }
 
+    /**
+     * Callback interface for handling success and error messages.
+     */
     public interface callbackMessage {
         void onSuccess(String message);
+
         void onError(String message);
     }
+
+    /**
+     * Sends a DELETE request to the given URL.
+     *
+     * @param context  the context
+     * @param url      the URL to send the DELETE request to
+     * @param callback the callback to handle the response
+     */
     public static void deleteRequest(Context context, String url, callbackMessage callback) {
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.DELETE, url, null, response -> {
             try {
@@ -179,6 +210,12 @@ public class NetworkUtils {
         VolleySingleton.getInstance(context).addToRequestQueue(jsonObjectRequest);
     }
 
+    /**
+     * Extracts and returns an error message from a VolleyError.
+     *
+     * @param error the VolleyError
+     * @return the error message
+     */
     public static String errorResponse(VolleyError error) {
         int statusCode = error.networkResponse != null ? error.networkResponse.statusCode : -1;
         String errorMessage = "";
@@ -208,8 +245,7 @@ public class NetworkUtils {
                 e.printStackTrace();
             }
         }
-         return "Error Code: " + statusCode;
+        return "Error Code: " + statusCode;
     }
-
 
 }
