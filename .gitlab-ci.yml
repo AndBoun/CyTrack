@@ -21,7 +21,7 @@ maven-test:
   tags:
     - kai_tag     # <-- change to your runner's tag
   script:
-    - cd Backend/CyTrack       # change 'Backend' to to where you have the pom.xml (do not add / in the beginning)
+    - cd Backend/CyTrack     # change 'Backend' to to where you have the pom.xml (do not add / in the beginning)
     - mvn test
   only:
     refs:
