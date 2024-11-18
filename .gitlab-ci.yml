@@ -1,8 +1,8 @@
 stages:
   - mavenbuild
   - maventest
-
-maven-build:
+  
+maven-build:            
   stage: mavenbuild
   tags:
     - kai_tag      # <-- change to your runner's tag
@@ -16,7 +16,7 @@ maven-build:
       - Backend/**/*
 
 
-maven-test:
+maven-test:             
   stage: maventest
   tags:
     - kai_tag     # <-- change to your runner's tag
