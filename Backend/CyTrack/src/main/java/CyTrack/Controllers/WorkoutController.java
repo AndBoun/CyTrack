@@ -33,7 +33,7 @@ public class WorkoutController {
     private final WorkoutService workoutService;
     private final UserService userService;
     private final BadgeService badgeService;
-
+    //Quick pipeline test
     private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("MM-dd-yyyy");
 
     private final WorkoutTrackingSocket workoutTrackingSocket;
