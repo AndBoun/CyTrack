@@ -34,6 +34,11 @@ android {
                 "proguard-rules.pro"
             )
         }
+        debug {
+            isTestCoverageEnabled = true
+//            enableAndroidTestCoverage = true
+//            enableUnitTestCoverage = true
+        }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -65,7 +70,10 @@ androidComponents {
             }
 
             configurations["implementation"].attributes {
-                attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage::class.java, Usage.JAVA_RUNTIME))
+                attribute(
+                    Usage.USAGE_ATTRIBUTE,
+                    objects.named(Usage::class.java, Usage.JAVA_RUNTIME)
+                )
             }
             configurations["implementation"].isCanBeResolved = true
 
@@ -105,7 +113,7 @@ tasks.withType<DokkaTask>().configureEach {
             sourceRoots.from(file("src/main/java"))
             sourceRoots.from(file("src/main/kotlin"))
         }
-        configureEach{
+        configureEach {
             // Exclude inherited members
             suppressInheritedMembers.set(true)
 
@@ -149,9 +157,18 @@ dependencies {
     implementation(libs.accompanist.themeadapter.material3)
     implementation(libs.androidx.compose.material)
     debugImplementation(libs.androidx.ui.tooling)
-    testImplementation(libs.junit)
     androidTestImplementation(libs.espresso.core)
-    androidTestImplementation(libs.ext.junit)
+
+
+    // Testing Dependencies
+    testImplementation("junit:junit:4.13.2")
+    androidTestImplementation("com.android.support.test:rules:1.0.2")
+    androidTestImplementation("com.android.support.test:runner:1.0.2")
+    androidTestImplementation("androidx.test.ext:junit:1.1.5")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+    androidTestImplementation("androidx.test.espresso:espresso-contrib:3.4.0")
+    androidTestImplementation("androidx.test.espresso:espresso-intents:3.4.0")
+
 
     implementation("io.coil-kt:coil-compose:2.7.0")
     implementation("androidx.compose.ui:ui-text-google-fonts:1.7.4")
@@ -161,11 +178,9 @@ dependencies {
 
     implementation(platform("androidx.compose:compose-bom:2024.09.03")) // Testing For Top App Bar
 
-    implementation ("androidx.compose.material3:material3:1.3.1")
-    implementation ("androidx.compose.material3:material3-window-size-class:1.3.1")
-    implementation ("androidx.compose.material3:material3-adaptive-navigation-suite:1.3.1")
-
-    implementation ("androidx.compose.material:material-icons-extended:$1.3.1")
-
+    implementation("androidx.compose.material3:material3:1.3.1")
+    implementation("androidx.compose.material3:material3-window-size-class:1.3.1")
+    implementation("androidx.compose.material3:material3-adaptive-navigation-suite:1.3.1")
+    implementation("androidx.compose.material:material-icons-extended:$1.3.1")
 }
 
