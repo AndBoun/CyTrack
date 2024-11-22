@@ -62,19 +62,43 @@ import com.example.CyTrack.Utilities.User
 import com.example.compose.AppTheme
 
 // Animation Imports End
+
 /**
  * The user whose profile is being displayed.
  */
 private lateinit var user: User
 
+/**
+ * List of all badges.
+ */
 private var AllBadges: MutableList<BadgeObject> = mutableListOf()
+
+/**
+ * Sample user data for testing.
+ */
 private val SampleUser = BadgeData.BadgeSample
+
+/**
+ * Data for the sample user.
+ */
 private val data = SampleUser
+
+/**
+ * Base URL for fetching badge data.
+ */
 private val URL = UrlHolder.URL
 //private val URL = "${UrlHolder.URL}/badge/2/earned"
 
-class BadgesActivity : ComponentActivity(
-) {
+/**
+ * Activity to display badges.
+ */
+class BadgesActivity : ComponentActivity() {
+    /**
+     * Called when the activity is starting. This is where most initialization should go.
+     *
+     * @param savedInstanceState If the activity is being re-initialized after previously being shut down
+     *                           then this Bundle contains the data it most recently supplied in onSaveInstanceState(Bundle).
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -85,7 +109,7 @@ class BadgesActivity : ComponentActivity(
                 this,
                 AllBadges,
                 "${URL}/badge/${user.id.toString()}/earned",
-                "badges"//TODO: VERIFY ARRAY NAME
+                "badges" // TODO: VERIFY ARRAY NAME
             )
 
             AppTheme { // Wraps our app in our custom theme
@@ -95,11 +119,8 @@ class BadgesActivity : ComponentActivity(
                     BGScreen(AllBadges)
                 }
             }
-
         }
-
     }
-
 }
 
 /**
@@ -108,6 +129,7 @@ class BadgesActivity : ComponentActivity(
  * @param name The name of the Badge
  * @param desc The description of the Badge
  * @param img The URL or resource identifier for the Badge
+ * @param modifier Modifier for the composable
  */
 @Composable
 fun BGProfileCard(
@@ -116,19 +138,15 @@ fun BGProfileCard(
     img: String,
     modifier: Modifier = Modifier
 ) {
-    // Composable function to display a card with user information
     Surface(
         color = Color.White,
         shape = RoundedCornerShape(10.dp),
         border = BorderStroke(1.dp, Color.Black),
         modifier = modifier.fillMaxWidth()
-
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-//            horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier
-                .padding(10.dp)
+            modifier = Modifier.padding(10.dp)
         ) {
             Image(
                 painter = painterResource(id = R.drawable.general_generic_avatar),
@@ -158,13 +176,18 @@ fun BGProfileCard(
                     text = desc
                 )
             }
-
-
         }
     }
 }
 
-// <!-- Adding Images END --!>
+/**
+ * Composable function to display a card with a badge profile.
+ *
+ * @param name The name of the Badge
+ * @param desc The description of the Badge
+ * @param onMessageClick Callback when the card is clicked
+ * @param modifier Modifier for the composable
+ */
 @Composable
 fun BGCard(
     name: String,
@@ -177,23 +200,27 @@ fun BGCard(
             BGProfileCard(name, desc, "temp", modifier)
             Spacer(modifier = Modifier.height(10.dp))
         }
-
     }
 }
-// <!-- LazyColumn Lists --!>
+
+/**
+ * Composable function to display a list of badges in a hierarchical structure.
+ *
+ * @param BadgeList List of BadgeObject to display
+ * @param onMessageClick Callback when a badge is clicked
+ * @param modifier Modifier for the composable
+ */
 @Composable
 fun BGHierarchy(
     BadgeList: List<BadgeObject>,
     onMessageClick: (BadgeObject) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-    //val userSorted = Badge.sortedByDescending { it.streak }
-
     LazyColumn(
         modifier = Modifier
             .fillMaxHeight()
             .padding(horizontal = 32.dp)
-    ){
+    ) {
         items(BadgeList) { Badge -> // the items() child takes a list as a param
             BGCard(Badge.name, Badge.desc, {
                 onMessageClick(Badge)
@@ -203,7 +230,12 @@ fun BGHierarchy(
     }
 }
 
-// <!-- Top Card --!>
+/**
+ * Composable function to display the top card with a back button and header image.
+ *
+ * @param modifier Modifier for the composable
+ * @param onClickMyProfile Callback when the profile is clicked
+ */
 @Composable
 fun BGTopCard(
     modifier: Modifier = Modifier,
@@ -221,10 +253,10 @@ fun BGTopCard(
         Row(
             verticalAlignment = Alignment.Bottom,
             horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
                 .offset(y = (-10).dp)
         ) {
-
             IconButton(
                 onClick = {
                     (context as Activity).finish()
@@ -243,12 +275,16 @@ fun BGTopCard(
             )
 
             Spacer(modifier = Modifier.width(20.dp))
-
-
         }
     }
 }
 
+/**
+ * Composable function to display the main screen with a list of badges.
+ *
+ * @param BGList List of BadgeObject to display
+ * @param modifier Modifier for the composable
+ */
 @Composable
 fun BGScreen(
     BGList: List<BadgeObject>,
@@ -259,11 +295,14 @@ fun BGScreen(
     }
 }
 
+/**
+ * @suppress
+ */
 @Preview
 @Composable
 fun BGLazyListPreview() {
     Surface {
-        Column{
+        Column {
             BGTopCardPreview()
             Spacer(modifier = Modifier.height(20.dp))
             BGScreen(data)
@@ -271,6 +310,9 @@ fun BGLazyListPreview() {
     }
 }
 
+/**
+ * @suppress
+ */
 @Preview
 @Composable
 fun PreviewConversation() {
@@ -279,9 +321,11 @@ fun PreviewConversation() {
     }
 }
 
+/**
+ * @suppress
+ */
 @Preview
 @Composable
 fun BGTopCardPreview() {
     BGTopCard()
 }
- //*/

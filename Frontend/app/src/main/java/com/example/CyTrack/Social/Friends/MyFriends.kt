@@ -55,10 +55,13 @@ import com.example.CyTrack.Utilities.User
 import com.example.CyTrack.Utilities.StatusBarUtil
 import com.example.CyTrack.Utilities.UrlHolder
 
+/**
+ * Activity to display the user's friends and handle friend-related actions.
+ */
 class MyFriends : ComponentActivity() {
 
     /**
-     * The user whose profile is being displayed.
+     * The user object representing the current user.
      */
     private lateinit var user: User
 
@@ -69,11 +72,15 @@ class MyFriends : ComponentActivity() {
 
     private val URL = UrlHolder.URL
 
+    /**
+     * Called when the activity is starting. Sets up the content view and initializes the user and friends list.
+     *
+     * @param savedInstanceState If the activity is being re-initialized after previously being shut down then this Bundle contains the data it most recently supplied in onSaveInstanceState(Bundle).
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             user = intent.getSerializableExtra("user") as User
-
 
             myFriends = remember { mutableStateListOf() }
 
@@ -101,7 +108,9 @@ class MyFriends : ComponentActivity() {
         StatusBarUtil.setStatusBarColor(this, R.color.CyRed)
     }
 
-
+    /**
+     * Fetches the list of friends for the user from the server.
+     */
     private fun getFriends() {
         val getURL = "${URL}/${user.id}/friends"
 
@@ -110,6 +119,11 @@ class MyFriends : ComponentActivity() {
         })
     }
 
+    /**
+     * Deletes a friend from the user's friends list.
+     *
+     * @param friend The friend to be deleted.
+     */
     private fun deleteFriend(friend: Friend) {
         val delURL = "${URL}/${user.id}/friends/${friend.friendID}"
 
@@ -120,7 +134,16 @@ class MyFriends : ComponentActivity() {
 
 }
 
-
+/**
+ * Composable function to display a card with user information.
+ *
+ * @param name The name of the user.
+ * @param username The username of the user.
+ * @param img The image URL of the user.
+ * @param modifier The modifier to be applied to the card.
+ * @param onProfileClick The callback to be invoked when the profile is clicked.
+ * @param dropDownButton The composable function to display the dropdown button.
+ */
 @Composable
 fun ListProfileCard(
     name: String,
@@ -130,7 +153,6 @@ fun ListProfileCard(
     onProfileClick: () -> Unit = {},
     dropDownButton: @Composable () -> Unit = {}
 ) {
-    // Composable function to display a card with user information
     Surface(
         color = Color.White,
         shape = RoundedCornerShape(10.dp),
@@ -171,7 +193,6 @@ fun ListProfileCard(
                 )
             }
 
-            // Right align more options button
             Row(
                 horizontalArrangement = Arrangement.End,
                 modifier = Modifier.fillMaxWidth()
@@ -183,6 +204,11 @@ fun ListProfileCard(
     }
 }
 
+/**
+ * Composable function to display a button with more options for a friend.
+ *
+ * @param onDeleteFriend The callback to be invoked when the delete friend option is selected.
+ */
 @Composable
 fun MoreOptionsButtonMyFriends(onDeleteFriend: () -> Unit) {
     var expanded by remember { mutableStateOf(false) }
@@ -214,6 +240,17 @@ fun MoreOptionsButtonMyFriends(onDeleteFriend: () -> Unit) {
     }
 }
 
+/**
+ * Composable function to display a friend's profile card with message and more options buttons.
+ *
+ * @param name The name of the friend.
+ * @param username The username of the friend.
+ * @param img The image URL of the friend.
+ * @param onMessageClick The callback to be invoked when the message button is clicked.
+ * @param onProfileClick The callback to be invoked when the profile is clicked.
+ * @param dropDownButton The composable function to display the dropdown button.
+ * @param modifier The modifier to be applied to the card.
+ */
 @Composable
 fun FriendsListProfileCard(
     name: String,
@@ -231,7 +268,6 @@ fun FriendsListProfileCard(
             dropDownButton = dropDownButton,
         )
 
-
         Button(
             onClick = onMessageClick,
             colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
@@ -243,8 +279,7 @@ fun FriendsListProfileCard(
                 .height(25.dp)
                 .width(100.dp)
                 .offset(x = (-50).dp),
-            contentPadding = PaddingValues(0.dp) //remove padding so text fits
-
+            contentPadding = PaddingValues(0.dp)
         ) {
             Text(
                 text = "Message",
@@ -261,7 +296,15 @@ fun FriendsListProfileCard(
     }
 }
 
-
+/**
+ * Composable function to display a list of friends using a LazyColumn.
+ *
+ * @param friendsList The list of friends to be displayed.
+ * @param onMessageClick The callback to be invoked when the message button is clicked.
+ * @param onProfileClick The callback to be invoked when the profile is clicked.
+ * @param onDeleteClick The callback to be invoked when the delete friend option is selected.
+ * @param modifier The modifier to be applied to the list.
+ */
 @Composable
 fun MyFriendsCardsLazyList(
     friendsList: List<Friend>,
@@ -270,7 +313,6 @@ fun MyFriendsCardsLazyList(
     onDeleteClick: (Friend) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-    // LazyColumn to display a list of friends
     Column(
         modifier = modifier
             .fillMaxHeight()
@@ -292,7 +334,12 @@ fun MyFriendsCardsLazyList(
     }
 }
 
-
+/**
+ * Composable function to display the top card with the add friends button.
+ *
+ * @param modifier The modifier to be applied to the card.
+ * @param onAddFriendsButton The callback to be invoked when the add friends button is clicked.
+ */
 @Composable
 fun MyFriendsTopCard(
     modifier: Modifier = Modifier,
@@ -327,7 +374,6 @@ fun MyFriendsTopCard(
                 )
             }
 
-
             Image(
                 painter = painterResource(id = R.drawable.social_friends_header),
                 contentDescription = "Friends text",
@@ -346,9 +392,9 @@ fun MyFriendsTopCard(
     }
 }
 
-
-
-
+/**
+ * @suppress
+ */
 @Preview
 @Composable
 fun FriendsListProfileCardPreview() {
@@ -361,11 +407,11 @@ fun FriendsListProfileCardPreview() {
     )
 }
 
+/**
+ * @suppress
+ */
 @Preview
 @Composable
 fun MyFriendsTopCardPreview() {
     MyFriendsTopCard()
 }
-
-
-

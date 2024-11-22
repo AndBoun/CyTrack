@@ -7,12 +7,17 @@ import CyTrack.Services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+@Tag(name = "Friend Requests", description = "Endpoints for sending, accepting, declining, and viewing friend requests")
 @RestController
 @RequestMapping("/{userID}/request")
 public class FriendsRequestController {
@@ -26,6 +31,68 @@ public class FriendsRequestController {
     }
 
     //Sends a friend request, by inputting a person's username.
+    @Operation(
+            summary = "Send a friend request",
+            description = "Send a friend request to a user by inputting their username",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "201",
+                            description = "Friend request sent",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = FriendRequestIDResponse.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Invalid username",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = ErrorResponse.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Invalid request",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = ErrorResponse.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Already friends",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = ErrorResponse.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Request already sent",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = ErrorResponse.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Request already received",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = ErrorResponse.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "User not found",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = ErrorResponse.class)
+                            )
+                    )
+            }
+    )
     @PostMapping("")
     public ResponseEntity<?> sendFriendRequest(@PathVariable Long userID, @RequestBody Map<String, String> friendUser) {
         String friendUsername = friendUser.get("friendUsername");
@@ -64,7 +131,44 @@ public class FriendsRequestController {
         ErrorResponse response = new ErrorResponse("error", 404, "User not found", "User not found");
         return ResponseEntity.status(404).body(response);
     }
-
+    @Operation(
+            summary = "Accept a friend request",
+            description = "Accept a friend request by inputting the request ID",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Friend request accepted",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = FriendRequestIDResponse.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Invalid request ID",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = ErrorResponse.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Invalid request",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = ErrorResponse.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Friend request not found",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = ErrorResponse.class)
+                            )
+                    )
+            }
+    )
     @PutMapping("")
     public ResponseEntity<?> acceptFriendRequest(@PathVariable Long userID, @RequestBody Map<String, Long> friendRequestID) {
         Long requestID = friendRequestID.get("friendRequestID");
@@ -94,6 +198,28 @@ public class FriendsRequestController {
         return ResponseEntity.status(404).body(response);
     }
 
+    @Operation(
+            summary = "Gets incoming friend requests",
+            description = "Get all incoming friend requests for a user",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Incoming friend requests found",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = FriendRequestResponse.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "User not found",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = ErrorResponse.class)
+                            )
+                    )
+            }
+    )
     @GetMapping("/incoming")
     public ResponseEntity<?> getIncomingFriendRequests(@PathVariable Long userID){
         Optional<User> user = userService.findByUserID(userID);
@@ -114,6 +240,28 @@ public class FriendsRequestController {
         return ResponseEntity.status(404).body(response);
     }
 
+    @Operation(
+            summary = "Gets outgoing friend requests",
+            description = "Get all outgoing friend requests for a user",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Outgoing friend requests found",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = FriendRequestResponse.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "User not found",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = ErrorResponse.class)
+                            )
+                    )
+            }
+    )
     @GetMapping("/outgoing")
     public ResponseEntity<?> getOutgoingFriendRequests(@PathVariable Long userID){
         Optional<User> user = userService.findByUserID(userID);
@@ -134,6 +282,44 @@ public class FriendsRequestController {
         return ResponseEntity.status(404).body(response);
     }
 
+    @Operation(
+            summary = "Decline a friend request",
+            description = "Decline a friend request by inputting the request ID",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Friend request declined",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = FriendRequestIDResponse.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Invalid request ID",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = ErrorResponse.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Invalid request",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = ErrorResponse.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Friend request not found",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = ErrorResponse.class)
+                            )
+                    )
+            }
+    )
     @DeleteMapping("/{friendRequestID}")
     public ResponseEntity<?> declineFriendRequest(@PathVariable Long userID, @PathVariable Long friendRequestID) {
         if (friendRequestID == null) {

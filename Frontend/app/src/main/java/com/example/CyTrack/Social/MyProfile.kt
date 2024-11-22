@@ -62,6 +62,9 @@ import com.example.CyTrack.Utilities.UrlHolder
 import org.json.JSONException
 import org.json.JSONObject
 
+/**
+ * Activity to display the user's profile.
+ */
 class MyProfile : ComponentActivity() {
 
     /**
@@ -74,16 +77,21 @@ class MyProfile : ComponentActivity() {
      */
     private var friendRequests: MutableList<Friend> = mutableListOf()
 
+    /**
+     * The base URL for network requests.
+     */
     private val URL: String = UrlHolder.URL
 
+    /**
+     * Called when the activity is starting. This is where most initialization should go.
+     * @param savedInstanceState If the activity is being re-initialized after previously being shut down then this Bundle contains the data it most recently supplied.
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             user = intent.getSerializableExtra("user") as User
             friendRequests = remember { mutableStateListOf() }
             getFriendRequests()
-
-
 
             Column {
                 ProfileScreen(user.firstName, user.username, "temp",
@@ -111,7 +119,9 @@ class MyProfile : ComponentActivity() {
         StatusBarUtil.setStatusBarColor(this, R.color.CyRed)
     }
 
-
+    /**
+     * Switches to the MyFriends activity.
+     */
     private fun switchToMyFriends() {
         val intent = Intent(this, MyFriends::class.java).apply {
             putExtra("user", user)
@@ -119,6 +129,9 @@ class MyProfile : ComponentActivity() {
         startActivity(intent)
     }
 
+    /**
+     * Switches to the MyMessages activity.
+     */
     private fun switchToMyMessages() {
         val intent = Intent(this, MyMessages::class.java).apply {
             putExtra("user", user)
@@ -126,6 +139,9 @@ class MyProfile : ComponentActivity() {
         startActivity(intent)
     }
 
+    /**
+     * Switches to the BadgesActivity.
+     */
     private fun switchToMyBadges() {
         val intent = Intent(this, BadgesActivity::class.java).apply {
             putExtra("user", user)
@@ -133,6 +149,9 @@ class MyProfile : ComponentActivity() {
         startActivity(intent)
     }
 
+    /**
+     * Retrieves the list of friend requests for the user.
+     */
     private fun getFriendRequests() {
         val getURL = "${URL}/${user.id}/request/incoming"
         SocialUtils.getListOfFriends(this, friendRequests, getURL, "friendRequests",
@@ -140,37 +159,12 @@ class MyProfile : ComponentActivity() {
                 friendRequests.sortBy { it.firstName }
             }
         )
-
-//        val jsonObjectRequest = JsonObjectRequest(
-//            Request.Method.GET, getURL, null,
-//            { response ->
-//                try {
-//                    val message = response.getString("message")
-//                    val data = response.getJSONObject("data").getJSONArray("friendRequests")
-//
-//                    for (i in 0 until data.length()) {
-//                        val tempUser = data.getJSONObject(i)
-//                        friendRequests.add(
-//                            Friend(
-//                                tempUser.getString("firstname"),
-//                                tempUser.getString("username"),
-//                                tempUser.getInt("id"),
-//                                tempUser.getInt("id")
-//                            )
-//                        )
-//                    }
-//                } catch (e: JSONException) {
-//                    e.printStackTrace()
-//                }
-//            },
-//            { error ->
-//                Toast.makeText(this, NetworkUtils.errorResponse(error), Toast.LENGTH_SHORT).show()
-//            }
-//        )
-//        VolleySingleton.getInstance(this).addToRequestQueue(jsonObjectRequest)
     }
 
-
+    /**
+     * Accepts a friend request.
+     * @param friend The friend request to accept.
+     */
     private fun acceptFriendRequest(friend: Friend) {
         val acceptURL = "${URL}/${user.id}/request"
         val inputs = JSONObject().apply {
@@ -195,6 +189,10 @@ class MyProfile : ComponentActivity() {
         VolleySingleton.getInstance(this).addToRequestQueue(jsonObjectRequest)
     }
 
+    /**
+     * Declines a friend request.
+     * @param friend The friend request to decline.
+     */
     private fun declineFriendRequest(friend: Friend) {
         val declineURL = "${URL}/${user.id}/request/${friend.friendID}"
 
@@ -219,6 +217,14 @@ class MyProfile : ComponentActivity() {
 }
 
 
+/**
+ * Composable function to display the main profile card.
+ *
+ * @param name The name of the user.
+ * @param userName The username of the user.
+ * @param imageUrl The URL of the user's profile image.
+ * @param modifier The modifier to be applied to the layout.
+ */
 @Composable
 fun MainProfileCard(
     name: String,
@@ -248,7 +254,7 @@ fun MainProfileCard(
         Box(
             modifier = Modifier
                 .fillMaxWidth(),
-            contentAlignment = Alignment.Center// Center the content within the Box
+            contentAlignment = Alignment.Center // Center the content within the Box
         ) {
             Column(
                 horizontalAlignment = CenterHorizontally,
@@ -276,6 +282,12 @@ fun MainProfileCard(
     }
 }
 
+/**
+ * Composable function to display the Friends button.
+ *
+ * @param onClick The callback to be invoked when the button is clicked.
+ * @param modifier The modifier to be applied to the layout.
+ */
 @Composable
 fun FriendsButton(
     onClick: () -> Unit,
@@ -303,6 +315,12 @@ fun FriendsButton(
     }
 }
 
+/**
+ * Composable function to display the Message button.
+ *
+ * @param onClick The callback to be invoked when the button is clicked.
+ * @param modifier The modifier to be applied to the layout.
+ */
 @Composable
 fun MessageButton(
     onClick: () -> Unit,
@@ -330,6 +348,12 @@ fun MessageButton(
     }
 }
 
+/**
+ * Composable function to display the Badges button.
+ *
+ * @param onClick The callback to be invoked when the button is clicked.
+ * @param modifier The modifier to be applied to the layout.
+ */
 @Composable
 fun BadgesButton(
     onClick: () -> Unit,
@@ -355,8 +379,17 @@ fun BadgesButton(
     }
 }
 
-
-
+/**
+ * Composable function to display the profile screen.
+ *
+ * @param name The name of the user.
+ * @param userName The username of the user.
+ * @param imageUrl The URL of the user's profile image.
+ * @param modifier The modifier to be applied to the layout.
+ * @param onClickMyFriends The callback to be invoked when the Friends button is clicked.
+ * @param onClickMyMessages The callback to be invoked when the Message button is clicked.
+ * @param onClickMyBadges The callback to be invoked when the Badges button is clicked.
+ */
 @Composable
 fun ProfileScreen(
     name: String,
@@ -417,6 +450,16 @@ fun ProfileScreen(
     }
 }
 
+/**
+ * Composable function to display a friend request card.
+ *
+ * @param name The name of the friend.
+ * @param userName The username of the friend.
+ * @param imageUrl The URL of the friend's profile image.
+ * @param onClickAdd The callback to be invoked when the Accept button is clicked.
+ * @param onClickDecline The callback to be invoked when the Decline button is clicked.
+ * @param modifier The modifier to be applied to the layout.
+ */
 @Composable
 fun FriendRequestCard(
     name: String,
@@ -498,6 +541,14 @@ fun FriendRequestCard(
     }
 }
 
+/**
+ * Composable function to display a list of friend request cards.
+ *
+ * @param friendRequests The list of friend requests.
+ * @param modifier The modifier to be applied to the layout.
+ * @param onAccept The callback to be invoked when a friend request is accepted.
+ * @param onDecline The callback to be invoked when a friend request is declined.
+ */
 @Composable
 fun FriendRequestCardLazyList(
     friendRequests: List<Friend>,
@@ -521,6 +572,9 @@ fun FriendRequestCardLazyList(
     }
 }
 
+/**
+ * @suppress
+ */
 @Preview
 @Composable
 fun FriendRequestCardPreview() {
@@ -533,6 +587,9 @@ fun FriendRequestCardPreview() {
     }
 }
 
+/**
+ * @suppress
+ */
 @Preview
 @Composable
 fun ProfileCardPreview() {
@@ -549,6 +606,9 @@ fun ProfileCardPreview() {
     }
 }
 
+/**
+ * @suppress
+ */
 @Preview
 @Composable
 fun FriendsButtonPreview() {
@@ -559,6 +619,9 @@ fun FriendsButtonPreview() {
     }
 }
 
+/**
+ * @suppress
+ */
 @Preview
 @Composable
 fun MessageButtonPreview() {
@@ -569,6 +632,9 @@ fun MessageButtonPreview() {
     }
 }
 
+/**
+ * @suppress
+ */
 @Preview
 @Composable
 fun BadgeButtonPreview() {
@@ -579,6 +645,9 @@ fun BadgeButtonPreview() {
     }
 }
 
+/**
+ * @suppress
+ */
 @Preview
 @Composable
 fun ProfileScreenPreview() {

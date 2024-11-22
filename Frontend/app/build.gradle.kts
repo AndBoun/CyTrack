@@ -3,12 +3,21 @@ import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.dokka.Platform
 import org.jetbrains.dokka.gradle.DokkaTaskPartial
 import java.net.URL
+import org.jetbrains.dokka.base.DokkaBase
+import org.jetbrains.dokka.base.DokkaBaseConfiguration
+
 
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     id("org.jetbrains.dokka") version "1.9.20"
+}
+
+buildscript {
+    dependencies {
+        classpath("org.jetbrains.dokka:dokka-base:1.9.20")
+    }
 }
 
 
@@ -34,14 +43,23 @@ android {
                 "proguard-rules.pro"
             )
         }
+        debug {
+            isTestCoverageEnabled = true
+//            enableAndroidTestCoverage = true
+//            enableUnitTestCoverage = true
+        }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
+
+
     buildFeatures {
         compose = true
     }
+
     kotlinOptions {
         jvmTarget = "17"
     }
@@ -65,7 +83,10 @@ androidComponents {
             }
 
             configurations["implementation"].attributes {
-                attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage::class.java, Usage.JAVA_RUNTIME))
+                attribute(
+                    Usage.USAGE_ATTRIBUTE,
+                    objects.named(Usage::class.java, Usage.JAVA_RUNTIME)
+                )
             }
             configurations["implementation"].isCanBeResolved = true
 
@@ -98,14 +119,28 @@ androidComponents {
 }
 
 tasks.withType<DokkaTask>().configureEach {
+
+    pluginConfiguration<DokkaBase, DokkaBaseConfiguration> {
+//        customAssets = listOf(file("my-image.png"))
+//        customStyleSheets = listOf(file("my-styles.css"))
+        footerMessage = "(c) 2024 CyTrack"
+        separateInheritedMembers = false
+//        templatesDir = file("dokka/templates")
+        mergeImplicitExpectActualDeclarations = false
+    }
+
     outputDirectory.set(layout.buildDirectory.dir("documentation/html"))
     dokkaSourceSets {
 
         named("main") {
             sourceRoots.from(file("src/main/java"))
             sourceRoots.from(file("src/main/kotlin"))
+            perPackageOption {
+                matchingRegex.set("com.example.compose.*")
+                suppress.set(true)
+            }
         }
-        configureEach{
+        configureEach {
             // Exclude inherited members
             suppressInheritedMembers.set(true)
 
@@ -130,6 +165,10 @@ tasks.withType<DokkaTask>().configureEach {
     }
 }
 
+/**
+ * This points for the version referenced in gradle.properties
+ */
+val ktor_version: String by project
 
 dependencies {
     implementation(libs.appcompat)
@@ -149,23 +188,36 @@ dependencies {
     implementation(libs.accompanist.themeadapter.material3)
     implementation(libs.androidx.compose.material)
     debugImplementation(libs.androidx.ui.tooling)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.espresso.core)
-    androidTestImplementation(libs.ext.junit)
+
+    // Ktor Dependencies for multiplatform
+    implementation(libs.ktor.client.core)
+    implementation(libs.ktor.client.cio)
+    implementation(libs.ktor.client.okhttp)
+    implementation(libs.ktor.client.logging)
+
+    // Dokka Plugin for Java
+    dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.9.20")
+
+    // Testing Dependencies
+    testImplementation("junit:junit:4.13.2")
+    androidTestImplementation("com.android.support.test:rules:1.0.2")
+    androidTestImplementation("com.android.support.test:runner:1.0.2")
+    androidTestImplementation("androidx.test.ext:junit:1.2.1")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
+    androidTestImplementation("androidx.test.espresso:espresso-contrib:3.6.1")
+    androidTestImplementation("androidx.test.espresso:espresso-intents:3.6.1")
+
 
     implementation("io.coil-kt:coil-compose:2.7.0")
     implementation("androidx.compose.ui:ui-text-google-fonts:1.7.4")
     implementation("org.java-websocket:Java-WebSocket:1.5.2")
 
-    dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.9.20")
 
     implementation(platform("androidx.compose:compose-bom:2024.09.03")) // Testing For Top App Bar
 
-    implementation ("androidx.compose.material3:material3:1.3.1")
-    implementation ("androidx.compose.material3:material3-window-size-class:1.3.1")
-    implementation ("androidx.compose.material3:material3-adaptive-navigation-suite:1.3.1")
-
-    implementation ("androidx.compose.material:material-icons-extended:$1.3.1")
-
+    implementation("androidx.compose.material3:material3:1.3.1")
+    implementation("androidx.compose.material3:material3-window-size-class:1.3.1")
+    implementation("androidx.compose.material3:material3-adaptive-navigation-suite:1.3.1")
+    implementation("androidx.compose.material:material-icons-extended:$1.3.1")
 }
 

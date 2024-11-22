@@ -1,4 +1,5 @@
 package com.example.compose
+
 import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -16,6 +17,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
+// Light color scheme definition
 private val lightScheme = lightColorScheme(
     primary = primaryLight,
     onPrimary = onPrimaryLight,
@@ -54,6 +56,7 @@ private val lightScheme = lightColorScheme(
     surfaceContainerHighest = surfaceContainerHighestLight,
 )
 
+// Dark color scheme definition
 private val darkScheme = darkColorScheme(
     primary = primaryDark,
     onPrimary = onPrimaryDark,
@@ -92,6 +95,7 @@ private val darkScheme = darkColorScheme(
     surfaceContainerHighest = surfaceContainerHighestDark,
 )
 
+// Medium contrast light color scheme definition
 private val mediumContrastLightColorScheme = lightColorScheme(
     primary = primaryLightMediumContrast,
     onPrimary = onPrimaryLightMediumContrast,
@@ -119,7 +123,7 @@ private val mediumContrastLightColorScheme = lightColorScheme(
     outlineVariant = outlineVariantLightMediumContrast,
     scrim = scrimLightMediumContrast,
     inverseSurface = inverseSurfaceLightMediumContrast,
-    inverseOnSurface = inverseOnSurfaceLightMediumContrast,
+    inverseOnSurface = onSurfaceLightMediumContrast,
     inversePrimary = inversePrimaryLightMediumContrast,
     surfaceDim = surfaceDimLightMediumContrast,
     surfaceBright = surfaceBrightLightMediumContrast,
@@ -130,6 +134,7 @@ private val mediumContrastLightColorScheme = lightColorScheme(
     surfaceContainerHighest = surfaceContainerHighestLightMediumContrast,
 )
 
+// High contrast light color scheme definition
 private val highContrastLightColorScheme = lightColorScheme(
     primary = primaryLightHighContrast,
     onPrimary = onPrimaryLightHighContrast,
@@ -168,6 +173,7 @@ private val highContrastLightColorScheme = lightColorScheme(
     surfaceContainerHighest = surfaceContainerHighestLightHighContrast,
 )
 
+// Medium contrast dark color scheme definition
 private val mediumContrastDarkColorScheme = darkColorScheme(
     primary = primaryDarkMediumContrast,
     onPrimary = onPrimaryDarkMediumContrast,
@@ -206,6 +212,7 @@ private val mediumContrastDarkColorScheme = darkColorScheme(
     surfaceContainerHighest = surfaceContainerHighestDarkMediumContrast,
 )
 
+// High contrast dark color scheme definition
 private val highContrastDarkColorScheme = darkColorScheme(
     primary = primaryDarkHighContrast,
     onPrimary = onPrimaryDarkHighContrast,
@@ -244,6 +251,9 @@ private val highContrastDarkColorScheme = darkColorScheme(
     surfaceContainerHighest = surfaceContainerHighestDarkHighContrast,
 )
 
+/**
+ * Data class representing a color family with primary, onPrimary, primaryContainer, and onPrimaryContainer colors.
+ */
 @Immutable
 data class ColorFamily(
     val color: Color,
@@ -252,10 +262,18 @@ data class ColorFamily(
     val onColorContainer: Color
 )
 
+// Unspecified color scheme
 val unspecified_scheme = ColorFamily(
     Color.Unspecified, Color.Unspecified, Color.Unspecified, Color.Unspecified
 )
 
+/**
+ * Composable function to set the app theme.
+ *
+ * @param darkTheme Boolean to determine if dark theme should be used.
+ * @param dynamicColor Boolean to determine if dynamic color should be used (available on Android 12+).
+ * @param content Composable content to be displayed within the theme.
+ */
 @Composable
 fun AppTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
@@ -263,28 +281,27 @@ fun AppTheme(
     dynamicColor: Boolean = false, // Dynamic Color if True, switches the app theme to device preferences
     content: @Composable() () -> Unit
 ) {
-  val colorScheme = when {
-      dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-          val context = LocalContext.current
-          if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-      }
-      
-      darkTheme -> darkScheme
-      else -> lightScheme
-  }
-  val view = LocalView.current
-  if (!view.isInEditMode) {
-    SideEffect {
-      val window = (view.context as Activity).window
-      window.statusBarColor = colorScheme.primary.toArgb()
-      WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
+    val colorScheme = when {
+        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
+            val context = LocalContext.current
+            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+        }
+
+        darkTheme -> darkScheme
+        else -> lightScheme
     }
-  }
+    val view = LocalView.current
+    if (!view.isInEditMode) {
+        SideEffect {
+            val window = (view.context as Activity).window
+            window.statusBarColor = colorScheme.primary.toArgb()
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
+        }
+    }
 
-  MaterialTheme(
-    colorScheme = colorScheme,
-    typography = AppTypography,
-    content = content
-  )
+    MaterialTheme(
+        colorScheme = colorScheme,
+        typography = AppTypography,
+        content = content
+    )
 }
-

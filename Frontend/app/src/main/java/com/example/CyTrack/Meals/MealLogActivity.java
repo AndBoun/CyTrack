@@ -19,13 +19,56 @@ import com.example.CyTrack.R;
 
 import java.util.ArrayList;
 
+/**
+ * Activity to log and display meals.
+ */
 public class MealLogActivity extends AppCompatActivity {
 
-    private ImageButton profileSettingsButton, notificationButton, MealsPageButton, LogPageButton;
+    /**
+     * ImageButton for profile settings
+     */
+    private ImageButton profileSettingsButton;
+
+    /**
+     * ImageButton for notifications
+     */
+    private ImageButton notificationButton;
+
+    /**
+     * ImageButton to navigate to Meals Page
+     */
+    private ImageButton MealsPageButton;
+
+    /**
+     * ImageButton to navigate to Log Page
+     */
+    private ImageButton LogPageButton;
+
+    /**
+     * ScrollView to display the meal table
+     */
     private ScrollView MealTable;
+
+    /**
+     * LinearLayout to display the meal table content
+     */
     private LinearLayout MealTableDisplay;
+
+    /**
+     * List to store meal objects
+     */
     private final ArrayList<Meal> meals = new ArrayList<Meal>();
+
+    /**
+     * URL to fetch meal data
+     */
     private final String url = "http://10.90.72.246:8080/meal/";
+
+    /**
+     * Called when the activity is first created.
+     *
+     * @param savedInstanceState If the activity is being re-initialized after previously being shut down then this Bundle contains the data it most recently supplied in onSaveInstanceState(Bundle).
+     */
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
@@ -63,11 +106,11 @@ public class MealLogActivity extends AppCompatActivity {
             //NOT NEEDED
         });
 
-        meals.add(new Meal("joe", "24", "23","120"));
+        meals.add(new Meal("joe", "24", "23", "120"));
         // APPENDING MEALS
         int id = 1;
 
-        while(true){
+        while (true) {
             Meal input = null;
             try {
                 fetchMealData(url + id);
@@ -77,10 +120,9 @@ public class MealLogActivity extends AppCompatActivity {
                         ViewGroup.LayoutParams.MATCH_PARENT,
                         ViewGroup.LayoutParams.WRAP_CONTENT));
 
-                if (id == 1){
+                if (id == 1) {
                     addTableRow(tableLayout, 0, "|Meal ID|", "|Calories|", "|Carbs|", "|Meal Name|", "|Protein|");
-                }
-                else {
+                } else {
                     String id1 = String.valueOf(input.getID());
                     id1 = String.format("MID:  %s    ", id1);
                     String name = input.getName();
@@ -95,8 +137,7 @@ public class MealLogActivity extends AppCompatActivity {
                 }
                 MealTableDisplay.addView(tableLayout);
                 id += 1;
-            }
-            catch (Exception e){
+            } catch (Exception e) {
                 System.out.println(e);
                 break;
             }
@@ -105,6 +146,13 @@ public class MealLogActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Adds a row to the given table layout.
+     *
+     * @param tableLayout The table layout to add the row to.
+     * @param m           The row index.
+     * @param values      The values to add to the row.
+     */
     private void addTableRow(TableLayout tableLayout, int m, String... values) {
         TableRow tableRow = new TableRow(this);
         tableRow.setLayoutParams(new TableRow.LayoutParams(
@@ -117,12 +165,12 @@ public class MealLogActivity extends AppCompatActivity {
             textView.setPadding(4, 4, 4, 4);
             textView.setTextSize(10);
             tableRow.addView(textView);
-            if (m == 0){
+            if (m == 0) {
                 tableRow.setBackgroundColor(Color.parseColor("#C8102E"));
                 textView.setTextColor(Color.parseColor("#FFFFFF"));
 
             }
-            if (m % 2 == 1){
+            if (m % 2 == 1) {
                 tableRow.setBackgroundColor(Color.parseColor("#f0e1b9"));
             }
         }
@@ -131,6 +179,11 @@ public class MealLogActivity extends AppCompatActivity {
         tableLayout.addView(tableRow);
     }
 
+    /**
+     * Fetches meal data from the given URL.
+     *
+     * @param url The URL to fetch meal data from.
+     */
     private void fetchMealData(String url) {
         MealUtils.fetchMealData(this, url, new MealUtils.fetchMealDataCallback() {
             @Override

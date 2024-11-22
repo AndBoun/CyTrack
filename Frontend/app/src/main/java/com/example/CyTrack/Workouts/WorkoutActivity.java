@@ -36,21 +36,46 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * Activity to manage and display workouts.
+ */
 public class WorkoutActivity extends AppCompatActivity implements WorkoutRecyclerInterface {
 
+    /**
+     * List to store workout objects.
+     */
     private final ArrayList<WorkoutObject> workoutList = new ArrayList<>();
 
+    /**
+     * The user object representing the current user.
+     */
     private User user;
 
+    /**
+     * URL for workout-related API endpoints.
+     */
     private String URL = UrlHolder.URL + "/workout/";
 
+    /**
+     * Button to add a new workout.
+     */
+    ImageButton addWorkoutButton;
 
-    ImageButton addWorkoutButton, backButton;
+    /**
+     * Button to navigate back.
+     */
+    ImageButton backButton;
 
+    /**
+     * RecyclerView to display the list of workouts.
+     */
     private RecyclerView recyclerView;
 
-
-
+    /**
+     * Called when the activity is first created.
+     *
+     * @param savedInstanceState If the activity is being re-initialized after previously being shut down then this Bundle contains the data it most recently supplied in onSaveInstanceState(Bundle).
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,7 +86,6 @@ public class WorkoutActivity extends AppCompatActivity implements WorkoutRecycle
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-
 
         user = (User) getIntent().getSerializableExtra("user");
         assert user != null;
@@ -75,7 +99,6 @@ public class WorkoutActivity extends AppCompatActivity implements WorkoutRecycle
         ImageButton addWorkoutButton = findViewById(R.id.addWorkoutButton);
         ImageButton backButton = findViewById(R.id.backButton);
 
-
         getWorkouts();
 
         addWorkoutButton.setOnClickListener(v -> showAddWorkoutDialog());
@@ -83,6 +106,11 @@ public class WorkoutActivity extends AppCompatActivity implements WorkoutRecycle
         backButton.setOnClickListener(v -> finish());
     }
 
+    /**
+     * Handles the click event on a workout item.
+     *
+     * @param position The position of the clicked workout item.
+     */
     @Override
     public void onWorkoutClick(int position) {
         WorkoutObject workout = workoutList.get(position);
@@ -139,7 +167,9 @@ public class WorkoutActivity extends AppCompatActivity implements WorkoutRecycle
         });
     }
 
-
+    /**
+     * Shows a dialog to add a new workout.
+     */
     private void showAddWorkoutDialog() {
         // Inflate the dialog layout
         LayoutInflater inflater = LayoutInflater.from(this);
@@ -155,10 +185,9 @@ public class WorkoutActivity extends AppCompatActivity implements WorkoutRecycle
                     EditText inputWorkoutDuration = dialogView.findViewById(R.id.inputWorkoutDuration2);
                     EditText inputCalories = dialogView.findViewById(R.id.inputCalories);
 
-
-                    if(inputExerciseType.getText().toString().isEmpty() ||
+                    if (inputExerciseType.getText().toString().isEmpty() ||
                             inputWorkoutDuration.getText().toString().isEmpty() ||
-                            inputCalories.getText().toString().isEmpty()){
+                            inputCalories.getText().toString().isEmpty()) {
                         Toast.makeText(WorkoutActivity.this, "Please fill out all fields", Toast.LENGTH_SHORT).show();
                         return;
                     }
@@ -168,7 +197,6 @@ public class WorkoutActivity extends AppCompatActivity implements WorkoutRecycle
                     String calories = inputCalories.getText().toString();
                     String date = getCurrentDate();
 
-
                     postWorkout(exerciseType, duration, calories, date);
                     dialog.dismiss();
                 })
@@ -177,14 +205,21 @@ public class WorkoutActivity extends AppCompatActivity implements WorkoutRecycle
                 .show();
     }
 
-
+    /**
+     * Gets the current date in MM-dd-yyyy format.
+     *
+     * @return The current date as a string.
+     */
     private String getCurrentDate() {
         SimpleDateFormat formatter = new SimpleDateFormat("MM-dd-yyyy");
         Date date = new Date();
         return formatter.format(date);
     }
 
-    private void getWorkouts(){
+    /**
+     * Fetches the workouts from the server.
+     */
+    private void getWorkouts() {
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, URL, null, response -> {
             try {
                 Log.d("WorkoutActivity", "URL: " + URL);
@@ -200,7 +235,6 @@ public class WorkoutActivity extends AppCompatActivity implements WorkoutRecycle
                     Objects.requireNonNull(recyclerView.getAdapter()).notifyItemInserted(workoutList.size() - 1);
                 }
 
-//                Toast.makeText(this, "Workouts fetched " + workoutList.size(), Toast.LENGTH_SHORT).show();
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -210,6 +244,14 @@ public class WorkoutActivity extends AppCompatActivity implements WorkoutRecycle
         VolleySingleton.getInstance(this).addToRequestQueue(jsonObjectRequest);
     }
 
+    /**
+     * Posts a new workout to the server.
+     *
+     * @param exerciseType The type of exercise.
+     * @param duration     The duration of the workout.
+     * @param calories     The calories burned during the workout.
+     * @param date         The date of the workout.
+     */
     private void postWorkout(String exerciseType, String duration, String calories, String date) {
         Map<String, String> params = new HashMap<>();
         params.put("userID", String.valueOf(user.getID()));
@@ -234,6 +276,12 @@ public class WorkoutActivity extends AppCompatActivity implements WorkoutRecycle
         VolleySingleton.getInstance(this).addToRequestQueue(jsonObjectRequest);
     }
 
+    /**
+     * Deletes a workout from the server.
+     *
+     * @param workoutID The ID of the workout to delete.
+     * @param position  The position of the workout in the list.
+     */
     private void deleteWorkout(int workoutID, int position) {
         String deleteURL = URL + "/" + workoutID;
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.DELETE, deleteURL, null, response -> {
@@ -246,6 +294,17 @@ public class WorkoutActivity extends AppCompatActivity implements WorkoutRecycle
         VolleySingleton.getInstance(this).addToRequestQueue(jsonObjectRequest);
     }
 
+    /**
+     * Modifies an existing workout on the server.
+     *
+     * @param workoutID    The ID of the workout to modify.
+     * @param exerciseType The new type of exercise.
+     * @param duration     The new duration of the workout.
+     * @param calories     The new calories burned during the workout.
+     * @param date         The new date of the workout.
+     * @param position     The position of the workout in the list.
+     * @param workout      The workout object to update.
+     */
     private void modifyWorkout(int workoutID, String exerciseType, String duration, String calories, String date, int position, WorkoutObject workout) {
         String modifyURL = URL + "/" + workoutID;
         Map<String, String> params = new HashMap<>();

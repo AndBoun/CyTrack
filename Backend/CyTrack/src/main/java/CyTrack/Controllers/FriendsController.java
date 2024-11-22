@@ -3,6 +3,11 @@ package CyTrack.Controllers;
 
 import CyTrack.Entities.User;
 import CyTrack.Entities.Friends;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +19,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Tag(name = "Friends", description = "Friends REST API")
 @RestController
 @RequestMapping("/{userID}/friends")
 public class FriendsController {
@@ -28,6 +34,25 @@ public class FriendsController {
 
     }
     //displays all friends of a user
+    @Operation(
+            summary="Get all friends of a user",
+            responses= {
+                    @ApiResponse(
+                            responseCode="200",
+                            description="Friends found",
+                            content = @Content(
+                                    schema = @Schema(implementation = FriendResponse.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode="404",
+                            description="User not found",
+                            content = @Content(
+                                    schema = @Schema(implementation = ErrorResponse.class)
+                            )
+                    )
+            }
+    )
     @GetMapping("")
     public ResponseEntity<?> getFriends(@PathVariable Long userID) {
         Optional<User> user = userService.findByUserID(userID);
@@ -59,7 +84,32 @@ public class FriendsController {
         FriendResponse response = new FriendResponse("success", friendsDataList, "Friends found");
         return ResponseEntity.status(200).body(response);
     }
-
+    @Operation(
+            summary="Removes a friend",
+            responses= {
+                    @ApiResponse(
+                            responseCode="200",
+                            description="Friend removed",
+                            content = @Content(
+                                    schema = @Schema(implementation = FriendResponse.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode="404",
+                            description="User not found",
+                            content = @Content(
+                                    schema = @Schema(implementation = ErrorResponse.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode="400",
+                            description="Friend request not found",
+                            content = @Content(
+                                    schema = @Schema(implementation = ErrorResponse.class)
+                            )
+                    )
+            }
+    )
     @DeleteMapping("/{friendID}")
     public ResponseEntity<?> removeFriend(@PathVariable Long friendID) {
         Optional<Friends> friend = friendsService.findByFriendID(friendID);

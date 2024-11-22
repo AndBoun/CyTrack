@@ -48,14 +48,30 @@ import com.example.CyTrack.Utilities.User
 import com.example.CyTrack.Utilities.WebSocketListener
 import org.java_websocket.handshake.ServerHandshake
 
+/**
+ * Activity to handle displaying and managing messages.
+ */
 class MyMessages : ComponentActivity(), WebSocketListener {
 
+    /**
+     * The user object representing the current user.
+     */
     private lateinit var user: User
 
+    /**
+     * The URL for conversations.
+     */
     private val URL = "${UrlHolder.URL}/conversations"
 
+    /**
+     * A mutable list to hold message card data.
+     */
     private var messageCards: MutableList<MessageCardData> = mutableListOf()
 
+    /**
+     * Called when the activity is first created.
+     * Sets up the content view and initializes WebSocket connection.
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -64,8 +80,8 @@ class MyMessages : ComponentActivity(), WebSocketListener {
 
             val serverUrl = "${UrlHolder.wsURL}/conversations/${user.id}"
             Log.d("WebSocketServiceUtil", "Connecting to $serverUrl")
-            WebSocketManagerMessages.getInstance().connectWebSocket(serverUrl);
-            WebSocketManagerMessages.getInstance().setWebSocketListener(this@MyMessages);
+            WebSocketManagerMessages.getInstance().connectWebSocket(serverUrl)
+            WebSocketManagerMessages.getInstance().setWebSocketListener(this@MyMessages)
 
             Column {
                 MyMessageTopCard()
@@ -83,14 +99,28 @@ class MyMessages : ComponentActivity(), WebSocketListener {
         StatusBarUtil.setStatusBarColor(this, R.color.CyRed)
     }
 
-
+    /**
+     * Switches to the message page for the given friend.
+     *
+     * @param friend The friend to message.
+     */
     private fun switchToMessagePage(friend: Friend) {
         SocialUtils.messageUserScreen(user, friend, this)
     }
 
+    /**
+     * Called when the WebSocket connection is opened.
+     *
+     * @param handshakedata The handshake data.
+     */
     override fun onWebSocketOpen(handshakedata: ServerHandshake?) {
     }
 
+    /**
+     * Called when a message is received from the WebSocket.
+     *
+     * @param message The message received.
+     */
     override fun onWebSocketMessage(message: String) {
         runOnUiThread(Runnable {
             Log.d("Mymessages", "Message: $message")
@@ -98,6 +128,13 @@ class MyMessages : ComponentActivity(), WebSocketListener {
         })
     }
 
+    /**
+     * Called when the WebSocket connection is closed.
+     *
+     * @param code The close code.
+     * @param reason The reason for the closure.
+     * @param remote Whether the closure was initiated by the remote server.
+     */
     override fun onWebSocketClose(code: Int, reason: String?, remote: Boolean) {
         val closedBy = if (remote) "server" else "local"
         runOnUiThread(Runnable {
@@ -106,6 +143,11 @@ class MyMessages : ComponentActivity(), WebSocketListener {
         })
     }
 
+    /**
+     * Called when an error occurs on the WebSocket.
+     *
+     * @param ex The exception that occurred.
+     */
     override fun onWebSocketError(ex: Exception?) {
         runOnUiThread(Runnable {
             Toast.makeText(this, "Error: ${ex?.message}", Toast.LENGTH_LONG).show()
@@ -114,6 +156,17 @@ class MyMessages : ComponentActivity(), WebSocketListener {
     }
 }
 
+/**
+ * Data class representing a message card.
+ *
+ * @param username The username of the sender.
+ * @param firstname The first name of the sender.
+ * @param content The content of the message.
+ * @param time The time the message was sent.
+ * @param userID The user ID of the sender.
+ * @param friendEntityID The friend entity ID.
+ * @param conversationID The conversation ID.
+ */
 data class MessageCardData(
     val username: String,
     val firstname: String,
@@ -124,6 +177,15 @@ data class MessageCardData(
     val conversationID: Int
 )
 
+/**
+ * Composable function to display a message card.
+ *
+ * @param name The name of the sender.
+ * @param message The message content.
+ * @param img The image resource.
+ * @param modifier The modifier to be applied to the card.
+ * @param onMessageClick The callback to be invoked when the card is clicked.
+ */
 @Composable
 fun ListMessageCard(
     name: String,
@@ -155,8 +217,7 @@ fun ListMessageCard(
 
             Spacer(modifier = Modifier.width(8.dp))
 
-            Column(
-            ) { // Column for name and message
+            Column {
                 Text(
                     text = name,
                     fontFamily = getCustomFontFamily(
@@ -181,6 +242,12 @@ fun ListMessageCard(
     }
 }
 
+/**
+ * Composable function to display the top card of the message screen.
+ *
+ * @param modifier The modifier to be applied to the card.
+ * @param onMessageClick The callback to be invoked when the card is clicked.
+ */
 @Composable
 fun MyMessageTopCard(
     modifier: Modifier = Modifier,
@@ -217,6 +284,13 @@ fun MyMessageTopCard(
     }
 }
 
+/**
+ * Composable function to display a list of message cards.
+ *
+ * @param messages The list of message cards to display.
+ * @param onMessageClick The callback to be invoked when a card is clicked.
+ * @param modifier The modifier to be applied to the list.
+ */
 @Composable
 fun MessageCardLazyList(
     messages: List<MessageCardData>,
@@ -230,45 +304,52 @@ fun MessageCardLazyList(
             })
         Log.d("MessageCardLazyList", message.userID.toString())
         HorizontalDivider(thickness = 1.dp, color = Color.Gray)
-
     }
 }
 
-    @Preview
-    @Composable
-    fun PreviewListMessageCard() {
-        ListMessageCard("John Doe", "Hello", "generic_avatar")
+/**
+ * @suppress
+ */
+@Preview
+@Composable
+fun PreviewListMessageCard() {
+    ListMessageCard("John Doe", "Hello", "generic_avatar")
+}
+
+/**
+ * @suppress
+ */
+@Preview
+@Composable
+fun PreviewMessageCardLazyList() {
+    Surface {
+        MessageCardLazyList(
+            listOf(
+                MessageCardData("john", "John Doe", "Hello", "12/1/12", 1, 2, 1),
+                MessageCardData("jane", "Jane Doe", "Hi", "12/1/12", 1, 2, 1),
+                MessageCardData("john", "John Doe", "Hello", "12/1/12", 1, 2, 1),
+            )
+        )
     }
+}
 
-
-    @Preview
-    @Composable
-    fun PreviewMessageCardLazyList() {
-        Surface {
+/**
+ * @suppress
+ */
+@Preview
+@Composable
+fun PreviewMyMessagesScreen() {
+    Surface {
+        Column {
+            MyMessageTopCard()
+            Spacer(modifier = Modifier.height(20.dp))
             MessageCardLazyList(
                 listOf(
                     MessageCardData("john", "John Doe", "Hello", "12/1/12", 1, 2, 1),
                     MessageCardData("jane", "Jane Doe", "Hi", "12/1/12", 1, 2, 1),
                     MessageCardData("john", "John Doe", "Hello", "12/1/12", 1, 2, 1),
-                )
+                ),
             )
         }
     }
-
-    @Preview
-    @Composable
-    fun PreviewMyMessagesScreen() {
-        Surface {
-            Column {
-                MyMessageTopCard()
-                Spacer(modifier = Modifier.height(20.dp))
-                MessageCardLazyList(
-                    listOf(
-                        MessageCardData("john", "John Doe", "Hello", "12/1/12", 1, 2, 1),
-                        MessageCardData("jane", "Jane Doe", "Hi", "12/1/12", 1, 2, 1),
-                        MessageCardData("john", "John Doe", "Hello", "12/1/12", 1, 2, 1),
-                    ),
-                )
-            }
-        }
-    }
+}

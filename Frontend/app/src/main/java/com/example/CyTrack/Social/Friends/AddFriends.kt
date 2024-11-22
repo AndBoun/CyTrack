@@ -45,6 +45,9 @@ import com.example.CyTrack.Utilities.VolleySingleton
 import org.json.JSONException
 import org.json.JSONObject
 
+/**
+ * Activity to add friends.
+ */
 class AddFriends : ComponentActivity() {
 
     /**
@@ -57,16 +60,21 @@ class AddFriends : ComponentActivity() {
      */
     private var searchList: MutableList<Friend> = mutableListOf()
 
+    /**
+     * Base URL for friend requests.
+     */
+    private val URL: String = UrlHolder.URL
 
-    private val URL: String = UrlHolder.URL;
-
+    /**
+     * Called when the activity is starting.
+     * @param savedInstanceState If the activity is being re-initialized after previously being shut down then this Bundle contains the data it most recently supplied in onSaveInstanceState(Bundle).
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             val context = LocalContext.current
             user = intent.getSerializableExtra("user") as User
             searchList = remember { mutableStateListOf() }
-
 
             Surface(
                 color = Color(context.resources.getColor(R.color.CyRed)),
@@ -76,7 +84,7 @@ class AddFriends : ComponentActivity() {
             ) {
                 Column(
                     verticalArrangement = Arrangement.Bottom
-                ){
+                ) {
                     IconButton(
                         onClick = {
                             (context as ComponentActivity).finish()
@@ -90,8 +98,6 @@ class AddFriends : ComponentActivity() {
                             modifier = Modifier.size(24.dp)
                         )
                     }
-
-//                    Spacer(modifier = Modifier.height(4.dp))
 
                     SearchBar(
                         searchList = mutableListOf(),
@@ -110,6 +116,10 @@ class AddFriends : ComponentActivity() {
         }
     }
 
+    /**
+     * Sends a friend request to the specified user.
+     * @param username The username of the user to add as a friend.
+     */
     private fun addUser(username: String) {
         val addURL = "${URL}/${user.id}/request"
 
@@ -118,7 +128,6 @@ class AddFriends : ComponentActivity() {
         }
 
         Log.d("AddFriends", inputs.toString())
-
 
         val jsonObjectRequest = JsonObjectRequest(
             Request.Method.POST,
@@ -142,10 +151,11 @@ class AddFriends : ComponentActivity() {
 
         VolleySingleton.getInstance(this).addToRequestQueue(jsonObjectRequest)
     }
-
 }
 
-
+/**
+ * @suppress
+ */
 @Preview
 @Composable
 fun AddFriendsTopCard(
@@ -159,38 +169,43 @@ fun AddFriendsTopCard(
             .fillMaxWidth()
             .height(120.dp)
     ) {
-       Column(
-           verticalArrangement = Arrangement.Bottom
-       ){
-           IconButton(
-               onClick = {
-                   (context as ComponentActivity).finish()
-               },
-               modifier = Modifier.align(Alignment.Start)
-           ) {
-               Icon(
-                   imageVector = Icons.Default.ArrowBack,
-                   contentDescription = "Back arrow",
-                   tint = Color.White,
-                   modifier = Modifier.size(24.dp)
-               )
-           }
-            
-           Spacer(modifier = Modifier.height(8.dp))
+        Column(
+            verticalArrangement = Arrangement.Bottom
+        ) {
+            IconButton(
+                onClick = {
+                    (context as ComponentActivity).finish()
+                },
+                modifier = Modifier.align(Alignment.Start)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.ArrowBack,
+                    contentDescription = "Back arrow",
+                    tint = Color.White,
+                    modifier = Modifier.size(24.dp)
+                )
+            }
 
-           SearchBar(
-               searchList = mutableListOf(),
-               modifier = Modifier
-                   .fillMaxWidth()
-                   .heightIn(min = 56.dp)
-                   .align(Alignment.CenterHorizontally),
-               onClickSearch = onClickSearch
-           )
-       }
+            Spacer(modifier = Modifier.height(8.dp))
+
+            SearchBar(
+                searchList = mutableListOf(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = 56.dp)
+                    .align(Alignment.CenterHorizontally),
+                onClickSearch = onClickSearch
+            )
+        }
     }
-
 }
 
+/**
+ * Composable function for the search bar.
+ * @param searchList List of friends from the search.
+ * @param modifier Modifier to be applied to the search bar.
+ * @param onClickSearch Callback function to handle search button click.
+ */
 @Composable
 fun SearchBar(
     searchList: MutableList<Friend>,
