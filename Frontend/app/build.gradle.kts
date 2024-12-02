@@ -49,13 +49,17 @@ android {
 //            enableUnitTestCoverage = true
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
+
+
     buildFeatures {
         compose = true
     }
+
     kotlinOptions {
         jvmTarget = "17"
     }
@@ -161,6 +165,10 @@ tasks.withType<DokkaTask>().configureEach {
     }
 }
 
+/**
+ * This points for the version referenced in gradle.properties
+ */
+val ktor_version: String by project
 
 dependencies {
     implementation(libs.appcompat)
@@ -180,24 +188,30 @@ dependencies {
     implementation(libs.accompanist.themeadapter.material3)
     implementation(libs.androidx.compose.material)
     debugImplementation(libs.androidx.ui.tooling)
-    androidTestImplementation(libs.espresso.core)
 
+    // Ktor Dependencies for multiplatform
+    implementation(libs.ktor.client.core)
+    implementation(libs.ktor.client.cio)
+    implementation(libs.ktor.client.okhttp)
+    implementation(libs.ktor.client.logging)
+
+    // Dokka Plugin for Java
+    dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.9.20")
 
     // Testing Dependencies
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("com.android.support.test:rules:1.0.2")
     androidTestImplementation("com.android.support.test:runner:1.0.2")
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-    androidTestImplementation("androidx.test.espresso:espresso-contrib:3.4.0")
-    androidTestImplementation("androidx.test.espresso:espresso-intents:3.4.0")
+    androidTestImplementation("androidx.test.ext:junit:1.2.1")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
+    androidTestImplementation("androidx.test.espresso:espresso-contrib:3.6.1")
+    androidTestImplementation("androidx.test.espresso:espresso-intents:3.6.1")
 
 
     implementation("io.coil-kt:coil-compose:2.7.0")
     implementation("androidx.compose.ui:ui-text-google-fonts:1.7.4")
     implementation("org.java-websocket:Java-WebSocket:1.5.2")
 
-    dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.9.20")
 
     implementation(platform("androidx.compose:compose-bom:2024.09.03")) // Testing For Top App Bar
 

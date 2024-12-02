@@ -1,30 +1,26 @@
 [versions]
 accompanistThemeadapterMaterial3 = "0.36.0"
 activityCompose = "1.9.3"
-agp = "8.7.1"
-composeBom = "2024.10.00"
-coreSplashscreen = "1.0.1"
-junit = "4.13.2"
-junitVersion = "1.2.1"
-espressoCore = "3.6.1"
-appcompat = "1.7.0"
-material = "1.12.0"
-activity = "1.9.3"
-constraintlayout = "2.1.4"
-uiTooling = "1.7.4"
+agp = "8.7.2"
 volley = "1.2.1"
+appcompat = "1.7.0"
+activity = "1.9.3"
 legacySupportV4 = "1.0.0"
-kotlin = "2.0.21"
+coreSplashscreen = "1.0.1"
+constraintlayout = "2.2.0"
+uiTooling = "1.7.5"
 storage = "1.5.0"
-foundationLayoutAndroid = "1.7.4"
-material3Android = "1.3.0"
-coreKtx = "1.13.1"
+foundationLayoutAndroid = "1.7.5"
+coreKtx = "1.12.0"
+kotlin = "2.0.21"
+ktor = "3.0.1"
+material3Android = "1.3.1"
+material = "1.12.0"
+composeBom = "2024.11.00"
+composeMaterial = "1.4.0"
 
 # Unneeded from duplicates
-googleMaterial = "1.12.0"
-materialVersion = "<version>"
 uiToolingPreviewAndroid = "1.7.4"
-composeMaterial = "1.4.0"
 
 [libraries]
 accompanist-themeadapter-material3 = { module = "com.google.accompanist:accompanist-themeadapter-material3", version.ref = "accompanistThemeadapterMaterial3" }
@@ -32,9 +28,6 @@ activity-compose = { module = "androidx.activity:activity-compose", version.ref 
 androidx-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
 compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeBom" }
 core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
-junit = { group = "junit", name = "junit", version.ref = "junit" }
-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
@@ -48,11 +41,10 @@ material3-android = { group = "androidx.compose.material3", name = "material3-an
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-compose-material = { group = "androidx.wear.compose", name = "compose-material", version.ref = "composeMaterial" }
 
-# Duplicatied Imports
-#androidx-material3 = { module = "androidx.compose.material3:material3" }
-#material-v190 = { module = "com.google.android.material:material", version.ref = "googleMaterial" }
-#material-vversion = { module = "com.google.android.material:material", version.ref = "materialVersion" }
-#material3 = { module = "androidx.compose.material3:material3" }
+ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
+ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
+ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
+ktor-client-logging = {module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
 
 # Preview version, switch if preview features needed
 #ui-tooling-preview-android = { group = "androidx.compose.ui", name = "ui-tooling-preview-android", version.ref = "uiToolingPreviewAndroid" }
