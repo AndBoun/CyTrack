@@ -165,11 +165,6 @@ tasks.withType<DokkaTask>().configureEach {
     }
 }
 
-/**
- * This points for the version referenced in gradle.properties
- */
-val ktor_version: String by project
-
 dependencies {
     implementation(libs.appcompat)
     implementation(libs.material)
@@ -208,7 +203,9 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-intents:3.6.1")
 
 
+    // Kotlin Multiplatform Image Loading
     implementation("io.coil-kt:coil-compose:2.7.0")
+
     implementation("androidx.compose.ui:ui-text-google-fonts:1.7.4")
     implementation("org.java-websocket:Java-WebSocket:1.5.2")
 
