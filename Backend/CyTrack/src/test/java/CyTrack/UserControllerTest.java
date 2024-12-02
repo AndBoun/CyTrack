@@ -41,4 +41,70 @@ public class UserControllerTest {
         // Assert
         assertEquals(201, response.getStatusCode());
     }
+
+    @Test
+    public void testGetUserById_Success() {
+        // Arrange
+        Long userId = 1L; // Assuming a user with ID 1 exists
+
+        // Act
+        Response response = RestAssured.given()
+                .contentType("application/json")
+                .get("/user/" + userId);
+
+        // Assert
+        assertEquals(201, response.getStatusCode());
+        assertNotNull(response.getBody().asString());
+    }
+    @Test
+    public void testUpdateUser_Success() {
+        // Arrange
+        Long userId = 1L; // Assuming a user with ID 1 exists
+        User updatedUser = new User();
+        updatedUser.setFirstName("UpdatedFirstName");
+        updatedUser.setLastName("UpdatedLastName");
+
+        // Act
+        Response response = RestAssured.given()
+                .contentType("application/json")
+                .body(updatedUser)
+                .put("/user/" + userId);
+
+        // Assert
+        assertEquals(200, response.getStatusCode());
+        assertNotNull(response.getBody().asString());
+    }
+
+    @Test
+    public void testDeleteUser_Success() {
+        // Arrange
+        Long userId = 1L; // Assuming a user with ID 1 exists
+
+        // Act
+        Response response = RestAssured.given()
+                .contentType("application/json")
+                .delete("/user/" + userId);
+
+        // Assert
+        assertEquals(200, response.getStatusCode());
+        assertNotNull(response.getBody().asString());
+    }
+
+    @Test
+    public void testLoginUser_Success() {
+        // Arrange
+        User user = new User();
+        user.setUsername("testUser");
+        user.setPassword("password123");
+
+        // Act
+        Response response = RestAssured.given()
+                .contentType("application/json")
+                .body(user)
+                .post("/user/login");
+
+        // Assert
+        assertEquals(201, response.getStatusCode());
+        assertNotNull(response.getBody().asString());
+    }
 }
