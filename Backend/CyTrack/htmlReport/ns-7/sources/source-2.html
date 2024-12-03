@@ -1,0 +1,215 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > MessageSocket</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">CyTrack.Sockets</a>
+</div>
+
+<h1>Coverage Summary for Class: MessageSocket (CyTrack.Sockets)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">MessageSocket</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    25%
+  </span>
+  <span class="absValue">
+    (2/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/14)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    19.4%
+  </span>
+  <span class="absValue">
+    (7/36)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package CyTrack.Sockets;
+&nbsp;
+&nbsp;import CyTrack.Entities.Message;
+&nbsp;import CyTrack.Repositories.MessageRepository;
+&nbsp;import CyTrack.Responses.ChatMessageResponse;
+&nbsp;import com.fasterxml.jackson.databind.ObjectMapper;
+&nbsp;import jakarta.websocket.*;
+&nbsp;import jakarta.websocket.server.PathParam;
+&nbsp;import jakarta.websocket.server.ServerEndpoint;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.stereotype.Controller;
+&nbsp;import CyTrack.Services.FriendsService;
+&nbsp;import CyTrack.Services.UserService;
+&nbsp;import java.io.IOException;
+&nbsp;import java.util.Hashtable;
+&nbsp;import java.util.Map;
+&nbsp;
+&nbsp;@Controller
+&nbsp;@ServerEndpoint(&quot;/chat/{senderID}/{receiverID}&quot;)
+&nbsp;public class MessageSocket {
+&nbsp;
+&nbsp;    private static MessageRepository msgRepo;
+&nbsp;    private static FriendsService friendsService;
+&nbsp;    private static UserService userService;
+&nbsp;    private static UserConversationsSocket userConversationsSocket;
+&nbsp;
+&nbsp;    @Autowired
+<b class="fc">&nbsp;    public MessageSocket(MessageRepository msgRepo, FriendsService friendsService, UserService userService, UserConversationsSocket userConversationsSocket) {</b>
+<b class="fc">&nbsp;        MessageSocket.msgRepo = msgRepo;</b>
+<b class="fc">&nbsp;        MessageSocket.friendsService = friendsService;</b>
+<b class="fc">&nbsp;        MessageSocket.userService = userService;</b>
+<b class="fc">&nbsp;        MessageSocket.userConversationsSocket = userConversationsSocket;</b>
+&nbsp;    }
+&nbsp;
+<b class="nc">&nbsp;    public MessageSocket() {</b>
+&nbsp;    }
+&nbsp;
+<b class="fc">&nbsp;    private static Map&lt;Session, Long&gt; sessionUserMap = new Hashtable&lt;&gt;();</b>
+<b class="fc">&nbsp;    private static Map&lt;Long, Session&gt; userSessionMap = new Hashtable&lt;&gt;();</b>
+&nbsp;
+&nbsp;    @OnOpen
+&nbsp;    public void onOpen(Session session, @PathParam(&quot;senderID&quot;) Long senderID, @PathParam(&quot;receiverID&quot;) Long receiverID) throws IOException {
+<b class="nc">&nbsp;        if (friendsService.checkIfFriends(senderID, receiverID)) {</b>
+<b class="nc">&nbsp;            sessionUserMap.put(session, senderID);</b>
+<b class="nc">&nbsp;            userSessionMap.put(senderID, session);</b>
+<b class="nc">&nbsp;            sendChatHistory(session, senderID, receiverID);</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            session.close(new CloseReason(CloseReason.CloseCodes.VIOLATED_POLICY, &quot;You are not friends with this user&quot;));</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @OnMessage
+&nbsp;    public void onMessage(Session session, @PathParam(&quot;receiverID&quot;) Long receiverID, String messageText) throws IOException {
+<b class="nc">&nbsp;        Long senderID = sessionUserMap.get(session);</b>
+<b class="nc">&nbsp;        if (senderID == null) return;</b>
+&nbsp;
+<b class="nc">&nbsp;        if (friendsService.checkIfFriends(senderID, receiverID)) {</b>
+<b class="nc">&nbsp;            String senderUsername = userService.findByUserID(senderID).get().getUsername();</b>
+<b class="nc">&nbsp;            String receiverUsername = userService.findByUserID(receiverID).get().getUsername();</b>
+<b class="nc">&nbsp;            Message message = new Message(senderID, receiverID, senderUsername, receiverUsername, messageText);</b>
+<b class="nc">&nbsp;            msgRepo.save(message);</b>
+&nbsp;
+<b class="nc">&nbsp;            Session receiverSession = userSessionMap.get(receiverID);</b>
+<b class="nc">&nbsp;            if (receiverSession != null &amp;&amp; receiverSession.isOpen()) {</b>
+<b class="nc">&nbsp;                receiverSession.getBasicRemote().sendText(senderUsername + &quot;: &quot; + messageText);</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            session.getBasicRemote().sendText(&quot;You: &quot; + messageText);</b>
+&nbsp;
+&nbsp;            // Update conversations for both sender and receiver
+<b class="nc">&nbsp;            userConversationsSocket.updateConversations(senderID);</b>
+<b class="nc">&nbsp;            userConversationsSocket.updateConversations(receiverID);</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            session.getBasicRemote().sendText(&quot;Error: You are not friends with this user&quot;);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @OnClose
+&nbsp;    public void onClose(Session session) {
+<b class="nc">&nbsp;        Long userID = sessionUserMap.remove(session);</b>
+<b class="nc">&nbsp;        if (userID != null) {</b>
+<b class="nc">&nbsp;            userSessionMap.remove(userID);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @OnError
+&nbsp;    public void onError(Session session, Throwable throwable) {
+<b class="nc">&nbsp;        System.err.println(&quot;WebSocket error: &quot; + throwable.getMessage());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private void sendChatHistory(Session session, Long senderID, Long receiverID) throws IOException {
+<b class="nc">&nbsp;        var chatHistory = msgRepo.findBySenderIDAndReceiverIDOrReceiverIDAndSenderIDOrderByDateAsc(senderID, receiverID);</b>
+<b class="nc">&nbsp;        for (Message msg : chatHistory) {</b>
+<b class="nc">&nbsp;            ChatMessageResponse chatMessage = new ChatMessageResponse(&quot;success&quot;, new ChatMessageResponse.Data(msg.getSenderID(), msg.getContent()), &quot;Chat history loaded&quot;);</b>
+<b class="nc">&nbsp;            String jsonMessage = new ObjectMapper().writeValueAsString(chatMessage);</b>
+<b class="nc">&nbsp;            session.getBasicRemote().sendText(jsonMessage);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-12-02 19:39</div>
+</div>
+</body>
+</html>

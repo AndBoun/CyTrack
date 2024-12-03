@@ -1,0 +1,480 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > UserController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">CyTrack.Controllers</a>
+</div>
+
+<h1>Coverage Summary for Class: UserController (CyTrack.Controllers)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">UserController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    66.7%
+  </span>
+  <span class="absValue">
+    (6/9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    40.6%
+  </span>
+  <span class="absValue">
+    (13/32)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    43.3%
+  </span>
+  <span class="absValue">
+    (39/90)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package CyTrack.Controllers;
+&nbsp;
+&nbsp;import CyTrack.Entities.User;
+&nbsp;import CyTrack.Services.BadgeService;
+&nbsp;import CyTrack.Services.UserService;
+&nbsp;import CyTrack.Sockets.LeaderBoardSocket;
+&nbsp;import CyTrack.Sockets.UserSocket;
+&nbsp;
+&nbsp;import io.swagger.v3.oas.annotations.Operation;
+&nbsp;import io.swagger.v3.oas.annotations.media.Content;
+&nbsp;import io.swagger.v3.oas.annotations.media.Schema;
+&nbsp;import io.swagger.v3.oas.annotations.responses.ApiResponse;
+&nbsp;import io.swagger.v3.oas.annotations.tags.Tag;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;import org.springframework.web.bind.annotation.*;
+&nbsp;import java.security.NoSuchAlgorithmException;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Optional;
+&nbsp;
+&nbsp;@Tag(name = &quot;User Controller&quot;, description = &quot;REST APIs related to Users&quot;)
+&nbsp;@RestController
+&nbsp;@RequestMapping(&quot;/user&quot;)
+&nbsp;public class UserController {
+&nbsp;
+&nbsp;
+&nbsp;    private final UserService userService;
+&nbsp;    private final BadgeService badgeService;
+&nbsp;
+&nbsp;    @Autowired
+<b class="fc">&nbsp;    public UserController(UserService userService, BadgeService badgeService) {</b>
+&nbsp;
+<b class="fc">&nbsp;        this.userService = userService;</b>
+<b class="fc">&nbsp;        this.badgeService = badgeService;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    // Register user
+&nbsp;    @Operation(
+&nbsp;            summary = &quot;Register user&quot;,
+&nbsp;            responses = {
+&nbsp;                    @ApiResponse(
+&nbsp;                            description = &quot;User registered&quot;,
+&nbsp;                            responseCode = &quot;201&quot;,
+&nbsp;                            content = @Content(schema = @Schema(implementation = LoginResponse.class))
+&nbsp;                    ),
+&nbsp;                    @ApiResponse(
+&nbsp;                            description = &quot;Username already exists&quot;,
+&nbsp;                            responseCode = &quot;409&quot;,
+&nbsp;                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+&nbsp;                    ),
+&nbsp;                    @ApiResponse(
+&nbsp;                            description = &quot;Internal server error&quot;,
+&nbsp;                            responseCode = &quot;500&quot;,
+&nbsp;                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+&nbsp;                    )
+&nbsp;            }
+&nbsp;    )
+&nbsp;    @PostMapping(&quot;&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; registerUser(@RequestBody User user) {
+&nbsp;        try {
+<b class="pc">&nbsp;            if (user.getUsername() == null || user.getPassword() == null) {</b>
+<b class="nc">&nbsp;                return ResponseEntity.badRequest().body(null);</b>
+&nbsp;            }
+<b class="pc">&nbsp;            if (userService.findByUserName(user.getUsername()).isPresent()) {</b>
+<b class="fc">&nbsp;                ErrorResponse response = new ErrorResponse(&quot;error&quot;, 409, &quot;Username already exists&quot;, &quot;Username already exists&quot;);</b>
+<b class="fc">&nbsp;                return ResponseEntity.status(409).body(response);</b>
+&nbsp;            }
+&nbsp;            else {
+<b class="nc">&nbsp;                User registeredUser = userService.registerUser(user);</b>
+&nbsp;
+&nbsp;                //update our websockets
+<b class="nc">&nbsp;                LeaderBoardSocket.updateLeaderboard(user.getUserID());</b>
+<b class="nc">&nbsp;                UserSocket.updateUserList();</b>
+&nbsp;
+<b class="nc">&nbsp;                badgeService.awardEligibleBadges(registeredUser);</b>
+&nbsp;
+<b class="nc">&nbsp;                LoginResponse response = new LoginResponse(&quot;success&quot;, registeredUser.getUserID(), &quot;User registered&quot; );</b>
+<b class="nc">&nbsp;                return ResponseEntity.status(201).body(response);</b>
+&nbsp;            }
+<b class="nc">&nbsp;        } catch (NoSuchAlgorithmException e) {</b>
+<b class="nc">&nbsp;            ErrorResponse response = new ErrorResponse(&quot;error&quot;, 500, &quot;Internal server error&quot;, &quot;Internal server error&quot;);</b>
+<b class="nc">&nbsp;            return ResponseEntity.status(500).body(response);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    // Login user
+&nbsp;    @Operation(
+&nbsp;            summary = &quot;Login user&quot;,
+&nbsp;            responses = {
+&nbsp;                    @ApiResponse(
+&nbsp;                            description = &quot;Login successful&quot;,
+&nbsp;                            responseCode = &quot;201&quot;,
+&nbsp;                            content = @Content(schema = @Schema(implementation = LoginResponse.class))
+&nbsp;                    ),
+&nbsp;                    @ApiResponse(
+&nbsp;                            description = &quot;Account Does Not Exist&quot;,
+&nbsp;                            responseCode = &quot;401&quot;,
+&nbsp;                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+&nbsp;                    ),
+&nbsp;                    @ApiResponse(
+&nbsp;                            description = &quot;Internal server error&quot;,
+&nbsp;                            responseCode = &quot;500&quot;,
+&nbsp;                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+&nbsp;                    )
+&nbsp;            }
+&nbsp;    )
+&nbsp;    @PostMapping(&quot;/login&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; loginUser(@RequestBody User user) {
+&nbsp;        try {
+<b class="fc">&nbsp;            Optional&lt;User&gt; foundUser = userService.findByUserName(user.getUsername());</b>
+<b class="pc">&nbsp;            if (foundUser.isPresent() &amp;&amp; userService.checkPassword(foundUser.get(), user.getPassword())) {</b>
+<b class="fc">&nbsp;                LoginResponse response = new LoginResponse(&quot;success&quot;, foundUser.get().getUserID(), &quot;Login successful&quot;);</b>
+<b class="fc">&nbsp;                return ResponseEntity.status(201).body(response);</b>
+&nbsp;            } else {
+<b class="nc">&nbsp;                ErrorResponse response = new ErrorResponse(&quot;error&quot;, 401, &quot;Account Does Not Exist&quot;, &quot;Unauthorized&quot;);</b>
+<b class="nc">&nbsp;                return ResponseEntity.status(401).body(response);</b>
+&nbsp;            }
+<b class="nc">&nbsp;        } catch (NoSuchAlgorithmException e) {</b>
+<b class="nc">&nbsp;            ErrorResponse response = new ErrorResponse(&quot;error&quot;, 500, &quot;Internal server error&quot;, &quot;Internal server error&quot;);</b>
+<b class="nc">&nbsp;            return ResponseEntity.status(500).body(response);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    // Get all users
+&nbsp;    @Operation(
+&nbsp;            summary = &quot;Get all users&quot;,
+&nbsp;            responses = {
+&nbsp;                    @ApiResponse(
+&nbsp;                            description = &quot;Users found&quot;,
+&nbsp;                            responseCode = &quot;200&quot;,
+&nbsp;                            content = @Content(schema = @Schema(implementation = User.class))
+&nbsp;                    )
+&nbsp;            }
+&nbsp;    )
+&nbsp;    @GetMapping(&quot;&quot;)
+&nbsp;    public ResponseEntity&lt;List&lt;User&gt;&gt; getAllUsers() {
+<b class="nc">&nbsp;        List&lt;User&gt; users = userService.getAllUsers();</b>
+<b class="nc">&nbsp;        return ResponseEntity.ok(users);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // Get user by userID
+&nbsp;    @Operation(
+&nbsp;            summary = &quot;Get user by userID&quot;,
+&nbsp;            responses = {
+&nbsp;                    @ApiResponse(
+&nbsp;                            description = &quot;User found&quot;,
+&nbsp;                            responseCode = &quot;201&quot;,
+&nbsp;                            content = @Content(schema = @Schema(implementation = LoginResponse.class))
+&nbsp;                    ),
+&nbsp;                    @ApiResponse(
+&nbsp;                            description = &quot;User not found&quot;,
+&nbsp;                            responseCode = &quot;404&quot;,
+&nbsp;                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+&nbsp;                    )
+&nbsp;            }
+&nbsp;    )
+&nbsp;    @GetMapping(&quot;/{userID}&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; getUserByUserID(@PathVariable Long userID) {
+<b class="fc">&nbsp;        Optional&lt;User&gt; user = userService.findByUserID(userID);</b>
+<b class="pc">&nbsp;        if (user.isPresent()) {</b>
+<b class="fc">&nbsp;            User foundUser = user.get();</b>
+<b class="fc">&nbsp;            LoginResponse response = new LoginResponse(</b>
+&nbsp;                    &quot;success&quot;,
+<b class="fc">&nbsp;                    foundUser.getUserID(),</b>
+<b class="fc">&nbsp;                    foundUser.getUsername(),</b>
+<b class="fc">&nbsp;                    foundUser.getFirstName(),</b>
+<b class="fc">&nbsp;                    foundUser.getLastName(),</b>
+<b class="fc">&nbsp;                    foundUser.getAge(),</b>
+<b class="fc">&nbsp;                    foundUser.getGender(),</b>
+<b class="fc">&nbsp;                    foundUser.getCurrentStreak(),</b>
+&nbsp;                    &quot;Resources sent successfully&quot;
+&nbsp;            );
+<b class="fc">&nbsp;            return ResponseEntity.status(201).body(response);</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            ErrorResponse error = new ErrorResponse(&quot;error&quot;, 404, &quot;User not found&quot;, &quot;User not found&quot;);</b>
+<b class="nc">&nbsp;            return ResponseEntity.status(404).body(error);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    // Update user information
+&nbsp;    @Operation(
+&nbsp;            summary = &quot;Update user information&quot;,
+&nbsp;            responses = {
+&nbsp;                    @ApiResponse(
+&nbsp;                            description = &quot;User updated&quot;,
+&nbsp;                            responseCode = &quot;200&quot;,
+&nbsp;                            content = @Content(schema = @Schema(implementation = LoginResponse.class))
+&nbsp;                    ),
+&nbsp;                    @ApiResponse(
+&nbsp;                            description = &quot;User not found&quot;,
+&nbsp;                            responseCode = &quot;404&quot;,
+&nbsp;                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+&nbsp;                    )
+&nbsp;            }
+&nbsp;    )
+&nbsp;    @PutMapping(&quot;/{userID}&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; updateUser(@PathVariable Long userID, @RequestBody User updatedUser) {
+<b class="fc">&nbsp;        Optional&lt;User&gt; user = userService.findByUserID(userID);</b>
+<b class="pc">&nbsp;        if (user.isPresent()) {</b>
+<b class="fc">&nbsp;            User existingUser = user.get();</b>
+<b class="pc">&nbsp;            if (updatedUser.getFirstName() != null) {</b>
+<b class="fc">&nbsp;                existingUser.setFirstName(updatedUser.getFirstName());</b>
+&nbsp;            }
+<b class="pc">&nbsp;            if (updatedUser.getLastName() != null) {</b>
+<b class="fc">&nbsp;                existingUser.setLastName(updatedUser.getLastName());</b>
+&nbsp;            }
+<b class="pc">&nbsp;            if (updatedUser.getUsername() != null) {</b>
+<b class="nc">&nbsp;                existingUser.setUsername(updatedUser.getUsername());</b>
+&nbsp;            }
+<b class="pc">&nbsp;            if (updatedUser.getAge() != 0) {</b>
+<b class="nc">&nbsp;                existingUser.setAge(updatedUser.getAge());</b>
+&nbsp;            }
+<b class="pc">&nbsp;            if (updatedUser.getGender() != null) {</b>
+<b class="nc">&nbsp;                existingUser.setGender(updatedUser.getGender());</b>
+&nbsp;            }
+<b class="fc">&nbsp;            User updated = userService.updateUser(existingUser);</b>
+<b class="fc">&nbsp;            LoginResponse response = new LoginResponse(&quot;success&quot;, updated.getUserID(), &quot;User updated&quot;);</b>
+<b class="fc">&nbsp;            return ResponseEntity.ok(response);</b>
+&nbsp;        }
+&nbsp;        else {
+<b class="nc">&nbsp;            ErrorResponse response = new ErrorResponse(&quot;error&quot;, 404, &quot;User not found&quot;, &quot;User not found&quot;);</b>
+<b class="nc">&nbsp;            return ResponseEntity.status(404).body(response);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;    /*
+&nbsp;    Post request check if the user exists and if the password matches the current password
+&nbsp;     */
+&nbsp;    @Operation(
+&nbsp;            summary = &quot;Check if user exists and password matches&quot;,
+&nbsp;            responses = {
+&nbsp;                    @ApiResponse(
+&nbsp;                            description = &quot;Password matches&quot;,
+&nbsp;                            responseCode = &quot;200&quot;,
+&nbsp;                            content = @Content(schema = @Schema(implementation = passwordResponse.class))
+&nbsp;                    ),
+&nbsp;                    @ApiResponse(
+&nbsp;                            description = &quot;Password does not match&quot;,
+&nbsp;                            responseCode = &quot;200&quot;,
+&nbsp;                            content = @Content(schema = @Schema(implementation = passwordResponse.class))
+&nbsp;                    ),
+&nbsp;                    @ApiResponse(
+&nbsp;                            description = &quot;User not found&quot;,
+&nbsp;                            responseCode = &quot;404&quot;,
+&nbsp;                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+&nbsp;                    ),
+&nbsp;                    @ApiResponse(
+&nbsp;                            description = &quot;Internal server error&quot;,
+&nbsp;                            responseCode = &quot;500&quot;,
+&nbsp;                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+&nbsp;                    )
+&nbsp;            }
+&nbsp;    )
+&nbsp;    @PostMapping(&quot;/resetPassword&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; SendUserIDForPassReset(@RequestBody User user) {
+<b class="nc">&nbsp;        Optional&lt;User&gt; foundUser = userService.findByUserName(user.getUsername());</b>
+<b class="nc">&nbsp;        if (foundUser.isPresent()) {</b>
+&nbsp;            try {
+<b class="nc">&nbsp;                User existingUser = foundUser.get();</b>
+<b class="nc">&nbsp;                if (!userService.checkPassword(existingUser, user.getPassword())) {</b>
+<b class="nc">&nbsp;                    passwordResponse response = new passwordResponse(&quot;success&quot;, &quot;Password does not match&quot;, existingUser.getUserID());</b>
+<b class="nc">&nbsp;                    return ResponseEntity.ok(response);</b>
+&nbsp;                } else {
+<b class="nc">&nbsp;                    return ResponseEntity.status(400).body(new passwordResponse(&quot;error&quot;, &quot;New password cannot be the same as the current password&quot;, null));</b>
+&nbsp;                }
+<b class="nc">&nbsp;            } catch (NoSuchAlgorithmException e) {</b>
+<b class="nc">&nbsp;                ErrorResponse response = new ErrorResponse(&quot;error&quot;, 500, &quot;Internal server error&quot;, &quot;Internal server error&quot;);</b>
+<b class="nc">&nbsp;                return ResponseEntity.status(500).body(response);</b>
+&nbsp;            }
+&nbsp;        } else {
+<b class="nc">&nbsp;            ErrorResponse response = new ErrorResponse(&quot;error&quot;, 404, &quot;User not found&quot;, &quot;User not found&quot;);</b>
+<b class="nc">&nbsp;            return ResponseEntity.status(404).body(response);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    // Resets password by userID
+&nbsp;    @Operation(
+&nbsp;            summary = &quot;Reset password by userID&quot;,
+&nbsp;            responses = {
+&nbsp;                    @ApiResponse(
+&nbsp;                            description = &quot;Password reset&quot;,
+&nbsp;                            responseCode = &quot;200&quot;,
+&nbsp;                            content = @Content(schema = @Schema(implementation = passwordResponse.class))
+&nbsp;                    ),
+&nbsp;                    @ApiResponse(
+&nbsp;                            description = &quot;User not found&quot;,
+&nbsp;                            responseCode = &quot;404&quot;,
+&nbsp;                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+&nbsp;                    ),
+&nbsp;                    @ApiResponse(
+&nbsp;                            description = &quot;Internal server error&quot;,
+&nbsp;                            responseCode = &quot;500&quot;,
+&nbsp;                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+&nbsp;                    )
+&nbsp;            }
+&nbsp;    )
+&nbsp;    @PutMapping(&quot;/resetPassword/{userID}&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; resetPasswordByUserID(@PathVariable Long userID, @RequestBody User user) {
+<b class="nc">&nbsp;        Optional&lt;User&gt; foundUser = userService.findByUserID(userID);</b>
+<b class="nc">&nbsp;        if (foundUser.isPresent()) {</b>
+&nbsp;            try {
+<b class="nc">&nbsp;                User updatedUser = userService.resetPassword(foundUser.get(), user.getPassword());</b>
+<b class="nc">&nbsp;                passwordResponse response = new passwordResponse(&quot;success&quot;, &quot;Password reset&quot;, updatedUser.getUserID());</b>
+<b class="nc">&nbsp;                return ResponseEntity.ok(response);</b>
+<b class="nc">&nbsp;            } catch (NoSuchAlgorithmException e) {</b>
+<b class="nc">&nbsp;                ErrorResponse response = new ErrorResponse(&quot;error&quot;, 500, &quot;Internal server error&quot;, &quot;Internal server error&quot;);</b>
+<b class="nc">&nbsp;                return ResponseEntity.status(500).body(response);</b>
+&nbsp;            }
+&nbsp;        } else {
+<b class="nc">&nbsp;            ErrorResponse response = new ErrorResponse(&quot;error&quot;, 404, &quot;User not found&quot;, &quot;User not found&quot;);</b>
+<b class="nc">&nbsp;            return ResponseEntity.status(404).body(response);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;    // Delete user
+&nbsp;    @Operation(
+&nbsp;            summary = &quot;Delete user&quot;,
+&nbsp;            responses = {
+&nbsp;                    @ApiResponse(
+&nbsp;                            description = &quot;User deleted&quot;,
+&nbsp;                            responseCode = &quot;200&quot;,
+&nbsp;                            content = @Content(schema = @Schema(implementation = DeleteResponse.class))
+&nbsp;                    ),
+&nbsp;                    @ApiResponse(
+&nbsp;                            description = &quot;User not found&quot;,
+&nbsp;                            responseCode = &quot;404&quot;,
+&nbsp;                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+&nbsp;                    )
+&nbsp;            }
+&nbsp;    )
+&nbsp;    @DeleteMapping(&quot;/{userID}&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; deleteUser(@PathVariable Long userID) {
+<b class="fc">&nbsp;        Optional&lt;User&gt; foundUser = userService.findByUserID(userID);</b>
+<b class="pc">&nbsp;        if (foundUser.isPresent()) {</b>
+<b class="fc">&nbsp;            userService.deleteUser(foundUser.get());</b>
+<b class="nc">&nbsp;            DeleteResponse response = new DeleteResponse(&quot;success&quot;, 200, &quot;User deleted&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;            UserSocket.updateUserList();</b>
+&nbsp;
+<b class="nc">&nbsp;            return ResponseEntity.ok(response);</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            ErrorResponse response = new ErrorResponse(&quot;error&quot;, 404, &quot;User not found&quot;, &quot;User not found&quot;);</b>
+<b class="nc">&nbsp;            return ResponseEntity.status(404).body(response);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /*
+&nbsp;    // Award a badge to a user -- IN PROGRESS
+&nbsp;    @PostMapping(&quot;/{userId}/badges/{badgeId}&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; awardBadge(@PathVariable Long userId, @PathVariable Long badgeId) {
+&nbsp;        try {
+&nbsp;            boolean badgeAwarded = userService.awardBadgeToUser(userId, badgeId);
+&nbsp;            if (badgeAwarded) {
+&nbsp;                return ResponseEntity.ok(&quot;Badge awarded successfully!&quot;);
+&nbsp;            } else {
+&nbsp;                ErrorResponse response = new ErrorResponse(&quot;error&quot;, 404, &quot;User or Badge not found&quot;, &quot;The user or badge with the specified ID does not exist.&quot;);
+&nbsp;                return ResponseEntity.status(404).body(response);
+&nbsp;            }
+&nbsp;        } catch (Exception e) {
+&nbsp;            ErrorResponse response = new ErrorResponse(&quot;error&quot;, 500, &quot;Internal server error&quot;, &quot;An unexpected error occurred.&quot;);
+&nbsp;            return ResponseEntity.status(500).body(response);
+&nbsp;        }
+&nbsp;    }
+&nbsp;     */
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-12-02 19:39</div>
+</div>
+</body>
+</html>

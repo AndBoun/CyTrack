@@ -1,0 +1,199 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > UserConversations</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">CyTrack.Entities</a>
+</div>
+
+<h1>Coverage Summary for Class: UserConversations (CyTrack.Entities)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">UserConversations</td>
+<td class="coverageStat">
+  <span class="percent">
+    8.3%
+  </span>
+  <span class="absValue">
+    (1/12)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    6.2%
+  </span>
+  <span class="absValue">
+    (1/16)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">UserConversations$HibernateInstantiator$qpFRUyA8</td>
+  </tr>
+  <tr>
+    <td class="name">UserConversations$HibernateProxy$yYYzxgRg</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    8.3%
+  </span>
+  <span class="absValue">
+    (1/12)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    6.2%
+  </span>
+  <span class="absValue">
+    (1/16)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package CyTrack.Entities;
+&nbsp;
+&nbsp;import com.fasterxml.jackson.annotation.JsonProperty;
+&nbsp;import jakarta.persistence.*;
+&nbsp;import org.hibernate.annotations.OnDelete;
+&nbsp;import org.hibernate.annotations.OnDeleteAction;
+&nbsp;
+&nbsp;import java.util.Date;
+&nbsp;
+&nbsp;/*
+&nbsp;    *@Author Kai Quach
+&nbsp; */
+&nbsp;@Entity
+&nbsp;public class UserConversations {
+&nbsp;
+&nbsp;    @Id
+&nbsp;    @GeneratedValue(strategy = GenerationType.IDENTITY)
+&nbsp;    private Long conversationID;
+&nbsp;
+&nbsp;    @ManyToOne
+&nbsp;    @JoinColumn(name = &quot;user1_id&quot;)
+&nbsp;    private User user1;
+&nbsp;
+&nbsp;    @ManyToOne
+&nbsp;    @JoinColumn(name = &quot;user2_id&quot;)
+&nbsp;    private User user2;
+&nbsp;
+&nbsp;    private String user1_username;
+&nbsp;    private String user2_username;
+&nbsp;
+<b class="fc">&nbsp;    public UserConversations() {}</b>
+&nbsp;
+<b class="nc">&nbsp;    public UserConversations(User user1, String user1_username, User user2, String user2_username) {</b>
+<b class="nc">&nbsp;        this.user1 = user1;</b>
+<b class="nc">&nbsp;        this.user1_username = user1_username;</b>
+<b class="nc">&nbsp;        this.user2 = user2;</b>
+<b class="nc">&nbsp;        this.user2_username = user2_username;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public User getUser1() {
+<b class="nc">&nbsp;        return user1;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setUser1(User user1) {
+<b class="nc">&nbsp;        this.user1 = user1;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public User getUser2() {
+<b class="nc">&nbsp;        return user2;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setUser2(User user2) {
+<b class="nc">&nbsp;        this.user2 = user2;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Long getConversationID() {
+<b class="nc">&nbsp;        return conversationID;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setConversationID(Long conversationID) {
+<b class="nc">&nbsp;        this.conversationID = conversationID;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getUser1_username() {
+<b class="nc">&nbsp;        return user1_username;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setUser1_username(String user1_username) {
+<b class="nc">&nbsp;        this.user1_username = user1_username;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getUser2_username() {
+<b class="nc">&nbsp;        return user2_username;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setUser2_username(String user2_username) {
+<b class="nc">&nbsp;        this.user2_username = user2_username;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-12-02 19:39</div>
+</div>
+</body>
+</html>

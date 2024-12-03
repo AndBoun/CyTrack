@@ -1,0 +1,275 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > BadgeService</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">CyTrack.Services</a>
+</div>
+
+<h1>Coverage Summary for Class: BadgeService (CyTrack.Services)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">BadgeService</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    9.1%
+  </span>
+  <span class="absValue">
+    (1/11)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/24)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    5.4%
+  </span>
+  <span class="absValue">
+    (3/56)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package CyTrack.Services;
+&nbsp;
+&nbsp;
+&nbsp;import CyTrack.Entities.Badge;
+&nbsp;import CyTrack.Entities.User;
+&nbsp;import CyTrack.Repositories.BadgeRepository;
+&nbsp;import CyTrack.Repositories.UserRepository;
+&nbsp;import CyTrack.Sockets.UserBadgeSocket;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Optional;
+&nbsp;
+&nbsp;@Service
+&nbsp;public class BadgeService {
+&nbsp;
+&nbsp;    private final BadgeRepository badgeRepository;
+&nbsp;    private final UserRepository userRepository;
+&nbsp;
+&nbsp;    @Autowired
+<b class="fc">&nbsp;    public BadgeService(BadgeRepository badgeRepository, UserRepository userRepository) {</b>
+<b class="fc">&nbsp;        this.badgeRepository = badgeRepository;</b>
+<b class="fc">&nbsp;        this.userRepository = userRepository;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // Retrieve all badges available in the app
+&nbsp;    public List&lt;Badge&gt; getAllBadges() {
+<b class="nc">&nbsp;        return badgeRepository.findAll();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // Find a badge by its ID
+&nbsp;    public Optional&lt;Badge&gt; findByBadgeId(Long badgeID) {
+<b class="nc">&nbsp;        return badgeRepository.findByBadgeID(badgeID);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // Get all badges a specific user has earned
+&nbsp;    public List&lt;Badge&gt; getUserBadges(User user) {
+<b class="nc">&nbsp;        return user.getBadges();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // Award a badge to a user if the user does not already have it
+&nbsp;    public boolean awardBadgeToUser(User user, Badge badge) {
+<b class="nc">&nbsp;        if (user.getBadges().contains(badge)) {</b>
+&nbsp;            // Badge is already awarded to the user
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // Add the badge to the user&#39;s list of badges and save the user
+<b class="nc">&nbsp;        user.addBadge(badge);</b>
+<b class="nc">&nbsp;        userRepository.save(user);</b>
+<b class="nc">&nbsp;        return true;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Award badges based on conditions met by the user.
+&nbsp;     * This method checks all badge conditions for the user.
+&nbsp;     * @param user we&#39;re checking to see if badge criteria are met
+&nbsp;     */
+&nbsp;    public void awardEligibleBadges(User user) {
+&nbsp;
+<b class="nc">&nbsp;        awardInitiateBadge(user);  // Add more badge checks here as needed</b>
+<b class="nc">&nbsp;        awardIntermediatBadge(user);</b>
+<b class="nc">&nbsp;        awardAdvancedBadge(user);</b>
+<b class="nc">&nbsp;        awardStreakBadge(user);</b>
+<b class="nc">&nbsp;        UserBadgeSocket.updateBadgeList(user.getUserID());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Awards Initiate badge if condition is met.
+&nbsp;     * Checks a user&#39;s total time.
+&nbsp;     * If total time &gt;= 500 (minutes), award badge
+&nbsp;     * Otherwise, do nothing
+&nbsp;     * @param user we&#39;re checking to see if badge criteria is met
+&nbsp;     */
+&nbsp;    private void awardInitiateBadge(User user) {
+<b class="nc">&nbsp;        int userTotalTime = user.getTotalTime();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (userTotalTime &gt;= 500) {</b>
+&nbsp;            // Check if the user already has this badge
+<b class="nc">&nbsp;            Optional&lt;Badge&gt; lifetimeTimeBadgeOpt = badgeRepository.findByUserAndBadgeName(user, &quot;Initiate Gymrat&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;            if (lifetimeTimeBadgeOpt.isEmpty()) {</b>
+&nbsp;                // User does not have the badge, so create and assign it
+<b class="nc">&nbsp;                Badge lifetimeTimeBadge = new Badge(&quot;Initiate Gymrat&quot;, &quot;Achieved 500 hours&quot;, user);</b>
+<b class="nc">&nbsp;                badgeRepository.save(lifetimeTimeBadge);</b>
+<b class="nc">&nbsp;                user.getBadges().add(lifetimeTimeBadge);</b>
+<b class="nc">&nbsp;                userRepository.save(user);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    private void awardIntermediatBadge(User user) {
+<b class="nc">&nbsp;        int userTotalTime = user.getTotalTime();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (userTotalTime &gt;= 750) {</b>
+<b class="nc">&nbsp;            if (user.getAge() &gt;= 14 &amp;&amp; user.getAge() &lt;= 18) {</b>
+&nbsp;                // Check if the user already has this badge
+<b class="nc">&nbsp;                Optional&lt;Badge&gt; earlyBeginnings = badgeRepository.findByUserAndBadgeName(user, &quot;Early Beginnings&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;                if (earlyBeginnings.isEmpty()) {</b>
+&nbsp;                    // User does not have the badge, so create and assign it
+<b class="nc">&nbsp;                    Badge lifetimeTimeBadge = new Badge(&quot;Intermediate Gymrat&quot;, &quot;Achieved 750 hours&quot;, user);</b>
+<b class="nc">&nbsp;                    badgeRepository.save(lifetimeTimeBadge);</b>
+<b class="nc">&nbsp;                    user.getBadges().add(lifetimeTimeBadge);</b>
+<b class="nc">&nbsp;                    userRepository.save(user);</b>
+&nbsp;                }
+&nbsp;            }
+&nbsp;            // Check if the user already has this badge
+<b class="nc">&nbsp;            Optional&lt;Badge&gt; lifetimeTimeBadgeOpt = badgeRepository.findByUserAndBadgeName(user, &quot;Intermediate Gymrat&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;            if (lifetimeTimeBadgeOpt.isEmpty()) {</b>
+&nbsp;                // User does not have the badge, so create and assign it
+<b class="nc">&nbsp;                Badge lifetimeTimeBadge = new Badge(&quot;Intermediate Gymrat&quot;, &quot;Achieved 750 hours&quot;, user);</b>
+<b class="nc">&nbsp;                badgeRepository.save(lifetimeTimeBadge);</b>
+<b class="nc">&nbsp;                user.getBadges().add(lifetimeTimeBadge);</b>
+<b class="nc">&nbsp;                userRepository.save(user);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    private void awardAdvancedBadge(User user) {
+<b class="nc">&nbsp;        int userTotalTime = user.getTotalTime();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (userTotalTime &gt;= 1000) {</b>
+&nbsp;            // Check if the user already has this badge
+<b class="nc">&nbsp;            Optional&lt;Badge&gt; lifetimeTimeBadgeOpt = badgeRepository.findByUserAndBadgeName(user, &quot;Advanced Gymrat&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;            if (lifetimeTimeBadgeOpt.isEmpty()) {</b>
+&nbsp;                // User does not have the badge, so create and assign it
+<b class="nc">&nbsp;                Badge lifetimeTimeBadge = new Badge(&quot;Advanced Gymrat&quot;, &quot;Achieved 1000 hours&quot;, user);</b>
+<b class="nc">&nbsp;                badgeRepository.save(lifetimeTimeBadge);</b>
+<b class="nc">&nbsp;                user.getBadges().add(lifetimeTimeBadge);</b>
+<b class="nc">&nbsp;                userRepository.save(user);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    private void awardStreakBadge(User user) {
+<b class="nc">&nbsp;        int highestStreak = user.getHighestStreak();</b>
+&nbsp;
+<b class="nc">&nbsp;        if (highestStreak &gt;= 30) {</b>
+<b class="nc">&nbsp;            Optional&lt;Badge&gt; streakBadgeOpt = badgeRepository.findByUserAndBadgeName(user, &quot;One Month&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;            if (streakBadgeOpt.isEmpty()) {</b>
+&nbsp;
+<b class="nc">&nbsp;                Badge streakBadge = new Badge(&quot;One Month&quot;, &quot;Work out for 1 month straight&quot;, user);</b>
+<b class="nc">&nbsp;                badgeRepository.save(streakBadge);</b>
+<b class="nc">&nbsp;                user.getBadges().add(streakBadge);</b>
+<b class="nc">&nbsp;                userRepository.save(user);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    public Optional&lt;Badge&gt; findByBadgeName(String badgeName) {
+<b class="nc">&nbsp;        return badgeRepository.findByBadgeName(badgeName);</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-12-02 19:39</div>
+</div>
+</body>
+</html>

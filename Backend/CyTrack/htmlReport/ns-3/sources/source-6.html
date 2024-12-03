@@ -1,0 +1,256 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > FriendRequestResponse</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">CyTrack.Controllers</a>
+</div>
+
+<h1>Coverage Summary for Class: FriendRequestResponse (CyTrack.Controllers)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">FriendRequestResponse</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/10)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">FriendRequestResponse$Data</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/4)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">FriendRequestResponse$FriendRequestData</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/13)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/19)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/27)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package CyTrack.Controllers;
+&nbsp;
+&nbsp;import CyTrack.Entities.FriendRequest;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;public class FriendRequestResponse {
+&nbsp;    private String status;
+&nbsp;    private Data data;
+&nbsp;    private String message;
+&nbsp;
+<b class="nc">&nbsp;    public FriendRequestResponse(String status, List&lt;FriendRequestData&gt; friendRequest, String message) {</b>
+<b class="nc">&nbsp;        this.status = status;</b>
+<b class="nc">&nbsp;        this.data = new Data(friendRequest);</b>
+<b class="nc">&nbsp;        this.message = message;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getStatus() {
+<b class="nc">&nbsp;        return status;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setStatus(String status) {
+<b class="nc">&nbsp;        this.status = status;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Data getData() {
+<b class="nc">&nbsp;        return data;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setData(Data data) {
+<b class="nc">&nbsp;        this.data = data;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getMessage() {
+<b class="nc">&nbsp;        return message;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setMessage(String message) {
+<b class="nc">&nbsp;        this.message = message;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static class Data {
+&nbsp;        private List&lt;FriendRequestData&gt; friendRequests;
+&nbsp;
+<b class="nc">&nbsp;        public Data(List&lt;FriendRequestData&gt; friendRequests) {</b>
+<b class="nc">&nbsp;            this.friendRequests = friendRequests;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        public List&lt;FriendRequestData&gt; getFriendRequests() {
+<b class="nc">&nbsp;            return friendRequests;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        public void setFriendRequests(List&lt;FriendRequestData&gt; friendRequests) {
+<b class="nc">&nbsp;            this.friendRequests = friendRequests;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    public static class FriendRequestData {
+&nbsp;        private String username;
+&nbsp;        private String firstname;
+&nbsp;        private Long userID;
+&nbsp;        private Long friendID;
+&nbsp;
+<b class="nc">&nbsp;        public FriendRequestData(String username, String firstname,Long userID, Long friendID) {</b>
+<b class="nc">&nbsp;            this.username = username;</b>
+<b class="nc">&nbsp;            this.firstname = firstname;</b>
+<b class="nc">&nbsp;            this.userID = userID;</b>
+<b class="nc">&nbsp;            this.friendID = friendID;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        public String getUsername() {
+<b class="nc">&nbsp;            return username;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        public void setUsername(String username) {
+<b class="nc">&nbsp;            this.username = username;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        public String getFirstname() {
+<b class="nc">&nbsp;            return firstname;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        public void setFirstname(String firstname) {
+<b class="nc">&nbsp;            this.firstname = firstname;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        public Long getUserID() {
+<b class="nc">&nbsp;            return userID;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        public void setUserID(Long userID) {
+<b class="nc">&nbsp;            this.userID = userID;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;
+&nbsp;        public Long getFriendID() {
+<b class="nc">&nbsp;            return friendID;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        public void setfriendID(Long friendID) {
+<b class="nc">&nbsp;            this.friendID = friendID;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-12-02 19:39</div>
+</div>
+</body>
+</html>

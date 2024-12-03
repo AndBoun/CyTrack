@@ -1,0 +1,221 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > MealService</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">CyTrack.Services</a>
+</div>
+
+<h1>Coverage Summary for Class: MealService (CyTrack.Services)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">MealService</td>
+<td class="coverageStat">
+  <span class="percent">
+    14.3%
+  </span>
+  <span class="absValue">
+    (1/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    6.7%
+  </span>
+  <span class="absValue">
+    (1/15)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">MealService$NutrientSummary</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/7)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    9.1%
+  </span>
+  <span class="absValue">
+    (1/11)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    4.5%
+  </span>
+  <span class="absValue">
+    (1/22)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package CyTrack.Services;
+&nbsp;
+&nbsp;import CyTrack.Entities.Meal;
+&nbsp;import CyTrack.Repositories.MealRepository;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Optional;
+&nbsp;
+&nbsp;@Service
+&nbsp;public class MealService {
+&nbsp;
+&nbsp;    private final MealRepository mealRepository;
+&nbsp;
+&nbsp;    @Autowired
+<b class="fc">&nbsp;    public MealService(MealRepository mealRepository) {this.mealRepository = mealRepository; }</b>
+&nbsp;
+<b class="nc">&nbsp;    public Meal createMeal(Meal meal) { return mealRepository.save(meal); }</b>
+&nbsp;
+<b class="nc">&nbsp;    public Optional&lt;Meal&gt; findByMealID(Long mealID) { return mealRepository.findByMealID(mealID); }</b>
+&nbsp;
+<b class="nc">&nbsp;    public void deleteMeal(Long mealID) { mealRepository.deleteByMealID(mealID); }</b>
+&nbsp;
+<b class="nc">&nbsp;    public List&lt;Meal&gt; getAllMeals(Long userID) {return mealRepository.findByUser_UserID(userID); }</b>
+&nbsp;
+&nbsp;    public List&lt;Meal&gt; getMealsByUserIDAndDate(Long userID, String date) {
+<b class="nc">&nbsp;        return mealRepository.findByUser_UserIDAndDate(userID, date);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    //Calculate total calories, protein, and carbs for a given date
+&nbsp;    public NutrientSummary calculateTotalNutrients(Long userID, String date) {
+<b class="nc">&nbsp;        List&lt;Meal&gt; meals = getMealsByUserIDAndDate(userID, date);</b>
+<b class="nc">&nbsp;        int totalCalories = 0;</b>
+<b class="nc">&nbsp;        int totalProtein = 0;</b>
+<b class="nc">&nbsp;        int totalCarbs = 0;</b>
+&nbsp;
+<b class="nc">&nbsp;        for (Meal meal : meals) {</b>
+<b class="nc">&nbsp;            totalCalories += meal.getCalories() != null ? meal.getCalories() : 0;</b>
+<b class="nc">&nbsp;            totalProtein += meal.getProtein() != null ? meal.getProtein() : 0;</b>
+<b class="nc">&nbsp;            totalCarbs += meal.getCarbs() != null ? meal.getCarbs() : 0;</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        return new NutrientSummary(totalCalories, totalProtein, totalCarbs);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // Inner class to hold nutrient summary
+&nbsp;    public static class NutrientSummary {
+&nbsp;        private int totalCalories;
+&nbsp;        private int totalProtein;
+&nbsp;        private int totalCarbs;
+&nbsp;
+<b class="nc">&nbsp;        public NutrientSummary(int totalCalories, int totalProtein, int totalCarbs) {</b>
+<b class="nc">&nbsp;            this.totalCalories = totalCalories;</b>
+<b class="nc">&nbsp;            this.totalProtein = totalProtein;</b>
+<b class="nc">&nbsp;            this.totalCarbs = totalCarbs;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        public int getTotalCalories() {
+<b class="nc">&nbsp;            return totalCalories;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        public int getTotalProtein() {
+<b class="nc">&nbsp;            return totalProtein;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        public int getTotalCarbs() {
+<b class="nc">&nbsp;            return totalCarbs;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-12-02 19:39</div>
+</div>
+</body>
+</html>

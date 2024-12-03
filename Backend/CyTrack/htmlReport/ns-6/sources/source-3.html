@@ -1,0 +1,241 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > FriendsService</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">CyTrack.Services</a>
+</div>
+
+<h1>Coverage Summary for Class: FriendsService (CyTrack.Services)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">FriendsService</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    6.7%
+  </span>
+  <span class="absValue">
+    (1/15)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    13.2%
+  </span>
+  <span class="absValue">
+    (5/38)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package CyTrack.Services;
+&nbsp;
+&nbsp;import CyTrack.Entities.*;
+&nbsp;import CyTrack.Repositories.FriendRequestRepository;
+&nbsp;import CyTrack.Repositories.FriendsRepository;
+&nbsp;import CyTrack.Repositories.UserRepository;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.messaging.handler.annotation.MessageMapping;
+&nbsp;import org.springframework.messaging.simp.SimpMessagingTemplate;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;import CyTrack.Repositories.UserConversationsRepository;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Optional;
+&nbsp;import java.util.stream.Collectors;
+&nbsp;
+&nbsp;@Service
+&nbsp;public class FriendsService {
+&nbsp;
+&nbsp;    private final FriendsRepository friendsRepository;
+&nbsp;    private final FriendRequestRepository friendRequestRepository;
+&nbsp;    private final UserRepository userRepository;
+&nbsp;    private final UserConversationsRepository UserConversationsRepository;
+&nbsp;    @Autowired
+&nbsp;    private SimpMessagingTemplate template;
+&nbsp;    @Autowired
+<b class="fc">&nbsp;    public FriendsService(FriendsRepository friendsRepository, FriendRequestRepository friendRequestRepository, UserRepository userRepository, UserConversationsRepository UserConversationsRepository) {</b>
+<b class="fc">&nbsp;        this.friendsRepository = friendsRepository;</b>
+<b class="fc">&nbsp;        this.friendRequestRepository = friendRequestRepository;</b>
+<b class="fc">&nbsp;        this.userRepository = userRepository;</b>
+<b class="fc">&nbsp;        this.UserConversationsRepository = UserConversationsRepository;</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;    // Checks if two users are friends by seeing if there is an accepted friend request between them
+&nbsp;    public boolean checkIfFriends(Long userID, Long friendID) {
+<b class="nc">&nbsp;        return friendsRepository.existsByUser1_UserIDAndUser2_UserID(userID, friendID) ||</b>
+<b class="nc">&nbsp;                friendsRepository.existsByUser1_UserIDAndUser2_UserID(friendID, userID);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // Sends a friend request if one does not already exist in any status
+&nbsp;    public FriendRequest sendFriendRequest(Long friendID, Long userID) {
+<b class="nc">&nbsp;        User sender = userRepository.findById(userID).orElseThrow(() -&gt; new RuntimeException(&quot;Sender not found&quot;));</b>
+<b class="nc">&nbsp;        User receiver = userRepository.findById(friendID).orElseThrow(() -&gt; new RuntimeException(&quot;Receiver not found&quot;));</b>
+&nbsp;
+<b class="nc">&nbsp;        if (checkIfRequestSent(userID, friendID) || checkIfRequestReceived(userID, friendID)) {</b>
+<b class="nc">&nbsp;            throw new RuntimeException(&quot;Friend request already exists between these users&quot;);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        String senderUsername = sender.getUsername();</b>
+<b class="nc">&nbsp;        String receiverUsername = receiver.getUsername();</b>
+<b class="nc">&nbsp;        FriendRequest friendRequest = new FriendRequest(sender, senderUsername, receiver, receiverUsername);</b>
+<b class="nc">&nbsp;        friendRequest.setStatus(FriendRequest.RequestStatus.PENDING);</b>
+<b class="nc">&nbsp;        friendRequestRepository.save(friendRequest);</b>
+&nbsp;
+<b class="nc">&nbsp;        sendNotification(receiver.getUserID(), sender.getUsername());</b>
+&nbsp;
+<b class="nc">&nbsp;        return friendRequest;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void acceptFriendRequest(FriendRequest friendRequest){
+&nbsp;        // Update the friend request status to accepted
+<b class="nc">&nbsp;        friendRequest.setStatus(FriendRequest.RequestStatus.ACCEPTED);</b>
+<b class="nc">&nbsp;        friendRequestRepository.save(friendRequest);</b>
+&nbsp;
+&nbsp;        // Create a new Friends record
+<b class="nc">&nbsp;        Friends friends = new Friends(friendRequest.getSender(), friendRequest.getSender().getUsername(), friendRequest.getReceiver(), friendRequest.getReceiver().getUsername());</b>
+<b class="nc">&nbsp;        friends.setFriendRequest(friendRequest);</b>
+<b class="nc">&nbsp;        friendsRepository.save(friends);</b>
+&nbsp;
+&nbsp;        // Create a new UserConversations record
+<b class="nc">&nbsp;        UserConversations userConversations = new UserConversations(friendRequest.getSender(), friendRequest.getSender().getUsername(), friendRequest.getReceiver(), friendRequest.getReceiver().getUsername());</b>
+<b class="nc">&nbsp;        UserConversationsRepository.save(userConversations);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void declineFriendRequest(FriendRequest friendRequest){
+&nbsp;        // Update the friend request status to declined
+<b class="nc">&nbsp;        friendRequest.setStatus(FriendRequest.RequestStatus.DECLINED);</b>
+<b class="nc">&nbsp;        friendRequestRepository.save(friendRequest);</b>
+&nbsp;    }
+&nbsp;    private void sendNotification(Long receiverId, String senderUsername) {
+<b class="nc">&nbsp;        String message = &quot;You have a new friend request from &quot; + senderUsername;</b>
+<b class="nc">&nbsp;        template.convertAndSendToUser(receiverId.toString(), &quot;/queue/friendRequest&quot;, message);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public List&lt;Friends&gt; getAllFriends(Long userID) {
+<b class="nc">&nbsp;        return friendsRepository.findByUser1_UserIDOrUser2_UserID(userID, userID);</b>
+&nbsp;    }
+&nbsp;    // Checks if a friend request has already been sent from sender to receiver
+&nbsp;    public boolean checkIfRequestSent(Long senderID, Long receiverID) {
+<b class="nc">&nbsp;        return friendRequestRepository.existsBySenderUserIDAndReceiverUserIDAndStatus(senderID, receiverID, FriendRequest.RequestStatus.PENDING);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // Checks if a friend request has already been received by the user from the friend
+&nbsp;    public boolean checkIfRequestReceived(Long friendID, Long userID) {
+<b class="nc">&nbsp;        return friendRequestRepository.existsBySenderUserIDAndReceiverUserIDAndStatus(friendID, userID, FriendRequest.RequestStatus.PENDING);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Optional&lt;FriendRequest&gt; findFriendRequestByID(Long requestID) {
+<b class="nc">&nbsp;        return friendRequestRepository.findById(requestID);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public List&lt;FriendRequest&gt; getIncomingFriendRequests(Long userID) {
+<b class="nc">&nbsp;        return friendRequestRepository.findByReceiver_UserIDAndStatus(userID, FriendRequest.RequestStatus.PENDING);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public List&lt;FriendRequest&gt; getOutgoingFriendRequests(Long userID) {
+<b class="nc">&nbsp;        return friendRequestRepository.findBySender_UserIDAndStatus(userID, FriendRequest.RequestStatus.PENDING);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Optional&lt;Friends&gt; findByFriendID(Long friendID) {
+<b class="nc">&nbsp;        return friendsRepository.findById(friendID);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void removeFriend(Long friendID) {
+<b class="nc">&nbsp;        friendsRepository.deleteById(friendID);</b>
+&nbsp;
+&nbsp;    }
+&nbsp;    public List&lt;UserConversations&gt; getUserConversations(Long userID) {
+<b class="nc">&nbsp;        return UserConversationsRepository.findByUser1_UserIDOrUser2_UserID(userID, userID);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-12-02 19:39</div>
+</div>
+</body>
+</html>

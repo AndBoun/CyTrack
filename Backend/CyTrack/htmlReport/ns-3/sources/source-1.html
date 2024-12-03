@@ -1,0 +1,273 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > BadgeController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">CyTrack.Controllers</a>
+</div>
+
+<h1>Coverage Summary for Class: BadgeController (CyTrack.Controllers)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">BadgeController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    25%
+  </span>
+  <span class="absValue">
+    (1/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    9.1%
+  </span>
+  <span class="absValue">
+    (3/33)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package CyTrack.Controllers;
+&nbsp;
+&nbsp;import CyTrack.Entities.Badge;
+&nbsp;import CyTrack.Entities.User;
+&nbsp;import CyTrack.Services.BadgeService;
+&nbsp;import CyTrack.Services.UserService;
+&nbsp;import io.swagger.v3.oas.annotations.Operation;
+&nbsp;import io.swagger.v3.oas.annotations.Parameter;
+&nbsp;import io.swagger.v3.oas.annotations.Parameters;
+&nbsp;import io.swagger.v3.oas.annotations.media.Content;
+&nbsp;import io.swagger.v3.oas.annotations.media.Schema;
+&nbsp;import io.swagger.v3.oas.annotations.responses.ApiResponse;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;import org.springframework.web.bind.annotation.*;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Optional;
+&nbsp;import java.util.stream.Collectors;
+&nbsp;
+&nbsp;@RestController
+&nbsp;@RequestMapping(&quot;/badge&quot;)
+&nbsp;public class BadgeController {
+&nbsp;
+&nbsp;    private final BadgeService badgeService;
+&nbsp;    private final UserService userService;
+&nbsp;
+&nbsp;    @Autowired
+<b class="fc">&nbsp;    public BadgeController(BadgeService badgeService, UserService userService) {</b>
+<b class="fc">&nbsp;        this.badgeService = badgeService;</b>
+<b class="fc">&nbsp;        this.userService = userService;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // Get all badges
+&nbsp;    @Operation(
+&nbsp;            summary = &quot;Retrieve all badges&quot;,
+&nbsp;            description = &quot;Fetches a list of all badges available in the system.&quot;,
+&nbsp;            responses = {
+&nbsp;                    @ApiResponse(
+&nbsp;                            responseCode = &quot;200&quot;,
+&nbsp;                            description = &quot;All badges retrieved&quot;,
+&nbsp;                            content = @Content(schema = @Schema(implementation = BadgeResponse.class))
+&nbsp;                    )
+&nbsp;            }
+&nbsp;    )
+&nbsp;    @GetMapping(&quot;allBadges&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; getAllBadges() {
+<b class="nc">&nbsp;        List&lt;Badge&gt; badges = badgeService.getAllBadges();</b>
+<b class="nc">&nbsp;        List&lt;BadgeResponse.BadgeData&gt; badgeDataList = badges.stream()</b>
+<b class="nc">&nbsp;                .map(badge -&gt; new BadgeResponse.BadgeData(badge.getBadgeID(), badge.getBadgeName(), badge.getDescription()))</b>
+<b class="nc">&nbsp;                .collect(Collectors.toList());</b>
+<b class="nc">&nbsp;        BadgeResponse response = new BadgeResponse(&quot;success&quot;, badgeDataList, &quot;All badges retrieved&quot;);</b>
+<b class="nc">&nbsp;        return ResponseEntity.ok(response);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // Award a badge to a user
+&nbsp;    @Operation(
+&nbsp;            summary = &quot;Award a badge to a user&quot;,
+&nbsp;            description = &quot;Assigns a badge to a user based on their user ID and the badge&#39;s name.&quot;,
+&nbsp;            responses = {
+&nbsp;                    @ApiResponse(
+&nbsp;                            responseCode = &quot;200&quot;,
+&nbsp;                            description = &quot;Badge awarded successfully&quot;,
+&nbsp;                            content = @Content(schema = @Schema(implementation = BadgeResponse.class))
+&nbsp;                    ),
+&nbsp;                    @ApiResponse(
+&nbsp;                            responseCode = &quot;404&quot;,
+&nbsp;                            description = &quot;User or badge not found&quot;,
+&nbsp;                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+&nbsp;                    ),
+&nbsp;                    @ApiResponse(
+&nbsp;                            responseCode = &quot;409&quot;,
+&nbsp;                            description = &quot;Conflict - Badge already awarded&quot;,
+&nbsp;                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+&nbsp;                    )
+&nbsp;            }
+&nbsp;    )
+&nbsp;    @Parameters({
+&nbsp;            @Parameter(
+&nbsp;                    name = &quot;userId&quot;,
+&nbsp;                    description = &quot;ID of the user to whom the badge will be awarded&quot;,
+&nbsp;                    required = true,
+&nbsp;                    example = &quot;1&quot;
+&nbsp;            ),
+&nbsp;            @Parameter(
+&nbsp;                    name = &quot;badgeName&quot;,
+&nbsp;                    description = &quot;Name of the badge to be awarded&quot;,
+&nbsp;                    required = true,
+&nbsp;                    example = &quot;Lifetime Achievement&quot;
+&nbsp;            )
+&nbsp;    })
+&nbsp;    @PostMapping(&quot;/{userId}/award/{badgeName}&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; awardBadgeToUser(@PathVariable Long userId, @PathVariable String badgeName) {
+<b class="nc">&nbsp;        Optional&lt;User&gt; userOpt = userService.findByUserID(userId);</b>
+<b class="nc">&nbsp;        Optional&lt;Badge&gt; badgeOpt = badgeService.findByBadgeName(badgeName);</b>
+&nbsp;
+<b class="nc">&nbsp;        if (userOpt.isEmpty()) {</b>
+<b class="nc">&nbsp;            ErrorResponse response = new ErrorResponse(&quot;error&quot;, 404, &quot;User not found&quot;, &quot;User with ID &quot; + userId + &quot; not found&quot;);</b>
+<b class="nc">&nbsp;            return ResponseEntity.status(404).body(response);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        if (badgeOpt.isEmpty()) {</b>
+<b class="nc">&nbsp;            ErrorResponse response = new ErrorResponse(&quot;error&quot;, 404, &quot;Badge not found&quot;, &quot;Badge with name &quot; + badgeName + &quot; not found&quot;);</b>
+<b class="nc">&nbsp;            return ResponseEntity.status(404).body(response);</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        boolean awarded = badgeService.awardBadgeToUser(userOpt.get(), badgeOpt.get());</b>
+<b class="nc">&nbsp;        if (awarded) {</b>
+<b class="nc">&nbsp;            BadgeResponse response = new BadgeResponse(&quot;success&quot;, null, &quot;Badge awarded successfully!&quot;);</b>
+<b class="nc">&nbsp;            return ResponseEntity.ok(response);</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            ErrorResponse response = new ErrorResponse(&quot;error&quot;, 409, &quot;Conflict&quot;, &quot;Badge already awarded to user&quot;);</b>
+<b class="nc">&nbsp;            return ResponseEntity.status(409).body(response);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    // Get all badges a user has earned
+&nbsp;    @Operation(
+&nbsp;            summary = &quot;Get all badges a user has earned&quot;,
+&nbsp;            description = &quot;Retrieves a list of badges awarded to a specific user by their user ID.&quot;,
+&nbsp;            responses = {
+&nbsp;                    @ApiResponse(
+&nbsp;                            responseCode = &quot;200&quot;,
+&nbsp;                            description = &quot;User&#39;s earned badges retrieved&quot;,
+&nbsp;                            content = @Content(schema = @Schema(implementation = BadgeResponse.class))
+&nbsp;                    ),
+&nbsp;                    @ApiResponse(
+&nbsp;                            responseCode = &quot;404&quot;,
+&nbsp;                            description = &quot;User not found&quot;,
+&nbsp;                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+&nbsp;                    )
+&nbsp;            }
+&nbsp;    )
+&nbsp;    @Parameter(
+&nbsp;            name = &quot;userId&quot;,
+&nbsp;            description = &quot;ID of the user whose earned badges are to be retrieved&quot;,
+&nbsp;            required = true,
+&nbsp;            example = &quot;1&quot;
+&nbsp;    )
+&nbsp;    @GetMapping(&quot;/{userId}/earned&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; getUserBadges(@PathVariable Long userId) {
+<b class="nc">&nbsp;        Optional&lt;User&gt; userOpt = userService.findByUserID(userId);</b>
+&nbsp;
+<b class="nc">&nbsp;        if (userOpt.isPresent()) {</b>
+<b class="nc">&nbsp;            List&lt;Badge&gt; userBadges = badgeService.getUserBadges(userOpt.get());</b>
+<b class="nc">&nbsp;            List&lt;BadgeResponse.BadgeData&gt; badgeDataList = userBadges.stream()</b>
+<b class="nc">&nbsp;                    .map(badge -&gt; new BadgeResponse.BadgeData(badge.getBadgeID(), badge.getBadgeName(), badge.getDescription()))</b>
+<b class="nc">&nbsp;                    .collect(Collectors.toList());</b>
+<b class="nc">&nbsp;            BadgeResponse response = new BadgeResponse(&quot;success&quot;, badgeDataList, &quot;User&#39;s earned badges retrieved&quot;);</b>
+<b class="nc">&nbsp;            return ResponseEntity.ok(response);</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            ErrorResponse response = new ErrorResponse(&quot;error&quot;, 404, &quot;User not found&quot;, &quot;User with ID &quot; + userId + &quot; not found&quot;);</b>
+<b class="nc">&nbsp;            return ResponseEntity.status(404).body(response);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-12-02 19:39</div>
+</div>
+</body>
+</html>
