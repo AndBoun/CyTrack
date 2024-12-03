@@ -20,8 +20,8 @@ public class FriendsService {
     private final FriendRequestRepository friendRequestRepository;
     private final UserRepository userRepository;
     private final UserConversationsRepository UserConversationsRepository;
-    @Autowired
-    private SimpMessagingTemplate template;
+//    @Autowired
+//    private SimpMessagingTemplate template;
     @Autowired
     public FriendsService(FriendsRepository friendsRepository, FriendRequestRepository friendRequestRepository, UserRepository userRepository, UserConversationsRepository UserConversationsRepository) {
         this.friendsRepository = friendsRepository;
@@ -54,7 +54,7 @@ public class FriendsService {
         friendRequest.setStatus(FriendRequest.RequestStatus.PENDING);
         friendRequestRepository.save(friendRequest);
 
-        sendNotification(receiver.getUserID(), sender.getUsername());
+//        sendNotification(receiver.getUserID(), sender.getUsername());
 
         return friendRequest;
     }
@@ -79,10 +79,10 @@ public class FriendsService {
         friendRequest.setStatus(FriendRequest.RequestStatus.DECLINED);
         friendRequestRepository.save(friendRequest);
     }
-    private void sendNotification(Long receiverId, String senderUsername) {
-        String message = "You have a new friend request from " + senderUsername;
-        template.convertAndSendToUser(receiverId.toString(), "/queue/friendRequest", message);
-    }
+//    private void sendNotification(Long receiverId, String senderUsername) {
+//        String message = "You have a new friend request from " + senderUsername;
+//        template.convertAndSendToUser(receiverId.toString(), "/queue/friendRequest", message);
+//    }
 
     public List<Friends> getAllFriends(Long userID) {
         return friendsRepository.findByUser1_UserIDOrUser2_UserID(userID, userID);

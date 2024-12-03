@@ -15,7 +15,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ExtendWith(SpringExtension.class)
-public class UserControllerTest {
+public class KaiQuachSystemTest {
     @LocalServerPort
     int port;
 
@@ -56,6 +56,7 @@ public class UserControllerTest {
         assertEquals(201, response.getStatusCode());
         assertNotNull(response.getBody().asString());
     }
+
     @Test
     public void testUpdateUser_Success() {
         // Arrange

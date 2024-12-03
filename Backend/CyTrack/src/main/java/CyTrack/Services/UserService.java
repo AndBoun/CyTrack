@@ -67,7 +67,6 @@ public class UserService {
     public boolean checkPassword(User user, String rawPassword) throws NoSuchAlgorithmException {
         return user.getPassword().equals(hashPassword(rawPassword));
     }
-
     private String hashPassword(String password) throws NoSuchAlgorithmException {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
