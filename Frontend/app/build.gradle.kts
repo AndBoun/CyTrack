@@ -166,23 +166,23 @@ tasks.withType<DokkaTask>().configureEach {
 }
 
 dependencies {
-    implementation(libs.appcompat)
-    implementation(libs.material)
     implementation(libs.activity)
-    implementation(libs.constraintlayout)
     implementation(libs.core.splashscreen)
     implementation(libs.legacy.support.v4)
-    implementation(libs.volley)
     implementation(libs.storage)
-    implementation(libs.foundation.layout.android)
-    implementation(libs.material3.android)
-    implementation(libs.ui.tooling)
-    implementation(libs.core.ktx)
-    implementation(platform(libs.compose.bom))
-    implementation(libs.activity.compose)
-    implementation(libs.accompanist.themeadapter.material3)
-    implementation(libs.androidx.compose.material)
-    debugImplementation(libs.androidx.ui.tooling)
+
+
+
+    // Java UI and Activities
+    implementation(libs.appcompat)
+    implementation(libs.material)
+    implementation(libs.constraintlayout)
+
+
+    // Java Networking Dependencies
+    implementation(libs.volley)
+    implementation("org.java-websocket:Java-WebSocket:1.5.2")
+
 
     // Ktor Dependencies for multiplatform
     implementation(libs.ktor.client.core)
@@ -190,10 +190,17 @@ dependencies {
     implementation(libs.ktor.client.okhttp)
     implementation(libs.ktor.client.logging)
 
+
+    // Coil Dependencies for KMP Image Loading
+    implementation("io.coil-kt.coil3:coil-compose:3.0.4")
+    implementation("io.coil-kt.coil3:coil-network-ktor3:3.0.4")
+
+
     // Dokka Plugin for Java
     dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.9.20")
 
-    // Testing Dependencies
+
+    // Testing Dependencies [REMOVE ESPRESSO LATER WHEN JAVA CODE IS REMOVED]
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("com.android.support.test:rules:1.0.2")
     androidTestImplementation("com.android.support.test:runner:1.0.2")
@@ -203,15 +210,21 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-intents:3.6.1")
 
 
-    // Kotlin Multiplatform Image Loading
-    implementation("io.coil-kt:coil-compose:2.7.0")
+
+    // Compose and UI Dependencies (for declarative UI)
+    implementation(platform(libs.compose.bom))
+    implementation(libs.activity.compose)
+    implementation(libs.accompanist.themeadapter.material3)
+    implementation(libs.material3.android)
+    implementation(libs.foundation.layout.android)
+    implementation(libs.androidx.compose.material)
+    debugImplementation(libs.androidx.ui.tooling)
+    implementation(libs.core.ktx)
+    implementation(libs.ui.tooling)
+
+
 
     implementation("androidx.compose.ui:ui-text-google-fonts:1.7.4")
-    implementation("org.java-websocket:Java-WebSocket:1.5.2")
-
-
-    implementation(platform("androidx.compose:compose-bom:2024.09.03")) // Testing For Top App Bar
-
     implementation("androidx.compose.material3:material3:1.3.1")
     implementation("androidx.compose.material3:material3-window-size-class:1.3.1")
     implementation("androidx.compose.material3:material3-adaptive-navigation-suite:1.3.1")
