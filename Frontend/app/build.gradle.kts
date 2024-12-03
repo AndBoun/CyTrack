@@ -217,10 +217,10 @@ dependencies {
     implementation(libs.accompanist.themeadapter.material3)
     implementation(libs.material3.android)
     implementation(libs.foundation.layout.android)
-    implementation(libs.androidx.compose.material)
     debugImplementation(libs.androidx.ui.tooling)
     implementation(libs.core.ktx)
     implementation(libs.ui.tooling)
+    implementation(libs.androidx.ui)
 
 
 

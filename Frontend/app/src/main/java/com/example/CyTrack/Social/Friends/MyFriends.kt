@@ -50,7 +50,9 @@ import com.example.CyTrack.Social.SocialUtils
 import com.example.CyTrack.Social.SocialUtils.Companion.messageUserScreen
 import com.example.CyTrack.Social.SocialUtils.Companion.switchToAddFriends
 import com.example.CyTrack.Social.SocialUtils.Companion.switchToFriendProfile
+import com.example.CyTrack.Utilities.ComposeUtils
 import com.example.CyTrack.Utilities.ComposeUtils.Companion.getCustomFontFamily
+import com.example.CyTrack.Utilities.ImageRequestUtils
 import com.example.CyTrack.Utilities.User
 import com.example.CyTrack.Utilities.StatusBarUtil
 import com.example.CyTrack.Utilities.UrlHolder
@@ -148,7 +150,7 @@ class MyFriends : ComponentActivity() {
 fun ListProfileCard(
     name: String,
     username: String,
-    img: String,
+    imageUrl: String = "",
     modifier: Modifier = Modifier,
     onProfileClick: () -> Unit = {},
     dropDownButton: @Composable () -> Unit = {}
@@ -165,7 +167,14 @@ fun ListProfileCard(
                 .padding(10.dp)
         ) {
             Image(
-                painter = painterResource(id = R.drawable.general_generic_avatar),
+                painter = if (imageUrl.isNotEmpty())
+                    ComposeUtils.bitmapToPainter(
+                        ImageRequestUtils.makeImageRequest(
+                            imageUrl,
+                            LocalContext.current
+                        )
+                    )
+                else painterResource(R.drawable.general_generic_avatar),
                 contentDescription = "Profile Picture",
                 modifier = Modifier
                     .size(40.dp)

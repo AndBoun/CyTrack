@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    android:usesCleartextTraffic="true"
 
     <application
         android:allowBackup="true"
@@ -14,6 +15,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FirstScreen"
         android:networkSecurityConfig="@xml/network_security_config"
+        android:usesCleartextTraffic="true"
         tools:targetApi="31">
 
         <service android:name=".Utilities.WebSocketServiceUtil" />

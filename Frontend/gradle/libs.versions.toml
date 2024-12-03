@@ -2,6 +2,7 @@
 accompanistThemeadapterMaterial3 = "0.36.0"
 activityCompose = "1.9.3"
 agp = "8.7.2"
+ui = "1.7.5"
 volley = "1.2.1"
 appcompat = "1.7.0"
 activity = "1.9.3"
@@ -17,7 +18,6 @@ ktor = "3.0.1"
 material3Android = "1.3.1"
 material = "1.12.0"
 composeBom = "2024.11.00"
-composeMaterial = "1.4.0"
 
 # Unneeded from duplicates
 uiToolingPreviewAndroid = "1.7.4"
@@ -25,6 +25,7 @@ uiToolingPreviewAndroid = "1.7.4"
 [libraries]
 accompanist-themeadapter-material3 = { module = "com.google.accompanist:accompanist-themeadapter-material3", version.ref = "accompanistThemeadapterMaterial3" }
 activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
+androidx-ui = { module = "androidx.compose.ui:ui", version.ref = "ui" }
 androidx-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
 compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeBom" }
 core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
@@ -39,7 +40,6 @@ storage = { group = "androidx.test.services", name = "storage", version.ref = "s
 foundation-layout-android = { group = "androidx.compose.foundation", name = "foundation-layout-android", version.ref = "foundationLayoutAndroid" }
 material3-android = { group = "androidx.compose.material3", name = "material3-android", version.ref = "material3Android" }
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
-androidx-compose-material = { group = "androidx.wear.compose", name = "compose-material", version.ref = "composeMaterial" }
 
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }

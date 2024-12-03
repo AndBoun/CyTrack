@@ -2,8 +2,10 @@ package com.example.CyTrack.Utilities;
 
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.util.Log;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
@@ -13,12 +15,63 @@ import java.io.InputStream;
 import android.content.ContentResolver;
 
 import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageRequest;
+
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
+import androidx.compose.ui.graphics.painter.BitmapPainter;
 
 
 /**
  * Utility class for handling image requests.
  */
 public class ImageRequestUtils {
+
+
+    /**
+     * Making image request
+     * <p>
+     *    THIS METHOD NEEDS TO BE REWRITTEN IN KOTLIN OF A DIFFERENT LIBRARY
+     */
+    public static Bitmap makeImageRequest(String URL_IMAGE, Context context) {
+        Log.d("Volley", "Making image request");
+        CompletableFuture<Bitmap> future = new CompletableFuture<>();
+
+        ImageRequest imageRequest = new ImageRequest(
+                URL_IMAGE,
+                response -> {
+                    future.complete(response);
+                    Log.d("Volley Success", "Image loaded successfully");
+                },
+
+                0, // Width, set to 0 to get the original width
+                0, // Height, set to 0 to get the original height
+                ImageView.ScaleType.FIT_XY, // ScaleType
+                Bitmap.Config.RGB_565, // Bitmap config
+
+                error -> {
+                    future.completeExceptionally(error);
+                    Log.e("Volley Error", error.toString());
+                }
+        );
+
+        // Adding request to request queue
+        VolleySingleton.getInstance(context).addToRequestQueue(imageRequest);
+
+        try {
+            return future.get(5, TimeUnit.SECONDS); // Timeout after 30 seconds
+        } catch (TimeoutException e) {
+            Log.e("Volley Timeout", "Image request timed out");
+            return null;
+        } catch (Exception e) {
+            Log.e("Volley Error", "Error occurred: " + e.getMessage());
+            return null;
+        }
+    }
 
 
     /**
@@ -29,7 +82,7 @@ public class ImageRequestUtils {
      * request is configured to handle multipart/form-data content type. The server is expected
      * to accept the image with a specific key ("image") in the request.
      */
-    private void uploadImage(Uri selectiedUri, String uploadURL, Context context) {
+    private static void uploadImage(Uri selectiedUri, String uploadURL, Context context) {
 
         byte[] imageData = convertImageUriToBytes(selectiedUri, context);
         MultipartRequest multipartRequest = new MultipartRequest(
@@ -64,7 +117,7 @@ public class ImageRequestUtils {
      * @return A byte array representing the image data, or null if the conversion fails.
      * @throws IOException If an I/O error occurs while reading from the InputStream.
      */
-    private byte[] convertImageUriToBytes(Uri imageUri, Context context) {
+    private static byte[] convertImageUriToBytes(Uri imageUri, Context context) {
         try {
             InputStream inputStream = context.getContentResolver().openInputStream(imageUri);
             ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();

@@ -9,6 +9,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,6 +17,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -38,6 +40,7 @@ import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
@@ -45,6 +48,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil3.compose.AsyncImage
+import coil3.compose.AsyncImagePainter
+import coil3.compose.rememberAsyncImagePainter
+import coil3.request.ImageRequest
+import coil3.request.crossfade
 import com.android.volley.toolbox.JsonObjectRequest
 import com.example.CyTrack.R
 import com.example.CyTrack.Utilities.ComposeUtils.Companion.getCustomFontFamily
@@ -57,6 +65,8 @@ import com.example.CyTrack.Social.Friends.ListProfileCard
 import com.example.CyTrack.Social.Friends.MyFriends
 import com.example.CyTrack.Social.Messaging.MyMessages
 import com.example.CyTrack.Badges.BadgesActivity
+import com.example.CyTrack.Utilities.ComposeUtils
+import com.example.CyTrack.Utilities.ImageRequestUtils
 import com.example.CyTrack.Utilities.NetworkUtils
 import com.example.CyTrack.Utilities.UrlHolder
 import org.json.JSONException
@@ -88,13 +98,16 @@ class MyProfile : ComponentActivity() {
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        user = intent.getSerializableExtra("user") as User
         setContent {
-            user = intent.getSerializableExtra("user") as User
             friendRequests = remember { mutableStateListOf() }
             getFriendRequests()
 
+//            val st = "https://easy-peasy.ai/cdn-cgi/image/quality=80,format=auto,width=700/https://fdczvxmwwjwpwbeeqcth.supabase.co/storage/v1/object/public/images/a8bf1a2c-259e-4e95-b2c2-bb995876ed63/a252bcd6-9a10-40be-bf99-1d850d2026e4.png"
+            val st = "http://sharding.org/outgoing/temp/testimg3.jpg"
+
             Column {
-                ProfileScreen(user.firstName, user.username, "temp",
+                ProfileScreen(user.firstName, user.username, st,
                     onClickMyFriends = {
                         switchToMyFriends()
                     },
@@ -229,7 +242,7 @@ class MyProfile : ComponentActivity() {
 fun MainProfileCard(
     name: String,
     userName: String,
-    imageUrl: String,
+    imageUrl: String = "",
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -241,13 +254,37 @@ fun MainProfileCard(
                 .fillMaxWidth(0.5f), // Take up half the screen width
             contentAlignment = Alignment.Center // Center the content within the Box
         ) {
-            Image(
-//            painter = rememberAsyncImagePainter(imageUrl),
-                painter = painterResource(R.drawable.general_generic_avatar),
+//            Image(
+//                painter = if (imageUrl.isNotEmpty())
+//                    ComposeUtils.bitmapToPainter(
+//                        ImageRequestUtils.makeImageRequest(
+//                            imageUrl,
+//                            LocalContext.current
+//                        )
+//                    )
+//                else painterResource(R.drawable.general_generic_avatar),
+//                contentDescription = "Profile picture",
+//                contentScale = ContentScale.Crop,
+//                modifier = Modifier
+//                    .size(120.dp)
+//                    .aspectRatio(1f)
+//                    .clip(CircleShape)
+//                    .border(10.dp, Color.Black, CircleShape)
+//            )
+            AsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(imageUrl)
+                    .crossfade(true)
+                    .build(),
+                placeholder = painterResource(R.drawable.general_generic_avatar),
                 contentDescription = "Profile picture",
+                contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .size(120.dp)
+                    .aspectRatio(1f)
                     .clip(CircleShape)
+                    .border(10.dp, Color.Black, CircleShape)
+
             )
         }
 
@@ -394,7 +431,7 @@ fun BadgesButton(
 fun ProfileScreen(
     name: String,
     userName: String,
-    imageUrl: String,
+    imageUrl: String = "",
     modifier: Modifier = Modifier,
     onClickMyFriends: () -> Unit = {},
     onClickMyMessages: () -> Unit = {},
@@ -464,7 +501,7 @@ fun ProfileScreen(
 fun FriendRequestCard(
     name: String,
     userName: String,
-    imageUrl: String,
+    imageUrl: String = "",
     onClickAdd: () -> Unit = {},
     onClickDecline: () -> Unit = {},
     modifier: Modifier = Modifier
@@ -562,7 +599,7 @@ fun FriendRequestCardLazyList(
             .padding(horizontal = 32.dp)
     ) {
         for (friend in friendRequests) {
-            FriendRequestCard(friend.firstName, friend.username, "temp", {
+            FriendRequestCard(friend.firstName, friend.username, "", {
                 onAccept(friend)
             }, {
                 onDecline(friend)
@@ -575,14 +612,14 @@ fun FriendRequestCardLazyList(
 /**
  * @suppress
  */
-@Preview
+//@Preview
 @Composable
 fun FriendRequestCardPreview() {
     Surface {
         FriendRequestCard(
             name = "Cati",
             userName = "cattack",
-            imageUrl = "https://thumbs.dreamstime.com/b/cute-cat-portrait-square-photo-beautiful-white-closeup-105311158.jpg"
+//            imageUrl = "https://thumbs.dreamstime.com/b/cute-cat-portrait-square-photo-beautiful-white-closeup-105311158.jpg"
         )
     }
 }
@@ -601,7 +638,7 @@ fun ProfileCardPreview() {
         MainProfileCard(
             name = "Cati",
             userName = "cattack",
-            imageUrl = "https://thumbs.dreamstime.com/b/cute-cat-portrait-square-photo-beautiful-white-closeup-105311158.jpg"
+//            imageUrl = "https://thumbs.dreamstime.com/b/cute-cat-portrait-square-photo-beautiful-white-closeup-105311158.jpg"
         )
     }
 }
@@ -609,7 +646,7 @@ fun ProfileCardPreview() {
 /**
  * @suppress
  */
-@Preview
+//@Preview
 @Composable
 fun FriendsButtonPreview() {
     Surface(
@@ -622,7 +659,7 @@ fun FriendsButtonPreview() {
 /**
  * @suppress
  */
-@Preview
+//@Preview
 @Composable
 fun MessageButtonPreview() {
     Surface(
@@ -635,7 +672,7 @@ fun MessageButtonPreview() {
 /**
  * @suppress
  */
-@Preview
+//@Preview
 @Composable
 fun BadgeButtonPreview() {
     Surface(
@@ -648,7 +685,7 @@ fun BadgeButtonPreview() {
 /**
  * @suppress
  */
-@Preview
+//@Preview
 @Composable
 fun ProfileScreenPreview() {
     val list = remember { mutableStateListOf<User>() }
@@ -662,8 +699,6 @@ fun ProfileScreenPreview() {
             ProfileScreen(
                 name = "Cati",
                 userName = "cattack",
-                imageUrl = "https://thumbs.dreamstime.com/b/cute-cat-portrait-" +
-                        "square-photo-beautiful-white-closeup-105311158.jpg"
             )
 
             Spacer(modifier = Modifier.height(20.dp))
