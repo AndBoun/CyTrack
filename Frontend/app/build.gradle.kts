@@ -185,12 +185,12 @@ dependencies {
 
     // Testing Dependencies
     testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("com.android.support.test:rules:1.0.2")
-    androidTestImplementation("com.android.support.test:runner:1.0.2")
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+    androidTestImplementation("androidx.test.ext:junit:1.2.1")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
+    androidTestImplementation("androidx.test:runner:1.6.1")
+    androidTestImplementation("androidx.test:rules:1.6.1")
     androidTestImplementation("androidx.test.espresso:espresso-contrib:3.4.0")
-    androidTestImplementation("androidx.test.espresso:espresso-intents:3.4.0")
+    androidTestImplementation("androidx.test.espresso:espresso-intents:3.6.1")
 
 
     implementation("io.coil-kt:coil-compose:2.7.0")
