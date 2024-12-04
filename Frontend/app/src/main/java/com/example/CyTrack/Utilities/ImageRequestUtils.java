@@ -35,7 +35,7 @@ public class ImageRequestUtils {
     /**
      * Making image request
      * <p>
-     *    THIS METHOD NEEDS TO BE REWRITTEN IN KOTLIN OF A DIFFERENT LIBRARY
+     *    THIS METHOD NEEDS DEBUGGED. USE COIL LIBRARY INSTEAD AND DELETE THIS LATER WITH APPROVAL
      */
     public static Bitmap makeImageRequest(String URL_IMAGE, Context context) {
         Log.d("Volley", "Making image request");

@@ -186,21 +186,23 @@ dependencies {
 
     // Ktor Dependencies for multiplatform
     implementation(libs.ktor.client.core)
-    implementation(libs.ktor.client.cio)
     implementation(libs.ktor.client.okhttp)
     implementation(libs.ktor.client.logging)
+    implementation(libs.ktor.client.content.negotiation)
+    implementation(libs.ktor.serialization.kotlinx.json)
+    implementation(libs.kotlinx.serialization.json)
 
 
     // Coil Dependencies for KMP Image Loading
-    implementation("io.coil-kt.coil3:coil-compose:3.0.4")
-    implementation("io.coil-kt.coil3:coil-network-ktor3:3.0.4")
+    implementation(libs.coil.compose)
+    implementation(libs.coil.network.ktor3)
 
 
     // Dokka Plugin for Java
     dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.9.20")
 
 
-    // Testing Dependencies [REMOVE ESPRESSO LATER WHEN JAVA CODE IS REMOVED]
+    // Testing Dependencies
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("com.android.support.test:rules:1.0.2")
     androidTestImplementation("com.android.support.test:runner:1.0.2")
@@ -221,8 +223,6 @@ dependencies {
     implementation(libs.core.ktx)
     implementation(libs.ui.tooling)
     implementation(libs.androidx.ui)
-
-
 
     implementation("androidx.compose.ui:ui-text-google-fonts:1.7.4")
     implementation("androidx.compose.material3:material3:1.3.1")
