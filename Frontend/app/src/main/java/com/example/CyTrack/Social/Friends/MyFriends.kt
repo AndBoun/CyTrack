@@ -6,6 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -20,6 +21,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -50,6 +52,7 @@ import com.example.CyTrack.Social.SocialUtils
 import com.example.CyTrack.Social.SocialUtils.Companion.messageUserScreen
 import com.example.CyTrack.Social.SocialUtils.Companion.switchToAddFriends
 import com.example.CyTrack.Social.SocialUtils.Companion.switchToFriendProfile
+import com.example.CyTrack.Social.ProfileImage
 import com.example.CyTrack.Utilities.ComposeUtils.Companion.getCustomFontFamily
 import com.example.CyTrack.Utilities.User
 import com.example.CyTrack.Utilities.StatusBarUtil
@@ -148,7 +151,7 @@ class MyFriends : ComponentActivity() {
 fun ListProfileCard(
     name: String,
     username: String,
-    img: String,
+    imageUrl: String = "",
     modifier: Modifier = Modifier,
     onProfileClick: () -> Unit = {},
     dropDownButton: @Composable () -> Unit = {}
@@ -164,11 +167,11 @@ fun ListProfileCard(
             modifier = Modifier
                 .padding(10.dp)
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.general_generic_avatar),
-                contentDescription = "Profile Picture",
-                modifier = Modifier
-                    .size(40.dp)
+
+            ProfileImage(
+                imageUrl,
+                modifier = Modifier.size(40.dp)
+                    .border(4.dp, Color.Black, CircleShape)
                     .clickable(onClick = onProfileClick)
             )
 

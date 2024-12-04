@@ -1,5 +1,12 @@
 package com.example.CyTrack.Utilities
 
+import android.graphics.Bitmap
+import android.util.Log
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.painter.BitmapPainter
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.semantics.Role.Companion.Image
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -45,6 +52,11 @@ class ComposeUtils {
                     style = fontStyle
                 )
             )
+        }
+
+        fun bitmapToPainter(bitmap: Bitmap): Painter {
+            Log.d("ComposeUtils", "bitmapToPainter: $bitmap")
+            return BitmapPainter(bitmap.asImageBitmap())
         }
     }
 }
