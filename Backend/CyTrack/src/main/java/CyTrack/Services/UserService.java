@@ -27,10 +27,15 @@ public class UserService {
         this.userRepository = userRepository;
         this.badgeRepository = badgeRepository;
     }
+
+
     // Register user, encrypt password
     public User registerUser(User user) throws NoSuchAlgorithmException {
         if (user.getPassword() == null) {
             throw new IllegalArgumentException("Password cannot be null");
+        }
+        if (user.getUsername() == null || user.getUsername().isEmpty()) {
+            throw new IllegalArgumentException("Username cannot be null or empty");
         }
         user.setPassword(hashPassword(user.getPassword()));
         return userRepository.save(user);
