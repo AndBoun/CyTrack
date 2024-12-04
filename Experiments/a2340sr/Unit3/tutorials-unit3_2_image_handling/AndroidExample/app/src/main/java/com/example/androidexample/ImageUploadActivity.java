@@ -56,7 +56,7 @@ public class ImageUploadActivity extends AppCompatActivity {
 
     /**
      * Uploads an image to a remote server using a multipart Volley request.
-     * <p>
+     *
      * This method creates and executes a multipart request using the Volley library to upload
      * an image to a predefined server endpoint. The image data is sent as a byte array and the
      * request is configured to handle multipart/form-data content type. The server is expected
