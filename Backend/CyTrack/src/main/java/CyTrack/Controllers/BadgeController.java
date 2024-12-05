@@ -153,5 +153,57 @@ public class BadgeController {
         }
     }
 
+    /*
+    @Test
+    public void testGetAllWorkoutsByUserID_Success() throws JSONException {
+        // Step 1: Create a test user
+        String uniqueUsername = "testUser_" + UUID.randomUUID().toString().substring(0, 5);
+        Response userResponse = RestAssured.given()
+                .header("Content-Type", "application/json")
+                .body("{ \"username\": \"" + uniqueUsername + "\", \"password\": \"password\" }")
+                .when()
+                .post("/user");
+
+        assertEquals(201, userResponse.getStatusCode());
+        Long userID = userResponse.jsonPath().getLong("data.userID");
+
+        // Step 2: Add workouts for the user
+        RestAssured.given()
+                .header("Content-Type", "application/json")
+                .body("{ \"exerciseType\": \"Running\", \"duration\": 45, \"calories\": 400, \"date\": \"2024-12-04\" }")
+                .when()
+                .post("/workout/" + userID + "/workout");
+
+        RestAssured.given()
+                .header("Content-Type", "application/json")
+                .body("{ \"exerciseType\": \"Cycling\", \"duration\": 30, \"calories\": 300, \"date\": \"2024-12-04\" }")
+                .when()
+                .post("/workout/" + userID + "/workout");
+
+        // Step 3: Retrieve workouts for the user
+        Response workoutsResponse = RestAssured.given()
+                .when()
+                .get("/workout/" + userID + "/workout");
+
+        System.out.println("Here is our current silly output lmao" + workoutsResponse.toString());
+
+
+        assertEquals(200, workoutsResponse.getStatusCode());
+
+        // Debug raw response
+        String rawResponse = workoutsResponse.getBody().asString();
+        System.out.println("Raw Response: " + rawResponse);
+
+        // Validate using JSON parsing
+        JSONObject jsonResponse = new JSONObject(rawResponse);
+        assertEquals("success", jsonResponse.getString("status"));
+        assertEquals("Workouts found", jsonResponse.getString("message"));
+
+        JSONArray workouts = jsonResponse.getJSONObject("data").getJSONArray("workouts");
+        assertEquals(2, workouts.length());
+
+    }
+    *
+     */
 
 }

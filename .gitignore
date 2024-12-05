@@ -94,4 +94,9 @@ buildNumber.properties
 # JDT-specific (Eclipse Java Development Tools)
 .classpath
 
+
+# Ignore generated JUnit coverage reports
+Backend/CyTrack/htmlReport/
+
+
 # End of https://www.toptal.com/developers/gitignore/api/java,android,maven
