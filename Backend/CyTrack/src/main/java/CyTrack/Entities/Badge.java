@@ -59,4 +59,10 @@ public class Badge {
     public void setUser(User user) {
         this.user = user;
     }
+
+    public void setBadgeID(Long badgeID) {this.badgeID = badgeID; }
+
+    public void setDescription(String description) {this.description = description; }
+
+    public void setBadgeName(String badgeName) {this.badgeName = badgeName; }
 }
