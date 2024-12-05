@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Theme.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.compose</a> &gt; <span class="el_source">Theme.kt</span></div><h1>Theme.kt</h1><pre class="source lang-java linenums">package com.example.compose
+
+import android.app.Activity
+import android.os.Build
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.lightColorScheme
+import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.dynamicDarkColorScheme
+import androidx.compose.material3.dynamicLightColorScheme
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.SideEffect
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
+import androidx.core.view.WindowCompat
+
+// Light color scheme definition
+<span class="nc" id="L21">private val lightScheme = lightColorScheme(</span>
+<span class="nc" id="L22">    primary = primaryLight,</span>
+<span class="nc" id="L23">    onPrimary = onPrimaryLight,</span>
+<span class="nc" id="L24">    primaryContainer = primaryContainerLight,</span>
+<span class="nc" id="L25">    onPrimaryContainer = onPrimaryContainerLight,</span>
+<span class="nc" id="L26">    secondary = secondaryLight,</span>
+<span class="nc" id="L27">    onSecondary = onSecondaryLight,</span>
+<span class="nc" id="L28">    secondaryContainer = secondaryContainerLight,</span>
+<span class="nc" id="L29">    onSecondaryContainer = onSecondaryContainerLight,</span>
+<span class="nc" id="L30">    tertiary = tertiaryLight,</span>
+<span class="nc" id="L31">    onTertiary = onTertiaryLight,</span>
+<span class="nc" id="L32">    tertiaryContainer = tertiaryContainerLight,</span>
+<span class="nc" id="L33">    onTertiaryContainer = onTertiaryContainerLight,</span>
+<span class="nc" id="L34">    error = errorLight,</span>
+<span class="nc" id="L35">    onError = onErrorLight,</span>
+<span class="nc" id="L36">    errorContainer = errorContainerLight,</span>
+<span class="nc" id="L37">    onErrorContainer = onErrorContainerLight,</span>
+<span class="nc" id="L38">    background = backgroundLight,</span>
+<span class="nc" id="L39">    onBackground = onBackgroundLight,</span>
+<span class="nc" id="L40">    surface = surfaceLight,</span>
+<span class="nc" id="L41">    onSurface = onSurfaceLight,</span>
+<span class="nc" id="L42">    surfaceVariant = surfaceVariantLight,</span>
+<span class="nc" id="L43">    onSurfaceVariant = onSurfaceVariantLight,</span>
+<span class="nc" id="L44">    outline = outlineLight,</span>
+<span class="nc" id="L45">    outlineVariant = outlineVariantLight,</span>
+<span class="nc" id="L46">    scrim = scrimLight,</span>
+<span class="nc" id="L47">    inverseSurface = inverseSurfaceLight,</span>
+<span class="nc" id="L48">    inverseOnSurface = inverseOnSurfaceLight,</span>
+<span class="nc" id="L49">    inversePrimary = inversePrimaryLight,</span>
+<span class="nc" id="L50">    surfaceDim = surfaceDimLight,</span>
+<span class="nc" id="L51">    surfaceBright = surfaceBrightLight,</span>
+<span class="nc" id="L52">    surfaceContainerLowest = surfaceContainerLowestLight,</span>
+<span class="nc" id="L53">    surfaceContainerLow = surfaceContainerLowLight,</span>
+<span class="nc" id="L54">    surfaceContainer = surfaceContainerLight,</span>
+<span class="nc" id="L55">    surfaceContainerHigh = surfaceContainerHighLight,</span>
+<span class="nc" id="L56">    surfaceContainerHighest = surfaceContainerHighestLight,</span>
+)
+
+// Dark color scheme definition
+<span class="nc" id="L60">private val darkScheme = darkColorScheme(</span>
+<span class="nc" id="L61">    primary = primaryDark,</span>
+<span class="nc" id="L62">    onPrimary = onPrimaryDark,</span>
+<span class="nc" id="L63">    primaryContainer = primaryContainerDark,</span>
+<span class="nc" id="L64">    onPrimaryContainer = onPrimaryContainerDark,</span>
+<span class="nc" id="L65">    secondary = secondaryDark,</span>
+<span class="nc" id="L66">    onSecondary = onSecondaryDark,</span>
+<span class="nc" id="L67">    secondaryContainer = secondaryContainerDark,</span>
+<span class="nc" id="L68">    onSecondaryContainer = onSecondaryContainerDark,</span>
+<span class="nc" id="L69">    tertiary = tertiaryDark,</span>
+<span class="nc" id="L70">    onTertiary = onTertiaryDark,</span>
+<span class="nc" id="L71">    tertiaryContainer = tertiaryContainerDark,</span>
+<span class="nc" id="L72">    onTertiaryContainer = onTertiaryContainerDark,</span>
+<span class="nc" id="L73">    error = errorDark,</span>
+<span class="nc" id="L74">    onError = onErrorDark,</span>
+<span class="nc" id="L75">    errorContainer = errorContainerDark,</span>
+<span class="nc" id="L76">    onErrorContainer = onErrorContainerDark,</span>
+<span class="nc" id="L77">    background = backgroundDark,</span>
+<span class="nc" id="L78">    onBackground = onBackgroundDark,</span>
+<span class="nc" id="L79">    surface = surfaceDark,</span>
+<span class="nc" id="L80">    onSurface = onSurfaceDark,</span>
+<span class="nc" id="L81">    surfaceVariant = surfaceVariantDark,</span>
+<span class="nc" id="L82">    onSurfaceVariant = onSurfaceVariantDark,</span>
+<span class="nc" id="L83">    outline = outlineDark,</span>
+<span class="nc" id="L84">    outlineVariant = outlineVariantDark,</span>
+<span class="nc" id="L85">    scrim = scrimDark,</span>
+<span class="nc" id="L86">    inverseSurface = inverseSurfaceDark,</span>
+<span class="nc" id="L87">    inverseOnSurface = inverseOnSurfaceDark,</span>
+<span class="nc" id="L88">    inversePrimary = inversePrimaryDark,</span>
+<span class="nc" id="L89">    surfaceDim = surfaceDimDark,</span>
+<span class="nc" id="L90">    surfaceBright = surfaceBrightDark,</span>
+<span class="nc" id="L91">    surfaceContainerLowest = surfaceContainerLowestDark,</span>
+<span class="nc" id="L92">    surfaceContainerLow = surfaceContainerLowDark,</span>
+<span class="nc" id="L93">    surfaceContainer = surfaceContainerDark,</span>
+<span class="nc" id="L94">    surfaceContainerHigh = surfaceContainerHighDark,</span>
+<span class="nc" id="L95">    surfaceContainerHighest = surfaceContainerHighestDark,</span>
+)
+
+// Medium contrast light color scheme definition
+<span class="nc" id="L99">private val mediumContrastLightColorScheme = lightColorScheme(</span>
+<span class="nc" id="L100">    primary = primaryLightMediumContrast,</span>
+<span class="nc" id="L101">    onPrimary = onPrimaryLightMediumContrast,</span>
+<span class="nc" id="L102">    primaryContainer = primaryContainerLightMediumContrast,</span>
+<span class="nc" id="L103">    onPrimaryContainer = onPrimaryContainerLightMediumContrast,</span>
+<span class="nc" id="L104">    secondary = secondaryLightMediumContrast,</span>
+<span class="nc" id="L105">    onSecondary = onSecondaryLightMediumContrast,</span>
+<span class="nc" id="L106">    secondaryContainer = secondaryContainerLightMediumContrast,</span>
+<span class="nc" id="L107">    onSecondaryContainer = onSecondaryContainerLightMediumContrast,</span>
+<span class="nc" id="L108">    tertiary = tertiaryLightMediumContrast,</span>
+<span class="nc" id="L109">    onTertiary = onTertiaryLightMediumContrast,</span>
+<span class="nc" id="L110">    tertiaryContainer = tertiaryContainerLightMediumContrast,</span>
+<span class="nc" id="L111">    onTertiaryContainer = onTertiaryContainerLightMediumContrast,</span>
+<span class="nc" id="L112">    error = errorLightMediumContrast,</span>
+<span class="nc" id="L113">    onError = onErrorLightMediumContrast,</span>
+<span class="nc" id="L114">    errorContainer = errorContainerLightMediumContrast,</span>
+<span class="nc" id="L115">    onErrorContainer = onErrorContainerLightMediumContrast,</span>
+<span class="nc" id="L116">    background = backgroundLightMediumContrast,</span>
+<span class="nc" id="L117">    onBackground = onBackgroundLightMediumContrast,</span>
+<span class="nc" id="L118">    surface = surfaceLightMediumContrast,</span>
+<span class="nc" id="L119">    onSurface = onSurfaceLightMediumContrast,</span>
+<span class="nc" id="L120">    surfaceVariant = surfaceVariantLightMediumContrast,</span>
+<span class="nc" id="L121">    onSurfaceVariant = onSurfaceVariantLightMediumContrast,</span>
+<span class="nc" id="L122">    outline = outlineLightMediumContrast,</span>
+<span class="nc" id="L123">    outlineVariant = outlineVariantLightMediumContrast,</span>
+<span class="nc" id="L124">    scrim = scrimLightMediumContrast,</span>
+<span class="nc" id="L125">    inverseSurface = inverseSurfaceLightMediumContrast,</span>
+<span class="nc" id="L126">    inverseOnSurface = onSurfaceLightMediumContrast,</span>
+<span class="nc" id="L127">    inversePrimary = inversePrimaryLightMediumContrast,</span>
+<span class="nc" id="L128">    surfaceDim = surfaceDimLightMediumContrast,</span>
+<span class="nc" id="L129">    surfaceBright = surfaceBrightLightMediumContrast,</span>
+<span class="nc" id="L130">    surfaceContainerLowest = surfaceContainerLowestLightMediumContrast,</span>
+<span class="nc" id="L131">    surfaceContainerLow = surfaceContainerLowLightMediumContrast,</span>
+<span class="nc" id="L132">    surfaceContainer = surfaceContainerLightMediumContrast,</span>
+<span class="nc" id="L133">    surfaceContainerHigh = surfaceContainerHighLightMediumContrast,</span>
+<span class="nc" id="L134">    surfaceContainerHighest = surfaceContainerHighestLightMediumContrast,</span>
+)
+
+// High contrast light color scheme definition
+<span class="nc" id="L138">private val highContrastLightColorScheme = lightColorScheme(</span>
+<span class="nc" id="L139">    primary = primaryLightHighContrast,</span>
+<span class="nc" id="L140">    onPrimary = onPrimaryLightHighContrast,</span>
+<span class="nc" id="L141">    primaryContainer = primaryContainerLightHighContrast,</span>
+<span class="nc" id="L142">    onPrimaryContainer = onPrimaryContainerLightHighContrast,</span>
+<span class="nc" id="L143">    secondary = secondaryLightHighContrast,</span>
+<span class="nc" id="L144">    onSecondary = onSecondaryLightHighContrast,</span>
+<span class="nc" id="L145">    secondaryContainer = secondaryContainerLightHighContrast,</span>
+<span class="nc" id="L146">    onSecondaryContainer = onSecondaryContainerLightHighContrast,</span>
+<span class="nc" id="L147">    tertiary = tertiaryLightHighContrast,</span>
+<span class="nc" id="L148">    onTertiary = onTertiaryLightHighContrast,</span>
+<span class="nc" id="L149">    tertiaryContainer = tertiaryContainerLightHighContrast,</span>
+<span class="nc" id="L150">    onTertiaryContainer = onTertiaryContainerLightHighContrast,</span>
+<span class="nc" id="L151">    error = errorLightHighContrast,</span>
+<span class="nc" id="L152">    onError = onErrorLightHighContrast,</span>
+<span class="nc" id="L153">    errorContainer = errorContainerLightHighContrast,</span>
+<span class="nc" id="L154">    onErrorContainer = onErrorContainerLightHighContrast,</span>
+<span class="nc" id="L155">    background = backgroundLightHighContrast,</span>
+<span class="nc" id="L156">    onBackground = onBackgroundLightHighContrast,</span>
+<span class="nc" id="L157">    surface = surfaceLightHighContrast,</span>
+<span class="nc" id="L158">    onSurface = onSurfaceLightHighContrast,</span>
+<span class="nc" id="L159">    surfaceVariant = surfaceVariantLightHighContrast,</span>
+<span class="nc" id="L160">    onSurfaceVariant = onSurfaceVariantLightHighContrast,</span>
+<span class="nc" id="L161">    outline = outlineLightHighContrast,</span>
+<span class="nc" id="L162">    outlineVariant = outlineVariantLightHighContrast,</span>
+<span class="nc" id="L163">    scrim = scrimLightHighContrast,</span>
+<span class="nc" id="L164">    inverseSurface = inverseSurfaceLightHighContrast,</span>
+<span class="nc" id="L165">    inverseOnSurface = inverseOnSurfaceLightHighContrast,</span>
+<span class="nc" id="L166">    inversePrimary = inversePrimaryLightHighContrast,</span>
+<span class="nc" id="L167">    surfaceDim = surfaceDimLightHighContrast,</span>
+<span class="nc" id="L168">    surfaceBright = surfaceBrightLightHighContrast,</span>
+<span class="nc" id="L169">    surfaceContainerLowest = surfaceContainerLowestLightHighContrast,</span>
+<span class="nc" id="L170">    surfaceContainerLow = surfaceContainerLowLightHighContrast,</span>
+<span class="nc" id="L171">    surfaceContainer = surfaceContainerLightHighContrast,</span>
+<span class="nc" id="L172">    surfaceContainerHigh = surfaceContainerHighLightHighContrast,</span>
+<span class="nc" id="L173">    surfaceContainerHighest = surfaceContainerHighestLightHighContrast,</span>
+)
+
+// Medium contrast dark color scheme definition
+<span class="nc" id="L177">private val mediumContrastDarkColorScheme = darkColorScheme(</span>
+<span class="nc" id="L178">    primary = primaryDarkMediumContrast,</span>
+<span class="nc" id="L179">    onPrimary = onPrimaryDarkMediumContrast,</span>
+<span class="nc" id="L180">    primaryContainer = primaryContainerDarkMediumContrast,</span>
+<span class="nc" id="L181">    onPrimaryContainer = onPrimaryContainerDarkMediumContrast,</span>
+<span class="nc" id="L182">    secondary = secondaryDarkMediumContrast,</span>
+<span class="nc" id="L183">    onSecondary = onSecondaryDarkMediumContrast,</span>
+<span class="nc" id="L184">    secondaryContainer = secondaryContainerDarkMediumContrast,</span>
+<span class="nc" id="L185">    onSecondaryContainer = onSecondaryContainerDarkMediumContrast,</span>
+<span class="nc" id="L186">    tertiary = tertiaryDarkMediumContrast,</span>
+<span class="nc" id="L187">    onTertiary = onTertiaryDarkMediumContrast,</span>
+<span class="nc" id="L188">    tertiaryContainer = tertiaryContainerDarkMediumContrast,</span>
+<span class="nc" id="L189">    onTertiaryContainer = onTertiaryContainerDarkMediumContrast,</span>
+<span class="nc" id="L190">    error = errorDarkMediumContrast,</span>
+<span class="nc" id="L191">    onError = onErrorDarkMediumContrast,</span>
+<span class="nc" id="L192">    errorContainer = errorContainerDarkMediumContrast,</span>
+<span class="nc" id="L193">    onErrorContainer = onErrorContainerDarkMediumContrast,</span>
+<span class="nc" id="L194">    background = backgroundDarkMediumContrast,</span>
+<span class="nc" id="L195">    onBackground = onBackgroundDarkMediumContrast,</span>
+<span class="nc" id="L196">    surface = surfaceDarkMediumContrast,</span>
+<span class="nc" id="L197">    onSurface = onSurfaceDarkMediumContrast,</span>
+<span class="nc" id="L198">    surfaceVariant = surfaceVariantDarkMediumContrast,</span>
+<span class="nc" id="L199">    onSurfaceVariant = onSurfaceVariantDarkMediumContrast,</span>
+<span class="nc" id="L200">    outline = outlineDarkMediumContrast,</span>
+<span class="nc" id="L201">    outlineVariant = outlineVariantDarkMediumContrast,</span>
+<span class="nc" id="L202">    scrim = scrimDarkMediumContrast,</span>
+<span class="nc" id="L203">    inverseSurface = inverseSurfaceDarkMediumContrast,</span>
+<span class="nc" id="L204">    inverseOnSurface = inverseOnSurfaceDarkMediumContrast,</span>
+<span class="nc" id="L205">    inversePrimary = inversePrimaryDarkMediumContrast,</span>
+<span class="nc" id="L206">    surfaceDim = surfaceDimDarkMediumContrast,</span>
+<span class="nc" id="L207">    surfaceBright = surfaceBrightDarkMediumContrast,</span>
+<span class="nc" id="L208">    surfaceContainerLowest = surfaceContainerLowestDarkMediumContrast,</span>
+<span class="nc" id="L209">    surfaceContainerLow = surfaceContainerLowDarkMediumContrast,</span>
+<span class="nc" id="L210">    surfaceContainer = surfaceContainerDarkMediumContrast,</span>
+<span class="nc" id="L211">    surfaceContainerHigh = surfaceContainerHighDarkMediumContrast,</span>
+<span class="nc" id="L212">    surfaceContainerHighest = surfaceContainerHighestDarkMediumContrast,</span>
+)
+
+// High contrast dark color scheme definition
+<span class="nc" id="L216">private val highContrastDarkColorScheme = darkColorScheme(</span>
+<span class="nc" id="L217">    primary = primaryDarkHighContrast,</span>
+<span class="nc" id="L218">    onPrimary = onPrimaryDarkHighContrast,</span>
+<span class="nc" id="L219">    primaryContainer = primaryContainerDarkHighContrast,</span>
+<span class="nc" id="L220">    onPrimaryContainer = onPrimaryContainerDarkHighContrast,</span>
+<span class="nc" id="L221">    secondary = secondaryDarkHighContrast,</span>
+<span class="nc" id="L222">    onSecondary = onSecondaryDarkHighContrast,</span>
+<span class="nc" id="L223">    secondaryContainer = secondaryContainerDarkHighContrast,</span>
+<span class="nc" id="L224">    onSecondaryContainer = onSecondaryContainerDarkHighContrast,</span>
+<span class="nc" id="L225">    tertiary = tertiaryDarkHighContrast,</span>
+<span class="nc" id="L226">    onTertiary = onTertiaryDarkHighContrast,</span>
+<span class="nc" id="L227">    tertiaryContainer = tertiaryContainerDarkHighContrast,</span>
+<span class="nc" id="L228">    onTertiaryContainer = onTertiaryContainerDarkHighContrast,</span>
+<span class="nc" id="L229">    error = errorDarkHighContrast,</span>
+<span class="nc" id="L230">    onError = onErrorDarkHighContrast,</span>
+<span class="nc" id="L231">    errorContainer = errorContainerDarkHighContrast,</span>
+<span class="nc" id="L232">    onErrorContainer = onErrorContainerDarkHighContrast,</span>
+<span class="nc" id="L233">    background = backgroundDarkHighContrast,</span>
+<span class="nc" id="L234">    onBackground = onBackgroundDarkHighContrast,</span>
+<span class="nc" id="L235">    surface = surfaceDarkHighContrast,</span>
+<span class="nc" id="L236">    onSurface = onSurfaceDarkHighContrast,</span>
+<span class="nc" id="L237">    surfaceVariant = surfaceVariantDarkHighContrast,</span>
+<span class="nc" id="L238">    onSurfaceVariant = onSurfaceVariantDarkHighContrast,</span>
+<span class="nc" id="L239">    outline = outlineDarkHighContrast,</span>
+<span class="nc" id="L240">    outlineVariant = outlineVariantDarkHighContrast,</span>
+<span class="nc" id="L241">    scrim = scrimDarkHighContrast,</span>
+<span class="nc" id="L242">    inverseSurface = inverseSurfaceDarkHighContrast,</span>
+<span class="nc" id="L243">    inverseOnSurface = inverseOnSurfaceDarkHighContrast,</span>
+<span class="nc" id="L244">    inversePrimary = inversePrimaryDarkHighContrast,</span>
+<span class="nc" id="L245">    surfaceDim = surfaceDimDarkHighContrast,</span>
+<span class="nc" id="L246">    surfaceBright = surfaceBrightDarkHighContrast,</span>
+<span class="nc" id="L247">    surfaceContainerLowest = surfaceContainerLowestDarkHighContrast,</span>
+<span class="nc" id="L248">    surfaceContainerLow = surfaceContainerLowDarkHighContrast,</span>
+<span class="nc" id="L249">    surfaceContainer = surfaceContainerDarkHighContrast,</span>
+<span class="nc" id="L250">    surfaceContainerHigh = surfaceContainerHighDarkHighContrast,</span>
+<span class="nc" id="L251">    surfaceContainerHighest = surfaceContainerHighestDarkHighContrast,</span>
+)
+
+/**
+ * Data class representing a color family with primary, onPrimary, primaryContainer, and onPrimaryContainer colors.
+ */
+@Immutable
+<span class="nc" id="L258">data class ColorFamily(</span>
+<span class="nc" id="L259">    val color: Color,</span>
+<span class="nc" id="L260">    val onColor: Color,</span>
+<span class="nc" id="L261">    val colorContainer: Color,</span>
+<span class="nc" id="L262">    val onColorContainer: Color</span>
+)
+
+// Unspecified color scheme
+<span class="nc" id="L266">val unspecified_scheme = ColorFamily(</span>
+<span class="nc" id="L267">    Color.Unspecified, Color.Unspecified, Color.Unspecified, Color.Unspecified</span>
+)
+
+/**
+ * Composable function to set the app theme.
+ *
+ * @param darkTheme Boolean to determine if dark theme should be used.
+ * @param dynamicColor Boolean to determine if dynamic color should be used (available on Android 12+).
+ * @param content Composable content to be displayed within the theme.
+ */
+@Composable
+fun AppTheme(
+<span class="nc bnc" id="L279" title="All 2 branches missed.">    darkTheme: Boolean = isSystemInDarkTheme(),</span>
+    // Dynamic color is available on Android 12+
+<span class="nc bnc" id="L281" title="All 4 branches missed.">    dynamicColor: Boolean = false, // Dynamic Color if True, switches the app theme to device preferences</span>
+    content: @Composable() () -&gt; Unit
+<span class="nc bnc" id="L283" title="All 28 branches missed.">) {</span>
+<span class="nc" id="L284">    val colorScheme = when {</span>
+<span class="nc bnc" id="L285" title="All 4 branches missed.">        dynamicColor &amp;&amp; Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.S -&gt; {</span>
+<span class="nc" id="L286">            val context = LocalContext.current</span>
+<span class="nc bnc" id="L287" title="All 2 branches missed.">            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)</span>
+        }
+
+<span class="nc bnc" id="L290" title="All 2 branches missed.">        darkTheme -&gt; darkScheme</span>
+<span class="nc" id="L291">        else -&gt; lightScheme</span>
+    }
+<span class="nc" id="L293">    val view = LocalView.current</span>
+<span class="nc bnc" id="L294" title="All 8 branches missed.">    if (!view.isInEditMode) {</span>
+<span class="nc" id="L295">        SideEffect {</span>
+<span class="nc" id="L296">            val window = (view.context as Activity).window</span>
+<span class="nc" id="L297">            window.statusBarColor = colorScheme.primary.toArgb()</span>
+<span class="nc" id="L298">            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme</span>
+<span class="nc" id="L299">        }</span>
+    }
+
+<span class="nc bnc" id="L302" title="All 2 branches missed.">    MaterialTheme(</span>
+<span class="nc" id="L303">        colorScheme = colorScheme,</span>
+<span class="nc" id="L304">        typography = AppTypography,</span>
+<span class="nc" id="L305">        content = content</span>
+    )
+<span class="nc bnc" id="L307" title="All 2 branches missed.">}</span>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span>Generated by the Android Gradle plugin 8.7.1</div></body></html>

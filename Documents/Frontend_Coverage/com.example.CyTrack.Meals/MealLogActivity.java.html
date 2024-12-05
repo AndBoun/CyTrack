@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MealLogActivity.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.CyTrack.Meals</a> &gt; <span class="el_source">MealLogActivity.java</span></div><h1>MealLogActivity.java</h1><pre class="source lang-java linenums">package com.example.CyTrack.Meals;
+
+import android.content.Intent;
+import android.graphics.Color;
+import android.os.Bundle;
+import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
+import android.widget.TableLayout;
+import android.widget.TableRow;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.CyTrack.R;
+
+import java.util.ArrayList;
+
+/**
+ * Activity to log and display meals.
+ */
+<span class="nc" id="L25">public class MealLogActivity extends AppCompatActivity {</span>
+
+    /**
+     * ImageButton for profile settings
+     */
+    private ImageButton profileSettingsButton;
+
+    /**
+     * ImageButton for notifications
+     */
+    private ImageButton notificationButton;
+
+    /**
+     * ImageButton to navigate to Meals Page
+     */
+    private ImageButton MealsPageButton;
+
+    /**
+     * ImageButton to navigate to Log Page
+     */
+    private ImageButton LogPageButton;
+
+    /**
+     * ScrollView to display the meal table
+     */
+    private ScrollView MealTable;
+
+    /**
+     * LinearLayout to display the meal table content
+     */
+    private LinearLayout MealTableDisplay;
+
+    /**
+     * List to store meal objects
+     */
+<span class="nc" id="L60">    private final ArrayList&lt;Meal&gt; meals = new ArrayList&lt;Meal&gt;();</span>
+
+    /**
+     * URL to fetch meal data
+     */
+<span class="nc" id="L65">    private final String url = &quot;http://10.90.72.246:8080/meal/&quot;;</span>
+
+    /**
+     * Called when the activity is first created.
+     *
+     * @param savedInstanceState If the activity is being re-initialized after previously being shut down then this Bundle contains the data it most recently supplied in onSaveInstanceState(Bundle).
+     */
+    protected void onCreate(Bundle savedInstanceState) {
+<span class="nc" id="L73">        super.onCreate(savedInstanceState);</span>
+<span class="nc" id="L74">        EdgeToEdge.enable(this);</span>
+<span class="nc" id="L75">        setContentView(R.layout.meal_log);</span>
+
+        // Initialize Buttons
+        // TOP BUTTONS
+<span class="nc" id="L79">        profileSettingsButton = findViewById(R.id.profileSettingsButton);</span>
+<span class="nc" id="L80">        notificationButton = findViewById(R.id.notificationButton);</span>
+        // RIGHT MAIN FUNCTION BUTTONS
+<span class="nc" id="L82">        MealsPageButton = findViewById(R.id.MealsPageButton);</span>
+<span class="nc" id="L83">        LogPageButton = findViewById(R.id.LogPageButton);</span>
+        // Initialize Meal Table
+<span class="nc" id="L85">        MealTable = findViewById(R.id.MealScroll);</span>
+<span class="nc" id="L86">        MealTableDisplay = findViewById(R.id.MealScrollDisplay);</span>
+
+        // Button Input Listeners
+<span class="nc" id="L89">        profileSettingsButton.setOnClickListener(v -&gt; {</span>
+            // Open Profile Settings Activity
+<span class="nc" id="L91">        });</span>
+
+<span class="nc" id="L93">        notificationButton.setOnClickListener(v -&gt; {</span>
+            // Open Notification Activity
+<span class="nc" id="L95">        });</span>
+
+<span class="nc" id="L97">        MealsPageButton.setOnClickListener(v -&gt; {</span>
+            //TODO: Send to MealPage
+<span class="nc" id="L99">            Intent Navigate = new Intent(MealLogActivity.this, MealTrackingMain.class);</span>
+<span class="nc" id="L100">            startActivity(Navigate);</span>
+
+<span class="nc" id="L102">        });</span>
+
+<span class="nc" id="L104">        LogPageButton.setOnClickListener(v -&gt; {</span>
+            //TODO: Send to LogPage
+            //NOT NEEDED
+<span class="nc" id="L107">        });</span>
+
+<span class="nc" id="L109">        meals.add(new Meal(&quot;joe&quot;, &quot;24&quot;, &quot;23&quot;, &quot;120&quot;));</span>
+        // APPENDING MEALS
+<span class="nc" id="L111">        int id = 1;</span>
+
+        while (true) {
+<span class="nc" id="L114">            Meal input = null;</span>
+            try {
+<span class="nc" id="L116">                fetchMealData(url + id);</span>
+<span class="nc" id="L117">                input = meals.get(id);</span>
+<span class="nc" id="L118">                TableLayout tableLayout = new TableLayout(this);</span>
+<span class="nc" id="L119">                tableLayout.setLayoutParams(new TableLayout.LayoutParams(</span>
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT));
+
+<span class="nc bnc" id="L123" title="All 2 branches missed.">                if (id == 1) {</span>
+<span class="nc" id="L124">                    addTableRow(tableLayout, 0, &quot;|Meal ID|&quot;, &quot;|Calories|&quot;, &quot;|Carbs|&quot;, &quot;|Meal Name|&quot;, &quot;|Protein|&quot;);</span>
+                } else {
+<span class="nc" id="L126">                    String id1 = String.valueOf(input.getID());</span>
+<span class="nc" id="L127">                    id1 = String.format(&quot;MID:  %s    &quot;, id1);</span>
+<span class="nc" id="L128">                    String name = input.getName();</span>
+<span class="nc" id="L129">                    name = String.format(&quot;   %s,&quot;, name);</span>
+<span class="nc" id="L130">                    String calories = input.getCalories();</span>
+<span class="nc" id="L131">                    calories = String.format(&quot;   %s cals,&quot;, calories);</span>
+<span class="nc" id="L132">                    String carbs = input.getCarbs();</span>
+<span class="nc" id="L133">                    carbs = String.format(&quot;   %s g,&quot;, carbs);</span>
+<span class="nc" id="L134">                    String protein = input.getProtein();</span>
+<span class="nc" id="L135">                    protein = String.format(&quot;   %s g&quot;, protein);</span>
+<span class="nc" id="L136">                    addTableRow(tableLayout, id, id1, calories, carbs, name, protein);</span>
+                }
+<span class="nc" id="L138">                MealTableDisplay.addView(tableLayout);</span>
+<span class="nc" id="L139">                id += 1;</span>
+<span class="nc" id="L140">            } catch (Exception e) {</span>
+<span class="nc" id="L141">                System.out.println(e);</span>
+<span class="nc" id="L142">                break;</span>
+<span class="nc" id="L143">            }</span>
+<span class="nc" id="L144">        }</span>
+
+
+<span class="nc" id="L147">    }</span>
+
+    /**
+     * Adds a row to the given table layout.
+     *
+     * @param tableLayout The table layout to add the row to.
+     * @param m           The row index.
+     * @param values      The values to add to the row.
+     */
+    private void addTableRow(TableLayout tableLayout, int m, String... values) {
+<span class="nc" id="L157">        TableRow tableRow = new TableRow(this);</span>
+<span class="nc" id="L158">        tableRow.setLayoutParams(new TableRow.LayoutParams(</span>
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT));
+
+<span class="nc bnc" id="L162" title="All 2 branches missed.">        for (String value : values) {</span>
+<span class="nc" id="L163">            TextView textView = new TextView(this);</span>
+<span class="nc" id="L164">            textView.setText(value);</span>
+<span class="nc" id="L165">            textView.setPadding(4, 4, 4, 4);</span>
+<span class="nc" id="L166">            textView.setTextSize(10);</span>
+<span class="nc" id="L167">            tableRow.addView(textView);</span>
+<span class="nc bnc" id="L168" title="All 2 branches missed.">            if (m == 0) {</span>
+<span class="nc" id="L169">                tableRow.setBackgroundColor(Color.parseColor(&quot;#C8102E&quot;));</span>
+<span class="nc" id="L170">                textView.setTextColor(Color.parseColor(&quot;#FFFFFF&quot;));</span>
+
+            }
+<span class="nc bnc" id="L173" title="All 2 branches missed.">            if (m % 2 == 1) {</span>
+<span class="nc" id="L174">                tableRow.setBackgroundColor(Color.parseColor(&quot;#f0e1b9&quot;));</span>
+            }
+        }
+
+
+<span class="nc" id="L179">        tableLayout.addView(tableRow);</span>
+<span class="nc" id="L180">    }</span>
+
+    /**
+     * Fetches meal data from the given URL.
+     *
+     * @param url The URL to fetch meal data from.
+     */
+    private void fetchMealData(String url) {
+<span class="nc" id="L188">        MealUtils.fetchMealData(this, url, new MealUtils.fetchMealDataCallback() {</span>
+            @Override
+            public void onSuccess(Meal meal, String message) {
+<span class="nc" id="L191">                meals.add(meal);</span>
+<span class="nc" id="L192">                Toast.makeText(getApplicationContext(), &quot;Meal Loaded&quot;, Toast.LENGTH_LONG).show();</span>
+<span class="nc" id="L193">            }</span>
+
+            @Override
+            public void onError(String error) {
+<span class="nc" id="L197">                Toast.makeText(getApplicationContext(), error, Toast.LENGTH_LONG).show();</span>
+<span class="nc" id="L198">            }</span>
+        });
+<span class="nc" id="L200">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span>Generated by the Android Gradle plugin 8.7.1</div></body></html>

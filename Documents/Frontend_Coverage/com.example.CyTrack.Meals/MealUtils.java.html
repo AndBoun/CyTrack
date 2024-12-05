@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MealUtils.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.CyTrack.Meals</a> &gt; <span class="el_source">MealUtils.java</span></div><h1>MealUtils.java</h1><pre class="source lang-java linenums">package com.example.CyTrack.Meals;
+
+import android.content.Context;
+import android.util.Log;
+
+import com.android.volley.Request;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.example.CyTrack.Utilities.VolleySingleton;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * Utility class for handling meal-related network operations.
+ */
+<span class="nc" id="L20">class MealUtils {</span>
+
+    /**
+     * Posts meal data to the given URL with the given parameters.
+     *
+     * @param context  the context
+     * @param url      the URL to post the user data to
+     * @param params   the parameters to post the user data with
+     * @param callBack the callback to handle success or error response
+     */
+    static void postMeal(Context context, String url, Map&lt;String, Object&gt; params, callbackMessage callBack) {
+<span class="nc" id="L31">        JSONObject jsonObject = new JSONObject(params);</span>
+<span class="nc" id="L32">        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, jsonObject, response -&gt; {</span>
+            try {
+                // TEST 1
+<span class="nc" id="L35">                Log.d(&quot;MealUtils&quot;, &quot; Headers Processing (PostMeal 1)&quot;);</span>
+<span class="nc" id="L36">                callBack.onSuccess(&quot;Success&quot;);</span>
+<span class="nc" id="L37">            } catch (Exception e) {</span>
+                // TEST 2
+<span class="nc" id="L39">                Log.d(&quot;MealUtils&quot;, e + &quot; Headers Processing (PostMeal 2)&quot;);</span>
+<span class="nc" id="L40">                e.printStackTrace();</span>
+<span class="nc" id="L41">            }</span>
+<span class="nc" id="L42">        }, error -&gt; {</span>
+<span class="nc" id="L43">            String errorMessage = errorResponse(error);</span>
+            // Test 3
+<span class="nc" id="L45">            Log.d(&quot;MealUtils&quot;, errorMessage + &quot; Headers Processing (PostMeal 3)&quot;);</span>
+<span class="nc" id="L46">            callBack.onError(errorMessage);</span>
+<span class="nc" id="L47">        }) {</span>
+            @Override
+            public Map&lt;String, String&gt; getHeaders() {
+<span class="nc" id="L50">                Map&lt;String, String&gt; headers = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L51">                headers.put(&quot;Content-Type&quot;, &quot;application/json&quot;);</span>
+                // Test 4
+<span class="nc" id="L53">                Log.d(&quot;MealUtils&quot;, headers + &quot; Headers Processing (PostMeal 4)&quot;);</span>
+
+<span class="nc" id="L55">                return headers;</span>
+            }
+        };
+
+<span class="nc" id="L59">        VolleySingleton.getInstance(context).addToRequestQueue(jsonObjectRequest);</span>
+
+<span class="nc" id="L61">    }</span>
+
+    /**
+     * Callback interface for handling the response of posting meal data and getting an ID.
+     */
+    interface postMealAndGetIDCallback {
+        void onSuccess(int id, String message);
+
+        void onError(String message);
+    }
+
+    /**
+     * Posts meal data to the given URL with the given parameters and retrieves an ID.
+     *
+     * @param context  the context
+     * @param url      the URL to post the user data to
+     * @param params   the parameters to post the user data with
+     * @param callback the callback to handle success or error response
+     */
+    static void postMealAndGetID(Context context, String url, Map&lt;String, String&gt; params, postMealAndGetIDCallback callback) {
+<span class="nc" id="L81">        JSONObject jsonObject = new JSONObject(params);</span>
+
+        //Log.d(&quot;MealUtils&quot;, url + &quot; Processing&quot;); // TEST
+
+<span class="nc" id="L85">        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, jsonObject, response -&gt; {</span>
+            try {
+<span class="nc" id="L87">                Log.d(&quot;MealUtils&quot;, url + &quot; Try(Catch) Processing&quot;); // TEST</span>
+<span class="nc" id="L88">                String message = response.getString(&quot;message&quot;);</span>
+<span class="nc" id="L89">                JSONObject data = response.getJSONObject(&quot;data&quot;);</span>
+                //TODO: Integrate MealIDS
+<span class="nc" id="L91">                int userID = data.getInt(&quot;ID&quot;);</span>
+<span class="nc" id="L92">                callback.onSuccess(userID, message);</span>
+<span class="nc" id="L93">            } catch (JSONException e) {</span>
+<span class="nc" id="L94">                Log.d(&quot;MealUtils&quot;, url + &quot; JSONException Processing&quot;);</span>
+<span class="nc" id="L95">                e.printStackTrace();</span>
+<span class="nc" id="L96">            }</span>
+<span class="nc" id="L97">        }, error -&gt; {</span>
+<span class="nc" id="L98">            Log.d(&quot;MealUtils&quot;, url + &quot; Error Processing&quot;);</span>
+<span class="nc" id="L99">            callback.onError(errorResponse(error));</span>
+<span class="nc" id="L100">        }) {</span>
+            @Override
+            public Map&lt;String, String&gt; getHeaders() {
+                // Test 3
+<span class="nc" id="L104">                Log.d(&quot;postMealAndGetID&quot;, url + &quot; Hash Header Processing&quot;);</span>
+<span class="nc" id="L105">                Map&lt;String, String&gt; headers = new HashMap&lt;&gt;();</span>
+                // Test 4
+<span class="nc" id="L107">                Log.d(&quot;postMealAndGetID&quot;, url + &quot; Hash Header Processing 2&quot;);</span>
+<span class="nc" id="L108">                headers.put(&quot;Content-Type&quot;, &quot;application/json&quot;);</span>
+<span class="nc" id="L109">                return headers;</span>
+            }
+        };
+<span class="nc" id="L112">        VolleySingleton.getInstance(context).addToRequestQueue(jsonObjectRequest);</span>
+<span class="nc" id="L113">    }</span>
+
+    /**
+     * Callback interface for fetching meal data.
+     * To be used with {@link MealUtils#fetchMealData(Context, String, fetchMealDataCallback)}
+     */
+    interface fetchMealDataCallback {
+        void onSuccess(Meal meal, String message);
+
+        void onError(String message);
+    }
+
+    /**
+     * Fetches meal data from the given URL and calls the appropriate callback method.
+     *
+     * @param context  the context
+     * @param url      the URL to fetch the meal data from
+     * @param callback the callback to call when the data is fetched
+     */
+    public static void fetchMealData(Context context, String url, fetchMealDataCallback callback) {
+<span class="nc" id="L133">        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, response -&gt; {</span>
+            try {
+<span class="nc" id="L135">                String message = response.getString(&quot;message&quot;);</span>
+<span class="nc" id="L136">                JSONObject data = response.getJSONObject(&quot;data&quot;);</span>
+
+<span class="nc" id="L138">                Meal meal = new Meal(</span>
+<span class="nc" id="L139">                        data.getString(&quot;mealName&quot;),</span>
+<span class="nc" id="L140">                        data.getString(&quot;calories&quot;),</span>
+<span class="nc" id="L141">                        data.getString(&quot;carbs&quot;),</span>
+<span class="nc" id="L142">                        data.getString(&quot;protein&quot;));</span>
+<span class="nc" id="L143">                callback.onSuccess(meal, message);</span>
+
+<span class="nc" id="L145">            } catch (JSONException e) {</span>
+<span class="nc" id="L146">                e.printStackTrace();</span>
+<span class="nc" id="L147">            }</span>
+<span class="nc" id="L148">        }, error -&gt; {</span>
+<span class="nc" id="L149">            callback.onError(errorResponse(error));</span>
+<span class="nc" id="L150">        }) {</span>
+            @Override
+            public Map&lt;String, String&gt; getHeaders() {
+<span class="nc" id="L153">                Map&lt;String, String&gt; headers = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L154">                headers.put(&quot;Content-Type&quot;, &quot;application/json&quot;);</span>
+<span class="nc" id="L155">                return headers;</span>
+            }
+        };
+
+<span class="nc" id="L159">        VolleySingleton.getInstance(context).addToRequestQueue(jsonObjectRequest);</span>
+<span class="nc" id="L160">    }</span>
+
+    /**
+     * Modifies meal data on the given URL with the given parameters.
+     *
+     * @param context         the context
+     * @param url             the URL to modify the meal data on
+     * @param params          the parameters to modify the meal data with
+     * @param callbackMessage the callback to handle success or error response
+     */
+    static void modifyData(Context context, String url, Map&lt;String, String&gt; params, callbackMessage callbackMessage) {
+<span class="nc" id="L171">        JSONObject jsonObject = new JSONObject(params);</span>
+
+<span class="nc" id="L173">        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.PUT, url, jsonObject, response -&gt; {</span>
+            try {
+<span class="nc" id="L175">                String message = response.getString(&quot;message&quot;);</span>
+<span class="nc" id="L176">                callbackMessage.onSuccess(message);</span>
+<span class="nc" id="L177">            } catch (JSONException e) {</span>
+<span class="nc" id="L178">                e.printStackTrace();</span>
+<span class="nc" id="L179">            }</span>
+<span class="nc" id="L180">        }, error -&gt; {</span>
+<span class="nc" id="L181">            String errorMessage = errorResponse(error);</span>
+<span class="nc" id="L182">            callbackMessage.onError(errorMessage);</span>
+<span class="nc" id="L183">        }) {</span>
+            @Override
+            public Map&lt;String, String&gt; getHeaders() {
+<span class="nc" id="L186">                Map&lt;String, String&gt; headers = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L187">                headers.put(&quot;Content-Type&quot;, &quot;application/json&quot;);</span>
+<span class="nc" id="L188">                return headers;</span>
+            }
+        };
+<span class="nc" id="L191">        VolleySingleton.getInstance(context).addToRequestQueue(jsonObjectRequest);</span>
+<span class="nc" id="L192">    }</span>
+
+    /**
+     * Callback interface for handling success or error messages.
+     */
+    interface callbackMessage {
+        void onSuccess(String message);
+
+        void onError(String message);
+    }
+
+    /**
+     * Sends a DELETE request to the given URL.
+     *
+     * @param context  the context
+     * @param url      the URL to send the DELETE request to
+     * @param callback the callback to handle success or error response
+     */
+    static void deleteRequest(Context context, String url, callbackMessage callback) {
+<span class="nc" id="L211">        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.DELETE, url, null, response -&gt; {</span>
+            try {
+<span class="nc" id="L213">                String message = response.getString(&quot;message&quot;);</span>
+<span class="nc" id="L214">                callback.onSuccess(message);</span>
+<span class="nc" id="L215">            } catch (JSONException e) {</span>
+<span class="nc" id="L216">                throw new RuntimeException(e);</span>
+<span class="nc" id="L217">            }</span>
+<span class="nc" id="L218">        }, error -&gt; {</span>
+<span class="nc" id="L219">            String errorMessage = errorResponse(error);</span>
+<span class="nc" id="L220">            callback.onError(errorMessage);</span>
+<span class="nc" id="L221">        }) {</span>
+            @Override
+            public Map&lt;String, String&gt; getHeaders() {
+<span class="nc" id="L224">                Map&lt;String, String&gt; headers = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L225">                headers.put(&quot;Content-Type&quot;, &quot;application/json&quot;);</span>
+<span class="nc" id="L226">                return headers;</span>
+            }
+        };
+<span class="nc" id="L229">        VolleySingleton.getInstance(context).addToRequestQueue(jsonObjectRequest);</span>
+<span class="nc" id="L230">    }</span>
+
+    /**
+     * Handles error responses from Volley requests.
+     *
+     * @param error the VolleyError object
+     * @return the error message
+     */
+    private static String errorResponse(VolleyError error) {
+<span class="nc bnc" id="L239" title="All 2 branches missed.">        int statusCode = error.networkResponse != null ? error.networkResponse.statusCode : -1;</span>
+<span class="nc" id="L240">        String errorMessage = &quot;&quot;;</span>
+
+        // Check if the server has returned error details in JSON
+<span class="nc bnc" id="L243" title="All 4 branches missed.">        if (error.networkResponse != null &amp;&amp; error.networkResponse.data != null) {</span>
+            try {
+                // Convert the response data (bytes) to a JSON object
+<span class="nc" id="L246">                String jsonResponse = new String(error.networkResponse.data);</span>
+<span class="nc" id="L247">                JSONObject jsonObject = new JSONObject(jsonResponse);</span>
+
+                // Extract error details from JSON
+<span class="nc" id="L250">                String status = jsonObject.getString(&quot;status&quot;);</span>
+<span class="nc" id="L251">                JSONObject errorObject = jsonObject.getJSONObject(&quot;error&quot;);</span>
+<span class="nc" id="L252">                int errorCode = errorObject.getInt(&quot;code&quot;);</span>
+<span class="nc" id="L253">                String message = errorObject.getString(&quot;message&quot;);</span>
+<span class="nc" id="L254">                String details = errorObject.getString(&quot;details&quot;);</span>
+
+                // Handle the error based on this JSON
+//                errorMessage += &quot;Error Status: &quot; + status + &quot;\n&quot;;
+//                errorMessage += &quot;Error Code: &quot; + errorCode + &quot;\n&quot;;
+//                errorMessage += &quot;Message: &quot; + message + &quot;\n&quot;;
+//                errorMessage += &quot;Details: &quot; + details + &quot;\n&quot;;
+<span class="nc" id="L261">                return message;</span>
+
+<span class="nc" id="L263">            } catch (JSONException e) {</span>
+<span class="nc" id="L264">                e.printStackTrace();</span>
+            }
+        }
+<span class="nc" id="L267">        return &quot;Error Code: &quot; + statusCode;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span>Generated by the Android Gradle plugin 8.7.1</div></body></html>

@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>WorkoutActivity.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.CyTrack.Workouts</a> &gt; <span class="el_source">WorkoutActivity.java</span></div><h1>WorkoutActivity.java</h1><pre class="source lang-java linenums">package com.example.CyTrack.Workouts;
+
+import android.app.AlertDialog;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.Toast;
+
+import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.android.volley.Request;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.example.CyTrack.Utilities.NetworkUtils;
+import com.example.CyTrack.R;
+import com.example.CyTrack.Utilities.UrlHolder;
+import com.example.CyTrack.Utilities.User;
+import com.example.CyTrack.Utilities.VolleySingleton;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+
+/**
+ * Activity to manage and display workouts.
+ */
+<span class="nc" id="L42">public class WorkoutActivity extends AppCompatActivity implements WorkoutRecyclerInterface {</span>
+
+    /**
+     * List to store workout objects.
+     */
+<span class="nc" id="L47">    private final ArrayList&lt;WorkoutObject&gt; workoutList = new ArrayList&lt;&gt;();</span>
+
+    /**
+     * The user object representing the current user.
+     */
+    private User user;
+
+    /**
+     * URL for workout-related API endpoints.
+     */
+<span class="nc" id="L57">    private String URL = UrlHolder.URL + &quot;/workout/&quot;;</span>
+
+    /**
+     * Button to add a new workout.
+     */
+    ImageButton addWorkoutButton;
+
+    /**
+     * Button to navigate back.
+     */
+    ImageButton backButton;
+
+    /**
+     * RecyclerView to display the list of workouts.
+     */
+    private RecyclerView recyclerView;
+
+    /**
+     * Called when the activity is first created.
+     *
+     * @param savedInstanceState If the activity is being re-initialized after previously being shut down then this Bundle contains the data it most recently supplied in onSaveInstanceState(Bundle).
+     */
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+<span class="nc" id="L81">        super.onCreate(savedInstanceState);</span>
+<span class="nc" id="L82">        EdgeToEdge.enable(this);</span>
+<span class="nc" id="L83">        setContentView(R.layout.workouts_activity);</span>
+<span class="nc" id="L84">        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.workoutScreen), (v, insets) -&gt; {</span>
+<span class="nc" id="L85">            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());</span>
+<span class="nc" id="L86">            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);</span>
+<span class="nc" id="L87">            return insets;</span>
+        });
+
+<span class="nc" id="L90">        user = (User) getIntent().getSerializableExtra(&quot;user&quot;);</span>
+<span class="nc bnc" id="L91" title="All 2 branches missed.">        assert user != null;</span>
+<span class="nc" id="L92">        URL += user.getID() + &quot;/workout&quot;;</span>
+
+<span class="nc" id="L94">        recyclerView = findViewById(R.id.recyclerView);</span>
+<span class="nc" id="L95">        WorkoutsRecyclerViewAdapter adapter = new WorkoutsRecyclerViewAdapter(this, workoutList, this);</span>
+<span class="nc" id="L96">        recyclerView.setAdapter(adapter);</span>
+<span class="nc" id="L97">        recyclerView.setLayoutManager(new LinearLayoutManager(this));</span>
+
+<span class="nc" id="L99">        ImageButton addWorkoutButton = findViewById(R.id.addWorkoutButton);</span>
+<span class="nc" id="L100">        ImageButton backButton = findViewById(R.id.backButton);</span>
+
+<span class="nc" id="L102">        getWorkouts();</span>
+
+<span class="nc" id="L104">        addWorkoutButton.setOnClickListener(v -&gt; showAddWorkoutDialog());</span>
+
+<span class="nc" id="L106">        backButton.setOnClickListener(v -&gt; finish());</span>
+<span class="nc" id="L107">    }</span>
+
+    /**
+     * Handles the click event on a workout item.
+     *
+     * @param position The position of the clicked workout item.
+     */
+    @Override
+    public void onWorkoutClick(int position) {
+<span class="nc" id="L116">        WorkoutObject workout = workoutList.get(position);</span>
+
+        // Inflate the dialog layout
+<span class="nc" id="L119">        LayoutInflater inflater = LayoutInflater.from(this);</span>
+<span class="nc" id="L120">        View dialogView = inflater.inflate(R.layout.workouts_modify_workout_dialog, null);</span>
+
+        // Populate the dialog with workout data
+<span class="nc" id="L123">        EditText inputExerciseType = dialogView.findViewById(R.id.inputExerciseType);</span>
+<span class="nc" id="L124">        EditText inputWorkoutDuration = dialogView.findViewById(R.id.inputWorkoutDuration);</span>
+<span class="nc" id="L125">        EditText inputCalories = dialogView.findViewById(R.id.inputCalories);</span>
+<span class="nc" id="L126">        EditText inputDate = dialogView.findViewById(R.id.inputDate);</span>
+
+<span class="nc" id="L128">        inputExerciseType.setText(workout.getExerciseType());</span>
+<span class="nc" id="L129">        inputWorkoutDuration.setText(workout.getDuration());</span>
+<span class="nc" id="L130">        inputCalories.setText(workout.getCaloriesBurned());</span>
+<span class="nc" id="L131">        inputDate.setText(workout.getDate());</span>
+
+        // Create the AlertDialog
+<span class="nc" id="L134">        AlertDialog dialog = new AlertDialog.Builder(this)</span>
+<span class="nc" id="L135">                .setView(dialogView)</span>
+<span class="nc" id="L136">                .setTitle(&quot;Modify Workout&quot;)</span>
+<span class="nc" id="L137">                .create();</span>
+
+<span class="nc" id="L139">        dialog.show();</span>
+
+        // Handle the modify button click
+<span class="nc" id="L142">        dialogView.findViewById(R.id.modifyButton).setOnClickListener(v -&gt; {</span>
+<span class="nc" id="L143">            workout.setExerciseType(inputExerciseType.getText().toString());</span>
+<span class="nc" id="L144">            workout.setDuration(inputWorkoutDuration.getText().toString());</span>
+<span class="nc" id="L145">            workout.setCaloriesBurned(inputCalories.getText().toString());</span>
+<span class="nc" id="L146">            workout.setDate(inputDate.getText().toString());</span>
+
+<span class="nc" id="L148">            modifyWorkout(workout.getWorkoutID(),</span>
+<span class="nc" id="L149">                    workout.getExerciseType(),</span>
+<span class="nc" id="L150">                    workout.getDuration(),</span>
+<span class="nc" id="L151">                    workout.getCaloriesBurned(),</span>
+<span class="nc" id="L152">                    workout.getDate(),</span>
+                    position,
+                    workout);
+<span class="nc" id="L155">            dialog.dismiss();</span>
+<span class="nc" id="L156">        });</span>
+
+        // Handle the delete button click
+<span class="nc" id="L159">        dialogView.findViewById(R.id.deleteButton).setOnClickListener(v -&gt; {</span>
+<span class="nc" id="L160">            deleteWorkout(workout.getWorkoutID(), position);</span>
+<span class="nc" id="L161">            dialog.dismiss();</span>
+<span class="nc" id="L162">        });</span>
+
+        // Handle the cancel button click
+<span class="nc" id="L165">        dialogView.findViewById(R.id.cancelButton).setOnClickListener(v -&gt; {</span>
+<span class="nc" id="L166">            dialog.dismiss();</span>
+<span class="nc" id="L167">        });</span>
+<span class="nc" id="L168">    }</span>
+
+    /**
+     * Shows a dialog to add a new workout.
+     */
+    private void showAddWorkoutDialog() {
+        // Inflate the dialog layout
+<span class="nc" id="L175">        LayoutInflater inflater = LayoutInflater.from(this);</span>
+<span class="nc" id="L176">        View dialogView = inflater.inflate(R.layout.workouts_add_workout_dialog, null);</span>
+
+        // Create the AlertDialog
+<span class="nc" id="L179">        AlertDialog.Builder builder = new AlertDialog.Builder(this);</span>
+<span class="nc" id="L180">        builder.setView(dialogView)</span>
+<span class="nc" id="L181">                .setTitle(&quot;Add Workout&quot;)</span>
+<span class="nc" id="L182">                .setPositiveButton(&quot;Add&quot;, (dialog, which) -&gt; {</span>
+                    // Handle the add button click
+<span class="nc" id="L184">                    EditText inputExerciseType = dialogView.findViewById(R.id.inputExerciseType);</span>
+<span class="nc" id="L185">                    EditText inputWorkoutDuration = dialogView.findViewById(R.id.inputWorkoutDuration2);</span>
+<span class="nc" id="L186">                    EditText inputCalories = dialogView.findViewById(R.id.inputCalories);</span>
+
+<span class="nc bnc" id="L188" title="All 2 branches missed.">                    if (inputExerciseType.getText().toString().isEmpty() ||</span>
+<span class="nc bnc" id="L189" title="All 2 branches missed.">                            inputWorkoutDuration.getText().toString().isEmpty() ||</span>
+<span class="nc bnc" id="L190" title="All 2 branches missed.">                            inputCalories.getText().toString().isEmpty()) {</span>
+<span class="nc" id="L191">                        Toast.makeText(WorkoutActivity.this, &quot;Please fill out all fields&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L192">                        return;</span>
+                    }
+
+<span class="nc" id="L195">                    String exerciseType = inputExerciseType.getText().toString();</span>
+<span class="nc" id="L196">                    String duration = inputWorkoutDuration.getText().toString();</span>
+<span class="nc" id="L197">                    String calories = inputCalories.getText().toString();</span>
+<span class="nc" id="L198">                    String date = getCurrentDate();</span>
+
+<span class="nc" id="L200">                    postWorkout(exerciseType, duration, calories, date);</span>
+<span class="nc" id="L201">                    dialog.dismiss();</span>
+<span class="nc" id="L202">                })</span>
+<span class="nc" id="L203">                .setNegativeButton(&quot;Cancel&quot;, (dialog, which) -&gt; dialog.dismiss())</span>
+<span class="nc" id="L204">                .create()</span>
+<span class="nc" id="L205">                .show();</span>
+<span class="nc" id="L206">    }</span>
+
+    /**
+     * Gets the current date in MM-dd-yyyy format.
+     *
+     * @return The current date as a string.
+     */
+    private String getCurrentDate() {
+<span class="nc" id="L214">        SimpleDateFormat formatter = new SimpleDateFormat(&quot;MM-dd-yyyy&quot;);</span>
+<span class="nc" id="L215">        Date date = new Date();</span>
+<span class="nc" id="L216">        return formatter.format(date);</span>
+    }
+
+    /**
+     * Fetches the workouts from the server.
+     */
+    private void getWorkouts() {
+<span class="nc" id="L223">        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, URL, null, response -&gt; {</span>
+            try {
+<span class="nc" id="L225">                Log.d(&quot;WorkoutActivity&quot;, &quot;URL: &quot; + URL);</span>
+
+<span class="nc" id="L227">                JSONArray workouts = response.getJSONObject(&quot;data&quot;).getJSONArray(&quot;workouts&quot;);</span>
+<span class="nc bnc" id="L228" title="All 2 branches missed.">                for (int i = 0; i &lt; workouts.length(); i++) {</span>
+<span class="nc" id="L229">                    JSONObject workout = workouts.getJSONObject(i);</span>
+<span class="nc" id="L230">                    workoutList.add(new WorkoutObject(workout.getString(&quot;exerciseType&quot;),</span>
+<span class="nc" id="L231">                            workout.getString(&quot;duration&quot;),</span>
+<span class="nc" id="L232">                            workout.getString(&quot;calories&quot;),</span>
+<span class="nc" id="L233">                            workout.getString(&quot;date&quot;),</span>
+<span class="nc" id="L234">                            workout.getInt(&quot;workoutID&quot;)));</span>
+<span class="nc" id="L235">                    Objects.requireNonNull(recyclerView.getAdapter()).notifyItemInserted(workoutList.size() - 1);</span>
+                }
+
+<span class="nc" id="L238">            } catch (JSONException e) {</span>
+<span class="nc" id="L239">                e.printStackTrace();</span>
+<span class="nc" id="L240">            }</span>
+<span class="nc" id="L241">        }, error -&gt; {</span>
+<span class="nc" id="L242">            Toast.makeText(WorkoutActivity.this, NetworkUtils.errorResponse(error), Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L243">        });</span>
+<span class="nc" id="L244">        VolleySingleton.getInstance(this).addToRequestQueue(jsonObjectRequest);</span>
+<span class="nc" id="L245">    }</span>
+
+    /**
+     * Posts a new workout to the server.
+     *
+     * @param exerciseType The type of exercise.
+     * @param duration     The duration of the workout.
+     * @param calories     The calories burned during the workout.
+     * @param date         The date of the workout.
+     */
+    private void postWorkout(String exerciseType, String duration, String calories, String date) {
+<span class="nc" id="L256">        Map&lt;String, String&gt; params = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L257">        params.put(&quot;userID&quot;, String.valueOf(user.getID()));</span>
+<span class="nc" id="L258">        params.put(&quot;exerciseType&quot;, exerciseType);</span>
+<span class="nc" id="L259">        params.put(&quot;duration&quot;, duration);</span>
+<span class="nc" id="L260">        params.put(&quot;calories&quot;, calories);</span>
+<span class="nc" id="L261">        params.put(&quot;date&quot;, date);</span>
+
+<span class="nc" id="L263">        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, URL, new JSONObject(params), response -&gt; {</span>
+            try {
+<span class="nc" id="L265">                JSONObject data = response.getJSONObject(&quot;data&quot;);</span>
+<span class="nc" id="L266">                int workoutID = data.getInt(&quot;workoutID&quot;);</span>
+<span class="nc" id="L267">                workoutList.add(new WorkoutObject(exerciseType, duration, calories, date, workoutID));</span>
+<span class="nc" id="L268">                Objects.requireNonNull(recyclerView.getAdapter()).notifyItemInserted(workoutList.size() - 1);</span>
+<span class="nc" id="L269">                Toast.makeText(this, &quot;Workout added&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L270">            } catch (JSONException e) {</span>
+<span class="nc" id="L271">                e.printStackTrace();</span>
+<span class="nc" id="L272">            }</span>
+<span class="nc" id="L273">        }, error -&gt; {</span>
+<span class="nc" id="L274">            Toast.makeText(WorkoutActivity.this, NetworkUtils.errorResponse(error), Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L275">        });</span>
+<span class="nc" id="L276">        VolleySingleton.getInstance(this).addToRequestQueue(jsonObjectRequest);</span>
+<span class="nc" id="L277">    }</span>
+
+    /**
+     * Deletes a workout from the server.
+     *
+     * @param workoutID The ID of the workout to delete.
+     * @param position  The position of the workout in the list.
+     */
+    private void deleteWorkout(int workoutID, int position) {
+<span class="nc" id="L286">        String deleteURL = URL + &quot;/&quot; + workoutID;</span>
+<span class="nc" id="L287">        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.DELETE, deleteURL, null, response -&gt; {</span>
+<span class="nc" id="L288">            workoutList.remove(position);</span>
+<span class="nc" id="L289">            Objects.requireNonNull(recyclerView.getAdapter()).notifyItemRemoved(position);</span>
+<span class="nc" id="L290">            Toast.makeText(this, &quot;Workout deleted&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L291">        }, error -&gt; {</span>
+<span class="nc" id="L292">            Toast.makeText(WorkoutActivity.this, NetworkUtils.errorResponse(error), Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L293">        });</span>
+<span class="nc" id="L294">        VolleySingleton.getInstance(this).addToRequestQueue(jsonObjectRequest);</span>
+<span class="nc" id="L295">    }</span>
+
+    /**
+     * Modifies an existing workout on the server.
+     *
+     * @param workoutID    The ID of the workout to modify.
+     * @param exerciseType The new type of exercise.
+     * @param duration     The new duration of the workout.
+     * @param calories     The new calories burned during the workout.
+     * @param date         The new date of the workout.
+     * @param position     The position of the workout in the list.
+     * @param workout      The workout object to update.
+     */
+    private void modifyWorkout(int workoutID, String exerciseType, String duration, String calories, String date, int position, WorkoutObject workout) {
+<span class="nc" id="L309">        String modifyURL = URL + &quot;/&quot; + workoutID;</span>
+<span class="nc" id="L310">        Map&lt;String, String&gt; params = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L311">        params.put(&quot;exerciseType&quot;, exerciseType);</span>
+<span class="nc" id="L312">        params.put(&quot;duration&quot;, duration);</span>
+<span class="nc" id="L313">        params.put(&quot;calories&quot;, calories);</span>
+<span class="nc" id="L314">        params.put(&quot;date&quot;, date);</span>
+
+<span class="nc" id="L316">        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.PUT, modifyURL, new JSONObject(params), response -&gt; {</span>
+<span class="nc" id="L317">            workoutList.set(position, workout);</span>
+<span class="nc" id="L318">            Objects.requireNonNull(recyclerView.getAdapter()).notifyItemChanged(position);</span>
+<span class="nc" id="L319">            Toast.makeText(this, &quot;Workout modified&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L320">        }, error -&gt; {</span>
+<span class="nc" id="L321">            Toast.makeText(WorkoutActivity.this, NetworkUtils.errorResponse(error), Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L322">        });</span>
+<span class="nc" id="L323">        VolleySingleton.getInstance(this).addToRequestQueue(jsonObjectRequest);</span>
+<span class="nc" id="L324">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span>Generated by the Android Gradle plugin 8.7.1</div></body></html>

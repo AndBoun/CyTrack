@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>LoginActivity.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.CyTrack.Startup</a> &gt; <span class="el_source">LoginActivity.java</span></div><h1>LoginActivity.java</h1><pre class="source lang-java linenums">package com.example.CyTrack.Startup;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.widget.EditText;
+
+import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+import androidx.core.splashscreen.SplashScreen;
+
+import android.widget.Button;
+
+import android.widget.Toast;
+
+import com.example.CyTrack.Dashboard.MainDashboardActivity;
+import com.example.CyTrack.R;
+import com.example.CyTrack.Utilities.UrlHolder;
+import com.example.CyTrack.Utilities.User;
+import com.example.CyTrack.Utilities.FocusUtils;
+import com.example.CyTrack.Utilities.NetworkUtils;
+
+import java.util.HashMap;
+import java.util.Map;
+
+
+/**
+ * LoginActivity handles the login process for the application.
+ */
+<span class="fc" id="L32">public class LoginActivity extends AppCompatActivity {</span>
+
+    /**
+     * EditText field for the username input.
+     */
+    private EditText usernameEditText;
+
+    /**
+     * EditText field for the password input.
+     */
+    private EditText passwordEditText;
+
+    /**
+     * Button to navigate to the sign-up activity.
+     */
+    private Button signUpButton;
+
+    /**
+     * Button to initiate the login process.
+     */
+    private Button loginButton;
+
+    /**
+     * Button to navigate to the forgot password activity.
+     */
+    private Button forgotPasswordButton;
+
+    /**
+     * User object to store the logged-in user's information.
+     */
+    private User user;
+
+    /**
+     * URL for the login endpoint.
+     */
+<span class="fc" id="L67">    private final String URL_LOGIN = UrlHolder.URL + &quot;/user/login&quot;;</span>
+
+    /**
+     * URL for fetching user data.
+     */
+<span class="fc" id="L72">    private final String URL_GET_USER = UrlHolder.URL + &quot;/user&quot;;</span>
+
+    /**
+     * Called when the activity is first created.
+     *
+     * @param savedInstanceState If the activity is being re-initialized after previously being shut down then this Bundle contains the data it most recently supplied in onSaveInstanceState(Bundle).
+     */
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+<span class="fc" id="L81">        SplashScreen splashScreen = SplashScreen.installSplashScreen(this);</span>
+<span class="fc" id="L82">        super.onCreate(savedInstanceState);</span>
+<span class="fc" id="L83">        EdgeToEdge.enable(this);</span>
+<span class="fc" id="L84">        setContentView(R.layout.startup_login_activity);</span>
+<span class="fc" id="L85">        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -&gt; {</span>
+<span class="fc" id="L86">            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());</span>
+<span class="fc" id="L87">            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);</span>
+<span class="fc" id="L88">            return insets;</span>
+        });
+
+<span class="fc" id="L91">        usernameEditText = findViewById(R.id.Username_field);</span>
+<span class="fc" id="L92">        passwordEditText = findViewById(R.id.Password_field);</span>
+<span class="fc" id="L93">        signUpButton = findViewById(R.id.signUp_button);</span>
+<span class="fc" id="L94">        loginButton = findViewById(R.id.login_button);</span>
+<span class="fc" id="L95">        forgotPasswordButton = findViewById(R.id.forgotPassword_button);</span>
+
+<span class="fc" id="L97">        loginButton.setOnClickListener(v -&gt; {</span>
+<span class="fc" id="L98">            String username = usernameEditText.getText().toString();</span>
+<span class="fc" id="L99">            String password = passwordEditText.getText().toString();</span>
+
+<span class="pc bpc" id="L101" title="2 of 4 branches missed.">            if (username.isEmpty() || password.isEmpty()) {</span>
+<span class="nc" id="L102">                Toast.makeText(getApplicationContext(), &quot;Please fill in all fields&quot;, Toast.LENGTH_LONG).show();</span>
+<span class="nc" id="L103">                return;</span>
+            }
+
+<span class="fc" id="L106">            login(username, password);</span>
+<span class="fc" id="L107">        });</span>
+
+<span class="fc" id="L109">        signUpButton.setOnClickListener(v -&gt; {</span>
+<span class="fc" id="L110">            Intent intent = new Intent(LoginActivity.this, SignUpActivity.class);</span>
+<span class="fc" id="L111">            startActivity(intent);</span>
+<span class="fc" id="L112">        });</span>
+
+<span class="fc" id="L114">        forgotPasswordButton.setOnClickListener(v -&gt; {</span>
+<span class="fc" id="L115">            Intent intent = new Intent(LoginActivity.this, ForgotPasswordActivity.class);</span>
+<span class="fc" id="L116">            startActivity(intent);</span>
+<span class="fc" id="L117">        });</span>
+
+<span class="fc" id="L119">        clearHintOnFocus();</span>
+<span class="fc" id="L120">    }</span>
+
+    /**
+     * Initiates the login process by sending the username and password to the server.
+     *
+     * @param username The username entered by the user.
+     * @param password The password entered by the user.
+     */
+    private void login(String username, String password) {
+<span class="fc" id="L129">        Map&lt;String, String&gt; params = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L130">        params.put(&quot;username&quot;, username);</span>
+<span class="fc" id="L131">        params.put(&quot;password&quot;, password);</span>
+
+<span class="fc" id="L133">        NetworkUtils.postUserAndGetID(getApplicationContext(), URL_LOGIN, params, new NetworkUtils.postUserAndGetIDCallback() {</span>
+            @Override
+            public void onSuccess(int id, String message) {
+<span class="pc bpc" id="L136" title="1 of 2 branches missed.">                if (id != 0) fetchUserData(URL_GET_USER + &quot;/&quot; + id);</span>
+<span class="fc" id="L137">            }</span>
+
+            @Override
+            public void onError(String error) {
+<span class="fc" id="L141">                Toast.makeText(getApplicationContext(), error, Toast.LENGTH_LONG).show();</span>
+<span class="fc" id="L142">            }</span>
+        });
+<span class="fc" id="L144">    }</span>
+
+    /**
+     * Fetches user data from the server using the provided URL.
+     *
+     * @param url The URL to fetch user data from.
+     */
+    private void fetchUserData(String url) {
+<span class="fc" id="L152">        NetworkUtils.fetchUserData(this, url, new NetworkUtils.fetchUserDataCallback() {</span>
+            @Override
+            public void onSuccess(User user, String message) {
+<span class="fc" id="L155">                LoginActivity.this.user = user;</span>
+<span class="fc" id="L156">                Toast.makeText(getApplicationContext(), &quot;Signing In&quot;, Toast.LENGTH_LONG).show();</span>
+<span class="fc" id="L157">                navigateToMainDashboard();</span>
+<span class="fc" id="L158">            }</span>
+
+            @Override
+            public void onError(String error) {
+<span class="nc" id="L162">                Toast.makeText(getApplicationContext(), error, Toast.LENGTH_LONG).show();</span>
+<span class="nc" id="L163">            }</span>
+        });
+<span class="fc" id="L165">    }</span>
+
+    /**
+     * Navigates to the main dashboard activity.
+     */
+    private void navigateToMainDashboard() {
+<span class="fc" id="L171">        Intent intent = new Intent(LoginActivity.this, MainDashboardActivity.class);</span>
+<span class="fc" id="L172">        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);</span>
+<span class="fc" id="L173">        intent.putExtra(&quot;user&quot;, user);</span>
+<span class="fc" id="L174">        startActivity(intent);</span>
+<span class="fc" id="L175">    }</span>
+
+    /**
+     * Clears the hint text when the EditText fields gain focus.
+     */
+    private void clearHintOnFocus() {
+<span class="fc" id="L181">        FocusUtils.clearHintOnFocus(usernameEditText, &quot;Username&quot;);</span>
+<span class="fc" id="L182">        FocusUtils.clearHintOnFocus(passwordEditText, &quot;Password&quot;);</span>
+<span class="fc" id="L183">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span>Generated by the Android Gradle plugin 8.7.1</div></body></html>

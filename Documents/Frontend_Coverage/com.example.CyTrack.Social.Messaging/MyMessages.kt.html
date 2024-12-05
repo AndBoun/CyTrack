@@ -1,0 +1,356 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MyMessages.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.CyTrack.Social.Messaging</a> &gt; <span class="el_source">MyMessages.kt</span></div><h1>MyMessages.kt</h1><pre class="source lang-java linenums">package com.example.CyTrack.Social.Messaging
+
+import android.app.Activity
+import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.example.CyTrack.R
+import com.example.CyTrack.Social.Friends.Friend
+import com.example.CyTrack.Social.SocialUtils
+import com.example.CyTrack.Social.SocialUtils.Companion.processMessageCardData
+import com.example.CyTrack.Social.WebSockets.WebSocketManagerMessages
+import com.example.CyTrack.Utilities.ComposeUtils.Companion.getCustomFontFamily
+import com.example.CyTrack.Utilities.StatusBarUtil
+import com.example.CyTrack.Utilities.UrlHolder
+import com.example.CyTrack.Utilities.User
+import com.example.CyTrack.Utilities.WebSocketListener
+import org.java_websocket.handshake.ServerHandshake
+
+/**
+ * Activity to handle displaying and managing messages.
+ */
+<span class="nc" id="L54">class MyMessages : ComponentActivity(), WebSocketListener {</span>
+
+    /**
+     * The user object representing the current user.
+     */
+    private lateinit var user: User
+
+    /**
+     * The URL for conversations.
+     */
+<span class="nc" id="L64">    private val URL = &quot;${UrlHolder.URL}/conversations&quot;</span>
+
+    /**
+     * A mutable list to hold message card data.
+     */
+<span class="nc" id="L69">    private var messageCards: MutableList&lt;MessageCardData&gt; = mutableListOf()</span>
+
+    /**
+     * Called when the activity is first created.
+     * Sets up the content view and initializes WebSocket connection.
+     */
+    override fun onCreate(savedInstanceState: Bundle?) {
+<span class="nc" id="L76">        super.onCreate(savedInstanceState)</span>
+<span class="nc" id="L77">        setContent {</span>
+<span class="nc bnc" id="L78" title="All 6 branches missed.">            user = intent.getSerializableExtra(&quot;user&quot;) as User</span>
+<span class="nc" id="L79">            messageCards = remember { mutableStateListOf() }</span>
+
+<span class="nc bnc" id="L81" title="All 2 branches missed.">            val serverUrl = &quot;${UrlHolder.wsURL}/conversations/${user.id}&quot;</span>
+<span class="nc" id="L82">            Log.d(&quot;WebSocketServiceUtil&quot;, &quot;Connecting to $serverUrl&quot;)</span>
+<span class="nc" id="L83">            WebSocketManagerMessages.getInstance().connectWebSocket(serverUrl)</span>
+<span class="nc" id="L84">            WebSocketManagerMessages.getInstance().setWebSocketListener(this@MyMessages)</span>
+
+<span class="nc" id="L86">            Column {</span>
+<span class="nc" id="L87">                MyMessageTopCard()</span>
+<span class="nc" id="L88">                Spacer(modifier = Modifier.height(20.dp))</span>
+<span class="nc" id="L89">                MessageCardLazyList(</span>
+<span class="nc" id="L90">                    messageCards,</span>
+<span class="nc" id="L91">                    onMessageClick = {</span>
+<span class="nc" id="L92">                        val friend = Friend(it.firstname, it.username, it.userID, it.friendEntityID)</span>
+<span class="nc" id="L93">                        switchToMessagePage(friend)</span>
+<span class="nc" id="L94">                    }</span>
+                )
+<span class="nc" id="L96">            }</span>
+<span class="nc" id="L97">        }</span>
+
+<span class="nc" id="L99">        StatusBarUtil.setStatusBarColor(this, R.color.CyRed)</span>
+<span class="nc" id="L100">    }</span>
+
+    /**
+     * Switches to the message page for the given friend.
+     *
+     * @param friend The friend to message.
+     */
+    private fun switchToMessagePage(friend: Friend) {
+<span class="nc bnc" id="L108" title="All 2 branches missed.">        SocialUtils.messageUserScreen(user, friend, this)</span>
+<span class="nc" id="L109">    }</span>
+
+    /**
+     * Called when the WebSocket connection is opened.
+     *
+     * @param handshakedata The handshake data.
+     */
+    override fun onWebSocketOpen(handshakedata: ServerHandshake?) {
+<span class="nc" id="L117">    }</span>
+
+    /**
+     * Called when a message is received from the WebSocket.
+     *
+     * @param message The message received.
+     */
+    override fun onWebSocketMessage(message: String) {
+<span class="nc" id="L125">        runOnUiThread(Runnable {</span>
+<span class="nc" id="L126">            Log.d(&quot;Mymessages&quot;, &quot;Message: $message&quot;)</span>
+<span class="nc" id="L127">            processMessageCardData(message, messageCards)</span>
+<span class="nc" id="L128">        })</span>
+<span class="nc" id="L129">    }</span>
+
+    /**
+     * Called when the WebSocket connection is closed.
+     *
+     * @param code The close code.
+     * @param reason The reason for the closure.
+     * @param remote Whether the closure was initiated by the remote server.
+     */
+    override fun onWebSocketClose(code: Int, reason: String?, remote: Boolean) {
+<span class="nc bnc" id="L139" title="All 2 branches missed.">        val closedBy = if (remote) &quot;server&quot; else &quot;local&quot;</span>
+<span class="nc" id="L140">        runOnUiThread(Runnable {</span>
+<span class="nc" id="L141">            Toast.makeText(this, &quot;Connection closed&quot;, Toast.LENGTH_LONG).show()</span>
+<span class="nc" id="L142">            Log.d(&quot;Mymessages&quot;, &quot;Connection closed $reason $closedBy&quot;)</span>
+<span class="nc" id="L143">        })</span>
+<span class="nc" id="L144">    }</span>
+
+    /**
+     * Called when an error occurs on the WebSocket.
+     *
+     * @param ex The exception that occurred.
+     */
+    override fun onWebSocketError(ex: Exception?) {
+<span class="nc" id="L152">        runOnUiThread(Runnable {</span>
+<span class="nc bnc" id="L153" title="All 2 branches missed.">            Toast.makeText(this, &quot;Error: ${ex?.message}&quot;, Toast.LENGTH_LONG).show()</span>
+<span class="nc bnc" id="L154" title="All 2 branches missed.">            Log.d(&quot;Mymessages&quot;, &quot;Error: ${ex?.message}&quot;)</span>
+<span class="nc" id="L155">        })</span>
+<span class="nc" id="L156">    }</span>
+}
+
+/**
+ * Data class representing a message card.
+ *
+ * @param username The username of the sender.
+ * @param firstname The first name of the sender.
+ * @param content The content of the message.
+ * @param time The time the message was sent.
+ * @param userID The user ID of the sender.
+ * @param friendEntityID The friend entity ID.
+ * @param conversationID The conversation ID.
+ */
+<span class="nc" id="L170">data class MessageCardData(</span>
+<span class="nc" id="L171">    val username: String,</span>
+<span class="nc" id="L172">    val firstname: String,</span>
+<span class="nc" id="L173">    val content: String,</span>
+<span class="nc" id="L174">    val time: String,</span>
+<span class="nc" id="L175">    val userID: Int,</span>
+<span class="nc" id="L176">    val friendEntityID: Int,</span>
+<span class="nc" id="L177">    val conversationID: Int</span>
+)
+
+/**
+ * Composable function to display a message card.
+ *
+ * @param name The name of the sender.
+ * @param message The message content.
+ * @param img The image resource.
+ * @param modifier The modifier to be applied to the card.
+ * @param onMessageClick The callback to be invoked when the card is clicked.
+ */
+@Composable
+fun ListMessageCard(
+    name: String,
+    message: String,
+    img: String,
+<span class="nc bnc" id="L194" title="All 2 branches missed.">    modifier: Modifier = Modifier,</span>
+<span class="nc bnc" id="L195" title="All 2 branches missed.">    onMessageClick: () -&gt; Unit = {}</span>
+<span class="nc bnc" id="L196" title="All 30 branches missed.">) {</span>
+<span class="nc bnc" id="L197" title="All 2 branches missed.">    Surface(</span>
+<span class="nc" id="L198">        modifier = modifier</span>
+<span class="nc" id="L199">            .fillMaxWidth()</span>
+<span class="nc" id="L200">            .clickable(</span>
+<span class="nc" id="L201">                onClick = onMessageClick</span>
+            )
+<span class="nc" id="L203">    ) {</span>
+<span class="nc bnc" id="L204" title="All 6 branches missed.">        Row(</span>
+<span class="nc" id="L205">            verticalAlignment = Alignment.CenterVertically,</span>
+<span class="nc" id="L206">            modifier = Modifier</span>
+<span class="nc" id="L207">                .padding(12.dp)</span>
+<span class="nc" id="L208">                .fillMaxWidth()</span>
+        ) {
+<span class="nc" id="L210">            Image(</span>
+<span class="nc" id="L211">                painter = painterResource(R.drawable.general_generic_avatar),</span>
+<span class="nc" id="L212">                contentDescription = &quot;Contact profile picture&quot;,</span>
+<span class="nc" id="L213">                modifier = Modifier</span>
+<span class="nc" id="L214">                    .size(40.dp)</span>
+<span class="nc" id="L215">                    .clip(CircleShape)</span>
+            )
+
+<span class="nc" id="L218">            Spacer(modifier = Modifier.width(8.dp))</span>
+
+<span class="nc" id="L220">            Column {</span>
+<span class="nc" id="L221">                Text(</span>
+<span class="nc" id="L222">                    text = name,</span>
+<span class="nc" id="L223">                    fontFamily = getCustomFontFamily(</span>
+<span class="nc" id="L224">                        &quot;Inter&quot;,</span>
+<span class="nc" id="L225">                        FontWeight.SemiBold,</span>
+<span class="nc" id="L226">                        FontStyle.Normal</span>
+                    ),
+<span class="nc" id="L228">                    fontWeight = FontWeight.SemiBold,</span>
+<span class="nc" id="L229">                    fontSize = 13.sp,</span>
+<span class="nc" id="L230">                    maxLines = 1</span>
+                )
+<span class="nc" id="L232">                Spacer(modifier = Modifier.height(3.dp))</span>
+<span class="nc" id="L233">                Text(</span>
+<span class="nc" id="L234">                    text = message,</span>
+<span class="nc" id="L235">                    fontFamily = getCustomFontFamily(&quot;Inter&quot;, FontWeight.Normal, FontStyle.Normal),</span>
+<span class="nc" id="L236">                    fontWeight = FontWeight.Normal,</span>
+<span class="nc" id="L237">                    fontSize = 11.sp,</span>
+<span class="nc" id="L238">                    maxLines = 1</span>
+                )
+<span class="nc" id="L240">            }</span>
+<span class="nc" id="L241">        }</span>
+<span class="nc" id="L242">    }</span>
+<span class="nc bnc" id="L243" title="All 2 branches missed.">}</span>
+
+/**
+ * Composable function to display the top card of the message screen.
+ *
+ * @param modifier The modifier to be applied to the card.
+ * @param onMessageClick The callback to be invoked when the card is clicked.
+ */
+@Composable
+fun MyMessageTopCard(
+<span class="nc bnc" id="L253" title="All 2 branches missed.">    modifier: Modifier = Modifier,</span>
+<span class="nc bnc" id="L254" title="All 2 branches missed.">    onMessageClick: (MessageCardData) -&gt; Unit = {}</span>
+<span class="nc bnc" id="L255" title="All 6 branches missed.">) {</span>
+<span class="nc" id="L256">    val context = LocalContext.current</span>
+
+<span class="nc bnc" id="L258" title="All 2 branches missed.">    Surface(</span>
+<span class="nc" id="L259">        modifier = Modifier</span>
+<span class="nc" id="L260">            .fillMaxWidth()</span>
+<span class="nc" id="L261">            .height(120.dp),</span>
+<span class="nc" id="L262">        color = Color(context.resources.getColor(R.color.CyRed)),</span>
+<span class="nc" id="L263">    ) {</span>
+<span class="nc bnc" id="L264" title="All 6 branches missed.">        Box {</span>
+<span class="nc" id="L265">            IconButton(</span>
+<span class="nc" id="L266">                onClick = {</span>
+<span class="nc" id="L267">                    (context as Activity).finish()</span>
+<span class="nc" id="L268">                },</span>
+<span class="nc" id="L269">                modifier = Modifier.align(Alignment.BottomStart)</span>
+<span class="nc" id="L270">            ) {</span>
+<span class="nc bnc" id="L271" title="All 8 branches missed.">                Image(</span>
+<span class="nc" id="L272">                    painter = painterResource(id = R.drawable.general_back_arrow_button),</span>
+<span class="nc" id="L273">                    contentDescription = &quot;Back arrow&quot;,</span>
+<span class="nc" id="L274">                    modifier = Modifier.size(24.dp)</span>
+<span class="nc" id="L275">                )</span>
+<span class="nc" id="L276">            }</span>
+
+<span class="nc" id="L278">            Image(</span>
+<span class="nc" id="L279">                painter = painterResource(R.drawable.social_messages_header),</span>
+<span class="nc" id="L280">                contentDescription = &quot;Messages&quot;,</span>
+<span class="nc" id="L281">                modifier = Modifier.align(Alignment.BottomCenter)</span>
+            )
+<span class="nc" id="L283">        }</span>
+<span class="nc" id="L284">    }</span>
+<span class="nc bnc" id="L285" title="All 2 branches missed.">}</span>
+
+/**
+ * Composable function to display a list of message cards.
+ *
+ * @param messages The list of message cards to display.
+ * @param onMessageClick The callback to be invoked when a card is clicked.
+ * @param modifier The modifier to be applied to the list.
+ */
+@Composable
+fun MessageCardLazyList(
+    messages: List&lt;MessageCardData&gt;,
+<span class="nc bnc" id="L297" title="All 2 branches missed.">    onMessageClick: (MessageCardData) -&gt; Unit = {},</span>
+<span class="nc bnc" id="L298" title="All 2 branches missed.">    modifier: Modifier = Modifier</span>
+<span class="nc bnc" id="L299" title="All 18 branches missed.">) {</span>
+<span class="nc bnc" id="L300" title="All 2 branches missed.">    for (message in messages) {</span>
+<span class="nc bnc" id="L301" title="All 2 branches missed.">        ListMessageCard(message.firstname, message.content, &quot;generic_avatar&quot;,</span>
+<span class="nc" id="L302">            onMessageClick = {</span>
+<span class="nc" id="L303">                onMessageClick(message)</span>
+<span class="nc" id="L304">            })</span>
+<span class="nc" id="L305">        Log.d(&quot;MessageCardLazyList&quot;, message.userID.toString())</span>
+<span class="nc bnc" id="L306" title="All 2 branches missed.">        HorizontalDivider(thickness = 1.dp, color = Color.Gray)</span>
+    }
+<span class="nc bnc" id="L308" title="All 2 branches missed.">}</span>
+
+/**
+ * @suppress
+ */
+@Preview
+@Composable
+<span class="nc bnc" id="L315" title="All 6 branches missed.">fun PreviewListMessageCard() {</span>
+<span class="nc bnc" id="L316" title="All 2 branches missed.">    ListMessageCard(&quot;John Doe&quot;, &quot;Hello&quot;, &quot;generic_avatar&quot;)</span>
+<span class="nc bnc" id="L317" title="All 2 branches missed.">}</span>
+
+/**
+ * @suppress
+ */
+@Preview
+@Composable
+<span class="nc bnc" id="L324" title="All 6 branches missed.">fun PreviewMessageCardLazyList() {</span>
+<span class="nc bnc" id="L325" title="All 2 branches missed.">    Surface {</span>
+<span class="nc bnc" id="L326" title="All 8 branches missed.">        MessageCardLazyList(</span>
+<span class="nc" id="L327">            listOf(</span>
+<span class="nc" id="L328">                MessageCardData(&quot;john&quot;, &quot;John Doe&quot;, &quot;Hello&quot;, &quot;12/1/12&quot;, 1, 2, 1),</span>
+<span class="nc" id="L329">                MessageCardData(&quot;jane&quot;, &quot;Jane Doe&quot;, &quot;Hi&quot;, &quot;12/1/12&quot;, 1, 2, 1),</span>
+<span class="nc" id="L330">                MessageCardData(&quot;john&quot;, &quot;John Doe&quot;, &quot;Hello&quot;, &quot;12/1/12&quot;, 1, 2, 1),</span>
+            )
+<span class="nc" id="L332">        )</span>
+<span class="nc" id="L333">    }</span>
+<span class="nc bnc" id="L334" title="All 2 branches missed.">}</span>
+
+/**
+ * @suppress
+ */
+@Preview
+@Composable
+<span class="nc bnc" id="L341" title="All 6 branches missed.">fun PreviewMyMessagesScreen() {</span>
+<span class="nc bnc" id="L342" title="All 2 branches missed.">    Surface {</span>
+<span class="nc bnc" id="L343" title="All 6 branches missed.">        Column {</span>
+<span class="nc" id="L344">            MyMessageTopCard()</span>
+<span class="nc" id="L345">            Spacer(modifier = Modifier.height(20.dp))</span>
+<span class="nc" id="L346">            MessageCardLazyList(</span>
+<span class="nc" id="L347">                listOf(</span>
+<span class="nc" id="L348">                    MessageCardData(&quot;john&quot;, &quot;John Doe&quot;, &quot;Hello&quot;, &quot;12/1/12&quot;, 1, 2, 1),</span>
+<span class="nc" id="L349">                    MessageCardData(&quot;jane&quot;, &quot;Jane Doe&quot;, &quot;Hi&quot;, &quot;12/1/12&quot;, 1, 2, 1),</span>
+<span class="nc" id="L350">                    MessageCardData(&quot;john&quot;, &quot;John Doe&quot;, &quot;Hello&quot;, &quot;12/1/12&quot;, 1, 2, 1),</span>
+                ),
+            )
+<span class="nc" id="L353">        }</span>
+<span class="nc" id="L354">    }</span>
+<span class="nc bnc" id="L355" title="All 2 branches missed.">}</span>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span>Generated by the Android Gradle plugin 8.7.1</div></body></html>

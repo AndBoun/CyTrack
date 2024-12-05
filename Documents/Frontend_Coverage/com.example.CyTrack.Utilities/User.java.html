@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>User.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.CyTrack.Utilities</a> &gt; <span class="el_source">User.java</span></div><h1>User.java</h1><pre class="source lang-java linenums">package com.example.CyTrack.Utilities;
+
+import androidx.annotation.NonNull;
+
+import java.io.Serializable;
+
+
+/**
+ * Represents a user with various attributes.
+ */
+public class User implements Serializable {
+    /**
+     * The unique identifier for the user.
+     */
+    private final int ID;
+
+    /**
+     * The username of the user.
+     */
+    private final String username;
+
+    /**
+     * The first name of the user.
+     */
+    private String firstName;
+
+    /**
+     * The last name of the user.
+     */
+    private String lastName;
+
+    /**
+     * The age of the user.
+     */
+    private int age;
+
+    /**
+     * The gender of the user.
+     */
+    private String gender;
+
+    /**
+     * The current streak of the user.
+     */
+    private int streak;
+
+    /**
+     * Constructs a new User.
+     *
+     * @param ID        the unique identifier for the user
+     * @param username  the username of the user
+     * @param firstName the first name of the user
+     * @param lastName  the last name of the user
+     * @param age       the age of the user
+     * @param gender    the gender of the user
+     * @param streak    the current streak of the user
+     */
+<span class="fc" id="L58">    public User(int ID, String username, String firstName, String lastName, int age, String gender, int streak) {</span>
+<span class="fc" id="L59">        this.ID = ID;</span>
+<span class="fc" id="L60">        this.username = username;</span>
+<span class="fc" id="L61">        this.firstName = firstName;</span>
+<span class="fc" id="L62">        this.lastName = lastName;</span>
+<span class="fc" id="L63">        this.age = age;</span>
+<span class="fc" id="L64">        this.gender = gender;</span>
+<span class="fc" id="L65">        this.streak = streak;</span>
+<span class="fc" id="L66">    }</span>
+
+    /**
+     * Gets the ID of the user.
+     *
+     * @return the ID of the user
+     */
+    public int getID() {
+<span class="nc" id="L74">        return ID;</span>
+    }
+
+    /**
+     * Gets the username of the user.
+     *
+     * @return the username of the user
+     */
+    public String getUsername() {
+<span class="nc" id="L83">        return username;</span>
+    }
+
+    /**
+     * Gets the first name of the user.
+     *
+     * @return the first name of the user
+     */
+    public String getFirstName() {
+<span class="fc" id="L92">        return firstName;</span>
+    }
+
+    /**
+     * Sets the first name of the user.
+     *
+     * @param firstName the new first name of the user
+     */
+    public void setFirstName(String firstName) {
+<span class="nc" id="L101">        this.firstName = firstName;</span>
+<span class="nc" id="L102">    }</span>
+
+    /**
+     * Gets the last name of the user.
+     *
+     * @return the last name of the user
+     */
+    public String getLastName() {
+<span class="nc" id="L110">        return lastName;</span>
+    }
+
+    /**
+     * Sets the last name of the user.
+     *
+     * @param lastName the new last name of the user
+     */
+    public void setLastName(String lastName) {
+<span class="nc" id="L119">        this.lastName = lastName;</span>
+<span class="nc" id="L120">    }</span>
+
+    /**
+     * Gets the age of the user.
+     *
+     * @return the age of the user
+     */
+    public int getAge() {
+<span class="nc" id="L128">        return age;</span>
+    }
+
+    /**
+     * Sets the age of the user.
+     *
+     * @param age the new age of the user
+     */
+    public void setAge(int age) {
+<span class="nc" id="L137">        this.age = age;</span>
+<span class="nc" id="L138">    }</span>
+
+    /**
+     * Gets the gender of the user.
+     *
+     * @return the gender of the user
+     */
+    public String getGender() {
+<span class="nc" id="L146">        return gender;</span>
+    }
+
+    /**
+     * Sets the gender of the user.
+     *
+     * @param gender the new gender of the user
+     */
+    public void setGender(String gender) {
+<span class="nc" id="L155">        this.gender = gender;</span>
+<span class="nc" id="L156">    }</span>
+
+    /**
+     * Gets the current streak of the user.
+     *
+     * @return the current streak of the user
+     */
+    public int getStreak() {
+<span class="fc" id="L164">        return streak;</span>
+    }
+
+    /**
+     * Sets the current streak of the user.
+     *
+     * @param streak the new streak of the user
+     */
+    public void setStreak(int streak) {
+<span class="nc" id="L173">        this.streak = streak;</span>
+<span class="nc" id="L174">    }</span>
+
+    /**
+     * Returns a string representation of the user.
+     *
+     * @return a string representation of the user
+     */
+    @Override
+    public String toString() {
+<span class="nc" id="L183">        return &quot;User{&quot; +</span>
+                &quot;ID=&quot; + ID +
+                &quot;, firstName='&quot; + firstName + '\'' +
+                &quot;, lastName='&quot; + lastName + '\'' +
+                &quot;, age=&quot; + age +
+                &quot;, gender='&quot; + gender + '\'' +
+                &quot;, streak=&quot; + streak +
+                '}';
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span>Generated by the Android Gradle plugin 8.7.1</div></body></html>

@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>WorkoutUtils.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.CyTrack.Workouts</a> &gt; <span class="el_source">WorkoutUtils.kt</span></div><h1>WorkoutUtils.kt</h1><pre class="source lang-java linenums">package com.example.CyTrack.Workouts
+
+import android.app.Activity
+import android.util.Log
+import android.widget.Toast
+import com.android.volley.Request
+import com.android.volley.toolbox.JsonObjectRequest
+import com.example.CyTrack.Utilities.NetworkUtils
+import com.example.CyTrack.Utilities.VolleySingleton
+
+/**
+ * Utility class for handling workout-related network operations.
+ */
+<span class="nc" id="L14">class WorkoutUtils {</span>
+
+    /**
+     * Companion object to hold static methods for WorkoutUtils.
+     */
+    companion object {
+
+        /**
+         * Fetches the list of workouts from the given URL and adds them to the provided mutable list.
+         *
+         * @param context The activity context.
+         * @param url The URL to fetch the workouts from.
+         * @param mutableList The mutable list to add the fetched workouts to.
+         */
+        @JvmStatic
+        fun getWorkouts(
+            context: Activity,
+            url: String,
+            mutableList: MutableList&lt;WorkoutObject&gt;
+        ) {
+<span class="nc" id="L34">            Log.d(&quot;getWorkouts at WorkoutUtils&quot;, &quot;getWorkouts called&quot;)</span>
+
+<span class="nc" id="L36">            val jsonObjectRequest = JsonObjectRequest(</span>
+<span class="nc" id="L37">                Request.Method.GET,</span>
+<span class="nc" id="L38">                url,</span>
+<span class="nc" id="L39">                null,</span>
+                { response -&gt;
+<span class="nc" id="L41">                    try {</span>
+<span class="nc" id="L42">                        val jsonArray = response.getJSONObject(&quot;data&quot;).getJSONArray(&quot;workouts&quot;)</span>
+<span class="nc" id="L43">                        Log.d(&quot;jsonarrlength_workoutUtils&quot;, jsonArray.length().toString())</span>
+<span class="nc bnc" id="L44" title="All 2 branches missed.">                        for (i in 0 until jsonArray.length()) {</span>
+<span class="nc" id="L45">                            val jsonObject = jsonArray.getJSONObject(i)</span>
+<span class="nc" id="L46">                            val workout = WorkoutObject(</span>
+<span class="nc" id="L47">                                jsonObject.getString(&quot;exerciseType&quot;),</span>
+<span class="nc" id="L48">                                jsonObject.getString(&quot;duration&quot;),</span>
+<span class="nc" id="L49">                                jsonObject.getString(&quot;calories&quot;),</span>
+<span class="nc" id="L50">                                jsonObject.getString(&quot;date&quot;),</span>
+<span class="nc" id="L51">                                jsonObject.getInt(&quot;workoutID&quot;)</span>
+                            )
+<span class="nc" id="L53">                            mutableList.add(workout)</span>
+<span class="nc" id="L54">                            Log.d(&quot;Workouts&quot;, workout.toString())</span>
+                        }
+<span class="nc" id="L56">                    } catch (e: Exception) {</span>
+<span class="nc" id="L57">                        e.printStackTrace()</span>
+                    }
+<span class="nc" id="L59">                },</span>
+<span class="nc" id="L60">                { error -&gt;</span>
+<span class="nc" id="L61">                    error.printStackTrace()</span>
+<span class="nc" id="L62">                }</span>
+            )
+<span class="nc" id="L64">            VolleySingleton.getInstance(context).addToRequestQueue(jsonObjectRequest)</span>
+<span class="nc" id="L65">        }</span>
+
+        /**
+         * Fetches the total daily calories burned from the given URL and invokes the callback with the result.
+         *
+         * @param context The activity context.
+         * @param url The URL to fetch the total daily calories burned from.
+         * @param onComplete A callback function to be invoked with the total calories burned.
+         */
+<span class="nc" id="L74">        @JvmStatic</span>
+        fun getDailyCaloriesBurned(
+            context: Activity,
+            url: String,
+<span class="nc" id="L78">            onComplete: (calories: Int) -&gt; Unit = {}</span>
+        ) {
+<span class="nc" id="L80">            val jsonObjectRequest = JsonObjectRequest(</span>
+<span class="nc" id="L81">                Request.Method.GET, url, null,</span>
+                { response -&gt;
+<span class="nc" id="L83">                    val calories = response.getJSONObject(&quot;data&quot;).getInt(&quot;totalCalories&quot;)</span>
+<span class="nc" id="L84">                    Log.d(&quot;Calories&quot;, calories.toString())</span>
+<span class="nc" id="L85">                    onComplete(calories)</span>
+<span class="nc" id="L86">                },</span>
+                { error -&gt;
+<span class="nc" id="L88">                    Log.d(&quot;MyWorkouts&quot;, &quot;Error: $error&quot;)</span>
+<span class="nc" id="L89">                    Toast.makeText(context, NetworkUtils.errorResponse(error), Toast.LENGTH_SHORT)</span>
+<span class="nc" id="L90">                        .show()</span>
+<span class="nc" id="L91">                }</span>
+            )
+<span class="nc" id="L93">            VolleySingleton.getInstance(context).addToRequestQueue(jsonObjectRequest)</span>
+<span class="nc" id="L94">        }</span>
+
+
+        /**
+         * Fetches the total workout time from the given URL and invokes the callback with the result.
+         *
+         * @param context The activity context.
+         * @param url The URL to fetch the total workout time from.
+         * @param onComplete A callback function to be invoked with the total workout time.
+         */
+<span class="nc" id="L104">        @JvmStatic</span>
+        fun getTotalWorkoutTime(
+            context: Activity,
+            url: String,
+<span class="nc" id="L108">            onComplete: (time: Int) -&gt; Unit = {}</span>
+        ) {
+<span class="nc" id="L110">            val jsonObjectRequest = JsonObjectRequest(</span>
+<span class="nc" id="L111">                Request.Method.GET, url, null,</span>
+                { response -&gt;
+<span class="nc" id="L113">                    val time = response.getJSONObject(&quot;data&quot;).getInt(&quot;totalWorkoutTime&quot;)</span>
+<span class="nc" id="L114">                    onComplete(time)</span>
+<span class="nc" id="L115">                },</span>
+                { error -&gt;
+<span class="nc" id="L117">                    Toast.makeText(context, NetworkUtils.errorResponse(error), Toast.LENGTH_SHORT)</span>
+<span class="nc" id="L118">                        .show()</span>
+<span class="nc" id="L119">                }</span>
+            )
+<span class="nc" id="L121">            VolleySingleton.getInstance(context).addToRequestQueue(jsonObjectRequest)</span>
+<span class="nc" id="L122">        }</span>
+
+
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span>Generated by the Android Gradle plugin 8.7.1</div></body></html>
