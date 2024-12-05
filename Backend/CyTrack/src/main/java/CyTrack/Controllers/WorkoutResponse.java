@@ -40,6 +40,12 @@ public class WorkoutResponse {
     public static class Data {
         private List<WorkoutData> workouts;
 
+        //default/no-arg constructor
+        public Data() {
+
+        }
+
+
         public Data(List<WorkoutData> workouts) {
             this.workouts = workouts;
         }
@@ -59,6 +65,10 @@ public class WorkoutResponse {
         private int calories;
         private LocalDate date;
         private Long workoutID;
+
+        //default/no-arg constructor
+        public WorkoutData() {
+        }
 
         public WorkoutData(String exerciseType, int duration, int calories, LocalDate date, Long workoutID) {
             this.exerciseType = exerciseType;
