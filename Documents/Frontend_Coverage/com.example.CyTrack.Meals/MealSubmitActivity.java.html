@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MealSubmitActivity.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.CyTrack.Meals</a> &gt; <span class="el_source">MealSubmitActivity.java</span></div><h1>MealSubmitActivity.java</h1><pre class="source lang-java linenums">package com.example.CyTrack.Meals;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
+import android.widget.EditText;
+
+import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.widget.ImageButton;
+import android.widget.Toast;
+
+
+import com.example.CyTrack.R;
+import com.example.CyTrack.Utilities.FocusUtils;
+
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * Activity for submitting meal information.
+ */
+<span class="nc" id="L24">public class MealSubmitActivity extends AppCompatActivity {</span>
+
+    /**
+     * EditText field for meal name input.
+     */
+    private EditText MealName;
+
+    /**
+     * EditText field for meal calories input.
+     */
+    private EditText MealCalories;
+
+    /**
+     * EditText field for meal protein input.
+     */
+    private EditText MealProtein;
+
+    /**
+     * EditText field for meal carbohydrates input.
+     */
+    private EditText MealCarbs;
+
+    /**
+     * ImageButton for profile settings.
+     */
+    private ImageButton profileSettingsButton;
+
+    /**
+     * ImageButton for notifications.
+     */
+    private ImageButton notificationButton;
+
+    /**
+     * ImageButton to navigate to Meals Page.
+     */
+    private ImageButton MealsPageButton;
+
+    /**
+     * ImageButton to navigate to Log Page.
+     */
+    private ImageButton LogPageButton;
+
+    /**
+     * ImageButton to submit the meal.
+     */
+    private ImageButton SubmitMeal;
+
+    /**
+     * Meal object to hold meal data.
+     */
+    private Meal meal;
+
+    /**
+     * URL to submit meal data.
+     * TODO: Find proper URL to submit hashmap over
+     */
+<span class="nc" id="L80">    private final String URL = &quot;http://10.90.72.246:8080/meal&quot;;</span>
+
+    /**
+     * Called when the activity is first created.
+     *
+     * @param savedInstanceState If the activity is being re-initialized after previously being shut down then this Bundle contains the data it most recently supplied in onSaveInstanceState(Bundle).
+     */
+    protected void onCreate(Bundle savedInstanceState) {
+<span class="nc" id="L88">        super.onCreate(savedInstanceState);</span>
+<span class="nc" id="L89">        EdgeToEdge.enable(this);</span>
+<span class="nc" id="L90">        setContentView(R.layout.meal_submit);</span>
+
+        // Initialize Buttons
+<span class="nc" id="L93">        profileSettingsButton = findViewById(R.id.profileSettingsButton);</span>
+<span class="nc" id="L94">        notificationButton = findViewById(R.id.notificationButton);</span>
+<span class="nc" id="L95">        MealsPageButton = findViewById(R.id.MealsPageButton);</span>
+<span class="nc" id="L96">        LogPageButton = findViewById(R.id.LogPageButton);</span>
+<span class="nc" id="L97">        SubmitMeal = findViewById(R.id.SubmitMeal);</span>
+
+        // USERINPUT TEXTEDIT
+<span class="nc" id="L100">        MealName = findViewById(R.id.MealName);</span>
+<span class="nc" id="L101">        MealCalories = findViewById(R.id.MealCalories);</span>
+<span class="nc" id="L102">        MealProtein = findViewById(R.id.MealProtein);</span>
+<span class="nc" id="L103">        MealCalories = findViewById(R.id.MealCalories);</span>
+<span class="nc" id="L104">        MealCarbs = findViewById(R.id.MealCarbs);</span>
+
+        // Button Input Listeners
+<span class="nc" id="L107">        profileSettingsButton.setOnClickListener(v -&gt; {</span>
+            // Open Profile Settings Activity
+<span class="nc" id="L109">        });</span>
+
+<span class="nc" id="L111">        notificationButton.setOnClickListener(v -&gt; {</span>
+            // Open Notification Activity
+<span class="nc" id="L113">        });</span>
+
+<span class="nc" id="L115">        MealsPageButton.setOnClickListener(v -&gt; {</span>
+            //TODO: Send to MealPage
+<span class="nc" id="L117">            Intent Navigate = new Intent(MealSubmitActivity.this, MealTrackingMain.class);</span>
+<span class="nc" id="L118">            startActivity(Navigate);</span>
+
+<span class="nc" id="L120">        });</span>
+
+<span class="nc" id="L122">        LogPageButton.setOnClickListener(v -&gt; {</span>
+            //TODO: Send to LogPage
+<span class="nc" id="L124">            Intent Navigate = new Intent(MealSubmitActivity.this, MealLogActivity.class);</span>
+<span class="nc" id="L125">            startActivity(Navigate);</span>
+<span class="nc" id="L126">        });</span>
+
+<span class="nc" id="L128">        SubmitMeal.setOnClickListener(v -&gt; {</span>
+            //TODO: Ensure String Data can be sent
+<span class="nc" id="L130">            String mealname = MealName.getText().toString();</span>
+<span class="nc" id="L131">            String mealcalories = MealCalories.getText().toString();</span>
+<span class="nc" id="L132">            String mealprotein = MealProtein.getText().toString();</span>
+<span class="nc" id="L133">            String mealcarbs = MealCarbs.getText().toString();</span>
+            //TODO: Add Favorite Checking
+
+<span class="nc bnc" id="L136" title="All 8 branches missed.">            if (mealname.isEmpty() || mealcalories.isEmpty() || mealprotein.isEmpty() || mealcarbs.isEmpty()) {</span>
+<span class="nc" id="L137">                Toast.makeText(getApplicationContext(), &quot;Please fill in all fields&quot;, Toast.LENGTH_LONG).show();</span>
+<span class="nc" id="L138">                return;</span>
+            }
+
+<span class="nc" id="L141">            mealsubmit(mealname, mealcalories, mealprotein, mealcarbs);</span>
+<span class="nc" id="L142">        });</span>
+
+<span class="nc" id="L144">    }</span>
+
+    /**
+     * Submits the meal data to the server.
+     *
+     * @param mealnm      The name of the meal.
+     * @param mealcals    The calories of the meal.
+     * @param mealprotein The protein content of the meal.
+     * @param mealcarbs   The carbohydrate content of the meal.
+     */
+    private void mealsubmit(String mealnm, String mealcals, String mealprotein, String mealcarbs) {
+        // TODO: Verify if input is done properly
+<span class="nc" id="L156">        Integer cals = Integer.parseInt(mealcals);</span>
+<span class="nc" id="L157">        Integer prot = Integer.parseInt(mealprotein);</span>
+<span class="nc" id="L158">        Integer carb = Integer.parseInt(mealcarbs);</span>
+        //TEST
+<span class="nc" id="L160">        Map&lt;String, Object&gt; params = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L161">        params.put(&quot;mealName&quot;, mealnm);</span>
+<span class="nc" id="L162">        params.put(&quot;calories&quot;, mealcals);</span>
+<span class="nc" id="L163">        params.put(&quot;protein&quot;, mealprotein);</span>
+<span class="nc" id="L164">        params.put(&quot;carbs&quot;, mealcarbs);</span>
+        //Log.d(&quot;MyApp&quot;, mealprotein);
+
+        //POST
+<span class="nc" id="L168">        MealUtils.postMeal(getApplicationContext(), URL, params, new MealUtils.callbackMessage() {</span>
+            @Override
+            public void onSuccess(String response) {
+<span class="nc" id="L171">                Toast.makeText(getApplicationContext(), &quot;Submitting Meal&quot;, Toast.LENGTH_LONG).show();</span>
+<span class="nc" id="L172">            }</span>
+
+            @Override
+            public void onError(String error) {
+<span class="nc" id="L176">                Toast.makeText(getApplicationContext(), error, Toast.LENGTH_LONG).show();</span>
+<span class="nc" id="L177">            }</span>
+        });
+
+<span class="nc" id="L180">    }</span>
+
+    /**
+     * Fetches meal data from the server.
+     *
+     * @param url The URL to fetch the meal data from.
+     */
+    private void fetchMealData(String url) {
+<span class="nc" id="L188">        MealUtils.fetchMealData(this, url, new MealUtils.fetchMealDataCallback() {</span>
+            @Override
+            public void onSuccess(Meal meal, String message) {
+<span class="nc" id="L191">                MealSubmitActivity.this.meal = meal;</span>
+<span class="nc" id="L192">                Toast.makeText(getApplicationContext(), &quot;Submitting Meal&quot;, Toast.LENGTH_LONG).show();</span>
+<span class="nc" id="L193">            }</span>
+
+            @Override
+            public void onError(String error) {
+<span class="nc" id="L197">                Log.d(&quot;MyApp&quot;, error + &quot; MSA: FetchMealDaata&quot;); // TEST</span>
+<span class="nc" id="L198">                Toast.makeText(getApplicationContext(), error, Toast.LENGTH_LONG).show();</span>
+<span class="nc" id="L199">            }</span>
+        });
+<span class="nc" id="L201">    }</span>
+
+    /**
+     * Clears the hint text on focus for the meal input fields.
+     */
+    private void clearHintOnFocus() {
+<span class="nc" id="L207">        FocusUtils.clearHintOnFocus(MealName, &quot;Meal Name&quot;);</span>
+<span class="nc" id="L208">        FocusUtils.clearHintOnFocus(MealCalories, &quot;Meal Calories&quot;);</span>
+<span class="nc" id="L209">        FocusUtils.clearHintOnFocus(MealProtein, &quot;Meal Protein&quot;);</span>
+<span class="nc" id="L210">        FocusUtils.clearHintOnFocus(MealCarbs, &quot;Meal Carbs&quot;);</span>
+<span class="nc" id="L211">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span>Generated by the Android Gradle plugin 8.7.1</div></body></html>

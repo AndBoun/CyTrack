@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SocialUtils.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.CyTrack.Social</a> &gt; <span class="el_source">SocialUtils.kt</span></div><h1>SocialUtils.kt</h1><pre class="source lang-java linenums">package com.example.CyTrack.Social
+
+import android.app.Activity
+import android.content.Intent
+import android.util.Log
+import android.widget.Toast
+import com.android.volley.Request
+import com.android.volley.toolbox.JsonObjectRequest
+import com.example.CyTrack.Social.Friends.AddFriends
+import com.example.CyTrack.Social.Friends.Friend
+import com.example.CyTrack.Social.Friends.FriendProfile
+import com.example.CyTrack.Social.Messaging.DirectMessage
+import com.example.CyTrack.Social.Messaging.MessageCardData
+import com.example.CyTrack.Utilities.NetworkUtils
+import com.example.CyTrack.Utilities.User
+import com.example.CyTrack.Utilities.VolleySingleton
+import org.json.JSONException
+import org.json.JSONObject
+import java.text.SimpleDateFormat
+
+/**
+ * Utility class for social-related functionalities.
+ */
+<span class="nc" id="L24">class SocialUtils {</span>
+
+    /**
+     * Companion object to hold static methods.
+     */
+    companion object {
+
+        /**
+         * Launches the DirectMessage activity to message a user.
+         *
+         * @param user The current user.
+         * @param recipient The friend to whom the message is to be sent.
+         * @param context The activity context.
+         */
+        @JvmStatic
+        fun messageUserScreen(user: User, recipient: Friend, context: Activity) {
+<span class="nc" id="L40">            val intent = Intent(context, DirectMessage::class.java).apply {</span>
+<span class="nc" id="L41">                putExtra(&quot;user&quot;, user)</span>
+<span class="nc" id="L42">                putExtra(&quot;recipientUser&quot;, recipient)</span>
+<span class="nc" id="L43">            }</span>
+
+<span class="nc" id="L45">            context.startActivity(intent)</span>
+<span class="nc" id="L46">        }</span>
+
+
+        /**
+         * Switches to the AddFriends activity.
+         *
+         * @param context The activity context.
+         * @param user The current user.
+         */
+        @JvmStatic
+        fun switchToAddFriends(context: Activity, user: User) {
+<span class="nc" id="L57">            val intent = Intent(context, AddFriends::class.java).apply {</span>
+<span class="nc" id="L58">                putExtra(&quot;user&quot;, user)</span>
+<span class="nc" id="L59">            }</span>
+<span class="nc" id="L60">            context.startActivity(intent)</span>
+<span class="nc" id="L61">        }</span>
+
+
+        /**
+         * Switches to the FriendProfile activity.
+         *
+         * @param context The activity context.
+         * @param user The current user.
+         * @param friend The friend whose profile is to be viewed.
+         */
+        @JvmStatic
+        fun switchToFriendProfile(context: Activity, user: User, friend: Friend) {
+<span class="nc" id="L73">            val intent = Intent(context, FriendProfile::class.java).apply {</span>
+<span class="nc" id="L74">                putExtra(&quot;user&quot;, user)</span>
+<span class="nc" id="L75">                putExtra(&quot;friend&quot;, friend)</span>
+<span class="nc" id="L76">            }</span>
+<span class="nc" id="L77">            context.startActivity(intent)</span>
+<span class="nc" id="L78">        }</span>
+
+
+        /**
+         * Fetches a list of friends from the server and updates the provided friendList.
+         *
+         * @param context The activity context.
+         * @param friendList The list to be updated with friends.
+         * @param url The URL to fetch the friends from.
+         * @param arrName The name of the JSON array containing the friends.
+         * @param onComplete A callback function to be executed after the request is completed.
+         */
+<span class="nc" id="L90">        @JvmStatic</span>
+        fun getListOfFriends(
+            context: Activity,
+            friendList: MutableList&lt;Friend&gt;,
+            url: String,
+            arrName: String,
+<span class="nc" id="L96">            onComplete: () -&gt; Unit = {}</span>
+        ) {
+<span class="nc" id="L98">            val jsonObjectRequest = JsonObjectRequest(</span>
+<span class="nc" id="L99">                Request.Method.GET,</span>
+<span class="nc" id="L100">                url,</span>
+<span class="nc" id="L101">                null,</span>
+                { response -&gt;
+<span class="nc" id="L103">                    try {</span>
+<span class="nc" id="L104">                        val message = response.getString(&quot;message&quot;)</span>
+<span class="nc" id="L105">                        val data = response.getJSONObject(&quot;data&quot;).getJSONArray(arrName)</span>
+
+<span class="nc bnc" id="L107" title="All 2 branches missed.">                        for (i in 0 until data.length()) {</span>
+<span class="nc" id="L108">                            val friend = data.getJSONObject(i)</span>
+<span class="nc" id="L109">                            friendList.add(</span>
+<span class="nc" id="L110">                                Friend(</span>
+<span class="nc" id="L111">                                    friend.getString(&quot;firstname&quot;),</span>
+<span class="nc" id="L112">                                    friend.getString(&quot;username&quot;),</span>
+<span class="nc" id="L113">                                    friend.getInt(&quot;userID&quot;),</span>
+<span class="nc" id="L114">                                    friend.getInt(&quot;friendID&quot;)</span>
+                                )
+                            )
+                        }
+<span class="nc" id="L118">                    } catch (e: JSONException) {</span>
+<span class="nc" id="L119">                        e.printStackTrace()</span>
+                    } finally {
+<span class="nc" id="L121">                        onComplete()</span>
+                    }
+<span class="nc" id="L123">                },</span>
+                { error -&gt;
+<span class="nc" id="L125">                    Toast.makeText(context, NetworkUtils.errorResponse(error), Toast.LENGTH_LONG)</span>
+<span class="nc" id="L126">                        .show()</span>
+<span class="nc" id="L127">                }</span>
+
+            )
+<span class="nc" id="L130">            VolleySingleton.getInstance(context).addToRequestQueue(jsonObjectRequest)</span>
+<span class="nc" id="L131">        }</span>
+
+
+        /**
+         * Deletes a friend from the server.
+         *
+         * @param context The activity context.
+         * @param url The URL to send the delete request to.
+         * @param onComplete A callback function to be executed after the request is completed.
+         */
+<span class="nc" id="L141">        @JvmStatic</span>
+        fun deleteFriend(
+            context: Activity,
+            url: String,
+<span class="nc" id="L145">            onComplete: () -&gt; Unit = {}</span>
+        ) {
+<span class="nc" id="L147">            val jsonObjectRequest = JsonObjectRequest(</span>
+<span class="nc" id="L148">                Request.Method.DELETE,</span>
+<span class="nc" id="L149">                url,</span>
+<span class="nc" id="L150">                null,</span>
+                { response -&gt;
+<span class="nc" id="L152">                    try {</span>
+<span class="nc" id="L153">                        val message = response.getString(&quot;message&quot;)</span>
+<span class="nc" id="L154">                        Toast.makeText(context, message, Toast.LENGTH_LONG).show()</span>
+<span class="nc" id="L155">                    } catch (e: JSONException) {</span>
+<span class="nc" id="L156">                        e.printStackTrace()</span>
+                    } finally {
+<span class="nc" id="L158">                        onComplete()</span>
+                    }
+<span class="nc" id="L160">                },</span>
+                { error -&gt;
+<span class="nc" id="L162">                    Toast.makeText(context, NetworkUtils.errorResponse(error), Toast.LENGTH_LONG)</span>
+<span class="nc" id="L163">                        .show()</span>
+<span class="nc" id="L164">                }</span>
+
+            )
+<span class="nc" id="L167">            VolleySingleton.getInstance(context).addToRequestQueue(jsonObjectRequest)</span>
+<span class="nc" id="L168">        }</span>
+
+
+        /**
+         * Processes a JSON message string and converts it into a DirectMessage.Msg object.
+         *
+         * @param msg The JSON message string to be processed.
+         * @return A DirectMessage.Msg object containing the message content and user ID.
+         */
+        fun processMessage(msg: String): DirectMessage.Msg {
+<span class="nc" id="L178">            try {</span>
+<span class="nc" id="L179">                val tempMsg = msg.removePrefix(&quot;Received message: &quot;)</span>
+
+
+<span class="nc" id="L182">                val jsonObject = JSONObject(tempMsg)</span>
+<span class="nc" id="L183">                val data = jsonObject.getJSONObject(&quot;data&quot;)</span>
+
+<span class="nc" id="L185">                val userID = data.getInt(&quot;userID&quot;)</span>
+<span class="nc" id="L186">                val msgContent = data.getString(&quot;contentofmessage&quot;)</span>
+
+<span class="nc" id="L188">                return DirectMessage.Msg(msgContent, userID)</span>
+
+<span class="nc" id="L190">            } catch (e: JSONException) {</span>
+<span class="nc" id="L191">                e.printStackTrace()</span>
+            }
+
+<span class="nc" id="L194">            return DirectMessage.Msg(&quot;&quot;, 0)</span>
+        }
+
+
+        /**
+         * Fetches a list of conversations from the server and updates the provided cardList.
+         *
+         * @param context The activity context.
+         * @param url The URL to fetch the conversations from.
+         * @param cardList The list to be updated with conversations.
+         */
+        fun getConversations(
+            context: Activity,
+            url: String,
+            cardList: MutableList&lt;MessageCardData&gt;,
+        ) {
+<span class="nc" id="L210">            val jsonObjectRequest = JsonObjectRequest(</span>
+<span class="nc" id="L211">                Request.Method.GET,</span>
+<span class="nc" id="L212">                url,</span>
+<span class="nc" id="L213">                null,</span>
+                { response -&gt;
+<span class="nc" id="L215">                    try {</span>
+<span class="nc" id="L216">                        val message = response.getString(&quot;message&quot;)</span>
+<span class="nc" id="L217">                        val data = response.getJSONObject(&quot;data&quot;).getJSONArray(&quot;userConversations&quot;)</span>
+
+<span class="nc bnc" id="L219" title="All 2 branches missed.">                        for (i in 0 until data.length()) {</span>
+<span class="nc" id="L220">                            val messageCardContent = data.getJSONObject(i)</span>
+<span class="nc" id="L221">                            cardList.add(</span>
+<span class="nc" id="L222">                                MessageCardData(</span>
+<span class="nc" id="L223">                                    messageCardContent.getString(&quot;username&quot;),</span>
+<span class="nc" id="L224">                                    messageCardContent.getString(&quot;firstName&quot;),</span>
+<span class="nc" id="L225">                                    messageCardContent.getString(&quot;content&quot;),</span>
+<span class="nc" id="L226">                                    messageCardContent.getString(&quot;time&quot;),</span>
+<span class="nc" id="L227">                                    messageCardContent.getInt(&quot;userID&quot;),</span>
+<span class="nc" id="L228">                                    messageCardContent.getInt(&quot;friendEntityID&quot;),</span>
+<span class="nc" id="L229">                                    messageCardContent.getInt(&quot;conversationID&quot;)</span>
+                                )
+                            )
+                        }
+<span class="nc" id="L233">                    } catch (e: JSONException) {</span>
+<span class="nc" id="L234">                        e.printStackTrace()</span>
+                    }
+<span class="nc" id="L236">                },</span>
+                { error -&gt;
+<span class="nc" id="L238">                    Toast.makeText(context, NetworkUtils.errorResponse(error), Toast.LENGTH_LONG)</span>
+<span class="nc" id="L239">                        .show()</span>
+<span class="nc" id="L240">                }</span>
+
+            )
+<span class="nc" id="L243">            VolleySingleton.getInstance(context).addToRequestQueue(jsonObjectRequest)</span>
+<span class="nc" id="L244">        }</span>
+
+        /**
+         * Processes a JSON message string and updates the provided cardList with MessageCardData objects.
+         *
+         * @param msg The JSON message string to be processed.
+         * @param cardList The list to be updated with MessageCardData objects.
+         */
+        fun processMessageCardData(msg: String, cardList: MutableList&lt;MessageCardData&gt;) {
+<span class="nc" id="L253">            try {</span>
+<span class="nc" id="L254">                cardList.clear()</span>
+<span class="nc" id="L255">                val tempMsg = msg.removePrefix(&quot;Received message: &quot;)</span>
+<span class="nc" id="L256">                val jsonObject = JSONObject(tempMsg)</span>
+<span class="nc" id="L257">                val data = jsonObject.getJSONObject(&quot;data&quot;).getJSONArray(&quot;userConversations&quot;)</span>
+
+
+<span class="nc bnc" id="L260" title="All 2 branches missed.">                for (i in 0 until data.length()) {</span>
+
+<span class="nc" id="L262">                    val messageCardContent = data.getJSONObject(i)</span>
+
+<span class="nc" id="L264">                    Log.d(&quot;MessageCardData&quot;, messageCardContent.getInt(&quot;userID&quot;).toString())</span>
+
+<span class="nc" id="L266">                    cardList.add(</span>
+<span class="nc" id="L267">                        MessageCardData(</span>
+<span class="nc" id="L268">                            messageCardContent.getString(&quot;username&quot;),</span>
+<span class="nc" id="L269">                            messageCardContent.getString(&quot;firstName&quot;),</span>
+<span class="nc" id="L270">                            messageCardContent.getString(&quot;content&quot;),</span>
+<span class="nc" id="L271">                            messageCardContent.getString(&quot;time&quot;),</span>
+<span class="nc" id="L272">                            messageCardContent.getInt(&quot;userID&quot;),</span>
+<span class="nc" id="L273">                            messageCardContent.getInt(&quot;friendEntityID&quot;),</span>
+<span class="nc" id="L274">                            messageCardContent.getInt(&quot;conversationID&quot;)</span>
+                        )
+                    )
+                }
+<span class="nc" id="L278">            } catch (e: JSONException) {</span>
+<span class="nc" id="L279">                e.printStackTrace()</span>
+            }
+<span class="nc" id="L281">        }</span>
+
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span>Generated by the Android Gradle plugin 8.7.1</div></body></html>

@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ProfileSettingsActivity.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.CyTrack.Dashboard</a> &gt; <span class="el_source">ProfileSettingsActivity.java</span></div><h1>ProfileSettingsActivity.java</h1><pre class="source lang-java linenums">package com.example.CyTrack.Dashboard;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.widget.ImageButton;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+
+import com.example.CyTrack.R;
+import com.example.CyTrack.Startup.LoginActivity;
+import com.example.CyTrack.Utilities.UrlHolder;
+import com.example.CyTrack.Utilities.User;
+import com.example.CyTrack.Utilities.NetworkUtils;
+
+/**
+ * Activity for managing profile settings.
+ */
+<span class="nc" id="L24">public class ProfileSettingsActivity extends AppCompatActivity {</span>
+
+    /**
+     * TextView for displaying the user's name.
+     */
+    private TextView nameTextView;
+
+    /**
+     * ImageButton for deleting the user account.
+     */
+    private ImageButton deleteButton;
+
+    /**
+     * ImageButton for navigating back.
+     */
+    private ImageButton backButton;
+
+    /**
+     * ImageButton for logging out.
+     */
+    private ImageButton logOutButton;
+
+    /**
+     * User object representing the current user.
+     */
+    private User user;
+
+    /**
+     * URL for deleting the user account.
+     */
+<span class="nc" id="L54">    private final String DELETE_URL = UrlHolder.URL + &quot;/user&quot;;</span>
+
+    /**
+     * Called when the activity is first created.
+     *
+     * @param savedInstanceState If the activity is being re-initialized after previously being shut down then this Bundle contains the data it most recently supplied in onSaveInstanceState(Bundle).
+     */
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+<span class="nc" id="L63">        super.onCreate(savedInstanceState);</span>
+<span class="nc" id="L64">        EdgeToEdge.enable(this);</span>
+<span class="nc" id="L65">        setContentView(R.layout.settings_profile_activity);</span>
+<span class="nc" id="L66">        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.profileSettingsScreen), (v, insets) -&gt; {</span>
+<span class="nc" id="L67">            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());</span>
+<span class="nc" id="L68">            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);</span>
+<span class="nc" id="L69">            return insets;</span>
+        });
+
+<span class="nc" id="L72">        user = (User) getIntent().getSerializableExtra(&quot;user&quot;);</span>
+
+<span class="nc" id="L74">        nameTextView = findViewById(R.id.nameTextView);</span>
+<span class="nc" id="L75">        deleteButton = findViewById(R.id.deleteButton);</span>
+<span class="nc" id="L76">        backButton = findViewById(R.id.backButton);</span>
+<span class="nc" id="L77">        logOutButton = findViewById(R.id.logOutButton);</span>
+
+<span class="nc" id="L79">        nameTextView.setText(user.getFirstName());</span>
+
+<span class="nc" id="L81">        deleteButton.setOnClickListener(v -&gt; {</span>
+<span class="nc" id="L82">            deleteUser();</span>
+<span class="nc" id="L83">        });</span>
+
+<span class="nc" id="L85">        backButton.setOnClickListener(v -&gt; {</span>
+<span class="nc" id="L86">            finish();</span>
+<span class="nc" id="L87">        });</span>
+
+<span class="nc" id="L89">        logOutButton.setOnClickListener(v -&gt; {</span>
+<span class="nc" id="L90">            switchToLoginActivity();</span>
+<span class="nc" id="L91">        });</span>
+<span class="nc" id="L92">    }</span>
+
+    /**
+     * Switches to the LoginActivity.
+     */
+    private void switchToLoginActivity() {
+<span class="nc" id="L98">        Intent intent = new Intent(this, LoginActivity.class);</span>
+<span class="nc" id="L99">        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);</span>
+<span class="nc" id="L100">        startActivity(intent);</span>
+<span class="nc" id="L101">    }</span>
+
+    /**
+     * Deletes the user account and handles the response.
+     */
+    private void deleteUser() {
+<span class="nc" id="L107">        NetworkUtils.deleteRequest(getApplicationContext(), DELETE_URL + &quot;/&quot; + user.getID(), new NetworkUtils.callbackMessage() {</span>
+            @Override
+            public void onSuccess(String response) {
+<span class="nc" id="L110">                Toast.makeText(getApplicationContext(), &quot;Account Deleted&quot;, Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L111">                switchToLoginActivity();</span>
+<span class="nc" id="L112">            }</span>
+
+            @Override
+            public void onError(String error) {
+<span class="nc" id="L116">                Toast.makeText(getApplicationContext(), error, Toast.LENGTH_SHORT).show();</span>
+<span class="nc" id="L117">            }</span>
+        });
+<span class="nc" id="L119">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span>Generated by the Android Gradle plugin 8.7.1</div></body></html>

@@ -1,0 +1,522 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DirectMessage.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.CyTrack.Social.Messaging</a> &gt; <span class="el_source">DirectMessage.kt</span></div><h1>DirectMessage.kt</h1><pre class="source lang-java linenums">package com.example.CyTrack.Social.Messaging
+
+import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Send
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterVertically
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.example.CyTrack.R
+import com.example.CyTrack.Social.Friends.Friend
+import com.example.CyTrack.Social.SocialUtils
+import com.example.CyTrack.Social.WebSockets.WebSocketManagerMessages
+import com.example.CyTrack.Utilities.ComposeUtils.Companion.getCustomFontFamily
+import com.example.CyTrack.Utilities.StatusBarUtil
+import com.example.CyTrack.Utilities.UrlHolder
+import com.example.CyTrack.Utilities.User
+import com.example.CyTrack.Utilities.WebSocketListener
+import org.java_websocket.handshake.ServerHandshake
+import kotlin.math.log
+
+
+/**
+ * Activity for handling direct messages between users.
+ */
+<span class="nc" id="L73">class DirectMessage : ComponentActivity(), WebSocketListener {</span>
+
+    /**
+     * The user whose profile is being displayed.
+     */
+    private lateinit var user: User
+
+    /**
+     * The recipient user.
+     */
+    private lateinit var recipientUser: Friend
+
+    /**
+     * The key for the conversation.
+     */
+    private lateinit var conversationKey: String
+
+    /**
+     * List of messages in the conversation.
+     */
+<span class="nc" id="L93">    private var messageList: MutableList&lt;Msg&gt; = mutableListOf()</span>
+
+    /**
+     * Called when the activity is starting.
+     * @param savedInstanceState If the activity is being re-initialized after previously being shut down then this Bundle contains the data it most recently supplied in onSaveInstanceState(Bundle).
+     */
+    override fun onCreate(savedInstanceState: Bundle?) {
+<span class="nc" id="L100">        super.onCreate(savedInstanceState)</span>
+<span class="nc" id="L101">        setContent {</span>
+<span class="nc bnc" id="L102" title="All 6 branches missed.">            messageList = remember { mutableStateListOf() }</span>
+
+<span class="nc" id="L104">            user = intent.getSerializableExtra(&quot;user&quot;) as User</span>
+<span class="nc" id="L105">            recipientUser = intent.getSerializableExtra(&quot;recipientUser&quot;) as Friend</span>
+<span class="nc bnc" id="L106" title="All 4 branches missed.">            conversationKey = &quot;${user.id}_DM_${recipientUser.userID}&quot;</span>
+
+<span class="nc bnc" id="L108" title="All 4 branches missed.">            val serverUrl = &quot;${UrlHolder.wsURL}/chat/${user.id}/${recipientUser.userID}&quot;</span>
+<span class="nc" id="L109">            Log.d(&quot;WebSocketServiceUtil&quot;, &quot;Connecting to $serverUrl&quot;)</span>
+<span class="nc" id="L110">            WebSocketManagerMessages.getInstance().connectWebSocket(serverUrl)</span>
+<span class="nc" id="L111">            WebSocketManagerMessages.getInstance().setWebSocketListener(this@DirectMessage)</span>
+
+<span class="nc" id="L113">            Box(</span>
+<span class="nc" id="L114">                modifier = Modifier.fillMaxSize()</span>
+            ) {
+<span class="nc" id="L116">                Column(</span>
+<span class="nc" id="L117">                    modifier = Modifier.fillMaxSize(),</span>
+                ) {
+<span class="nc" id="L119">                    DirectMessageTopCard(</span>
+<span class="nc bnc" id="L120" title="All 2 branches missed.">                        recipientUser.firstName,</span>
+<span class="nc bnc" id="L121" title="All 2 branches missed.">                        recipientUser.username,</span>
+<span class="nc" id="L122">                        &quot;generic_avatar&quot;</span>
+                    )
+
+<span class="nc" id="L125">                    ConversationLazyList(messageList, messageAlignment = {</span>
+<span class="nc bnc" id="L126" title="All 4 branches missed.">                        it.senderID != user.id</span>
+                    })
+<span class="nc" id="L128">                }</span>
+
+<span class="nc" id="L130">                InputMessageBar(</span>
+<span class="nc" id="L131">                    messageList,</span>
+<span class="nc" id="L132">                    modifier = Modifier</span>
+<span class="nc" id="L133">                        .align(Alignment.BottomCenter)</span>
+<span class="nc" id="L134">                        .offset(y = (-50).dp),</span>
+<span class="nc" id="L135">                    onClickSend = {</span>
+<span class="nc" id="L136">                        sendMessage(it)</span>
+<span class="nc" id="L137">                    }</span>
+                )
+<span class="nc" id="L139">            }</span>
+
+<span class="nc bnc" id="L141" title="All 2 branches missed.">            StatusBarUtil.setStatusBarColor(this, R.color.CyRed)</span>
+<span class="nc" id="L142">        }</span>
+<span class="nc" id="L143">    }</span>
+
+    /**
+     * Data class representing a message.
+     * @param message The content of the message.
+     * @param senderID The ID of the sender.
+     */
+<span class="nc" id="L150">    data class Msg(</span>
+<span class="nc" id="L151">        val message: String,</span>
+<span class="nc" id="L152">        val senderID: Int</span>
+    )
+
+    /**
+     * Sends a message.
+     * @param message The content of the message to be sent.
+     */
+    private fun sendMessage(message: String) {
+<span class="nc bnc" id="L160" title="All 2 branches missed.">        if (message.isBlank()) return</span>
+<span class="nc" id="L161">        try {</span>
+<span class="nc" id="L162">            WebSocketManagerMessages.getInstance().sendMessage(message)</span>
+<span class="nc bnc" id="L163" title="All 2 branches missed.">            messageList.add(Msg(message, user.id))</span>
+<span class="nc" id="L164">        } catch (e: Exception) {</span>
+<span class="nc" id="L165">            Log.d(&quot;ExceptionSendMessage:&quot;, e.message.toString())</span>
+<span class="nc" id="L166">            Toast.makeText(this, &quot;Failed to send message&quot;, Toast.LENGTH_SHORT).show()</span>
+        }
+<span class="nc" id="L168">    }</span>
+
+    /**
+     * Called when the WebSocket connection is opened.
+     * @param handshakedata The handshake data.
+     */
+<span class="nc" id="L174">    override fun onWebSocketOpen(handshakedata: ServerHandshake) {}</span>
+
+    /**
+     * Called when a message is received from the WebSocket.
+     * @param message The message received.
+     */
+    override fun onWebSocketMessage(message: String) {
+<span class="nc" id="L181">        runOnUiThread(Runnable {</span>
+<span class="nc" id="L182">            Log.d(&quot;MessageReceived&quot;, message)</span>
+<span class="nc" id="L183">            try {</span>
+<span class="nc bnc" id="L184" title="All 2 branches missed.">                if (message.substring(0, 4) == &quot;You:&quot;) {</span>
+<span class="nc" id="L185">                    Log.d(&quot;MessageReceived&quot;, &quot;You: $message&quot;)</span>
+<span class="nc bnc" id="L186" title="All 2 branches missed.">                } else if (message.substring(</span>
+<span class="nc" id="L187">                        0,</span>
+<span class="nc bnc" id="L188" title="All 2 branches missed.">                        recipientUser.username.length + 1</span>
+<span class="nc bnc" id="L189" title="All 2 branches missed.">                    ) == &quot;${recipientUser.username}:&quot;</span>
+                ) {
+<span class="nc" id="L191">                    messageList.add(</span>
+<span class="nc" id="L192">                        Msg(</span>
+<span class="nc bnc" id="L193" title="All 2 branches missed.">                            message.substring(recipientUser.username.length + 1).trim(),</span>
+<span class="nc bnc" id="L194" title="All 2 branches missed.">                            recipientUser.userID</span>
+                        )
+                    )
+                } else {
+                    // Handle message received
+<span class="nc" id="L199">                    val tempMsg = SocialUtils.processMessage(message)</span>
+<span class="nc" id="L200">                    messageList.add(tempMsg)</span>
+                }
+<span class="nc" id="L202">            } catch (e: Exception) {</span>
+<span class="nc" id="L203">                Log.d(&quot;Exception&quot;, e.message.toString())</span>
+            }
+<span class="nc" id="L205">        })</span>
+<span class="nc" id="L206">    }</span>
+
+    /**
+     * Called when the WebSocket connection is closed.
+     * @param code The close code.
+     * @param reason The reason for the closure.
+     * @param remote Whether the closure was initiated by the remote peer.
+     */
+    override fun onWebSocketClose(code: Int, reason: String?, remote: Boolean) {
+<span class="nc" id="L215">        runOnUiThread(Runnable {</span>
+<span class="nc bnc" id="L216" title="All 2 branches missed.">            val closedBy = if (remote) &quot;Server&quot; else &quot;Client&quot;</span>
+<span class="nc" id="L217">            Toast.makeText(this, &quot;Connection closed by $closedBy&quot;, Toast.LENGTH_SHORT).show()</span>
+<span class="nc" id="L218">        })</span>
+<span class="nc" id="L219">    }</span>
+
+    /**
+     * Called when an error occurs on the WebSocket.
+     * @param ex The exception that occurred.
+     */
+    override fun onWebSocketError(ex: Exception?) {
+<span class="nc" id="L226">    }</span>
+}
+
+/**
+ * Composable function for the input message bar.
+ * @param messageList The list of messages.
+ * @param modifier The modifier to be applied to the layout.
+ * @param onClickSend The callback to be invoked when the send button is clicked.
+ */
+@Composable
+fun InputMessageBar(
+    messageList: MutableList&lt;DirectMessage.Msg&gt;,
+<span class="nc bnc" id="L238" title="All 2 branches missed.">    modifier: Modifier = Modifier,</span>
+<span class="nc bnc" id="L239" title="All 2 branches missed.">    onClickSend: (String) -&gt; Unit = {}</span>
+<span class="nc bnc" id="L240" title="All 18 branches missed.">) {</span>
+<span class="nc" id="L241">    var message by remember { mutableStateOf(&quot;&quot;) } // Message state</span>
+
+<span class="nc bnc" id="L243" title="All 2 branches missed.">    TextField(</span>
+<span class="nc" id="L244">        value = message,</span>
+<span class="nc" id="L245">        onValueChange = { message = it }, // Update the message value</span>
+<span class="nc" id="L246">        trailingIcon = {</span>
+<span class="nc bnc" id="L247" title="All 8 branches missed.">            IconButton(</span>
+<span class="nc" id="L248">                onClick = {</span>
+<span class="nc" id="L249">                    onClickSend(message)</span>
+<span class="nc" id="L250">                    message = &quot;&quot;</span>
+<span class="nc" id="L251">                },</span>
+<span class="nc" id="L252">            ) {</span>
+<span class="nc bnc" id="L253" title="All 8 branches missed.">                Icon(</span>
+<span class="nc" id="L254">                    imageVector = Icons.Default.Send,</span>
+<span class="nc" id="L255">                    contentDescription = null,</span>
+<span class="nc" id="L256">                )</span>
+<span class="nc" id="L257">            }</span>
+<span class="nc" id="L258">        },</span>
+<span class="nc" id="L259">        colors = TextFieldDefaults.colors(</span>
+<span class="nc" id="L260">            unfocusedContainerColor = MaterialTheme.colorScheme.surface,</span>
+<span class="nc" id="L261">            focusedContainerColor = MaterialTheme.colorScheme.surface</span>
+        ),
+<span class="nc" id="L263">        placeholder = {</span>
+<span class="nc bnc" id="L264" title="All 8 branches missed.">            Text(&quot;Message&quot;)</span>
+<span class="nc" id="L265">        },</span>
+<span class="nc" id="L266">        modifier = modifier</span>
+<span class="nc" id="L267">            .fillMaxWidth()</span>
+<span class="nc" id="L268">            .heightIn(min = 56.dp)</span>
+    )
+<span class="nc bnc" id="L270" title="All 2 branches missed.">}</span>
+
+/**
+ * Composable function for displaying a conversation message card.
+ * @param msg The message to be displayed.
+ * @param modifier The modifier to be applied to the layout.
+ */
+@Composable
+fun ConversationMessageCard(
+    msg: String,
+<span class="nc bnc" id="L280" title="All 2 branches missed.">    modifier: Modifier = Modifier</span>
+<span class="nc bnc" id="L281" title="All 18 branches missed.">) {</span>
+    // Get the screen width
+<span class="nc" id="L283">    val configuration = LocalConfiguration.current</span>
+<span class="nc" id="L284">    val screenWidth = configuration.screenWidthDp.dp</span>
+
+<span class="nc bnc" id="L286" title="All 2 branches missed.">    Surface(</span>
+<span class="nc" id="L287">        color = Color.White,</span>
+<span class="nc" id="L288">        shape = RoundedCornerShape(4.dp),</span>
+<span class="nc" id="L289">        modifier = modifier</span>
+<span class="nc" id="L290">            .padding(8.dp)</span>
+<span class="nc" id="L291">            .widthIn(max = screenWidth * 0.7f), // Set max width to 70% of screen width</span>
+<span class="nc" id="L292">        shadowElevation = 2.dp</span>
+<span class="nc" id="L293">    ) {</span>
+<span class="nc bnc" id="L294" title="All 8 branches missed.">        Text(</span>
+<span class="nc" id="L295">            text = msg,</span>
+<span class="nc" id="L296">            fontFamily = getCustomFontFamily(&quot;Inter&quot;, FontWeight.Normal, FontStyle.Normal),</span>
+<span class="nc" id="L297">            color = MaterialTheme.colorScheme.onSurface,</span>
+<span class="nc" id="L298">            modifier = Modifier.padding(15.dp)</span>
+<span class="nc" id="L299">        )</span>
+<span class="nc" id="L300">    }</span>
+<span class="nc bnc" id="L301" title="All 2 branches missed.">}</span>
+
+/**
+ * Composable function for displaying a list of conversation messages.
+ * @param msg The list of messages.
+ * @param modifier The modifier to be applied to the layout.
+ * @param messageAlignment A lambda function to determine the alignment of the message.
+ */
+@Composable
+fun ConversationLazyList(
+    msg: List&lt;DirectMessage.Msg&gt;,
+<span class="nc bnc" id="L312" title="All 2 branches missed.">    modifier: Modifier = Modifier,</span>
+<span class="nc bnc" id="L313" title="All 2 branches missed.">    messageAlignment: (DirectMessage.Msg) -&gt; Boolean = { false }</span>
+<span class="nc bnc" id="L314" title="All 18 branches missed.">) {</span>
+<span class="nc bnc" id="L315" title="All 2 branches missed.">    LazyColumn(</span>
+<span class="nc bnc" id="L316" title="All 2 branches missed.">        modifier = Modifier.padding(bottom = 100.dp)</span>
+<span class="nc" id="L317">    ) {</span>
+<span class="nc" id="L318">        items(msg) { message -&gt;</span>
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                if (messageAlignment(message)) { // Check if message is sent by the user
+                    ConversationMessageCard(
+                        msg = message.message,
+                        modifier = Modifier.align(Alignment.TopStart)
+                    )
+                } else {
+                    ConversationMessageCard(
+                        msg = message.message,
+                        modifier = Modifier.align(Alignment.TopEnd)
+                    )
+                }
+            }
+        }
+<span class="nc" id="L336">    }</span>
+<span class="nc bnc" id="L337" title="All 2 branches missed.">}</span>
+
+/**
+ * Composable function for displaying the top card of the direct message screen.
+ * @param name The name of the recipient.
+ * @param username The username of the recipient.
+ * @param img The image resource for the recipient's avatar.
+ * @param modifier The modifier to be applied to the layout.
+ */
+@Composable
+fun DirectMessageTopCard(
+    name: String,
+    username: String,
+    img: String,
+<span class="nc bnc" id="L351" title="All 2 branches missed.">    modifier: Modifier = Modifier</span>
+<span class="nc bnc" id="L352" title="All 18 branches missed.">) {</span>
+<span class="nc" id="L353">    val context = LocalContext.current</span>
+
+<span class="nc bnc" id="L355" title="All 2 branches missed.">    Surface(</span>
+<span class="nc" id="L356">        color = Color(LocalContext.current.resources.getColor(R.color.CyRed)),</span>
+<span class="nc" id="L357">        modifier = Modifier</span>
+<span class="nc" id="L358">            .fillMaxWidth()</span>
+<span class="nc" id="L359">            .padding(bottom = 20.dp)</span>
+<span class="nc" id="L360">    ) {</span>
+<span class="nc bnc" id="L361" title="All 6 branches missed.">        Row(</span>
+<span class="nc" id="L362">            verticalAlignment = CenterVertically,</span>
+<span class="nc" id="L363">            modifier = Modifier</span>
+<span class="nc" id="L364">                .padding(8.dp)</span>
+<span class="nc" id="L365">                .padding(top = 20.dp)</span>
+        ) {
+<span class="nc" id="L367">            IconButton(</span>
+<span class="nc" id="L368">                onClick = {</span>
+<span class="nc" id="L369">                    (context as ComponentActivity).finish()</span>
+<span class="nc" id="L370">                },</span>
+<span class="nc" id="L371">                modifier = Modifier.size(24.dp)</span>
+<span class="nc" id="L372">            ) {</span>
+<span class="nc bnc" id="L373" title="All 8 branches missed.">                Icon(</span>
+<span class="nc" id="L374">                    painter = painterResource(R.drawable.general_back_arrow_button),</span>
+<span class="nc" id="L375">                    contentDescription = &quot;Back arrow&quot;,</span>
+<span class="nc" id="L376">                    tint = Color.White</span>
+<span class="nc" id="L377">                )</span>
+<span class="nc" id="L378">            }</span>
+
+<span class="nc" id="L380">            Spacer(modifier = Modifier.width(20.dp))</span>
+
+<span class="nc" id="L382">            Image(</span>
+<span class="nc" id="L383">                painter = painterResource(R.drawable.general_generic_avatar),</span>
+<span class="nc" id="L384">                contentDescription = &quot;Contact profile picture&quot;,</span>
+<span class="nc" id="L385">                modifier = Modifier</span>
+<span class="nc" id="L386">                    .size(50.dp)</span>
+            )
+
+<span class="nc" id="L389">            Spacer(modifier = Modifier.width(20.dp))</span>
+
+<span class="nc" id="L391">            Column {</span>
+<span class="nc" id="L392">                Text(</span>
+<span class="nc" id="L393">                    text = name,</span>
+<span class="nc" id="L394">                    fontFamily = getCustomFontFamily(&quot;Inter&quot;, FontWeight.Normal, FontStyle.Normal),</span>
+<span class="nc" id="L395">                    color = Color.White,</span>
+<span class="nc" id="L396">                    fontSize = 16.sp</span>
+                )
+
+<span class="nc" id="L399">                Spacer(modifier = Modifier.height(2.dp))</span>
+
+<span class="nc" id="L401">                Text(</span>
+<span class="nc" id="L402">                    text = &quot;#$username&quot;,</span>
+<span class="nc" id="L403">                    fontFamily = getCustomFontFamily(&quot;Inter&quot;, FontWeight.Normal, FontStyle.Normal),</span>
+<span class="nc" id="L404">                    color = Color(0xFFF1BE48),</span>
+<span class="nc" id="L405">                    fontSize = 12.sp</span>
+                )
+<span class="nc" id="L407">            }</span>
+<span class="nc" id="L408">        }</span>
+<span class="nc" id="L409">    }</span>
+<span class="nc bnc" id="L410" title="All 2 branches missed.">}</span>
+
+/**
+ * Composable function for displaying the direct message screen.
+ * @param user The user whose profile is being displayed.
+ * @param messageList The list of messages in the conversation.
+ * @param modifier The modifier to be applied to the layout.
+ */
+@Composable
+fun DirectMessageScreen(
+    user: User,
+    messageList: MutableList&lt;DirectMessage.Msg&gt;,
+<span class="nc bnc" id="L422" title="All 2 branches missed.">    modifier: Modifier = Modifier</span>
+<span class="nc bnc" id="L423" title="All 18 branches missed.">) {</span>
+<span class="nc" id="L424">    val insets = WindowInsets.systemBars.asPaddingValues()</span>
+
+<span class="nc bnc" id="L426" title="All 2 branches missed.">    Surface(</span>
+<span class="nc" id="L427">        modifier = Modifier.fillMaxSize()</span>
+<span class="nc" id="L428">    ) {</span>
+<span class="nc bnc" id="L429" title="All 6 branches missed.">        Box(</span>
+<span class="nc" id="L430">            modifier = Modifier</span>
+<span class="nc" id="L431">                .fillMaxSize()</span>
+<span class="nc" id="L432">                .padding(insets) // Apply padding to avoid overlap with the status bar</span>
+        ) {
+<span class="nc" id="L434">            Column {</span>
+<span class="nc" id="L435">                DirectMessageTopCard(user.firstName, user.username, &quot;temp&quot;)</span>
+
+<span class="nc" id="L437">                ConversationLazyList(messageList)</span>
+<span class="nc" id="L438">            }</span>
+<span class="nc" id="L439">        }</span>
+<span class="nc" id="L440">    }</span>
+<span class="nc bnc" id="L441" title="All 2 branches missed.">}</span>
+
+/**
+ * @suppress
+ */
+@Preview
+@Composable
+<span class="nc bnc" id="L448" title="All 8 branches missed.">fun InputMessageBarPreview() {</span>
+<span class="nc bnc" id="L449" title="All 2 branches missed.">}</span>
+
+/**
+ * @suppress
+ */
+@Preview
+@Composable
+<span class="nc bnc" id="L456" title="All 6 branches missed.">fun ConversationMessageCardPreview() {</span>
+<span class="nc bnc" id="L457" title="All 2 branches missed.">    ConversationMessageCard(&quot;Hello, World!&quot;)</span>
+<span class="nc bnc" id="L458" title="All 2 branches missed.">}</span>
+
+/**
+ * @suppress
+ */
+@Preview
+@Composable
+<span class="nc bnc" id="L465" title="All 6 branches missed.">fun DirectMessageTopCardPreview() {</span>
+<span class="nc bnc" id="L466" title="All 2 branches missed.">    DirectMessageTopCard(&quot;John Doe&quot;, &quot;johndoe&quot;, &quot;generic_avatar&quot;)</span>
+<span class="nc bnc" id="L467" title="All 2 branches missed.">}</span>
+
+/**
+ * @suppress
+ */
+@Preview
+@Composable
+<span class="nc bnc" id="L474" title="All 6 branches missed.">fun PreviewMessageScreen() {</span>
+<span class="nc" id="L475">    var messageList = remember {</span>
+<span class="nc" id="L476">        mutableStateListOf&lt;DirectMessage.Msg&gt;(</span>
+<span class="nc" id="L477">            DirectMessage.Msg(&quot;Hello&quot;, 1),</span>
+<span class="nc" id="L478">            DirectMessage.Msg(&quot;Hi&quot;, 2),</span>
+<span class="nc" id="L479">            DirectMessage.Msg(&quot;Hello&quot;, 1),</span>
+<span class="nc" id="L480">            DirectMessage.Msg(&quot;Hi&quot;, 2),</span>
+<span class="nc" id="L481">            DirectMessage.Msg(&quot;Hello&quot;, 1),</span>
+<span class="nc" id="L482">            DirectMessage.Msg(&quot;Hello&quot;, 1),</span>
+<span class="nc" id="L483">            DirectMessage.Msg(&quot;Hi&quot;, 2),</span>
+<span class="nc" id="L484">            DirectMessage.Msg(&quot;Hello&quot;, 1),</span>
+<span class="nc" id="L485">            DirectMessage.Msg(&quot;Hi&quot;, 2),</span>
+<span class="nc" id="L486">            DirectMessage.Msg(&quot;Hello&quot;, 1),</span>
+<span class="nc" id="L487">            DirectMessage.Msg(&quot;Hello&quot;, 1),</span>
+<span class="nc" id="L488">            DirectMessage.Msg(&quot;Hi&quot;, 2),</span>
+<span class="nc" id="L489">            DirectMessage.Msg(&quot;Hello&quot;, 1),</span>
+<span class="nc" id="L490">            DirectMessage.Msg(&quot;Hi&quot;, 2),</span>
+<span class="nc" id="L491">            DirectMessage.Msg(&quot;Hello&quot;, 1),</span>
+<span class="nc" id="L492">        )</span>
+    }
+
+<span class="nc bnc" id="L495" title="All 2 branches missed.">    Surface(</span>
+<span class="nc" id="L496">        modifier = Modifier.fillMaxSize()</span>
+<span class="nc" id="L497">    ) {</span>
+<span class="nc bnc" id="L498" title="All 6 branches missed.">        Box(</span>
+<span class="nc" id="L499">            modifier = Modifier.fillMaxSize()</span>
+        ) {
+<span class="nc" id="L501">            Column(</span>
+<span class="nc" id="L502">                modifier = Modifier.fillMaxSize(),</span>
+            ) {
+<span class="nc" id="L504">                DirectMessageTopCard(&quot;John&quot;, &quot;Doe&quot;, &quot;generic_avatar&quot;)</span>
+
+<span class="nc" id="L506">                ConversationLazyList(messageList, messageAlignment = {</span>
+<span class="nc bnc" id="L507" title="All 2 branches missed.">                    it.senderID != 1</span>
+                })
+<span class="nc" id="L509">            }</span>
+
+<span class="nc" id="L511">            InputMessageBar(</span>
+<span class="nc" id="L512">                messageList,</span>
+<span class="nc" id="L513">                modifier = Modifier</span>
+<span class="nc" id="L514">                    .align(Alignment.BottomCenter)</span>
+<span class="nc" id="L515">                    .offset(y = (-50).dp),</span>
+<span class="nc" id="L516">                onClickSend = {</span>
+<span class="nc" id="L517">                }</span>
+            )
+<span class="nc" id="L519">        }</span>
+<span class="nc" id="L520">    }</span>
+<span class="nc bnc" id="L521" title="All 2 branches missed.">}</span>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span>Generated by the Android Gradle plugin 8.7.1</div></body></html>
