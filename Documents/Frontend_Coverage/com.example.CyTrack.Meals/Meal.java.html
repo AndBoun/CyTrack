@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Meal.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.CyTrack.Meals</a> &gt; <span class="el_source">Meal.java</span></div><h1>Meal.java</h1><pre class="source lang-java linenums">package com.example.CyTrack.Meals;
+
+import androidx.annotation.NonNull;
+
+import java.io.Serializable;
+
+/**
+ * Represents a Meal with nutritional information.
+ */
+class Meal implements Serializable {
+    /**
+     * The unique identifier for the meal.
+     */
+<span class="nc" id="L14">    private final int ID = 0;</span>
+
+    /**
+     * The name of the meal.
+     */
+    private String name;
+
+    /**
+     * The calories in the meal.
+     */
+    private String calories;
+
+    /**
+     * The carbohydrates in the meal.
+     */
+    private String carbs;
+
+    /**
+     * The protein in the meal.
+     */
+    private String protein;
+
+    /**
+     * Constructs a new Meal with the specified attributes.
+     *
+     * @param name     the name of the meal
+     * @param calories the calories in the meal
+     * @param carbs    the carbohydrates in the meal
+     * @param protein  the protein in the meal
+     */
+<span class="nc" id="L44">    Meal(String name, String calories, String carbs, String protein) {</span>
+<span class="nc" id="L45">        this.calories = calories;</span>
+<span class="nc" id="L46">        this.carbs = carbs;</span>
+<span class="nc" id="L47">        this.name = name;</span>
+<span class="nc" id="L48">        this.protein = protein;</span>
+<span class="nc" id="L49">    }</span>
+
+    /**
+     * Returns the ID of the meal.
+     *
+     * @return the ID of the meal
+     */
+    int getID() {
+<span class="nc" id="L57">        return ID;</span>
+    }
+
+    /**
+     * Returns the name of the meal.
+     *
+     * @return the name of the meal
+     */
+    String getName() {
+<span class="nc" id="L66">        return name;</span>
+    }
+
+    /**
+     * Sets the name of the meal.
+     *
+     * @param name the new name of the meal
+     */
+    void setName(String name) {
+<span class="nc" id="L75">        this.name = name;</span>
+<span class="nc" id="L76">    }</span>
+
+    /**
+     * Returns the calories in the meal.
+     *
+     * @return the calories in the meal
+     */
+    String getCalories() {
+<span class="nc" id="L84">        return calories;</span>
+    }
+
+    /**
+     * Sets the calories in the meal.
+     *
+     * @param calories the new calories in the meal
+     */
+    void setCalories(String calories) {
+<span class="nc" id="L93">        this.calories = calories;</span>
+<span class="nc" id="L94">    }</span>
+
+    /**
+     * Returns the carbohydrates in the meal.
+     *
+     * @return the carbohydrates in the meal
+     */
+    String getCarbs() {
+<span class="nc" id="L102">        return carbs;</span>
+    }
+
+    /**
+     * Sets the carbohydrates in the meal.
+     *
+     * @param carbs the new carbohydrates in the meal
+     */
+    void setCarbs(String carbs) {
+<span class="nc" id="L111">        this.carbs = carbs;</span>
+<span class="nc" id="L112">    }</span>
+
+    /**
+     * Returns the protein in the meal.
+     *
+     * @return the protein in the meal
+     */
+    String getProtein() {
+<span class="nc" id="L120">        return protein;</span>
+    }
+
+    /**
+     * Sets the protein in the meal.
+     *
+     * @param protein the new protein in the meal
+     */
+    void setProtein(String protein) {
+<span class="nc" id="L129">        this.protein = protein;</span>
+<span class="nc" id="L130">    }</span>
+
+    /**
+     * Returns a string representation of the meal.
+     *
+     * @return a string representation of the meal
+     */
+    @NonNull
+    @Override
+    public String toString() {
+<span class="nc" id="L140">        return &quot;User{&quot; +</span>
+                &quot;ID=&quot; + ID +
+                &quot;, name='&quot; + name + '\'' +
+                &quot;, calories=&quot; + calories +
+                &quot;, carbs='&quot; + carbs + '\'' +
+                &quot;, protein=&quot; + protein +
+                '}';
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span>Generated by the Android Gradle plugin 8.7.1</div></body></html>

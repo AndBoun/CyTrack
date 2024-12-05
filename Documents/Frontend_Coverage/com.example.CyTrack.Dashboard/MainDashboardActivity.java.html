@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MainDashboardActivity.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.CyTrack.Dashboard</a> &gt; <span class="el_source">MainDashboardActivity.java</span></div><h1>MainDashboardActivity.java</h1><pre class="source lang-java linenums">package com.example.CyTrack.Dashboard;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.TextView;
+
+import androidx.activity.EdgeToEdge;
+import androidx.activity.OnBackPressedCallback;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+
+import com.example.CyTrack.Meals.MealTrackingMain;
+import com.example.CyTrack.R;
+import com.example.CyTrack.Social.MyProfile;
+import com.example.CyTrack.Leaderboard.TimeEntryBoard.LeaderboardActivity;
+import com.example.CyTrack.Utilities.User;
+import com.example.CyTrack.Utilities.StatusBarUtil;
+import com.example.CyTrack.Workouts.MyWorkouts;
+import com.example.CyTrack.Workouts.WorkoutActivity;
+
+/**
+ * MainDashboardActivity is the main screen of the application where users can navigate
+ * to different sections such as Profile Settings, Notifications, Meal Tracking, Workout Tracking,
+ * Exercise Tracking, and Leaderboard.
+ */
+<span class="fc" id="L30">public class MainDashboardActivity extends AppCompatActivity {</span>
+
+    /**
+     * ImageButton for navigating to Profile Settings
+     */
+    private ImageButton profileSettingsButton;
+
+    /**
+     * ImageButton for opening Notifications
+     */
+    private ImageButton notificationButton;
+
+    /**
+     * ImageButton for navigating to Meal Tracking
+     */
+    private ImageButton mealTrackingButton;
+
+    /**
+     * ImageButton for navigating to Workout Tracking
+     */
+    private ImageButton workOutTrackingButton;
+
+    /**
+     * ImageButton for navigating to Exercise Tracking
+     */
+    private ImageButton exerciseTrackingButton;
+
+    /**
+     * ImageButton for navigating to Leaderboard
+     */
+    private ImageButton leaderboardButton;
+
+    /**
+     * TextView to display the user's name
+     */
+    private TextView userNameTextView;
+
+    /**
+     * TextView to display the user's streak
+     */
+    private TextView userStreakTextView;
+
+    /**
+     * User object to hold the current user's data
+     */
+    private User user;
+
+    /**
+     * Called when the activity is first created.
+     *
+     * @param savedInstanceState If the activity is being re-initialized after previously being shut down then this Bundle contains the data it most recently supplied in onSaveInstanceState(Bundle).
+     */
+    protected void onCreate(Bundle savedInstanceState) {
+<span class="fc" id="L83">        super.onCreate(savedInstanceState);</span>
+<span class="fc" id="L84">        EdgeToEdge.enable(this);</span>
+<span class="fc" id="L85">        setContentView(R.layout.main_dashboard_activity);</span>
+<span class="fc" id="L86">        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.mainDashboardScreen), (v, insets) -&gt; {</span>
+<span class="fc" id="L87">            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());</span>
+<span class="fc" id="L88">            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);</span>
+<span class="fc" id="L89">            return insets;</span>
+        });
+
+<span class="fc" id="L92">        StatusBarUtil.setStatusBarColor(this, R.color.CyRed);</span>
+
+<span class="fc" id="L94">        user = (User) getIntent().getSerializableExtra(&quot;user&quot;);</span>
+
+<span class="fc" id="L96">        profileSettingsButton = findViewById(R.id.profilePictureButton);</span>
+<span class="fc" id="L97">        notificationButton = findViewById(R.id.notificationButton);</span>
+<span class="fc" id="L98">        mealTrackingButton = findViewById(R.id.mealTrackingButton);</span>
+<span class="fc" id="L99">        workOutTrackingButton = findViewById(R.id.workOutTrackingButton);</span>
+<span class="fc" id="L100">        exerciseTrackingButton = findViewById(R.id.exerciseTrackingButton);</span>
+<span class="fc" id="L101">        leaderboardButton = findViewById(R.id.LBbutton);</span>
+
+<span class="fc" id="L103">        userNameTextView = findViewById(R.id.helloTextView);</span>
+<span class="fc" id="L104">        userStreakTextView = findViewById(R.id.streakTextView);</span>
+
+<span class="fc" id="L106">        userNameTextView.setText(&quot;Hi, &quot; + user.getFirstName());</span>
+<span class="fc" id="L107">        userStreakTextView.setText(&quot;Streak: &quot; + user.getStreak());</span>
+
+<span class="fc" id="L109">        profileSettingsButton.setOnClickListener(v -&gt; {</span>
+            // Open Profile Settings Activity
+<span class="nc" id="L111">            Intent intent = new Intent(this, ProfileSettingsActivity.class);</span>
+<span class="nc" id="L112">            intent.putExtra(&quot;user&quot;, user);</span>
+<span class="nc" id="L113">            startActivity(intent);</span>
+<span class="nc" id="L114">        });</span>
+
+<span class="fc" id="L116">        notificationButton.setOnClickListener(v -&gt; {</span>
+            // Open Notification Activity
+<span class="nc" id="L118">        });</span>
+
+<span class="fc" id="L120">        mealTrackingButton.setOnClickListener(v -&gt; {</span>
+            // Open Meal Tracking Activity
+<span class="nc" id="L122">            Intent Navigate = new Intent(MainDashboardActivity.this, MealTrackingMain.class);</span>
+<span class="nc" id="L123">            startActivity(Navigate);</span>
+<span class="nc" id="L124">        });</span>
+
+<span class="fc" id="L126">        workOutTrackingButton.setOnClickListener(v -&gt; {</span>
+            // Open Workout Tracking Activity
+<span class="nc" id="L128">            Intent intent = new Intent(this, MyWorkouts.class);</span>
+<span class="nc" id="L129">            intent.putExtra(&quot;user&quot;, user);</span>
+<span class="nc" id="L130">            startActivity(intent);</span>
+<span class="nc" id="L131">        });</span>
+
+<span class="fc" id="L133">        leaderboardButton.setOnClickListener(v -&gt; {</span>
+<span class="nc" id="L134">            Intent intent = new Intent(this, LeaderboardActivity.class);</span>
+<span class="nc" id="L135">            intent.putExtra(&quot;user&quot;, user);</span>
+<span class="nc" id="L136">            startActivity(intent);</span>
+<span class="nc" id="L137">        });</span>
+
+<span class="fc" id="L139">        Button myProfileButton = findViewById(R.id.myProfileButton);</span>
+<span class="fc" id="L140">        myProfileButton.setOnClickListener(v -&gt; {</span>
+            // Open My Profile Activity
+<span class="nc" id="L142">            Intent intent = new Intent(this, MyProfile.class);</span>
+<span class="nc" id="L143">            intent.putExtra(&quot;user&quot;, user);</span>
+<span class="nc" id="L144">            startActivity(intent);</span>
+<span class="nc" id="L145">        });</span>
+
+        // Handle back press
+<span class="fc" id="L148">        OnBackPressedCallback callback = new OnBackPressedCallback(true) {</span>
+            @Override
+            public void handleOnBackPressed() {
+                // Do nothing to disable back press
+<span class="nc" id="L152">            }</span>
+        };
+<span class="fc" id="L154">        getOnBackPressedDispatcher().addCallback(this, callback);</span>
+<span class="fc" id="L155">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span>Generated by the Android Gradle plugin 8.7.1</div></body></html>

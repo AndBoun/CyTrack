@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MyBadges.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.CyTrack.Badges</a> &gt; <span class="el_source">MyBadges.kt</span></div><h1>MyBadges.kt</h1><pre class="source lang-java linenums">package com.example.CyTrack.Badges
+
+// &lt;!-- Creating a Layout --!&gt;
+// UI elements are hierarchical. Elements contain other elements.
+// Uses Column
+// A Hierarchy is built as comp functions call other comp functions.
+
+// &lt;!-- Adding Images --!&gt;
+
+// Custom Theme Testing
+// Custom Themes
+
+// Creating Lists
+// Creating Lists End
+
+// Animation Imports
+import android.app.Activity
+import android.content.Intent
+import android.os.Bundle
+import android.widget.Space
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.example.CyTrack.R
+import com.example.CyTrack.Social.MyProfile
+import com.example.CyTrack.Utilities.ComposeUtils.Companion.getCustomFontFamily
+import com.example.CyTrack.Utilities.UrlHolder
+import com.example.CyTrack.Utilities.User
+import com.example.compose.AppTheme
+
+// Animation Imports End
+
+/**
+ * The user whose profile is being displayed.
+ */
+private lateinit var user: User
+
+/**
+ * List of all badges.
+ */
+<span class="nc" id="L74">private var AllBadges: MutableList&lt;BadgeObject&gt; = mutableListOf()</span>
+
+/**
+ * Sample user data for testing.
+ */
+<span class="nc" id="L79">private val SampleUser = BadgeData.BadgeSample</span>
+
+/**
+ * Data for the sample user.
+ */
+<span class="nc" id="L84">private val data = SampleUser</span>
+
+/**
+ * Base URL for fetching badge data.
+ */
+<span class="nc" id="L89">private val URL = UrlHolder.URL</span>
+//private val URL = &quot;${UrlHolder.URL}/badge/2/earned&quot;
+
+/**
+ * Activity to display badges.
+ */
+<span class="nc" id="L95">class BadgesActivity : ComponentActivity() {</span>
+    /**
+     * Called when the activity is starting. This is where most initialization should go.
+     *
+     * @param savedInstanceState If the activity is being re-initialized after previously being shut down
+     *                           then this Bundle contains the data it most recently supplied in onSaveInstanceState(Bundle).
+     */
+    override fun onCreate(savedInstanceState: Bundle?) {
+<span class="nc" id="L103">        super.onCreate(savedInstanceState)</span>
+<span class="nc" id="L104">        setContent {</span>
+<span class="nc bnc" id="L105" title="All 6 branches missed.">            user = intent.getSerializableExtra(&quot;user&quot;) as User</span>
+
+<span class="nc" id="L107">            AllBadges = remember { mutableStateListOf() }</span>
+<span class="nc" id="L108">            BadgeUtils.getListOfBadges(</span>
+<span class="nc" id="L109">                this,</span>
+<span class="nc" id="L110">                AllBadges,</span>
+<span class="nc bnc" id="L111" title="All 2 branches missed.">                &quot;${URL}/badge/${user.id.toString()}/earned&quot;,</span>
+<span class="nc" id="L112">                &quot;badges&quot; // TODO: VERIFY ARRAY NAME</span>
+            )
+
+<span class="nc bnc" id="L115" title="All 2 branches missed.">            AppTheme { // Wraps our app in our custom theme</span>
+<span class="nc bnc" id="L116" title="All 6 branches missed.">                Column {</span>
+<span class="nc" id="L117">                    BGTopCard()</span>
+<span class="nc" id="L118">                    Spacer(modifier = Modifier.height(10.dp))</span>
+<span class="nc" id="L119">                    BGScreen(AllBadges)</span>
+<span class="nc" id="L120">                }</span>
+<span class="nc" id="L121">            }</span>
+<span class="nc" id="L122">        }</span>
+<span class="nc" id="L123">    }</span>
+}
+
+/**
+ * Composable function to display a basic profile card to be in a list.
+ *
+ * @param name The name of the Badge
+ * @param desc The description of the Badge
+ * @param img The URL or resource identifier for the Badge
+ * @param modifier Modifier for the composable
+ */
+@Composable
+fun BGProfileCard(
+    name: String,
+    desc: String,
+    img: String,
+<span class="nc bnc" id="L139" title="All 2 branches missed.">    modifier: Modifier = Modifier</span>
+<span class="nc bnc" id="L140" title="All 24 branches missed.">) {</span>
+<span class="nc bnc" id="L141" title="All 2 branches missed.">    Surface(</span>
+<span class="nc" id="L142">        color = Color.White,</span>
+<span class="nc" id="L143">        shape = RoundedCornerShape(10.dp),</span>
+<span class="nc" id="L144">        border = BorderStroke(1.dp, Color.Black),</span>
+<span class="nc" id="L145">        modifier = modifier.fillMaxWidth()</span>
+<span class="nc" id="L146">    ) {</span>
+<span class="nc bnc" id="L147" title="All 6 branches missed.">        Row(</span>
+<span class="nc" id="L148">            verticalAlignment = Alignment.CenterVertically,</span>
+<span class="nc" id="L149">            modifier = Modifier.padding(10.dp)</span>
+        ) {
+<span class="nc" id="L151">            Image(</span>
+<span class="nc" id="L152">                painter = painterResource(id = R.drawable.general_generic_avatar),</span>
+<span class="nc" id="L153">                contentDescription = &quot;Profile Picture&quot;,</span>
+<span class="nc" id="L154">                modifier = Modifier.size(40.dp),</span>
+            )
+
+<span class="nc" id="L157">            Spacer(modifier = Modifier.width(10.dp))</span>
+
+<span class="nc" id="L159">            Column(</span>
+<span class="nc" id="L160">                horizontalAlignment = Alignment.CenterHorizontally</span>
+            ) {
+<span class="nc" id="L162">                Text(</span>
+<span class="nc" id="L163">                    text = name,</span>
+<span class="nc" id="L164">                    color = Color.Black,</span>
+<span class="nc" id="L165">                    fontSize = 16.sp,</span>
+<span class="nc" id="L166">                    fontWeight = FontWeight.Bold,</span>
+<span class="nc" id="L167">                    fontFamily = getCustomFontFamily(&quot;Inter&quot;, FontWeight.Bold, FontStyle.Normal)</span>
+                )
+<span class="nc" id="L169">            }</span>
+
+<span class="nc" id="L171">            Row(</span>
+<span class="nc" id="L172">                horizontalArrangement = Arrangement.End,</span>
+<span class="nc" id="L173">                modifier = Modifier.fillMaxWidth()</span>
+            ) {
+<span class="nc" id="L175">                Text(</span>
+<span class="nc" id="L176">                    text = desc</span>
+                )
+<span class="nc" id="L178">            }</span>
+<span class="nc" id="L179">        }</span>
+<span class="nc" id="L180">    }</span>
+<span class="nc bnc" id="L181" title="All 2 branches missed.">}</span>
+
+/**
+ * Composable function to display a card with a badge profile.
+ *
+ * @param name The name of the Badge
+ * @param desc The description of the Badge
+ * @param onMessageClick Callback when the card is clicked
+ * @param modifier Modifier for the composable
+ */
+@Composable
+fun BGCard(
+    name: String,
+    desc: String,
+    onMessageClick: () -&gt; Unit,
+<span class="nc bnc" id="L196" title="All 2 branches missed.">    modifier: Modifier = Modifier</span>
+<span class="nc bnc" id="L197" title="All 24 branches missed.">) {</span>
+<span class="nc" id="L198">    Row {</span>
+<span class="nc" id="L199">        Box {</span>
+<span class="nc" id="L200">            BGProfileCard(name, desc, &quot;temp&quot;, modifier)</span>
+<span class="nc" id="L201">            Spacer(modifier = Modifier.height(10.dp))</span>
+<span class="nc" id="L202">        }</span>
+<span class="nc" id="L203">    }</span>
+<span class="nc bnc" id="L204" title="All 2 branches missed.">}</span>
+
+/**
+ * Composable function to display a list of badges in a hierarchical structure.
+ *
+ * @param BadgeList List of BadgeObject to display
+ * @param onMessageClick Callback when a badge is clicked
+ * @param modifier Modifier for the composable
+ */
+@Composable
+fun BGHierarchy(
+    BadgeList: List&lt;BadgeObject&gt;,
+<span class="nc bnc" id="L216" title="All 2 branches missed.">    onMessageClick: (BadgeObject) -&gt; Unit = {},</span>
+<span class="nc bnc" id="L217" title="All 2 branches missed.">    modifier: Modifier = Modifier</span>
+<span class="nc bnc" id="L218" title="All 18 branches missed.">) {</span>
+<span class="nc bnc" id="L219" title="All 2 branches missed.">    LazyColumn(</span>
+<span class="nc" id="L220">        modifier = Modifier</span>
+<span class="nc" id="L221">            .fillMaxHeight()</span>
+<span class="nc bnc" id="L222" title="All 2 branches missed.">            .padding(horizontal = 32.dp)</span>
+<span class="nc" id="L223">    ) {</span>
+<span class="nc" id="L224">        items(BadgeList) { Badge -&gt; // the items() child takes a list as a param</span>
+            BGCard(Badge.name, Badge.desc, {
+<span class="nc" id="L226">                onMessageClick(Badge)</span>
+<span class="nc" id="L227">            })  // Our message is then linked into our card and created</span>
+            Spacer(modifier = Modifier.height(10.dp))
+        }
+<span class="nc" id="L230">    }</span>
+<span class="nc bnc" id="L231" title="All 2 branches missed.">}</span>
+
+/**
+ * Composable function to display the top card with a back button and header image.
+ *
+ * @param modifier Modifier for the composable
+ * @param onClickMyProfile Callback when the profile is clicked
+ */
+@Composable
+fun BGTopCard(
+<span class="nc bnc" id="L241" title="All 2 branches missed.">    modifier: Modifier = Modifier,</span>
+<span class="nc bnc" id="L242" title="All 2 branches missed.">    onClickMyProfile: () -&gt; Unit = {}</span>
+<span class="nc bnc" id="L243" title="All 6 branches missed.">) {</span>
+<span class="nc" id="L244">    val context = LocalContext.current</span>
+
+<span class="nc bnc" id="L246" title="All 2 branches missed.">    Surface(</span>
+<span class="nc" id="L247">        color = Color(context.resources.getColor(R.color.CyRed)),</span>
+<span class="nc" id="L248">        border = BorderStroke(1.dp, Color.Black),</span>
+<span class="nc" id="L249">        modifier = Modifier</span>
+<span class="nc" id="L250">            .fillMaxWidth()</span>
+<span class="nc" id="L251">            .height(120.dp)</span>
+<span class="nc" id="L252">    ) {</span>
+<span class="nc bnc" id="L253" title="All 6 branches missed.">        Row(</span>
+<span class="nc" id="L254">            verticalAlignment = Alignment.Bottom,</span>
+<span class="nc" id="L255">            horizontalArrangement = Arrangement.SpaceBetween,</span>
+<span class="nc" id="L256">            modifier = Modifier</span>
+<span class="nc" id="L257">                .fillMaxWidth()</span>
+<span class="nc" id="L258">                .offset(y = (-10).dp)</span>
+        ) {
+<span class="nc" id="L260">            IconButton(</span>
+<span class="nc" id="L261">                onClick = {</span>
+<span class="nc" id="L262">                    (context as Activity).finish()</span>
+<span class="nc" id="L263">                },</span>
+<span class="nc" id="L264">            ) {</span>
+<span class="nc bnc" id="L265" title="All 8 branches missed.">                Image(</span>
+<span class="nc" id="L266">                    painter = painterResource(id = R.drawable.general_back_arrow_button),</span>
+<span class="nc" id="L267">                    contentDescription = &quot;Back arrow&quot;,</span>
+<span class="nc" id="L268">                    modifier = Modifier.size(24.dp)</span>
+<span class="nc" id="L269">                )</span>
+<span class="nc" id="L270">            }</span>
+
+<span class="nc" id="L272">            Image(</span>
+<span class="nc" id="L273">                painter = painterResource(id = R.drawable.my_badges),</span>
+<span class="nc" id="L274">                contentDescription = &quot;Badge Header&quot;</span>
+            )
+
+<span class="nc" id="L277">            Spacer(modifier = Modifier.width(20.dp))</span>
+<span class="nc" id="L278">        }</span>
+<span class="nc" id="L279">    }</span>
+<span class="nc bnc" id="L280" title="All 2 branches missed.">}</span>
+
+/**
+ * Composable function to display the main screen with a list of badges.
+ *
+ * @param BGList List of BadgeObject to display
+ * @param modifier Modifier for the composable
+ */
+@Composable
+fun BGScreen(
+    BGList: List&lt;BadgeObject&gt;,
+<span class="nc bnc" id="L291" title="All 2 branches missed.">    modifier: Modifier = Modifier</span>
+<span class="nc bnc" id="L292" title="All 12 branches missed.">) {</span>
+<span class="nc" id="L293">    Column {</span>
+<span class="nc" id="L294">        BGHierarchy(BGList)</span>
+<span class="nc" id="L295">    }</span>
+<span class="nc bnc" id="L296" title="All 2 branches missed.">}</span>
+
+/**
+ * @suppress
+ */
+@Preview
+@Composable
+<span class="nc bnc" id="L303" title="All 6 branches missed.">fun BGLazyListPreview() {</span>
+<span class="nc bnc" id="L304" title="All 2 branches missed.">    Surface {</span>
+<span class="nc bnc" id="L305" title="All 6 branches missed.">        Column {</span>
+<span class="nc" id="L306">            BGTopCardPreview()</span>
+<span class="nc" id="L307">            Spacer(modifier = Modifier.height(20.dp))</span>
+<span class="nc" id="L308">            BGScreen(data)</span>
+<span class="nc" id="L309">        }</span>
+<span class="nc" id="L310">    }</span>
+<span class="nc bnc" id="L311" title="All 2 branches missed.">}</span>
+
+/**
+ * @suppress
+ */
+@Preview
+@Composable
+<span class="nc bnc" id="L318" title="All 6 branches missed.">fun PreviewConversation() {</span>
+<span class="nc bnc" id="L319" title="All 2 branches missed.">    AppTheme {</span>
+<span class="nc bnc" id="L320" title="All 8 branches missed.">        com.example.CyTrack.Badges.BGHierarchy(data)</span>
+<span class="nc" id="L321">    }</span>
+<span class="nc bnc" id="L322" title="All 2 branches missed.">}</span>
+
+/**
+ * @suppress
+ */
+@Preview
+@Composable
+<span class="nc bnc" id="L329" title="All 6 branches missed.">fun BGTopCardPreview() {</span>
+<span class="nc bnc" id="L330" title="All 2 branches missed.">    BGTopCard()</span>
+<span class="nc bnc" id="L331" title="All 2 branches missed.">}</span>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span>Generated by the Android Gradle plugin 8.7.1</div></body></html>
