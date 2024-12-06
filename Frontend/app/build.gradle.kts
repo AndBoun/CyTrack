@@ -49,13 +49,17 @@ android {
 //            enableUnitTestCoverage = true
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
+
+
     buildFeatures {
         compose = true
     }
+
     kotlinOptions {
         jvmTarget = "17"
     }
@@ -161,26 +165,41 @@ tasks.withType<DokkaTask>().configureEach {
     }
 }
 
-
 dependencies {
-    implementation(libs.appcompat)
-    implementation(libs.material)
     implementation(libs.activity)
-    implementation(libs.constraintlayout)
     implementation(libs.core.splashscreen)
     implementation(libs.legacy.support.v4)
-    implementation(libs.volley)
     implementation(libs.storage)
-    implementation(libs.foundation.layout.android)
-    implementation(libs.material3.android)
-    implementation(libs.ui.tooling)
-    implementation(libs.core.ktx)
-    implementation(platform(libs.compose.bom))
-    implementation(libs.activity.compose)
-    implementation(libs.accompanist.themeadapter.material3)
-    implementation(libs.androidx.compose.material)
-    debugImplementation(libs.androidx.ui.tooling)
-    androidTestImplementation(libs.espresso.core)
+
+
+
+    // Java UI and Activities
+    implementation(libs.appcompat)
+    implementation(libs.material)
+    implementation(libs.constraintlayout)
+
+
+    // Java Networking Dependencies
+    implementation(libs.volley)
+    implementation("org.java-websocket:Java-WebSocket:1.5.2")
+
+
+    // Ktor Dependencies for multiplatform
+    implementation(libs.ktor.client.core)
+    implementation(libs.ktor.client.okhttp)
+    implementation(libs.ktor.client.logging)
+    implementation(libs.ktor.client.content.negotiation)
+    implementation(libs.ktor.serialization.kotlinx.json)
+    implementation(libs.kotlinx.serialization.json)
+
+
+    // Coil Dependencies for KMP Image Loading
+    implementation(libs.coil.compose)
+    implementation(libs.coil.network.ktor3)
+
+
+    // Dokka Plugin for Java
+    dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.9.20")
 
 
     // Testing Dependencies
@@ -193,14 +212,18 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-intents:3.6.1")
 
 
-    implementation("io.coil-kt:coil-compose:2.7.0")
+    // Compose and UI Dependencies (for declarative UI)
+    implementation(platform(libs.compose.bom))
+    implementation(libs.activity.compose)
+    implementation(libs.accompanist.themeadapter.material3)
+    implementation(libs.material3.android)
+    implementation(libs.foundation.layout.android)
+    debugImplementation(libs.androidx.ui.tooling)
+    implementation(libs.core.ktx)
+    implementation(libs.ui.tooling)
+    implementation(libs.androidx.ui)
+
     implementation("androidx.compose.ui:ui-text-google-fonts:1.7.4")
-    implementation("org.java-websocket:Java-WebSocket:1.5.2")
-
-    dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:1.9.20")
-
-    implementation(platform("androidx.compose:compose-bom:2024.09.03")) // Testing For Top App Bar
-
     implementation("androidx.compose.material3:material3:1.3.1")
     implementation("androidx.compose.material3:material3-window-size-class:1.3.1")
     implementation("androidx.compose.material3:material3-adaptive-navigation-suite:1.3.1")

@@ -1,40 +1,38 @@
 [versions]
 accompanistThemeadapterMaterial3 = "0.36.0"
 activityCompose = "1.9.3"
-agp = "8.7.1"
-composeBom = "2024.10.00"
-coreSplashscreen = "1.0.1"
-junit = "4.13.2"
-junitVersion = "1.2.1"
-espressoCore = "3.6.1"
-appcompat = "1.7.0"
-material = "1.12.0"
-activity = "1.9.3"
-constraintlayout = "2.1.4"
-uiTooling = "1.7.4"
+agp = "8.7.2"
+coil = "3.0.4"
+kotlinxSerializationJson = "1.7.3"
+ui = "1.7.5"
 volley = "1.2.1"
+appcompat = "1.7.0"
+activity = "1.9.3"
 legacySupportV4 = "1.0.0"
-kotlin = "2.0.21"
+coreSplashscreen = "1.0.1"
+constraintlayout = "2.2.0"
+uiTooling = "1.7.5"
 storage = "1.5.0"
-foundationLayoutAndroid = "1.7.4"
-material3Android = "1.3.0"
-coreKtx = "1.13.1"
+foundationLayoutAndroid = "1.7.5"
+coreKtx = "1.12.0"
+kotlin = "2.0.21"
+ktor = "3.0.1"
+material3Android = "1.3.1"
+material = "1.12.0"
+composeBom = "2024.11.00"
 
 # Unneeded from duplicates
-googleMaterial = "1.12.0"
-materialVersion = "<version>"
 uiToolingPreviewAndroid = "1.7.4"
-composeMaterial = "1.4.0"
 
 [libraries]
 accompanist-themeadapter-material3 = { module = "com.google.accompanist:accompanist-themeadapter-material3", version.ref = "accompanistThemeadapterMaterial3" }
 activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
+androidx-ui = { module = "androidx.compose.ui:ui", version.ref = "ui" }
 androidx-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
+coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
+coil-network-ktor3 = { module = "io.coil-kt.coil3:coil-network-ktor3", version.ref = "coil" }
 compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeBom" }
 core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
-junit = { group = "junit", name = "junit", version.ref = "junit" }
-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
@@ -46,13 +44,14 @@ storage = { group = "androidx.test.services", name = "storage", version.ref = "s
 foundation-layout-android = { group = "androidx.compose.foundation", name = "foundation-layout-android", version.ref = "foundationLayoutAndroid" }
 material3-android = { group = "androidx.compose.material3", name = "material3-android", version.ref = "material3Android" }
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
-androidx-compose-material = { group = "androidx.wear.compose", name = "compose-material", version.ref = "composeMaterial" }
 
-# Duplicatied Imports
-#androidx-material3 = { module = "androidx.compose.material3:material3" }
-#material-v190 = { module = "com.google.android.material:material", version.ref = "googleMaterial" }
-#material-vversion = { module = "com.google.android.material:material", version.ref = "materialVersion" }
-#material3 = { module = "androidx.compose.material3:material3" }
+ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
+ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
+ktor-client-logging = {module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
+ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
+ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
+
 
 # Preview version, switch if preview features needed
 #ui-tooling-preview-android = { group = "androidx.compose.ui", name = "ui-tooling-preview-android", version.ref = "uiToolingPreviewAndroid" }

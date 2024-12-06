@@ -3,12 +3,12 @@ package com.example.CyTrack.Social
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.provider.ContactsContract.Profile
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -23,7 +23,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Badge
+import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.IconButton
@@ -36,8 +36,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
@@ -88,13 +88,13 @@ class MyProfile : ComponentActivity() {
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        user = intent.getSerializableExtra("user") as User
         setContent {
-            user = intent.getSerializableExtra("user") as User
             friendRequests = remember { mutableStateListOf() }
             getFriendRequests()
 
             Column {
-                ProfileScreen(user.firstName, user.username, "temp",
+                ProfileScreen(user.firstName, user.username, "",
                     onClickMyFriends = {
                         switchToMyFriends()
                     },
@@ -229,7 +229,7 @@ class MyProfile : ComponentActivity() {
 fun MainProfileCard(
     name: String,
     userName: String,
-    imageUrl: String,
+    imageUrl: String = "",
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -241,13 +241,11 @@ fun MainProfileCard(
                 .fillMaxWidth(0.5f), // Take up half the screen width
             contentAlignment = Alignment.Center // Center the content within the Box
         ) {
-            Image(
-//            painter = rememberAsyncImagePainter(imageUrl),
-                painter = painterResource(R.drawable.general_generic_avatar),
-                contentDescription = "Profile picture",
+            ProfileImage(
+                imageUrl,
                 modifier = Modifier
                     .size(120.dp)
-                    .clip(CircleShape)
+                    .border(10.dp, Color.Black, CircleShape)
             )
         }
 
@@ -296,6 +294,7 @@ fun FriendsButton(
     Column(
         horizontalAlignment = CenterHorizontally,
         modifier = modifier.clickable(onClick = onClick)
+            .height(50.dp)
     ) {
         Image(
             painter = painterResource(R.drawable.general_friends_icon),
@@ -329,6 +328,7 @@ fun MessageButton(
     Column(
         horizontalAlignment = CenterHorizontally,
         modifier = modifier.clickable(onClick = onClick)
+            .height(50.dp)
     ) {
         Image(
             painter = painterResource(R.drawable.general_message_icon),
@@ -362,12 +362,15 @@ fun BadgesButton(
     Column(
         horizontalAlignment = CenterHorizontally,
         modifier = modifier.clickable(onClick = onClick)
+            .height(50.dp)
     ) {
         Image(
             painter = painterResource(R.drawable.badge_button),
             contentDescription = "Badge icon",
-            modifier = Modifier.size(30.dp)
+            modifier = Modifier.size(24.dp)
         )
+
+        Spacer(modifier = Modifier.height(3.dp))
 
         Text(
             text = "Badges",
@@ -391,10 +394,10 @@ fun BadgesButton(
  * @param onClickMyBadges The callback to be invoked when the Badges button is clicked.
  */
 @Composable
-fun ProfileScreen(
+private fun ProfileScreen(
     name: String,
     userName: String,
-    imageUrl: String,
+    imageUrl: String = "",
     modifier: Modifier = Modifier,
     onClickMyFriends: () -> Unit = {},
     onClickMyMessages: () -> Unit = {},
@@ -433,7 +436,7 @@ fun ProfileScreen(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 80.dp)
+                    .padding(horizontal = 60.dp)
                     .padding(bottom = 5.dp)
             ) {
                 FriendsButton(onClick = {
@@ -464,7 +467,7 @@ fun ProfileScreen(
 fun FriendRequestCard(
     name: String,
     userName: String,
-    imageUrl: String,
+    imageUrl: String = "",
     onClickAdd: () -> Unit = {},
     onClickDecline: () -> Unit = {},
     modifier: Modifier = Modifier
@@ -550,7 +553,7 @@ fun FriendRequestCard(
  * @param onDecline The callback to be invoked when a friend request is declined.
  */
 @Composable
-fun FriendRequestCardLazyList(
+private fun FriendRequestCardLazyList(
     friendRequests: List<Friend>,
     modifier: Modifier = Modifier,
     onAccept: (Friend) -> Unit,
@@ -562,12 +565,12 @@ fun FriendRequestCardLazyList(
             .padding(horizontal = 32.dp)
     ) {
         for (friend in friendRequests) {
-            FriendRequestCard(friend.firstName, friend.username, "temp", {
+            FriendRequestCard(friend.firstName, friend.username, "", {
                 onAccept(friend)
             }, {
                 onDecline(friend)
             })
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = modifier.height(10.dp))
         }
     }
 }
@@ -577,12 +580,11 @@ fun FriendRequestCardLazyList(
  */
 @Preview
 @Composable
-fun FriendRequestCardPreview() {
+private fun FriendRequestCardPreview() {
     Surface {
         FriendRequestCard(
             name = "Cati",
             userName = "cattack",
-            imageUrl = "https://thumbs.dreamstime.com/b/cute-cat-portrait-square-photo-beautiful-white-closeup-105311158.jpg"
         )
     }
 }
@@ -592,7 +594,7 @@ fun FriendRequestCardPreview() {
  */
 @Preview
 @Composable
-fun ProfileCardPreview() {
+private fun ProfileCardPreview() {
     Surface(
 //        modifier = Modifier.fillMaxWidth(),
         color = Color(0xFFC8102E)
@@ -601,7 +603,7 @@ fun ProfileCardPreview() {
         MainProfileCard(
             name = "Cati",
             userName = "cattack",
-            imageUrl = "https://thumbs.dreamstime.com/b/cute-cat-portrait-square-photo-beautiful-white-closeup-105311158.jpg"
+//            imageUrl = "https://thumbs.dreamstime.com/b/cute-cat-portrait-square-photo-beautiful-white-closeup-105311158.jpg"
         )
     }
 }
@@ -611,7 +613,7 @@ fun ProfileCardPreview() {
  */
 @Preview
 @Composable
-fun FriendsButtonPreview() {
+private fun FriendsButtonPreview() {
     Surface(
         color = Color(0xFFC8102E)
     ) {
@@ -624,7 +626,7 @@ fun FriendsButtonPreview() {
  */
 @Preview
 @Composable
-fun MessageButtonPreview() {
+private fun MessageButtonPreview() {
     Surface(
         color = Color(0xFFC8102E)
     ) {
@@ -637,7 +639,7 @@ fun MessageButtonPreview() {
  */
 @Preview
 @Composable
-fun BadgeButtonPreview() {
+private fun BadgeButtonPreview() {
     Surface(
         color = Color(0xFFC8102E)
     ) {
@@ -650,7 +652,7 @@ fun BadgeButtonPreview() {
  */
 @Preview
 @Composable
-fun ProfileScreenPreview() {
+private fun ProfileScreenPreview() {
     val list = remember { mutableStateListOf<User>() }
     list.add(User(1, "Doe", "John", "Doe", 20, "M", 2))
     list.add(User(2, "Doe", "Jane", "Doe", 20, "F", 2))
@@ -662,8 +664,6 @@ fun ProfileScreenPreview() {
             ProfileScreen(
                 name = "Cati",
                 userName = "cattack",
-                imageUrl = "https://thumbs.dreamstime.com/b/cute-cat-portrait-" +
-                        "square-photo-beautiful-white-closeup-105311158.jpg"
             )
 
             Spacer(modifier = Modifier.height(20.dp))
