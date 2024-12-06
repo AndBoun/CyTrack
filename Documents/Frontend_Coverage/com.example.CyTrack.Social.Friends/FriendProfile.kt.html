@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FriendProfile.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.CyTrack.Social.Friends</a> &gt; <span class="el_source">FriendProfile.kt</span></div><h1>FriendProfile.kt</h1><pre class="source lang-java linenums">package com.example.CyTrack.Social.Friends
+
+import android.app.Activity
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.material3.Surface
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+import com.example.CyTrack.Utilities.User
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.IconButton
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
+import com.example.CyTrack.R
+import com.example.CyTrack.Social.MainProfileCard
+
+/**
+ * Activity representing a friend's profile.
+ */
+<span class="nc" id="L30">class FriendProfile : ComponentActivity() {</span>
+
+    /**
+     * The user object representing the current user.
+     */
+    private lateinit var user: User
+
+    /**
+     * The friend object representing the friend's profile being viewed.
+     */
+    private lateinit var friend: Friend
+
+    /**
+     * Called when the activity is starting. Initializes the user and sets the content view.
+     *
+     * @param savedInstanceState If the activity is being re-initialized after previously being shut down then this Bundle contains the data it most recently supplied in onSaveInstanceState(Bundle).
+     */
+    override fun onCreate(savedInstanceState: Bundle?) {
+<span class="nc" id="L48">        super.onCreate(savedInstanceState)</span>
+<span class="nc" id="L49">        setContent {</span>
+<span class="nc bnc" id="L50" title="All 6 branches missed.">            user = intent.getSerializableExtra(&quot;user&quot;) as User</span>
+
+<span class="nc" id="L52">            Column {</span>
+<span class="nc bnc" id="L53" title="All 4 branches missed.">                FriendProfileTopCard(user.firstName, user.username, &quot;generic_avatar&quot;)</span>
+<span class="nc" id="L54">            }</span>
+
+<span class="nc" id="L56">        }</span>
+<span class="nc" id="L57">    }</span>
+}
+
+/**
+ * Composable function to display the top card of a friend's profile.
+ *
+ * @param name The name of the friend.
+ * @param username The username of the friend.
+ * @param img The image resource identifier for the friend's avatar.
+ * @param modifier The modifier to be applied to the layout.
+ */
+@Composable
+fun FriendProfileTopCard(
+    name: String,
+    username: String,
+    img: String,
+<span class="nc bnc" id="L73" title="All 2 branches missed.">    modifier: Modifier = Modifier</span>
+<span class="nc bnc" id="L74" title="All 30 branches missed.">) {</span>
+<span class="nc" id="L75">    val context = LocalContext.current</span>
+<span class="nc bnc" id="L76" title="All 2 branches missed.">    Surface(</span>
+<span class="nc" id="L77">        color = Color(context.resources.getColor(R.color.CyRed)),</span>
+<span class="nc" id="L78">        modifier = modifier</span>
+<span class="nc" id="L79">            .fillMaxWidth()</span>
+<span class="nc" id="L80">    ) {</span>
+<span class="nc bnc" id="L81" title="All 6 branches missed.">        Column(</span>
+<span class="nc" id="L82">            verticalArrangement = Arrangement.Bottom</span>
+        ) {
+
+<span class="nc" id="L85">            IconButton(</span>
+<span class="nc" id="L86">                onClick = {</span>
+<span class="nc" id="L87">                    (context as Activity).finish()</span>
+<span class="nc" id="L88">                },</span>
+<span class="nc" id="L89">                modifier = Modifier.align(Alignment.Start)</span>
+<span class="nc" id="L90">            ) {</span>
+<span class="nc bnc" id="L91" title="All 8 branches missed.">                Image(</span>
+<span class="nc" id="L92">                    painter = painterResource(R.drawable.general_back_arrow_button),</span>
+<span class="nc" id="L93">                    contentDescription = &quot;Back arrow&quot;,</span>
+<span class="nc" id="L94">                    modifier = Modifier.size(24.dp)</span>
+<span class="nc" id="L95">                )</span>
+<span class="nc" id="L96">            }</span>
+
+<span class="nc" id="L98">            MainProfileCard(</span>
+<span class="nc" id="L99">                name, username, img,</span>
+<span class="nc" id="L100">                modifier = Modifier</span>
+<span class="nc" id="L101">                    .padding(bottom = 20.dp)</span>
+<span class="nc" id="L102">                    .fillMaxWidth()</span>
+            )
+<span class="nc" id="L104">        }</span>
+
+<span class="nc" id="L106">    }</span>
+<span class="nc bnc" id="L107" title="All 2 branches missed.">}</span>
+
+/**
+ * @suppress
+ */
+@Preview
+@Composable
+<span class="nc bnc" id="L114" title="All 6 branches missed.">fun PreviewFriendProfileTopCard() {</span>
+<span class="nc bnc" id="L115" title="All 2 branches missed.">    FriendProfileTopCard(&quot;John Doe&quot;, &quot;johndoe&quot;, &quot;generic_avatar&quot;)</span>
+<span class="nc bnc" id="L116" title="All 2 branches missed.">}</span>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span>Generated by the Android Gradle plugin 8.7.1</div></body></html>

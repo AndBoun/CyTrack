@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>StartWorkout.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.CyTrack.Workouts</a> &gt; <span class="el_source">StartWorkout.kt</span></div><h1>StartWorkout.kt</h1><pre class="source lang-java linenums">package com.example.CyTrack.Workouts
+
+import android.os.Bundle
+import android.widget.Toast
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.SegmentedButtonDefaults.borderStroke
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.android.volley.Request
+import com.android.volley.toolbox.JsonObjectRequest
+import com.example.CyTrack.R
+import com.example.CyTrack.Utilities.ComposeUtils.Companion.getCustomFontFamily
+import com.example.CyTrack.Utilities.NetworkUtils
+import com.example.CyTrack.Utilities.UrlHolder
+import com.example.CyTrack.Utilities.User
+import com.example.CyTrack.Utilities.VolleySingleton
+import com.example.compose.AppTheme
+import org.json.JSONObject
+
+/**
+ * Activity to start and end a workout.
+ */
+<span class="nc" id="L50">class StartWorkout : ComponentActivity() {</span>
+
+    /**
+     * The user object representing the current user.
+     */
+    private lateinit var user: User
+
+    /**
+     * The base URL for workout-related API endpoints.
+     */
+<span class="nc" id="L60">    private val URL = &quot;${UrlHolder.URL}/workout&quot;</span>
+
+    /**
+     * The ID of the current workout.
+     */
+    private var workoutID: Int = 0
+
+    /**
+     * Called when the activity is starting.
+     * @param savedInstanceState If the activity is being re-initialized after previously being shut down then this Bundle contains the data it most recently supplied in onSaveInstanceState(Bundle).
+     */
+    override fun onCreate(savedInstanceState: Bundle?) {
+<span class="nc" id="L72">        super.onCreate(savedInstanceState)</span>
+<span class="nc" id="L73">        setContent {</span>
+<span class="nc bnc" id="L74" title="All 6 branches missed.">            user = intent.getSerializableExtra(&quot;user&quot;) as User</span>
+
+<span class="nc bnc" id="L76" title="All 2 branches missed.">            AppTheme {</span>
+<span class="nc bnc" id="L77" title="All 6 branches missed.">                Column(</span>
+<span class="nc" id="L78">                    modifier = Modifier.padding(16.dp)</span>
+                ) {
+<span class="nc" id="L80">                    CreateWorkoutForm(</span>
+<span class="nc" id="L81">                        onCreateWorkout = { workout -&gt;</span>
+<span class="nc" id="L82">                            startWorkout(workout)</span>
+<span class="nc" id="L83">                        }</span>
+                    )
+<span class="nc" id="L85">                    Spacer(modifier = Modifier.height(16.dp))</span>
+<span class="nc" id="L86">                    EndWorkoutButton(</span>
+<span class="nc" id="L87">                        onClick = {</span>
+                            // Handle ending workout
+<span class="nc" id="L89">                            endWorkout()</span>
+<span class="nc" id="L90">                        }</span>
+                    )
+<span class="nc" id="L92">                }</span>
+<span class="nc" id="L93">            }</span>
+<span class="nc" id="L94">        }</span>
+<span class="nc" id="L95">    }</span>
+
+    /**
+     * Starts a workout by sending a POST request to the server.
+     *
+     * @param workout The workout object containing details of the workout to be started.
+     */
+    private fun startWorkout(workout: WorkoutObject) {
+<span class="nc bnc" id="L103" title="All 2 branches missed.">        val postURL = &quot;${URL}/${user.id}/createAndStart&quot;</span>
+
+        // Handle starting workout
+<span class="nc" id="L106">        val inputs = JSONObject().apply {</span>
+<span class="nc" id="L107">            put(&quot;exerciseType&quot;, workout.exerciseType)</span>
+<span class="nc" id="L108">            put(&quot;date&quot;, workout.date)</span>
+<span class="nc" id="L109">            put(&quot;calories&quot;, workout.caloriesBurned)</span>
+<span class="nc" id="L110">        }</span>
+
+<span class="nc" id="L112">        val jsonObject = JsonObjectRequest(</span>
+<span class="nc" id="L113">            Request.Method.POST,</span>
+<span class="nc" id="L114">            postURL,</span>
+<span class="nc" id="L115">            inputs,</span>
+            { response -&gt;
+                // Handle response
+<span class="nc" id="L118">                workout.workoutID = response.getJSONObject(&quot;data&quot;).getInt(&quot;workoutID&quot;)</span>
+<span class="nc" id="L119">                workoutID = workout.workoutID</span>
+<span class="nc" id="L120">                Toast.makeText(this, &quot;Workout started&quot;, Toast.LENGTH_LONG)</span>
+<span class="nc" id="L121">                    .show()</span>
+<span class="nc" id="L122">            },</span>
+            { error -&gt;
+                // Handle error
+<span class="nc" id="L125">                Toast.makeText(this, NetworkUtils.errorResponse(error), Toast.LENGTH_LONG)</span>
+<span class="nc" id="L126">                    .show()</span>
+<span class="nc" id="L127">            })</span>
+<span class="nc" id="L128">        VolleySingleton.getInstance(this).addToRequestQueue(jsonObject)</span>
+<span class="nc" id="L129">    }</span>
+
+    /**
+     * Ends the current workout by sending a POST request to the server.
+     */
+    private fun endWorkout() {
+<span class="nc bnc" id="L135" title="All 2 branches missed.">        val postURL = &quot;${URL}/${user.id}/workout/${workoutID}/end&quot;</span>
+
+<span class="nc" id="L137">        val jsonObject = JsonObjectRequest(</span>
+<span class="nc" id="L138">            Request.Method.POST,</span>
+<span class="nc" id="L139">            postURL,</span>
+<span class="nc" id="L140">            null,</span>
+            { response -&gt;
+                // Handle response
+<span class="nc" id="L143">                Toast.makeText(this, response.getString(&quot;message&quot;), Toast.LENGTH_LONG)</span>
+<span class="nc" id="L144">                    .show()</span>
+<span class="nc" id="L145">            },</span>
+            { error -&gt;
+                // Handle error
+<span class="nc" id="L148">                Toast.makeText(this, NetworkUtils.errorResponse(error), Toast.LENGTH_LONG)</span>
+<span class="nc" id="L149">                    .show()</span>
+<span class="nc" id="L150">            })</span>
+<span class="nc" id="L151">        VolleySingleton.getInstance(this).addToRequestQueue(jsonObject)</span>
+<span class="nc" id="L152">    }</span>
+
+}
+
+/**
+ * A composable function that creates a button to end the workout.
+ *
+ * @param onClick The callback to be invoked when the button is clicked.
+ * @param modifier The modifier to be applied to the button.
+ */
+@Composable
+fun EndWorkoutButton(
+    onClick: () -&gt; Unit,
+<span class="nc bnc" id="L165" title="All 2 branches missed.">    modifier: Modifier = Modifier</span>
+<span class="nc bnc" id="L166" title="All 18 branches missed.">) {</span>
+<span class="nc bnc" id="L167" title="All 2 branches missed.">    Button(</span>
+<span class="nc" id="L168">        onClick = onClick,</span>
+<span class="nc" id="L169">        shape = RoundedCornerShape(15.dp),</span>
+<span class="nc" id="L170">        colors = ButtonDefaults.buttonColors(</span>
+<span class="nc" id="L171">            containerColor = Color.Transparent</span>
+        ),
+<span class="nc" id="L173">        border = borderStroke(</span>
+<span class="nc" id="L174">            width = 2.dp,</span>
+<span class="nc" id="L175">            color = Color(LocalContext.current.resources.getColor(R.color.CyYellow))</span>
+        ),
+<span class="nc" id="L177">        modifier = modifier</span>
+<span class="nc" id="L178">            .width(160.dp)</span>
+<span class="nc" id="L179">            .height(60.dp)</span>
+<span class="nc" id="L180">    ) {</span>
+<span class="nc bnc" id="L181" title="All 8 branches missed.">        Text(</span>
+<span class="nc" id="L182">            text = &quot;End Workout&quot;,</span>
+<span class="nc" id="L183">            color = Color.Black,</span>
+<span class="nc" id="L184">            fontFamily = getCustomFontFamily(</span>
+<span class="nc" id="L185">                &quot;Inter&quot;,</span>
+<span class="nc" id="L186">                FontWeight.Bold,</span>
+<span class="nc" id="L187">                FontStyle.Normal</span>
+            ),
+<span class="nc" id="L189">            fontWeight = FontWeight.Bold,</span>
+<span class="nc" id="L190">            fontSize = 16.sp</span>
+<span class="nc" id="L191">        )</span>
+<span class="nc" id="L192">    }</span>
+<span class="nc bnc" id="L193" title="All 2 branches missed.">}</span>
+
+/**
+ * A composable function that creates a form for starting a workout.
+ *
+ * @param onCreateWorkout The callback to be invoked when the workout is created.
+ * @param modifier The modifier to be applied to the form.
+ */
+@Composable
+fun CreateWorkoutForm(
+    onCreateWorkout: (WorkoutObject) -&gt; Unit,
+<span class="nc bnc" id="L204" title="All 2 branches missed.">    modifier: Modifier = Modifier</span>
+<span class="nc bnc" id="L205" title="All 18 branches missed.">) {</span>
+<span class="nc" id="L206">    val context = LocalContext.current</span>
+<span class="nc" id="L207">    var exerciseType by remember { mutableStateOf(&quot;&quot;) }</span>
+<span class="nc" id="L208">    var duration by remember { mutableStateOf(&quot;&quot;) }</span>
+<span class="nc" id="L209">    var caloriesBurned by remember { mutableStateOf(&quot;&quot;) }</span>
+<span class="nc" id="L210">    var date by remember { mutableStateOf(&quot;&quot;) }</span>
+
+<span class="nc" id="L212">    Column(</span>
+<span class="nc" id="L213">        modifier = modifier</span>
+<span class="nc" id="L214">            .padding(16.dp)</span>
+<span class="nc" id="L215">            .fillMaxWidth()</span>
+    ) {
+<span class="nc" id="L217">        TextField(</span>
+<span class="nc" id="L218">            value = exerciseType,</span>
+<span class="nc" id="L219">            onValueChange = { exerciseType = it },</span>
+<span class="nc bnc" id="L220" title="All 8 branches missed.">            label = { Text(&quot;Exercise Type&quot;) },</span>
+<span class="nc" id="L221">            modifier = Modifier.fillMaxWidth()</span>
+        )
+<span class="nc" id="L223">        Spacer(modifier = Modifier.height(8.dp))</span>
+<span class="nc" id="L224">        TextField(</span>
+<span class="nc" id="L225">            value = duration,</span>
+<span class="nc" id="L226">            onValueChange = { duration = it },</span>
+<span class="nc bnc" id="L227" title="All 8 branches missed.">            label = { Text(&quot;Duration (minutes)&quot;) },</span>
+<span class="nc" id="L228">            modifier = Modifier.fillMaxWidth(),</span>
+<span class="nc" id="L229">            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)</span>
+        )
+<span class="nc" id="L231">        Spacer(modifier = Modifier.height(8.dp))</span>
+<span class="nc" id="L232">        TextField(</span>
+<span class="nc" id="L233">            value = caloriesBurned,</span>
+<span class="nc" id="L234">            onValueChange = { caloriesBurned = it },</span>
+<span class="nc bnc" id="L235" title="All 8 branches missed.">            label = { Text(&quot;Calories Burned&quot;) },</span>
+<span class="nc" id="L236">            modifier = Modifier.fillMaxWidth(),</span>
+<span class="nc" id="L237">            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)</span>
+        )
+<span class="nc" id="L239">        Spacer(modifier = Modifier.height(8.dp))</span>
+<span class="nc" id="L240">        TextField(</span>
+<span class="nc" id="L241">            value = date,</span>
+<span class="nc" id="L242">            onValueChange = { date = it },</span>
+<span class="nc bnc" id="L243" title="All 8 branches missed.">            label = { Text(&quot;Date&quot;) },</span>
+<span class="nc" id="L244">            modifier = Modifier.fillMaxWidth(),</span>
+<span class="nc" id="L245">            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)</span>
+        )
+<span class="nc bnc" id="L247" title="All 2 branches missed.">        Spacer(modifier = Modifier.height(16.dp))</span>
+<span class="nc" id="L248">        Button(</span>
+<span class="nc" id="L249">            onClick = {</span>
+<span class="nc" id="L250">                val workout = WorkoutObject(</span>
+<span class="nc" id="L251">                    exerciseType,</span>
+<span class="nc" id="L252">                    duration,</span>
+<span class="nc" id="L253">                    caloriesBurned,</span>
+<span class="nc" id="L254">                    date,</span>
+<span class="nc" id="L255">                    0 // Placeholder for workout ID</span>
+                )
+<span class="nc" id="L257">                onCreateWorkout(workout)</span>
+<span class="nc" id="L258">            },</span>
+<span class="nc" id="L259">            modifier = Modifier.align(Alignment.End)</span>
+<span class="nc" id="L260">        ) {</span>
+<span class="nc bnc" id="L261" title="All 8 branches missed.">            Text(&quot;Start Workout&quot;)</span>
+<span class="nc" id="L262">        }</span>
+<span class="nc" id="L263">    }</span>
+<span class="nc bnc" id="L264" title="All 2 branches missed.">}</span>
+
+/**
+ * @suppress
+ */
+@Preview
+@Composable
+<span class="nc bnc" id="L271" title="All 6 branches missed.">fun CreateWorkoutFormPreview() {</span>
+<span class="nc bnc" id="L272" title="All 2 branches missed.">    Surface {</span>
+<span class="nc bnc" id="L273" title="All 8 branches missed.">        CreateWorkoutForm(</span>
+<span class="nc" id="L274">            onCreateWorkout = {}</span>
+<span class="nc" id="L275">        )</span>
+<span class="nc" id="L276">    }</span>
+<span class="nc bnc" id="L277" title="All 2 branches missed.">}</span>
+
+/**
+ * @suppress
+ */
+@Preview
+@Composable
+<span class="nc bnc" id="L284" title="All 6 branches missed.">fun EndWorkoutButtonPreview() {</span>
+<span class="nc bnc" id="L285" title="All 2 branches missed.">    Surface {</span>
+<span class="nc bnc" id="L286" title="All 8 branches missed.">        EndWorkoutButton(</span>
+<span class="nc" id="L287">            onClick = {}</span>
+<span class="nc" id="L288">        )</span>
+<span class="nc" id="L289">    }</span>
+<span class="nc bnc" id="L290" title="All 2 branches missed.">}</span>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span>Generated by the Android Gradle plugin 8.7.1</div></body></html>

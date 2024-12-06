@@ -1,0 +1,607 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MyWorkouts.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.CyTrack.Workouts</a> &gt; <span class="el_source">MyWorkouts.kt</span></div><h1>MyWorkouts.kt</h1><pre class="source lang-java linenums">package com.example.CyTrack.Workouts
+
+import android.app.Activity
+import android.content.Intent
+import android.os.Bundle
+import android.util.Log
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.example.CyTrack.R
+import com.example.CyTrack.Utilities.ComposeUtils.Companion.getCustomFontFamily
+import com.example.CyTrack.Utilities.StatusBarUtil
+import com.example.CyTrack.Utilities.UrlHolder
+import com.example.CyTrack.Utilities.User
+
+
+/**
+ * Activity class for displaying the user's workouts.
+ */
+<span class="nc" id="L61">class MyWorkouts : ComponentActivity() {</span>
+
+    /**
+     * The user object representing the current user.
+     */
+    private lateinit var user: User
+
+    /**
+     * A mutable list of workout objects.
+     */
+<span class="nc" id="L71">    private var workoutList = mutableStateListOf&lt;WorkoutObject&gt;()</span>
+
+    /**
+     * The base URL for workout-related API calls.
+     */
+<span class="nc" id="L76">    private val URL = &quot;${UrlHolder.URL}/workout&quot;</span>
+
+    /**
+     * The total calories burned, stored as a mutable state.
+     */
+<span class="nc" id="L81">    private var caloriesBurned = mutableIntStateOf(0)</span>
+
+    /**
+     * The total workout time, stored as a mutable state.
+     */
+<span class="nc" id="L86">    private var workoutTime = mutableIntStateOf(0)</span>
+
+    /**
+     * Called when the activity is starting. This is where most initialization should go.
+     * @param savedInstanceState If the activity is being re-initialized after previously being shut down then this Bundle contains the data it most recently supplied.
+     */
+    override fun onCreate(savedInstanceState: Bundle?) {
+<span class="nc" id="L93">        super.onCreate(savedInstanceState)</span>
+
+<span class="nc" id="L95">        user = intent.getSerializableExtra(&quot;user&quot;) as User</span>
+<span class="nc" id="L96">        WorkoutUtils.getWorkouts(</span>
+<span class="nc" id="L97">            this,</span>
+<span class="nc bnc" id="L98" title="All 2 branches missed.">            &quot;${URL}/${user.id}/workoutByDate/${getDateAsString()}&quot;,</span>
+<span class="nc" id="L99">            workoutList</span>
+        )
+
+<span class="nc" id="L102">        setContent {</span>
+
+<span class="nc bnc" id="L104" title="All 6 branches missed.">            Column(</span>
+<span class="nc" id="L105">                verticalArrangement = Arrangement.Top,</span>
+<span class="nc" id="L106">                modifier = Modifier.fillMaxSize()</span>
+            ) {
+<span class="nc" id="L108">                MyWorkoutsTopCard()</span>
+<span class="nc" id="L109">                getDailyCaloriesBurned()</span>
+<span class="nc" id="L110">                getDailyWorkoutTime()</span>
+
+<span class="nc" id="L112">                Spacer(modifier = Modifier.height(20.dp))</span>
+
+<span class="nc" id="L114">                Row(</span>
+<span class="nc" id="L115">                    horizontalArrangement = Arrangement.SpaceBetween,</span>
+<span class="nc" id="L116">                    modifier = Modifier</span>
+<span class="nc" id="L117">                        .fillMaxWidth()</span>
+<span class="nc" id="L118">                        .padding(horizontal = 20.dp)</span>
+                ) {
+<span class="nc" id="L120">                    DailyStatisticBox(</span>
+<span class="nc" id="L121">                        displayText = &quot;Calories Burned&quot;,</span>
+<span class="nc" id="L122">                        displayValue = caloriesBurned.value,</span>
+                    )
+<span class="nc" id="L124">                    DailyStatisticBox(</span>
+<span class="nc" id="L125">                        displayText = &quot;Workout Time&quot;,</span>
+<span class="nc" id="L126">                        displayValue = workoutTime.value,</span>
+                    )
+<span class="nc" id="L128">                }</span>
+
+<span class="nc" id="L130">                Spacer(modifier = Modifier.height(50.dp))</span>
+
+<span class="nc" id="L132">                Row(</span>
+<span class="nc" id="L133">                    horizontalArrangement = Arrangement.SpaceBetween,</span>
+<span class="nc" id="L134">                    verticalAlignment = Alignment.Bottom,</span>
+<span class="nc" id="L135">                    modifier = Modifier</span>
+<span class="nc" id="L136">                        .fillMaxWidth()</span>
+<span class="nc" id="L137">                        .padding(horizontal = 20.dp)</span>
+                ) {
+<span class="nc" id="L139">                    StartWorkoutButton(</span>
+<span class="nc" id="L140">                        onClick = {</span>
+<span class="nc" id="L141">                            switchToStartWorkouts()</span>
+<span class="nc" id="L142">                        }</span>
+                    )
+<span class="nc" id="L144">                    AddWorkOutButton(</span>
+<span class="nc" id="L145">                        onClick = {</span>
+<span class="nc" id="L146">                            switchToAddWorkouts()</span>
+<span class="nc" id="L147">                        }</span>
+                    )
+<span class="nc" id="L149">                }</span>
+
+<span class="nc" id="L151">                Spacer(modifier = Modifier.height(50.dp))</span>
+
+<span class="nc" id="L153">                WorkoutsLazyList(workoutList)</span>
+
+<span class="nc" id="L155">            }</span>
+
+<span class="nc bnc" id="L157" title="All 2 branches missed.">            StatusBarUtil.setStatusBarColor(this, R.color.CyRed)</span>
+
+<span class="nc" id="L159">        }</span>
+<span class="nc" id="L160">    }</span>
+
+    /**
+     * Returns the current date as a string in the format MM-dd-yyyy.
+     * @return The current date as a string.
+     */
+    private fun getDateAsString(): String {
+<span class="nc" id="L167">        val dateFormat = java.text.SimpleDateFormat(&quot;MM-dd-yyyy&quot;, java.util.Locale.getDefault())</span>
+<span class="nc" id="L168">        return dateFormat.format(java.util.Date())</span>
+    }
+
+    /**
+     * Fetches the total calories burned for the current date and updates the state.
+     */
+    private fun getDailyCaloriesBurned() {
+<span class="nc bnc" id="L175" title="All 2 branches missed.">        val getURL = &quot;${URL}/${user.id}/totalCalories/${getDateAsString()}&quot;</span>
+//        var calories = 0
+
+<span class="nc" id="L178">        WorkoutUtils.getDailyCaloriesBurned(this, getURL) {</span>
+<span class="nc" id="L179">            caloriesBurned.intValue = it</span>
+<span class="nc" id="L180">            Log.d(&quot;Workout calories&quot;, caloriesBurned.toString())</span>
+<span class="nc" id="L181">        }</span>
+
+<span class="nc" id="L183">    }</span>
+
+    /**
+     * Fetches the total workout time for the current date and updates the state.
+     */
+    private fun getDailyWorkoutTime() {
+<span class="nc bnc" id="L189" title="All 2 branches missed.">        val getURL = &quot;${URL}/${user.id}/totalWorkoutTime/${getDateAsString()}&quot;</span>
+
+<span class="nc" id="L191">        WorkoutUtils.getTotalWorkoutTime(this, getURL) {</span>
+<span class="nc" id="L192">            workoutTime.intValue = it</span>
+<span class="nc" id="L193">        }</span>
+
+<span class="nc" id="L195">    }</span>
+
+    /**
+     * Switches to the Add Workouts activity.
+     */
+    private fun switchToAddWorkouts() {
+<span class="nc" id="L201">        val intent = Intent(this, WorkoutActivity::class.java).apply {</span>
+<span class="nc bnc" id="L202" title="All 2 branches missed.">            putExtra(&quot;user&quot;, user)</span>
+<span class="nc" id="L203">        }</span>
+<span class="nc" id="L204">        startActivity(intent)</span>
+<span class="nc" id="L205">    }</span>
+
+    /**
+     * Switches to the Start Workouts activity.
+     */
+    private fun switchToStartWorkouts() {
+<span class="nc" id="L211">        val intent = Intent(this, StartWorkout::class.java).apply {</span>
+<span class="nc bnc" id="L212" title="All 2 branches missed.">            putExtra(&quot;user&quot;, user)</span>
+<span class="nc" id="L213">        }</span>
+<span class="nc" id="L214">        startActivity(intent)</span>
+<span class="nc" id="L215">    }</span>
+
+}
+
+/**
+ * Composable function that displays the top card of the My Workouts screen.
+ */
+@Composable
+<span class="nc bnc" id="L223" title="All 6 branches missed.">fun MyWorkoutsTopCard() {</span>
+<span class="nc" id="L224">    val context = LocalContext.current</span>
+
+<span class="nc bnc" id="L226" title="All 2 branches missed.">    Surface(</span>
+<span class="nc" id="L227">        color = Color(context.resources.getColor(R.color.CyRed)),</span>
+<span class="nc" id="L228">        modifier = Modifier</span>
+<span class="nc" id="L229">            .fillMaxWidth()</span>
+<span class="nc" id="L230">            .height(120.dp)</span>
+<span class="nc" id="L231">    ) {</span>
+<span class="nc bnc" id="L232" title="All 6 branches missed.">        Box {</span>
+<span class="nc" id="L233">            IconButton(</span>
+<span class="nc" id="L234">                onClick = {</span>
+<span class="nc" id="L235">                    (context as Activity).finish()</span>
+<span class="nc" id="L236">                },</span>
+<span class="nc" id="L237">                modifier = Modifier.align(Alignment.BottomStart)</span>
+<span class="nc" id="L238">            ) {</span>
+<span class="nc bnc" id="L239" title="All 8 branches missed.">                Image(</span>
+<span class="nc" id="L240">                    painter = painterResource(id = R.drawable.general_back_arrow_button),</span>
+<span class="nc" id="L241">                    contentDescription = &quot;Back arrow&quot;,</span>
+<span class="nc" id="L242">                    modifier = Modifier.size(24.dp)</span>
+<span class="nc" id="L243">                )</span>
+<span class="nc" id="L244">            }</span>
+
+<span class="nc" id="L246">            Image(</span>
+<span class="nc" id="L247">                painter = painterResource(R.drawable.workouts_title),</span>
+<span class="nc" id="L248">                contentDescription = &quot;Messages&quot;,</span>
+<span class="nc" id="L249">                modifier = Modifier</span>
+<span class="nc" id="L250">                    .align(Alignment.BottomCenter)</span>
+<span class="nc" id="L251">                    .offset(y = (-8).dp)</span>
+            )
+<span class="nc" id="L253">        }</span>
+<span class="nc" id="L254">    }</span>
+<span class="nc bnc" id="L255" title="All 2 branches missed.">}</span>
+
+/**
+ * @suppress
+ */
+@Preview
+@Composable
+<span class="nc bnc" id="L262" title="All 6 branches missed.">fun PreviewMyWorkoutsTopCard() {</span>
+<span class="nc bnc" id="L263" title="All 2 branches missed.">    MyWorkoutsTopCard()</span>
+<span class="nc bnc" id="L264" title="All 2 branches missed.">}</span>
+
+/**
+ * Composable function that displays a button to add a workout.
+ * @param onClick The action to perform when the button is clicked.
+ * @param modifier The modifier to be applied to the button.
+ */
+@Composable
+fun AddWorkOutButton(
+<span class="nc bnc" id="L273" title="All 2 branches missed.">    onClick: () -&gt; Unit = {},</span>
+<span class="nc bnc" id="L274" title="All 2 branches missed.">    modifier: Modifier = Modifier</span>
+<span class="nc bnc" id="L275" title="All 18 branches missed.">) {</span>
+<span class="nc bnc" id="L276" title="All 2 branches missed.">    Button(</span>
+<span class="nc" id="L277">        onClick = onClick,</span>
+<span class="nc" id="L278">        shape = RoundedCornerShape(15.dp),</span>
+<span class="nc" id="L279">        contentPadding = PaddingValues(0.dp),</span>
+<span class="nc" id="L280">        colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),</span>
+<span class="nc" id="L281">        border = BorderStroke(2.dp, Color(0xFFF1BE48)),</span>
+<span class="nc" id="L282">        modifier = modifier</span>
+<span class="nc" id="L283">            .width(160.dp)</span>
+<span class="nc" id="L284">            .height(60.dp)</span>
+<span class="nc" id="L285">    ) {</span>
+<span class="nc bnc" id="L286" title="All 6 branches missed.">        Row(</span>
+<span class="nc" id="L287">            horizontalArrangement = Arrangement.SpaceBetween,</span>
+<span class="nc" id="L288">            verticalAlignment = Alignment.CenterVertically</span>
+        ) {
+<span class="nc" id="L290">            Icon(</span>
+<span class="nc" id="L291">                imageVector = Icons.Default.Add,</span>
+<span class="nc" id="L292">                contentDescription = &quot;Add Workout&quot;,</span>
+<span class="nc" id="L293">                tint = Color(LocalContext.current.resources.getColor(R.color.CyRed)),</span>
+<span class="nc" id="L294">                modifier = Modifier.size(24.dp)</span>
+            )
+
+<span class="nc" id="L297">            Spacer(modifier = Modifier.width(15.dp))</span>
+
+<span class="nc" id="L299">            Text(</span>
+<span class="nc" id="L300">                text = &quot;Add Workout&quot;,</span>
+<span class="nc" id="L301">                color = Color.Black,</span>
+<span class="nc" id="L302">                fontFamily = getCustomFontFamily(</span>
+<span class="nc" id="L303">                    &quot;Inter&quot;,</span>
+<span class="nc" id="L304">                    FontWeight.Bold,</span>
+<span class="nc" id="L305">                    FontStyle.Normal</span>
+                ),
+<span class="nc" id="L307">                fontWeight = FontWeight.Bold,</span>
+<span class="nc" id="L308">                fontSize = 13.sp</span>
+            )
+<span class="nc" id="L310">        }</span>
+<span class="nc" id="L311">    }</span>
+<span class="nc bnc" id="L312" title="All 2 branches missed.">}</span>
+
+/**
+ * @suppress
+ */
+@Preview
+@Composable
+<span class="nc bnc" id="L319" title="All 6 branches missed.">fun PreviewAddWorkOutButton() {</span>
+<span class="nc bnc" id="L320" title="All 2 branches missed.">    Surface {</span>
+<span class="nc bnc" id="L321" title="All 8 branches missed.">        AddWorkOutButton()</span>
+<span class="nc" id="L322">    }</span>
+<span class="nc bnc" id="L323" title="All 2 branches missed.">}</span>
+
+/**
+ * Composable function that displays a button to start a workout.
+ * @param onClick The action to perform when the button is clicked.
+ * @param modifier The modifier to be applied to the button.
+ */
+@Composable
+fun StartWorkoutButton(
+<span class="nc bnc" id="L332" title="All 2 branches missed.">    onClick: () -&gt; Unit = {},</span>
+<span class="nc bnc" id="L333" title="All 2 branches missed.">    modifier: Modifier = Modifier</span>
+<span class="nc bnc" id="L334" title="All 18 branches missed.">) {</span>
+<span class="nc bnc" id="L335" title="All 2 branches missed.">    Button(</span>
+<span class="nc" id="L336">        onClick = onClick,</span>
+<span class="nc" id="L337">        shape = RoundedCornerShape(15.dp),</span>
+<span class="nc" id="L338">        colors = ButtonDefaults.buttonColors(</span>
+<span class="nc" id="L339">            containerColor = Color(</span>
+<span class="nc" id="L340">                LocalContext.current.resources.getColor(</span>
+<span class="nc" id="L341">                    R.color.CyRed</span>
+                )
+            )
+        ),
+<span class="nc" id="L345">        modifier = modifier</span>
+<span class="nc" id="L346">            .width(160.dp)</span>
+<span class="nc" id="L347">            .height(60.dp)</span>
+<span class="nc" id="L348">    ) {</span>
+<span class="nc bnc" id="L349" title="All 8 branches missed.">        Text(</span>
+<span class="nc" id="L350">            text = &quot;Start Workout&quot;,</span>
+<span class="nc" id="L351">            color = Color.White,</span>
+<span class="nc" id="L352">            fontFamily = getCustomFontFamily(</span>
+<span class="nc" id="L353">                &quot;Inter&quot;,</span>
+<span class="nc" id="L354">                FontWeight.Bold,</span>
+<span class="nc" id="L355">                FontStyle.Normal</span>
+            ),
+<span class="nc" id="L357">            fontWeight = FontWeight.Bold,</span>
+<span class="nc" id="L358">            fontSize = 16.sp</span>
+<span class="nc" id="L359">        )</span>
+<span class="nc" id="L360">    }</span>
+<span class="nc bnc" id="L361" title="All 2 branches missed.">}</span>
+
+/**
+ * Composable function that displays a box with daily statistics.
+ * @param displayText The text to display.
+ * @param displayValue The value to display.
+ * @param modifier The modifier to be applied to the box.
+ */
+@Composable
+fun DailyStatisticBox(
+    displayText: String,
+    displayValue: Int,
+<span class="nc bnc" id="L373" title="All 2 branches missed.">    modifier: Modifier = Modifier</span>
+<span class="nc bnc" id="L374" title="All 24 branches missed.">) {</span>
+<span class="nc" id="L375">    val context = LocalContext.current</span>
+<span class="nc bnc" id="L376" title="All 2 branches missed.">    Surface(</span>
+<span class="nc" id="L377">        shape = RoundedCornerShape(20.dp),</span>
+<span class="nc" id="L378">        border = BorderStroke(</span>
+<span class="nc" id="L379">            width = 2.dp,</span>
+<span class="nc" id="L380">            brush = Brush.linearGradient(</span>
+<span class="nc" id="L381">                colors = listOf(</span>
+<span class="nc" id="L382">                    Color(context.resources.getColor(R.color.CyRed)),</span>
+<span class="nc" id="L383">                    Color(context.resources.getColor(R.color.CyYellow))</span>
+                )
+            )
+        ),
+<span class="nc" id="L387">        modifier = modifier.size(160.dp)</span>
+<span class="nc" id="L388">    ) {</span>
+<span class="nc bnc" id="L389" title="All 6 branches missed.">        Column(</span>
+<span class="nc" id="L390">            verticalArrangement = Arrangement.SpaceBetween,</span>
+<span class="nc" id="L391">            horizontalAlignment = Alignment.CenterHorizontally,</span>
+<span class="nc" id="L392">            modifier = modifier</span>
+<span class="nc" id="L393">                .padding(10.dp)</span>
+<span class="nc" id="L394">                .fillMaxWidth()</span>
+        ) {
+<span class="nc" id="L396">            Text(</span>
+<span class="nc" id="L397">                text = displayValue.toString(),</span>
+<span class="nc" id="L398">                color = Color(context.resources.getColor(R.color.CyRed)),</span>
+<span class="nc" id="L399">                fontFamily = getCustomFontFamily(</span>
+<span class="nc" id="L400">                    &quot;Inter&quot;,</span>
+<span class="nc" id="L401">                    FontWeight.Bold,</span>
+<span class="nc" id="L402">                    FontStyle.Normal</span>
+                ),
+<span class="nc" id="L404">                fontWeight = FontWeight.Bold,</span>
+<span class="nc" id="L405">                fontSize = 48.sp,</span>
+<span class="nc" id="L406">                modifier = Modifier.padding(top = 20.dp)</span>
+            )
+
+<span class="nc" id="L409">            Spacer(modifier = Modifier.height(10.dp))</span>
+
+<span class="nc" id="L411">            Text(</span>
+<span class="nc" id="L412">                text = displayText,</span>
+<span class="nc" id="L413">                color = Color.Black,</span>
+<span class="nc" id="L414">                fontFamily = getCustomFontFamily(</span>
+<span class="nc" id="L415">                    &quot;Inter&quot;,</span>
+<span class="nc" id="L416">                    FontWeight.Bold,</span>
+<span class="nc" id="L417">                    FontStyle.Normal</span>
+                ),
+<span class="nc" id="L419">                fontWeight = FontWeight.Bold,</span>
+<span class="nc" id="L420">                fontSize = 16.sp,</span>
+<span class="nc" id="L421">                modifier = modifier.padding(bottom = 4.dp)</span>
+            )
+<span class="nc" id="L423">        }</span>
+<span class="nc" id="L424">    }</span>
+<span class="nc bnc" id="L425" title="All 2 branches missed.">}</span>
+
+/**
+ * Composable function that displays a workout card.
+ * @param workout A WorkoutObject representing the workout details to be displayed.
+ */
+@Composable
+<span class="nc bnc" id="L432" title="All 10 branches missed.">fun WorkoutCard(workout: WorkoutObject) {</span>
+<span class="nc bnc" id="L433" title="All 2 branches missed.">    Surface(</span>
+<span class="nc" id="L434">        shape = RoundedCornerShape(10.dp),</span>
+<span class="nc" id="L435">        modifier = Modifier</span>
+<span class="nc" id="L436">            .height(52.dp)</span>
+<span class="nc" id="L437">            .fillMaxWidth()</span>
+<span class="nc" id="L438">    ) {</span>
+<span class="nc bnc" id="L439" title="All 6 branches missed.">        Row(</span>
+<span class="nc" id="L440">            verticalAlignment = Alignment.CenterVertically,</span>
+<span class="nc" id="L441">            horizontalArrangement = Arrangement.SpaceBetween,</span>
+        ) {
+<span class="nc" id="L443">            Column(</span>
+
+            ) {
+<span class="nc" id="L446">                Text(</span>
+<span class="nc" id="L447">                    text = workout.exerciseType,</span>
+<span class="nc" id="L448">                    color = Color.Black,</span>
+<span class="nc" id="L449">                    fontFamily = getCustomFontFamily(</span>
+<span class="nc" id="L450">                        &quot;Inter&quot;,</span>
+<span class="nc" id="L451">                        FontWeight.Bold,</span>
+<span class="nc" id="L452">                        FontStyle.Normal</span>
+                    ),
+<span class="nc" id="L454">                    fontWeight = FontWeight.Bold,</span>
+<span class="nc" id="L455">                    fontSize = 16.sp,</span>
+<span class="nc" id="L456">                    modifier = Modifier.padding(start = 20.dp)</span>
+                )
+<span class="nc" id="L458">                Spacer(modifier = Modifier.height(3.dp))</span>
+<span class="nc" id="L459">                Text(</span>
+<span class="nc" id="L460">                    text = workout.date,</span>
+<span class="nc" id="L461">                    color = Color.Black,</span>
+<span class="nc" id="L462">                    fontFamily = getCustomFontFamily(</span>
+<span class="nc" id="L463">                        &quot;Inter&quot;,</span>
+<span class="nc" id="L464">                        FontWeight.Normal,</span>
+<span class="nc" id="L465">                        FontStyle.Normal</span>
+                    ),
+<span class="nc" id="L467">                    fontWeight = FontWeight.Normal,</span>
+<span class="nc" id="L468">                    fontSize = 12.sp,</span>
+<span class="nc" id="L469">                    modifier = Modifier.padding(start = 20.dp)</span>
+                )
+<span class="nc" id="L471">            }</span>
+
+<span class="nc" id="L473">            Text(</span>
+<span class="nc" id="L474">                text = workout.duration,</span>
+<span class="nc" id="L475">                color = Color.Black,</span>
+<span class="nc" id="L476">                fontFamily = getCustomFontFamily(</span>
+<span class="nc" id="L477">                    &quot;Inter&quot;,</span>
+<span class="nc" id="L478">                    FontWeight.Bold,</span>
+<span class="nc" id="L479">                    FontStyle.Normal</span>
+                ),
+<span class="nc" id="L481">                fontWeight = FontWeight.Bold,</span>
+<span class="nc" id="L482">                fontSize = 12.sp,</span>
+<span class="nc" id="L483">                modifier = Modifier.padding(end = 20.dp)</span>
+            )
+
+<span class="nc" id="L486">            Text(</span>
+<span class="nc" id="L487">                text = workout.caloriesBurned,</span>
+<span class="nc" id="L488">                color = Color.Black,</span>
+<span class="nc" id="L489">                fontFamily = getCustomFontFamily(</span>
+<span class="nc" id="L490">                    &quot;Inter&quot;,</span>
+<span class="nc" id="L491">                    FontWeight.Bold,</span>
+<span class="nc" id="L492">                    FontStyle.Normal</span>
+                ),
+<span class="nc" id="L494">                fontWeight = FontWeight.Bold,</span>
+<span class="nc" id="L495">                fontSize = 12.sp,</span>
+<span class="nc" id="L496">                modifier = Modifier.padding(end = 20.dp)</span>
+            )
+
+<span class="nc" id="L499">        }</span>
+<span class="nc" id="L500">    }</span>
+<span class="nc bnc" id="L501" title="All 2 branches missed.">}</span>
+
+/**
+ * Composable function that displays a list of workouts using a LazyColumn.
+ * @param workoutList A list of WorkoutObject representing the workouts to be displayed.
+ */
+@Composable
+<span class="nc bnc" id="L508" title="All 10 branches missed.">fun WorkoutsLazyList(workoutList: List&lt;WorkoutObject&gt;) {</span>
+<span class="nc bnc" id="L509" title="All 2 branches missed.">    LazyColumn {</span>
+<span class="nc" id="L510">        items(workoutList.size) {</span>
+<span class="nc bnc" id="L511" title="All 6 branches missed.">            WorkoutCard(workoutList[it])</span>
+<span class="nc bnc" id="L512" title="All 2 branches missed.">            HorizontalDivider()</span>
+<span class="nc" id="L513">        }</span>
+<span class="nc" id="L514">    }</span>
+<span class="nc bnc" id="L515" title="All 2 branches missed.">}</span>
+
+/**
+ * @suppress
+ */
+@Preview
+@Composable
+<span class="nc bnc" id="L522" title="All 6 branches missed.">fun PreviewWorkoutCard() {</span>
+<span class="nc" id="L523">    val workout = WorkoutObject(&quot;Running&quot;, &quot;30&quot;, &quot;200&quot;, &quot;12-12-2021&quot;, 1)</span>
+<span class="nc bnc" id="L524" title="All 2 branches missed.">    WorkoutCard(workout)</span>
+<span class="nc bnc" id="L525" title="All 2 branches missed.">}</span>
+
+/**
+ * @suppress
+ */
+@Preview
+@Composable
+<span class="nc bnc" id="L532" title="All 6 branches missed.">fun PreviewMyWorkoutsPage() {</span>
+<span class="nc bnc" id="L533" title="All 2 branches missed.">    Surface(</span>
+<span class="nc" id="L534">        modifier = Modifier.fillMaxSize()</span>
+<span class="nc" id="L535">    ) {</span>
+<span class="nc bnc" id="L536" title="All 6 branches missed.">        Column(</span>
+<span class="nc" id="L537">            verticalArrangement = Arrangement.Top,</span>
+<span class="nc" id="L538">            modifier = Modifier.fillMaxSize()</span>
+
+        ) {
+
+<span class="nc" id="L542">            MyWorkoutsTopCard()</span>
+
+<span class="nc" id="L544">            Spacer(modifier = Modifier.height(20.dp))</span>
+
+<span class="nc" id="L546">            Row(</span>
+<span class="nc" id="L547">                horizontalArrangement = Arrangement.SpaceBetween,</span>
+<span class="nc" id="L548">                modifier = Modifier</span>
+<span class="nc" id="L549">                    .fillMaxWidth()</span>
+<span class="nc" id="L550">                    .padding(horizontal = 20.dp)</span>
+            ) {
+<span class="nc" id="L552">                DailyStatisticBox(</span>
+<span class="nc" id="L553">                    displayText = &quot;Calories Burned&quot;,</span>
+<span class="nc" id="L554">                    displayValue = 100,</span>
+                )
+<span class="nc" id="L556">                DailyStatisticBox(</span>
+<span class="nc" id="L557">                    displayText = &quot;Workout Time&quot;,</span>
+<span class="nc" id="L558">                    displayValue = 120,</span>
+                )
+<span class="nc" id="L560">            }</span>
+
+
+<span class="nc" id="L563">            Spacer(modifier = Modifier.height(50.dp))</span>
+
+
+<span class="nc" id="L566">            Row(</span>
+<span class="nc" id="L567">                horizontalArrangement = Arrangement.SpaceBetween,</span>
+<span class="nc" id="L568">                verticalAlignment = Alignment.Bottom,</span>
+<span class="nc" id="L569">                modifier = Modifier</span>
+<span class="nc" id="L570">                    .fillMaxWidth()</span>
+<span class="nc" id="L571">                    .padding(horizontal = 20.dp)</span>
+            ) {
+<span class="nc" id="L573">                StartWorkoutButton()</span>
+<span class="nc" id="L574">                AddWorkOutButton()</span>
+<span class="nc" id="L575">            }</span>
+
+<span class="nc" id="L577">            Spacer(modifier = Modifier.height(40.dp))</span>
+
+<span class="nc" id="L579">            WorkoutsLazyList(</span>
+<span class="nc" id="L580">                workoutList = listOf(</span>
+<span class="nc" id="L581">                    WorkoutObject(&quot;Running&quot;, &quot;30&quot;, &quot;200&quot;, &quot;12-12-2021&quot;, 1),</span>
+<span class="nc" id="L582">                    WorkoutObject(&quot;Cycling&quot;, &quot;45&quot;, &quot;300&quot;, &quot;12-12-2021&quot;, 2),</span>
+<span class="nc" id="L583">                    WorkoutObject(&quot;Swimming&quot;, &quot;60&quot;, &quot;400&quot;, &quot;12-12-2021&quot;, 3),</span>
+<span class="nc" id="L584">                    WorkoutObject(&quot;Running&quot;, &quot;30&quot;, &quot;200&quot;, &quot;12-12-2021&quot;, 4),</span>
+<span class="nc" id="L585">                    WorkoutObject(&quot;Cycling&quot;, &quot;45&quot;, &quot;300&quot;, &quot;12-12-2021&quot;, 5),</span>
+<span class="nc" id="L586">                    WorkoutObject(&quot;Swimming&quot;, &quot;60&quot;, &quot;400&quot;, &quot;12-12-2021&quot;, 6),</span>
+<span class="nc" id="L587">                    WorkoutObject(&quot;Running&quot;, &quot;30&quot;, &quot;200&quot;, &quot;12-12-2021&quot;, 7),</span>
+<span class="nc" id="L588">                    WorkoutObject(&quot;Cycling&quot;, &quot;45&quot;, &quot;300&quot;, &quot;12-12-2021&quot;, 8),</span>
+<span class="nc" id="L589">                    WorkoutObject(&quot;Swimming&quot;, &quot;60&quot;, &quot;400&quot;, &quot;12-12-2021&quot;, 9),</span>
+<span class="nc" id="L590">                    WorkoutObject(&quot;Running&quot;, &quot;30&quot;, &quot;200&quot;, &quot;12-12-2021&quot;, 10),</span>
+<span class="nc" id="L591">                    WorkoutObject(&quot;Cycling&quot;, &quot;45&quot;, &quot;300&quot;, &quot;12-12-2021&quot;, 11),</span>
+<span class="nc" id="L592">                    WorkoutObject(&quot;Swimming&quot;, &quot;60&quot;, &quot;400&quot;, &quot;12-12-2021&quot;, 12),</span>
+<span class="nc" id="L593">                    WorkoutObject(&quot;Running&quot;, &quot;30&quot;, &quot;200&quot;, &quot;12-12-2021&quot;, 13),</span>
+<span class="nc" id="L594">                    WorkoutObject(&quot;Cycling&quot;, &quot;45&quot;, &quot;300&quot;, &quot;12-12-2021&quot;, 14),</span>
+<span class="nc" id="L595">                    WorkoutObject(&quot;Swimming&quot;, &quot;60&quot;, &quot;400&quot;, &quot;12-12-2021&quot;, 15),</span>
+<span class="nc" id="L596">                    WorkoutObject(&quot;Running&quot;, &quot;30&quot;, &quot;200&quot;, &quot;12-12-2021&quot;, 16),</span>
+<span class="nc" id="L597">                    WorkoutObject(&quot;Cycling&quot;, &quot;45&quot;, &quot;300&quot;, &quot;12-12-2021&quot;, 17),</span>
+<span class="nc" id="L598">                    WorkoutObject(&quot;Swimming&quot;, &quot;60&quot;, &quot;400&quot;, &quot;12-12-2021&quot;, 18),</span>
+<span class="nc" id="L599">                    WorkoutObject(&quot;Running&quot;, &quot;30&quot;, &quot;200&quot;, &quot;12-12-2021&quot;, 19),</span>
+<span class="nc" id="L600">                    WorkoutObject(&quot;Cycling&quot;, &quot;45&quot;, &quot;300&quot;, &quot;12-12-2021&quot;, 20)</span>
+                )
+            )
+
+<span class="nc" id="L604">        }</span>
+<span class="nc" id="L605">    }</span>
+<span class="nc bnc" id="L606" title="All 2 branches missed.">}</span>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span>Generated by the Android Gradle plugin 8.7.1</div></body></html>

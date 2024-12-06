@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>WorkoutObject.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.CyTrack.Workouts</a> &gt; <span class="el_source">WorkoutObject.java</span></div><h1>WorkoutObject.java</h1><pre class="source lang-java linenums">package com.example.CyTrack.Workouts;
+
+/**
+ * Represents a workout object with details about the exercise.
+ */
+public class WorkoutObject {
+    /**
+     * The type of exercise.
+     */
+    String exerciseType;
+
+    /**
+     * The duration of the workout.
+     */
+    String duration;
+
+    /**
+     * The calories burned during the workout.
+     */
+    String caloriesBurned;
+
+    /**
+     * The date of the workout.
+     */
+    String date;
+
+    /**
+     * The unique ID of the workout.
+     */
+    int workoutID;
+
+    /**
+     * Constructs a new WorkoutObject.
+     *
+     * @param exerciseType   the type of exercise
+     * @param duration       the duration of the workout
+     * @param caloriesBurned the calories burned during the workout
+     * @param date           the date of the workout
+     * @param workoutID      the unique ID of the workout
+     */
+<span class="nc" id="L41">    WorkoutObject(String exerciseType, String duration, String caloriesBurned, String date, int workoutID) {</span>
+<span class="nc" id="L42">        this.exerciseType = exerciseType;</span>
+<span class="nc" id="L43">        this.duration = duration;</span>
+<span class="nc" id="L44">        this.caloriesBurned = caloriesBurned;</span>
+<span class="nc" id="L45">        this.date = date;</span>
+<span class="nc" id="L46">        this.workoutID = workoutID;</span>
+<span class="nc" id="L47">    }</span>
+
+    /**
+     * Gets the type of exercise.
+     *
+     * @return the type of exercise
+     */
+    public String getExerciseType() {
+<span class="nc" id="L55">        return exerciseType;</span>
+    }
+
+    /**
+     * Sets the type of exercise.
+     *
+     * @param exerciseType the type of exercise
+     */
+    public void setExerciseType(String exerciseType) {
+<span class="nc" id="L64">        this.exerciseType = exerciseType;</span>
+<span class="nc" id="L65">    }</span>
+
+    /**
+     * Gets the duration of the workout.
+     *
+     * @return the duration of the workout
+     */
+    public String getDuration() {
+<span class="nc" id="L73">        return duration;</span>
+    }
+
+    /**
+     * Sets the duration of the workout.
+     *
+     * @param duration the duration of the workout
+     */
+    public void setDuration(String duration) {
+<span class="nc" id="L82">        this.duration = duration;</span>
+<span class="nc" id="L83">    }</span>
+
+    /**
+     * Gets the calories burned during the workout.
+     *
+     * @return the calories burned during the workout
+     */
+    public String getCaloriesBurned() {
+<span class="nc" id="L91">        return caloriesBurned;</span>
+    }
+
+    /**
+     * Sets the calories burned during the workout.
+     *
+     * @param caloriesBurned the calories burned during the workout
+     */
+    public void setCaloriesBurned(String caloriesBurned) {
+<span class="nc" id="L100">        this.caloriesBurned = caloriesBurned;</span>
+<span class="nc" id="L101">    }</span>
+
+    /**
+     * Gets the date of the workout.
+     *
+     * @return the date of the workout
+     */
+    public String getDate() {
+<span class="nc" id="L109">        return date;</span>
+    }
+
+    /**
+     * Sets the date of the workout.
+     *
+     * @param date the date of the workout
+     */
+    public void setDate(String date) {
+<span class="nc" id="L118">        this.date = date;</span>
+<span class="nc" id="L119">    }</span>
+
+    /**
+     * Gets the unique ID of the workout.
+     *
+     * @return the unique ID of the workout
+     */
+    public int getWorkoutID() {
+<span class="nc" id="L127">        return workoutID;</span>
+    }
+
+    /**
+     * Sets the unique ID of the workout.
+     *
+     * @param workoutID the unique ID of the workout
+     */
+    public void setWorkoutID(int workoutID) {
+<span class="nc" id="L136">        this.workoutID = workoutID;</span>
+<span class="nc" id="L137">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span>Generated by the Android Gradle plugin 8.7.1</div></body></html>

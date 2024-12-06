@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>WorkoutsRecyclerViewAdapter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.CyTrack.Workouts</a> &gt; <span class="el_source">WorkoutsRecyclerViewAdapter.java</span></div><h1>WorkoutsRecyclerViewAdapter.java</h1><pre class="source lang-java linenums">package com.example.CyTrack.Workouts;
+
+import android.content.Context;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.CyTrack.R;
+
+import java.util.ArrayList;
+
+/**
+ * Adapter class for managing and displaying workout items in a RecyclerView.
+ */
+public class WorkoutsRecyclerViewAdapter extends RecyclerView.Adapter&lt;WorkoutsRecyclerViewAdapter.ViewHolder&gt; {
+
+    /**
+     * Interface for handling item clicks in the RecyclerView.
+     */
+    private final WorkoutRecyclerInterface workoutRecyclerInterface;
+
+    /**
+     * The context in which the adapter is being used.
+     */
+    private final Context context;
+
+    /**
+     * The list of workout objects to be displayed.
+     */
+    private final ArrayList&lt;WorkoutObject&gt; workoutList;
+
+    /**
+     * Constructor for WorkoutsRecyclerViewAdapter.
+     *
+     * @param context                  The context in which the adapter is being used.
+     * @param workoutList              The list of workout objects to be displayed.
+     * @param workoutRecyclerInterface The interface for handling item clicks.
+     */
+<span class="nc" id="L43">    public WorkoutsRecyclerViewAdapter(Context context, ArrayList&lt;WorkoutObject&gt; workoutList, WorkoutRecyclerInterface workoutRecyclerInterface) {</span>
+<span class="nc" id="L44">        this.context = context;</span>
+<span class="nc" id="L45">        this.workoutList = workoutList;</span>
+<span class="nc" id="L46">        this.workoutRecyclerInterface = workoutRecyclerInterface;</span>
+<span class="nc" id="L47">    }</span>
+
+    /**
+     * Called when RecyclerView needs a new ViewHolder of the given type to represent an item.
+     *
+     * @param parent   The ViewGroup into which the new View will be added after it is bound to an adapter position.
+     * @param viewType The view type of the new View.
+     * @return A new ViewHolder that holds a View of the given view type.
+     */
+    @NonNull
+    @Override
+    public WorkoutsRecyclerViewAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+<span class="nc" id="L59">        LayoutInflater inflater = LayoutInflater.from(context);</span>
+<span class="nc" id="L60">        View view = inflater.inflate(R.layout.workouts_recycle_layout, parent, false);</span>
+<span class="nc" id="L61">        return new WorkoutsRecyclerViewAdapter.ViewHolder(view, workoutRecyclerInterface);</span>
+    }
+
+    /**
+     * Called by RecyclerView to display the data at the specified position.
+     *
+     * @param holder   The ViewHolder which should be updated to represent the contents of the item at the given position.
+     * @param position The position of the item within the adapter's data set.
+     */
+    @Override
+    public void onBindViewHolder(@NonNull WorkoutsRecyclerViewAdapter.ViewHolder holder, int position) {
+<span class="nc" id="L72">        holder.exerciseType.setText(workoutList.get(position).getExerciseType());</span>
+<span class="nc" id="L73">        holder.duration.setText(workoutList.get(position).getDuration() + &quot;m&quot;);</span>
+<span class="nc" id="L74">        holder.caloriesBurned.setText(&quot;calories burned: &quot; + workoutList.get(position).getCaloriesBurned());</span>
+<span class="nc" id="L75">        holder.time.setText(workoutList.get(position).getDate());</span>
+<span class="nc" id="L76">    }</span>
+
+    /**
+     * Returns the total number of items in the data set held by the adapter.
+     *
+     * @return The total number of items in this adapter.
+     */
+    @Override
+    public int getItemCount() {
+<span class="nc" id="L85">        return workoutList.size();</span>
+    }
+
+    /**
+     * ViewHolder class for holding and recycling views as they are scrolled off screen.
+     */
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+
+        TextView exerciseType, duration, caloriesBurned, time;
+
+        /**
+         * Constructor for ViewHolder.
+         *
+         * @param itemView                 The view of the item.
+         * @param workoutRecyclerInterface The interface for handling item clicks.
+         */
+        public ViewHolder(@NonNull View itemView, WorkoutRecyclerInterface workoutRecyclerInterface) {
+<span class="nc" id="L102">            super(itemView);</span>
+
+<span class="nc" id="L104">            exerciseType = itemView.findViewById(R.id.exerciseType);</span>
+<span class="nc" id="L105">            duration = itemView.findViewById(R.id.duration);</span>
+<span class="nc" id="L106">            caloriesBurned = itemView.findViewById(R.id.caloriesBurned);</span>
+<span class="nc" id="L107">            time = itemView.findViewById(R.id.time);</span>
+
+<span class="nc" id="L109">            itemView.setOnClickListener(v -&gt; {</span>
+<span class="nc bnc" id="L110" title="All 2 branches missed.">                if (workoutRecyclerInterface != null) {</span>
+<span class="nc" id="L111">                    int position = getAdapterPosition();</span>
+<span class="nc bnc" id="L112" title="All 2 branches missed.">                    if (position != RecyclerView.NO_POSITION) {</span>
+<span class="nc" id="L113">                        workoutRecyclerInterface.onWorkoutClick(position);</span>
+                    }
+                }
+<span class="nc" id="L116">            });</span>
+<span class="nc" id="L117">        }</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span>Generated by the Android Gradle plugin 8.7.1</div></body></html>

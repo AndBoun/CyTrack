@@ -1,0 +1,675 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MyProfile.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.CyTrack.Social</a> &gt; <span class="el_source">MyProfile.kt</span></div><h1>MyProfile.kt</h1><pre class="source lang-java linenums">package com.example.CyTrack.Social
+
+import android.app.Activity
+import android.content.Intent
+import android.os.Bundle
+import android.provider.ContactsContract.Profile
+import android.widget.Toast
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Badge
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterHorizontally
+import androidx.compose.ui.Alignment.Companion.CenterVertically
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.android.volley.toolbox.JsonObjectRequest
+import com.example.CyTrack.R
+import com.example.CyTrack.Utilities.ComposeUtils.Companion.getCustomFontFamily
+import com.example.CyTrack.Utilities.User
+import com.example.CyTrack.Utilities.StatusBarUtil
+import com.example.CyTrack.Utilities.VolleySingleton
+import com.android.volley.Request
+import com.example.CyTrack.Social.Friends.Friend
+import com.example.CyTrack.Social.Friends.ListProfileCard
+import com.example.CyTrack.Social.Friends.MyFriends
+import com.example.CyTrack.Social.Messaging.MyMessages
+import com.example.CyTrack.Badges.BadgesActivity
+import com.example.CyTrack.Utilities.NetworkUtils
+import com.example.CyTrack.Utilities.UrlHolder
+import org.json.JSONException
+import org.json.JSONObject
+
+/**
+ * Activity to display the user's profile.
+ */
+<span class="nc" id="L68">class MyProfile : ComponentActivity() {</span>
+
+    /**
+     * The user whose profile is being displayed.
+     */
+    private lateinit var user: User
+
+    /**
+     * A list of friend requests for the user.
+     */
+<span class="nc" id="L78">    private var friendRequests: MutableList&lt;Friend&gt; = mutableListOf()</span>
+
+    /**
+     * The base URL for network requests.
+     */
+<span class="nc" id="L83">    private val URL: String = UrlHolder.URL</span>
+
+    /**
+     * Called when the activity is starting. This is where most initialization should go.
+     * @param savedInstanceState If the activity is being re-initialized after previously being shut down then this Bundle contains the data it most recently supplied.
+     */
+    override fun onCreate(savedInstanceState: Bundle?) {
+<span class="nc" id="L90">        super.onCreate(savedInstanceState)</span>
+<span class="nc" id="L91">        setContent {</span>
+<span class="nc bnc" id="L92" title="All 6 branches missed.">            user = intent.getSerializableExtra(&quot;user&quot;) as User</span>
+<span class="nc" id="L93">            friendRequests = remember { mutableStateListOf() }</span>
+<span class="nc" id="L94">            getFriendRequests()</span>
+
+<span class="nc" id="L96">            Column {</span>
+<span class="nc bnc" id="L97" title="All 4 branches missed.">                ProfileScreen(user.firstName, user.username, &quot;temp&quot;,</span>
+<span class="nc" id="L98">                    onClickMyFriends = {</span>
+<span class="nc" id="L99">                        switchToMyFriends()</span>
+<span class="nc" id="L100">                    },</span>
+<span class="nc" id="L101">                    onClickMyMessages = {</span>
+<span class="nc" id="L102">                        switchToMyMessages()</span>
+<span class="nc" id="L103">                    },</span>
+<span class="nc" id="L104">                    onClickMyBadges = {</span>
+<span class="nc" id="L105">                        switchToMyBadges()</span>
+<span class="nc" id="L106">                    }</span>
+                )
+
+<span class="nc" id="L109">                Spacer(modifier = Modifier.height(20.dp))</span>
+
+<span class="nc" id="L111">                FriendRequestCardLazyList(friendRequests, onAccept = {</span>
+<span class="nc" id="L112">                    acceptFriendRequest(it)</span>
+<span class="nc" id="L113">                }, onDecline = {</span>
+<span class="nc" id="L114">                    declineFriendRequest(it)</span>
+<span class="nc" id="L115">                })</span>
+<span class="nc" id="L116">            }</span>
+<span class="nc" id="L117">        }</span>
+
+<span class="nc" id="L119">        StatusBarUtil.setStatusBarColor(this, R.color.CyRed)</span>
+<span class="nc" id="L120">    }</span>
+
+    /**
+     * Switches to the MyFriends activity.
+     */
+    private fun switchToMyFriends() {
+<span class="nc" id="L126">        val intent = Intent(this, MyFriends::class.java).apply {</span>
+<span class="nc bnc" id="L127" title="All 2 branches missed.">            putExtra(&quot;user&quot;, user)</span>
+<span class="nc" id="L128">        }</span>
+<span class="nc" id="L129">        startActivity(intent)</span>
+<span class="nc" id="L130">    }</span>
+
+    /**
+     * Switches to the MyMessages activity.
+     */
+    private fun switchToMyMessages() {
+<span class="nc" id="L136">        val intent = Intent(this, MyMessages::class.java).apply {</span>
+<span class="nc bnc" id="L137" title="All 2 branches missed.">            putExtra(&quot;user&quot;, user)</span>
+<span class="nc" id="L138">        }</span>
+<span class="nc" id="L139">        startActivity(intent)</span>
+<span class="nc" id="L140">    }</span>
+
+    /**
+     * Switches to the BadgesActivity.
+     */
+    private fun switchToMyBadges() {
+<span class="nc" id="L146">        val intent = Intent(this, BadgesActivity::class.java).apply {</span>
+<span class="nc bnc" id="L147" title="All 2 branches missed.">            putExtra(&quot;user&quot;, user)</span>
+<span class="nc" id="L148">        }</span>
+<span class="nc" id="L149">        startActivity(intent)</span>
+<span class="nc" id="L150">    }</span>
+
+    /**
+     * Retrieves the list of friend requests for the user.
+     */
+    private fun getFriendRequests() {
+<span class="nc bnc" id="L156" title="All 2 branches missed.">        val getURL = &quot;${URL}/${user.id}/request/incoming&quot;</span>
+<span class="nc" id="L157">        SocialUtils.getListOfFriends(this, friendRequests, getURL, &quot;friendRequests&quot;,</span>
+            onComplete = {
+<span class="nc" id="L159">                friendRequests.sortBy { it.firstName }</span>
+<span class="nc" id="L160">            }</span>
+        )
+<span class="nc" id="L162">    }</span>
+
+    /**
+     * Accepts a friend request.
+     * @param friend The friend request to accept.
+     */
+    private fun acceptFriendRequest(friend: Friend) {
+<span class="nc bnc" id="L169" title="All 2 branches missed.">        val acceptURL = &quot;${URL}/${user.id}/request&quot;</span>
+<span class="nc" id="L170">        val inputs = JSONObject().apply {</span>
+<span class="nc" id="L171">            put(&quot;friendRequestID&quot;, friend.friendID)</span>
+<span class="nc" id="L172">        }</span>
+
+<span class="nc" id="L174">        val jsonObjectRequest = JsonObjectRequest(</span>
+<span class="nc" id="L175">            Request.Method.PUT, acceptURL, inputs,</span>
+            { response -&gt;
+<span class="nc" id="L177">                try {</span>
+<span class="nc" id="L178">                    val message = response.getString(&quot;message&quot;)</span>
+<span class="nc" id="L179">                    friendRequests.remove(friend)</span>
+<span class="nc" id="L180">                    Toast.makeText(this, message, Toast.LENGTH_SHORT).show()</span>
+<span class="nc" id="L181">                } catch (e: JSONException) {</span>
+<span class="nc" id="L182">                    e.printStackTrace()</span>
+                }
+<span class="nc" id="L184">            },</span>
+            { error -&gt;
+<span class="nc" id="L186">                Toast.makeText(this, NetworkUtils.errorResponse(error), Toast.LENGTH_SHORT).show()</span>
+<span class="nc" id="L187">            }</span>
+        )
+<span class="nc" id="L189">        VolleySingleton.getInstance(this).addToRequestQueue(jsonObjectRequest)</span>
+<span class="nc" id="L190">    }</span>
+
+    /**
+     * Declines a friend request.
+     * @param friend The friend request to decline.
+     */
+    private fun declineFriendRequest(friend: Friend) {
+<span class="nc bnc" id="L197" title="All 2 branches missed.">        val declineURL = &quot;${URL}/${user.id}/request/${friend.friendID}&quot;</span>
+
+<span class="nc" id="L199">        val jsonObjectRequest = JsonObjectRequest(</span>
+<span class="nc" id="L200">            Request.Method.DELETE, declineURL, null,</span>
+            { response -&gt;
+<span class="nc" id="L202">                try {</span>
+<span class="nc" id="L203">                    val message = response.getString(&quot;message&quot;)</span>
+<span class="nc" id="L204">                    friendRequests.remove(friend)</span>
+<span class="nc" id="L205">                    Toast.makeText(this, message, Toast.LENGTH_SHORT).show()</span>
+<span class="nc" id="L206">                } catch (e: JSONException) {</span>
+<span class="nc" id="L207">                    e.printStackTrace()</span>
+                }
+<span class="nc" id="L209">            },</span>
+            { error -&gt;
+<span class="nc" id="L211">                Toast.makeText(this, NetworkUtils.errorResponse(error), Toast.LENGTH_SHORT).show()</span>
+<span class="nc" id="L212">            }</span>
+        )
+<span class="nc" id="L214">        VolleySingleton.getInstance(this).addToRequestQueue(jsonObjectRequest)</span>
+<span class="nc" id="L215">    }</span>
+
+}
+
+
+/**
+ * Composable function to display the main profile card.
+ *
+ * @param name The name of the user.
+ * @param userName The username of the user.
+ * @param imageUrl The URL of the user's profile image.
+ * @param modifier The modifier to be applied to the layout.
+ */
+@Composable
+fun MainProfileCard(
+    name: String,
+    userName: String,
+    imageUrl: String,
+<span class="nc bnc" id="L233" title="All 2 branches missed.">    modifier: Modifier = Modifier</span>
+<span class="nc bnc" id="L234" title="All 24 branches missed.">) {</span>
+<span class="nc" id="L235">    Row(</span>
+<span class="nc" id="L236">        verticalAlignment = CenterVertically,</span>
+<span class="nc" id="L237">        modifier = modifier.fillMaxWidth()</span>
+    ) {
+<span class="nc" id="L239">        Box(</span>
+<span class="nc" id="L240">            modifier = Modifier</span>
+<span class="nc" id="L241">                .fillMaxWidth(0.5f), // Take up half the screen width</span>
+<span class="nc" id="L242">            contentAlignment = Alignment.Center // Center the content within the Box</span>
+        ) {
+<span class="nc" id="L244">            Image(</span>
+//            painter = rememberAsyncImagePainter(imageUrl),
+<span class="nc" id="L246">                painter = painterResource(R.drawable.general_generic_avatar),</span>
+<span class="nc" id="L247">                contentDescription = &quot;Profile picture&quot;,</span>
+<span class="nc" id="L248">                modifier = Modifier</span>
+<span class="nc" id="L249">                    .size(120.dp)</span>
+<span class="nc" id="L250">                    .clip(CircleShape)</span>
+            )
+<span class="nc" id="L252">        }</span>
+
+<span class="nc" id="L254">        Box(</span>
+<span class="nc" id="L255">            modifier = Modifier</span>
+<span class="nc" id="L256">                .fillMaxWidth(),</span>
+<span class="nc" id="L257">            contentAlignment = Alignment.Center // Center the content within the Box</span>
+        ) {
+<span class="nc" id="L259">            Column(</span>
+<span class="nc" id="L260">                horizontalAlignment = CenterHorizontally,</span>
+            ) {
+<span class="nc" id="L262">                Text(</span>
+<span class="nc" id="L263">                    text = name,</span>
+<span class="nc" id="L264">                    color = Color.White,</span>
+<span class="nc" id="L265">                    fontWeight = FontWeight.Bold,</span>
+<span class="nc" id="L266">                    fontSize = 32.sp,</span>
+<span class="nc" id="L267">                    fontFamily = getCustomFontFamily(&quot;Inter&quot;, FontWeight.Bold, FontStyle.Normal)</span>
+                )
+
+<span class="nc" id="L270">                Spacer(modifier = Modifier.height(7.dp))</span>
+
+<span class="nc" id="L272">                Text(</span>
+<span class="nc" id="L273">                    text = &quot;#$userName&quot;,</span>
+<span class="nc" id="L274">                    color = Color(0xFFF1BE48),</span>
+<span class="nc" id="L275">                    fontWeight = FontWeight.Medium,</span>
+<span class="nc" id="L276">                    fontStyle = FontStyle.Italic,</span>
+<span class="nc" id="L277">                    fontFamily = getCustomFontFamily(&quot;Inter&quot;, FontWeight.Medium, FontStyle.Normal)</span>
+                )
+<span class="nc" id="L279">            }</span>
+<span class="nc" id="L280">        }</span>
+
+<span class="nc" id="L282">    }</span>
+<span class="nc bnc" id="L283" title="All 2 branches missed.">}</span>
+
+/**
+ * Composable function to display the Friends button.
+ *
+ * @param onClick The callback to be invoked when the button is clicked.
+ * @param modifier The modifier to be applied to the layout.
+ */
+@Composable
+fun FriendsButton(
+    onClick: () -&gt; Unit,
+<span class="nc bnc" id="L294" title="All 2 branches missed.">    modifier: Modifier = Modifier</span>
+<span class="nc bnc" id="L295" title="All 18 branches missed.">) {</span>
+<span class="nc" id="L296">    Column(</span>
+<span class="nc" id="L297">        horizontalAlignment = CenterHorizontally,</span>
+<span class="nc" id="L298">        modifier = modifier.clickable(onClick = onClick)</span>
+    ) {
+<span class="nc" id="L300">        Image(</span>
+<span class="nc" id="L301">            painter = painterResource(R.drawable.general_friends_icon),</span>
+<span class="nc" id="L302">            contentDescription = &quot;Friends icon&quot;,</span>
+<span class="nc" id="L303">            modifier = Modifier.size(24.dp)</span>
+        )
+
+<span class="nc" id="L306">        Spacer(modifier = Modifier.height(3.dp))</span>
+
+<span class="nc" id="L308">        Text(</span>
+<span class="nc" id="L309">            text = &quot;Friends&quot;,</span>
+<span class="nc" id="L310">            color = Color.White,</span>
+<span class="nc" id="L311">            fontWeight = FontWeight.SemiBold,</span>
+<span class="nc" id="L312">            fontSize = 13.sp,</span>
+<span class="nc" id="L313">            fontFamily = getCustomFontFamily(&quot;Inter&quot;, FontWeight.SemiBold, FontStyle.Normal)</span>
+        )
+<span class="nc" id="L315">    }</span>
+<span class="nc bnc" id="L316" title="All 2 branches missed.">}</span>
+
+/**
+ * Composable function to display the Message button.
+ *
+ * @param onClick The callback to be invoked when the button is clicked.
+ * @param modifier The modifier to be applied to the layout.
+ */
+@Composable
+fun MessageButton(
+    onClick: () -&gt; Unit,
+<span class="nc bnc" id="L327" title="All 2 branches missed.">    modifier: Modifier = Modifier</span>
+<span class="nc bnc" id="L328" title="All 18 branches missed.">) {</span>
+<span class="nc" id="L329">    Column(</span>
+<span class="nc" id="L330">        horizontalAlignment = CenterHorizontally,</span>
+<span class="nc" id="L331">        modifier = modifier.clickable(onClick = onClick)</span>
+    ) {
+<span class="nc" id="L333">        Image(</span>
+<span class="nc" id="L334">            painter = painterResource(R.drawable.general_message_icon),</span>
+<span class="nc" id="L335">            contentDescription = &quot;Message icon&quot;,</span>
+<span class="nc" id="L336">            modifier = Modifier.size(24.dp)</span>
+        )
+
+<span class="nc" id="L339">        Spacer(modifier = Modifier.height(3.dp))</span>
+
+<span class="nc" id="L341">        Text(</span>
+<span class="nc" id="L342">            text = &quot;Message&quot;,</span>
+<span class="nc" id="L343">            color = Color.White,</span>
+<span class="nc" id="L344">            fontWeight = FontWeight.SemiBold,</span>
+<span class="nc" id="L345">            fontSize = 13.sp,</span>
+<span class="nc" id="L346">            fontFamily = getCustomFontFamily(&quot;Inter&quot;, FontWeight.SemiBold, FontStyle.Normal)</span>
+        )
+<span class="nc" id="L348">    }</span>
+<span class="nc bnc" id="L349" title="All 2 branches missed.">}</span>
+
+/**
+ * Composable function to display the Badges button.
+ *
+ * @param onClick The callback to be invoked when the button is clicked.
+ * @param modifier The modifier to be applied to the layout.
+ */
+@Composable
+fun BadgesButton(
+    onClick: () -&gt; Unit,
+<span class="nc bnc" id="L360" title="All 2 branches missed.">    modifier: Modifier = Modifier</span>
+<span class="nc bnc" id="L361" title="All 18 branches missed.">) {</span>
+<span class="nc" id="L362">    Column(</span>
+<span class="nc" id="L363">        horizontalAlignment = CenterHorizontally,</span>
+<span class="nc" id="L364">        modifier = modifier.clickable(onClick = onClick)</span>
+    ) {
+<span class="nc" id="L366">        Image(</span>
+<span class="nc" id="L367">            painter = painterResource(R.drawable.badge_button),</span>
+<span class="nc" id="L368">            contentDescription = &quot;Badge icon&quot;,</span>
+<span class="nc" id="L369">            modifier = Modifier.size(30.dp)</span>
+        )
+
+<span class="nc" id="L372">        Text(</span>
+<span class="nc" id="L373">            text = &quot;Badges&quot;,</span>
+<span class="nc" id="L374">            color = Color.White,</span>
+<span class="nc" id="L375">            fontWeight = FontWeight.SemiBold,</span>
+<span class="nc" id="L376">            fontSize = 13.sp,</span>
+<span class="nc" id="L377">            fontFamily = getCustomFontFamily(&quot;Inter&quot;, FontWeight.SemiBold, FontStyle.Normal)</span>
+        )
+<span class="nc" id="L379">    }</span>
+<span class="nc bnc" id="L380" title="All 2 branches missed.">}</span>
+
+/**
+ * Composable function to display the profile screen.
+ *
+ * @param name The name of the user.
+ * @param userName The username of the user.
+ * @param imageUrl The URL of the user's profile image.
+ * @param modifier The modifier to be applied to the layout.
+ * @param onClickMyFriends The callback to be invoked when the Friends button is clicked.
+ * @param onClickMyMessages The callback to be invoked when the Message button is clicked.
+ * @param onClickMyBadges The callback to be invoked when the Badges button is clicked.
+ */
+@Composable
+fun ProfileScreen(
+    name: String,
+    userName: String,
+    imageUrl: String,
+<span class="nc bnc" id="L398" title="All 2 branches missed.">    modifier: Modifier = Modifier,</span>
+<span class="nc bnc" id="L399" title="All 2 branches missed.">    onClickMyFriends: () -&gt; Unit = {},</span>
+<span class="nc bnc" id="L400" title="All 2 branches missed.">    onClickMyMessages: () -&gt; Unit = {},</span>
+<span class="nc bnc" id="L401" title="All 2 branches missed.">    onClickMyBadges: () -&gt; Unit = {}</span>
+<span class="nc bnc" id="L402" title="All 48 branches missed.">) {</span>
+<span class="nc" id="L403">    val context = LocalContext.current</span>
+
+<span class="nc bnc" id="L405" title="All 2 branches missed.">    Surface(</span>
+<span class="nc" id="L406">        color = Color(0xFFC8102E),</span>
+<span class="nc" id="L407">        modifier = modifier</span>
+<span class="nc" id="L408">    ) {</span>
+<span class="nc bnc" id="L409" title="All 6 branches missed.">        Column(</span>
+<span class="nc" id="L410">            modifier = Modifier</span>
+<span class="nc" id="L411">                .fillMaxWidth()</span>
+<span class="nc" id="L412">                .padding(top = 40.dp),</span>
+<span class="nc" id="L413">            horizontalAlignment = CenterHorizontally</span>
+        ) {
+<span class="nc" id="L415">            IconButton(</span>
+<span class="nc" id="L416">                onClick = {</span>
+<span class="nc" id="L417">                    (context as Activity).finish()</span>
+<span class="nc" id="L418">                },</span>
+<span class="nc" id="L419">                modifier = Modifier.align(Alignment.Start)</span>
+<span class="nc" id="L420">            ) {</span>
+<span class="nc bnc" id="L421" title="All 8 branches missed.">                Image(</span>
+<span class="nc" id="L422">                    painter = painterResource(R.drawable.general_back_arrow_button),</span>
+<span class="nc" id="L423">                    contentDescription = &quot;Back arrow&quot;,</span>
+<span class="nc" id="L424">                    modifier = Modifier.size(24.dp)</span>
+<span class="nc" id="L425">                )</span>
+<span class="nc" id="L426">            }</span>
+
+<span class="nc" id="L428">            MainProfileCard(name, userName, imageUrl)</span>
+
+<span class="nc" id="L430">            Spacer(modifier = Modifier.height(55.dp))</span>
+
+<span class="nc" id="L432">            Row(</span>
+<span class="nc" id="L433">                horizontalArrangement = Arrangement.SpaceBetween,</span>
+<span class="nc" id="L434">                modifier = Modifier</span>
+<span class="nc" id="L435">                    .fillMaxWidth()</span>
+<span class="nc" id="L436">                    .padding(horizontal = 80.dp)</span>
+<span class="nc" id="L437">                    .padding(bottom = 5.dp)</span>
+            ) {
+<span class="nc" id="L439">                FriendsButton(onClick = {</span>
+<span class="nc" id="L440">                    onClickMyFriends()</span>
+<span class="nc" id="L441">                })</span>
+<span class="nc" id="L442">                MessageButton(onClick = {</span>
+<span class="nc" id="L443">                    onClickMyMessages()</span>
+<span class="nc" id="L444">                })</span>
+<span class="nc" id="L445">                BadgesButton(onClick = {</span>
+<span class="nc" id="L446">                    onClickMyBadges()</span>
+<span class="nc" id="L447">                })</span>
+<span class="nc" id="L448">            }</span>
+<span class="nc" id="L449">        }</span>
+<span class="nc" id="L450">    }</span>
+<span class="nc bnc" id="L451" title="All 2 branches missed.">}</span>
+
+/**
+ * Composable function to display a friend request card.
+ *
+ * @param name The name of the friend.
+ * @param userName The username of the friend.
+ * @param imageUrl The URL of the friend's profile image.
+ * @param onClickAdd The callback to be invoked when the Accept button is clicked.
+ * @param onClickDecline The callback to be invoked when the Decline button is clicked.
+ * @param modifier The modifier to be applied to the layout.
+ */
+@Composable
+fun FriendRequestCard(
+    name: String,
+    userName: String,
+    imageUrl: String,
+<span class="nc bnc" id="L468" title="All 2 branches missed.">    onClickAdd: () -&gt; Unit = {},</span>
+<span class="nc bnc" id="L469" title="All 2 branches missed.">    onClickDecline: () -&gt; Unit = {},</span>
+<span class="nc bnc" id="L470" title="All 2 branches missed.">    modifier: Modifier = Modifier</span>
+<span class="nc bnc" id="L471" title="All 42 branches missed.">) {</span>
+<span class="nc" id="L472">    Box {</span>
+<span class="nc" id="L473">        val context = LocalContext.current</span>
+
+<span class="nc" id="L475">        ListProfileCard(name, userName, imageUrl, modifier)</span>
+
+<span class="nc" id="L477">        Row(</span>
+<span class="nc" id="L478">            modifier = Modifier</span>
+<span class="nc" id="L479">                .align(Alignment.CenterEnd)</span>
+<span class="nc" id="L480">                .padding(10.dp)</span>
+<span class="nc" id="L481">                .padding(end = 30.dp)</span>
+        ) {
+<span class="nc" id="L483">            Button(</span>
+<span class="nc" id="L484">                onClick = onClickAdd,</span>
+<span class="nc" id="L485">                colors = ButtonDefaults.buttonColors(</span>
+<span class="nc" id="L486">                    containerColor = Color(</span>
+<span class="nc" id="L487">                        context.resources.getColor(</span>
+<span class="nc" id="L488">                            R.color.CyRed</span>
+                        )
+                    )
+                ),
+<span class="nc" id="L492">                shape = RoundedCornerShape(6.dp),</span>
+<span class="nc" id="L493">                border = BorderStroke(1.dp, Color(0xFFF1BE48)),</span>
+<span class="nc" id="L494">                modifier = Modifier</span>
+<span class="nc" id="L495">                    .height(25.dp)</span>
+<span class="nc" id="L496">                    .width(60.dp),</span>
+//                    .offset(x = (-50).dp),
+<span class="nc" id="L498">                contentPadding = PaddingValues(0.dp) //remove padding so text fits</span>
+
+<span class="nc" id="L500">            ) {</span>
+<span class="nc bnc" id="L501" title="All 8 branches missed.">                Text(</span>
+<span class="nc" id="L502">                    text = &quot;Accept&quot;,</span>
+<span class="nc" id="L503">                    fontFamily = getCustomFontFamily(</span>
+<span class="nc" id="L504">                        &quot;Inter&quot;,</span>
+<span class="nc" id="L505">                        FontWeight.SemiBold,</span>
+<span class="nc" id="L506">                        FontStyle.Normal</span>
+                    ),
+<span class="nc" id="L508">                    color = Color.White,</span>
+<span class="nc" id="L509">                    fontSize = 13.sp,</span>
+<span class="nc" id="L510">                    fontWeight = FontWeight.SemiBold,</span>
+<span class="nc" id="L511">                )</span>
+<span class="nc" id="L512">            }</span>
+
+<span class="nc" id="L514">            Spacer(modifier = Modifier.width(10.dp))</span>
+
+<span class="nc" id="L516">            Button(</span>
+<span class="nc" id="L517">                onClick = onClickDecline,</span>
+<span class="nc" id="L518">                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),</span>
+<span class="nc" id="L519">                shape = RoundedCornerShape(6.dp),</span>
+<span class="nc" id="L520">                border = BorderStroke(1.dp, Color(0xFFF1BE48)),</span>
+<span class="nc" id="L521">                modifier = Modifier</span>
+<span class="nc" id="L522">                    .height(25.dp)</span>
+<span class="nc" id="L523">                    .width(60.dp),</span>
+//                    .offset(x = (-50).dp),
+<span class="nc" id="L525">                contentPadding = PaddingValues(0.dp) //remove padding so text fits</span>
+
+<span class="nc" id="L527">            ) {</span>
+<span class="nc bnc" id="L528" title="All 8 branches missed.">                Text(</span>
+<span class="nc" id="L529">                    text = &quot;Decline&quot;,</span>
+<span class="nc" id="L530">                    fontFamily = getCustomFontFamily(</span>
+<span class="nc" id="L531">                        &quot;Inter&quot;,</span>
+<span class="nc" id="L532">                        FontWeight.SemiBold,</span>
+<span class="nc" id="L533">                        FontStyle.Normal</span>
+                    ),
+<span class="nc" id="L535">                    color = Color.Black,</span>
+<span class="nc" id="L536">                    fontSize = 13.sp,</span>
+<span class="nc" id="L537">                    fontWeight = FontWeight.SemiBold,</span>
+<span class="nc" id="L538">                )</span>
+<span class="nc" id="L539">            }</span>
+<span class="nc" id="L540">        }</span>
+<span class="nc" id="L541">    }</span>
+<span class="nc bnc" id="L542" title="All 2 branches missed.">}</span>
+
+/**
+ * Composable function to display a list of friend request cards.
+ *
+ * @param friendRequests The list of friend requests.
+ * @param modifier The modifier to be applied to the layout.
+ * @param onAccept The callback to be invoked when a friend request is accepted.
+ * @param onDecline The callback to be invoked when a friend request is declined.
+ */
+@Composable
+fun FriendRequestCardLazyList(
+    friendRequests: List&lt;Friend&gt;,
+<span class="nc bnc" id="L555" title="All 2 branches missed.">    modifier: Modifier = Modifier,</span>
+    onAccept: (Friend) -&gt; Unit,
+    onDecline: (Friend) -&gt; Unit
+<span class="nc bnc" id="L558" title="All 24 branches missed.">) {</span>
+<span class="nc" id="L559">    Column(</span>
+<span class="nc" id="L560">        modifier = Modifier</span>
+<span class="nc" id="L561">            .fillMaxWidth()</span>
+<span class="nc" id="L562">            .padding(horizontal = 32.dp)</span>
+    ) {
+<span class="nc bnc" id="L564" title="All 2 branches missed.">        for (friend in friendRequests) {</span>
+<span class="nc bnc" id="L565" title="All 4 branches missed.">            FriendRequestCard(friend.firstName, friend.username, &quot;temp&quot;, {</span>
+<span class="nc" id="L566">                onAccept(friend)</span>
+<span class="nc" id="L567">            }, {</span>
+<span class="nc" id="L568">                onDecline(friend)</span>
+<span class="nc" id="L569">            })</span>
+<span class="nc" id="L570">            Spacer(modifier = Modifier.height(10.dp))</span>
+        }
+<span class="nc" id="L572">    }</span>
+<span class="nc bnc" id="L573" title="All 2 branches missed.">}</span>
+
+/**
+ * @suppress
+ */
+@Preview
+@Composable
+<span class="nc bnc" id="L580" title="All 6 branches missed.">fun FriendRequestCardPreview() {</span>
+<span class="nc bnc" id="L581" title="All 2 branches missed.">    Surface {</span>
+<span class="nc bnc" id="L582" title="All 8 branches missed.">        FriendRequestCard(</span>
+<span class="nc" id="L583">            name = &quot;Cati&quot;,</span>
+<span class="nc" id="L584">            userName = &quot;cattack&quot;,</span>
+<span class="nc" id="L585">            imageUrl = &quot;https://thumbs.dreamstime.com/b/cute-cat-portrait-square-photo-beautiful-white-closeup-105311158.jpg&quot;</span>
+<span class="nc" id="L586">        )</span>
+<span class="nc" id="L587">    }</span>
+<span class="nc bnc" id="L588" title="All 2 branches missed.">}</span>
+
+/**
+ * @suppress
+ */
+@Preview
+@Composable
+<span class="nc bnc" id="L595" title="All 6 branches missed.">fun ProfileCardPreview() {</span>
+<span class="nc bnc" id="L596" title="All 2 branches missed.">    Surface(</span>
+//        modifier = Modifier.fillMaxWidth(),
+<span class="nc" id="L598">        color = Color(0xFFC8102E)</span>
+
+<span class="nc" id="L600">    ) {</span>
+<span class="nc bnc" id="L601" title="All 8 branches missed.">        MainProfileCard(</span>
+<span class="nc" id="L602">            name = &quot;Cati&quot;,</span>
+<span class="nc" id="L603">            userName = &quot;cattack&quot;,</span>
+<span class="nc" id="L604">            imageUrl = &quot;https://thumbs.dreamstime.com/b/cute-cat-portrait-square-photo-beautiful-white-closeup-105311158.jpg&quot;</span>
+<span class="nc" id="L605">        )</span>
+<span class="nc" id="L606">    }</span>
+<span class="nc bnc" id="L607" title="All 2 branches missed.">}</span>
+
+/**
+ * @suppress
+ */
+@Preview
+@Composable
+<span class="nc bnc" id="L614" title="All 6 branches missed.">fun FriendsButtonPreview() {</span>
+<span class="nc bnc" id="L615" title="All 2 branches missed.">    Surface(</span>
+<span class="nc" id="L616">        color = Color(0xFFC8102E)</span>
+<span class="nc" id="L617">    ) {</span>
+<span class="nc bnc" id="L618" title="All 8 branches missed.">        FriendsButton(onClick = {})</span>
+<span class="nc" id="L619">    }</span>
+<span class="nc bnc" id="L620" title="All 2 branches missed.">}</span>
+
+/**
+ * @suppress
+ */
+@Preview
+@Composable
+<span class="nc bnc" id="L627" title="All 6 branches missed.">fun MessageButtonPreview() {</span>
+<span class="nc bnc" id="L628" title="All 2 branches missed.">    Surface(</span>
+<span class="nc" id="L629">        color = Color(0xFFC8102E)</span>
+<span class="nc" id="L630">    ) {</span>
+<span class="nc bnc" id="L631" title="All 8 branches missed.">        MessageButton(onClick = {})</span>
+<span class="nc" id="L632">    }</span>
+<span class="nc bnc" id="L633" title="All 2 branches missed.">}</span>
+
+/**
+ * @suppress
+ */
+@Preview
+@Composable
+<span class="nc bnc" id="L640" title="All 6 branches missed.">fun BadgeButtonPreview() {</span>
+<span class="nc bnc" id="L641" title="All 2 branches missed.">    Surface(</span>
+<span class="nc" id="L642">        color = Color(0xFFC8102E)</span>
+<span class="nc" id="L643">    ) {</span>
+<span class="nc bnc" id="L644" title="All 8 branches missed.">        BadgesButton(onClick = {})</span>
+<span class="nc" id="L645">    }</span>
+<span class="nc bnc" id="L646" title="All 2 branches missed.">}</span>
+
+/**
+ * @suppress
+ */
+@Preview
+@Composable
+<span class="nc bnc" id="L653" title="All 6 branches missed.">fun ProfileScreenPreview() {</span>
+<span class="nc" id="L654">    val list = remember { mutableStateListOf&lt;User&gt;() }</span>
+<span class="nc" id="L655">    list.add(User(1, &quot;Doe&quot;, &quot;John&quot;, &quot;Doe&quot;, 20, &quot;M&quot;, 2))</span>
+<span class="nc" id="L656">    list.add(User(2, &quot;Doe&quot;, &quot;Jane&quot;, &quot;Doe&quot;, 20, &quot;F&quot;, 2))</span>
+<span class="nc" id="L657">    list.add(User(3, &quot;Doe&quot;, &quot;John&quot;, &quot;Doe&quot;, 20, &quot;M&quot;, 2))</span>
+<span class="nc" id="L658">    list.add(User(4, &quot;Doe&quot;, &quot;Jane&quot;, &quot;Doe&quot;, 20, &quot;F&quot;, 2))</span>
+<span class="nc" id="L659">    list.add(User(5, &quot;Doe&quot;, &quot;John&quot;, &quot;Doe&quot;, 20, &quot;M&quot;, 2))</span>
+<span class="nc bnc" id="L660" title="All 2 branches missed.">    Surface {</span>
+<span class="nc bnc" id="L661" title="All 6 branches missed.">        Column {</span>
+<span class="nc" id="L662">            ProfileScreen(</span>
+<span class="nc" id="L663">                name = &quot;Cati&quot;,</span>
+<span class="nc" id="L664">                userName = &quot;cattack&quot;,</span>
+<span class="nc" id="L665">                imageUrl = &quot;https://thumbs.dreamstime.com/b/cute-cat-portrait-&quot; +</span>
+                        &quot;square-photo-beautiful-white-closeup-105311158.jpg&quot;
+            )
+
+<span class="nc" id="L669">            Spacer(modifier = Modifier.height(20.dp))</span>
+
+//            FriendRequestCardLazyList(list, onAccept = {}, onDecline = {})
+<span class="nc" id="L672">        }</span>
+<span class="nc" id="L673">    }</span>
+<span class="nc bnc" id="L674" title="All 2 branches missed.">}</span>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span>Generated by the Android Gradle plugin 8.7.1</div></body></html>

@@ -204,13 +204,12 @@ dependencies {
 
     // Testing Dependencies
     testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("com.android.support.test:rules:1.0.2")
-    androidTestImplementation("com.android.support.test:runner:1.0.2")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
+    androidTestImplementation("androidx.test:runner:1.6.1")
+    androidTestImplementation("androidx.test:rules:1.6.1")
     androidTestImplementation("androidx.test.espresso:espresso-contrib:3.6.1")
     androidTestImplementation("androidx.test.espresso:espresso-intents:3.6.1")
-
 
 
     // Compose and UI Dependencies (for declarative UI)

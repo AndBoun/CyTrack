@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>WebSocketServiceUtil.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.CyTrack.Utilities</a> &gt; <span class="el_source">WebSocketServiceUtil.java</span></div><h1>WebSocketServiceUtil.java</h1><pre class="source lang-java linenums">package com.example.CyTrack.Utilities;
+
+import android.app.Service;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.IBinder;
+import android.util.Log;
+
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
+import org.java_websocket.client.WebSocketClient;
+import org.java_websocket.handshake.ServerHandshake;
+
+import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * Service to manage WebSocket connections.
+ * Allows multiple WebSocket connections identified by a unique key.
+ */
+public class WebSocketServiceUtil extends Service {
+
+    // key to WebSocketClient obj mapping - for multiple WebSocket connections
+<span class="nc" id="L27">    private final Map&lt;String, WebSocketClient&gt; webSockets = new HashMap&lt;&gt;();</span>
+
+<span class="nc" id="L29">    public WebSocketServiceUtil() {</span>
+<span class="nc" id="L30">    }</span>
+
+    /**
+     * Handles the start command for the service.
+     *
+     * @param intent  The intent that started the service.
+     * @param flags   Additional data about the start request.
+     * @param startId A unique integer representing this specific request to start.
+     * @return The sticky mode for the service.
+     */
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+<span class="nc bnc" id="L42" title="All 2 branches missed.">        if (intent != null) {</span>
+<span class="nc" id="L43">            String action = intent.getAction();</span>
+<span class="nc" id="L44">            Log.d(&quot;WebSocketServiceUtil&quot;, &quot;onStartCommand action: &quot; + action);</span>
+
+<span class="nc bnc" id="L46" title="All 2 branches missed.">            if (&quot;CONNECT&quot;.equals(action)) {</span>
+<span class="nc" id="L47">                String url = intent.getStringExtra(&quot;url&quot;);      // eg, &quot;ws://localhost:8080/chat/1/uname&quot;</span>
+<span class="nc" id="L48">                String key = intent.getStringExtra(&quot;key&quot;);</span>
+
+<span class="nc" id="L50">                Log.d(&quot;WebSocketServiceUtil&quot;, &quot;Connecting to WebSocket URL: &quot; + url);</span>
+
+                // eg, &quot;chat1&quot; - refer to MainActivity where this Intent was called
+<span class="nc" id="L53">                connectWebSocket(key, url);                           // Initialize WebSocket connection</span>
+<span class="nc bnc" id="L54" title="All 2 branches missed.">            } else if (&quot;DISCONNECT&quot;.equals(action)) {</span>
+<span class="nc" id="L55">                String key = intent.getStringExtra(&quot;key&quot;);</span>
+<span class="nc" id="L56">                disconnectWebSocket(key);</span>
+            }
+        }
+<span class="nc" id="L59">        return START_STICKY;</span>
+    }
+
+    /**
+     * Called when the service is created.
+     * Registers a BroadcastReceiver to listen for messages from Activities.
+     */
+    @Override
+    public void onCreate() {
+<span class="nc" id="L68">        super.onCreate();</span>
+<span class="nc" id="L69">        LocalBroadcastManager</span>
+<span class="nc" id="L70">                .getInstance(this)</span>
+<span class="nc" id="L71">                .registerReceiver(messageReceiver, new IntentFilter(&quot;SendWebSocketMessage&quot;));</span>
+<span class="nc" id="L72">    }</span>
+
+    /**
+     * Called when the service is destroyed.
+     * Closes all WebSocket connections to prevent memory leaks.
+     */
+    @Override
+    public void onDestroy() {
+<span class="nc" id="L80">        super.onDestroy();</span>
+<span class="nc bnc" id="L81" title="All 2 branches missed.">        for (WebSocketClient client : webSockets.values()) {</span>
+<span class="nc" id="L82">            client.close();</span>
+<span class="nc" id="L83">        }</span>
+<span class="nc" id="L84">        LocalBroadcastManager.getInstance(this).unregisterReceiver(messageReceiver);</span>
+<span class="nc" id="L85">    }</span>
+
+    @Override
+    public IBinder onBind(Intent intent) {
+<span class="nc" id="L89">        return null;</span>
+    }
+
+    /**
+     * Initializes a WebSocket client and defines callbacks for message reception.
+     *
+     * @param key The unique key identifying the WebSocket connection.
+     * @param url The URL of the WebSocket server.
+     */
+    private void connectWebSocket(String key, String url) {
+        try {
+<span class="nc" id="L100">            URI serverUri = URI.create(url);</span>
+<span class="nc" id="L101">            WebSocketClient webSocketClient = new WebSocketClient(serverUri) {</span>
+                @Override
+                public void onOpen(ServerHandshake handshakedata) {
+<span class="nc" id="L104">                    Log.d(key, &quot;Connected&quot;);</span>
+<span class="nc" id="L105">                }</span>
+
+                @Override
+                public void onMessage(String message) {
+                    // whenever a message is received for this WebSocketClient obj
+                    // broadcast the message internally (within the app) with its corresponding key
+                    // only the Activities who care about this message will act accordingly
+<span class="nc" id="L112">                    Intent intent = new Intent(&quot;WebSocketMessageReceived&quot;);</span>
+<span class="nc" id="L113">                    intent.putExtra(&quot;key&quot;, key);</span>
+<span class="nc" id="L114">                    intent.putExtra(&quot;message&quot;, message);</span>
+<span class="nc" id="L115">                    LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);</span>
+<span class="nc" id="L116">                }</span>
+
+                @Override
+                public void onClose(int code, String reason, boolean remote) {
+<span class="nc" id="L120">                    Log.d(key, &quot;Closed&quot;);</span>
+<span class="nc" id="L121">                }</span>
+
+                @Override
+                public void onError(Exception ex) {
+<span class="nc" id="L125">                    Log.d(key, &quot;Error&quot;);</span>
+<span class="nc" id="L126">                }</span>
+            };
+
+<span class="nc" id="L129">            webSocketClient.connect();              // connect to the websocket</span>
+<span class="nc" id="L130">            webSockets.put(key, webSocketClient);   // add this instance to the mapping</span>
+
+<span class="nc" id="L132">        } catch (Exception e) {</span>
+<span class="nc" id="L133">            e.printStackTrace();</span>
+<span class="nc" id="L134">        }</span>
+<span class="nc" id="L135">    }</span>
+
+    /**
+     * BroadcastReceiver to listen to messages from Activities.
+     * Sends the message to its designated WebSocket connection.
+     */
+<span class="nc" id="L141">    private BroadcastReceiver messageReceiver = new BroadcastReceiver() {</span>
+        @Override
+        public void onReceive(Context context, Intent intent) {
+<span class="nc" id="L144">            String key = intent.getStringExtra(&quot;key&quot;);</span>
+<span class="nc" id="L145">            String message = intent.getStringExtra(&quot;message&quot;);</span>
+
+<span class="nc" id="L147">            WebSocketClient webSocket = webSockets.get(key);</span>
+<span class="nc bnc" id="L148" title="All 2 branches missed.">            if (webSocket != null) {</span>
+<span class="nc" id="L149">                webSocket.send(message);</span>
+            }
+<span class="nc" id="L151">        }</span>
+    };
+
+    /**
+     * Disconnects the WebSocket connection identified by the given key.
+     *
+     * @param key The unique key identifying the WebSocket connection.
+     */
+    private void disconnectWebSocket(String key) {
+<span class="nc bnc" id="L160" title="All 2 branches missed.">        if (webSockets.containsKey(key))</span>
+<span class="nc" id="L161">            webSockets.get(key).close();</span>
+<span class="nc" id="L162">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span>Generated by the Android Gradle plugin 8.7.1</div></body></html>

@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AddFriends.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.CyTrack.Social.Friends</a> &gt; <span class="el_source">AddFriends.kt</span></div><h1>AddFriends.kt</h1><pre class="source lang-java linenums">package com.example.CyTrack.Social.Friends
+
+import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.android.volley.Request
+import com.android.volley.toolbox.JsonObjectRequest
+import com.example.CyTrack.R
+import com.example.CyTrack.Utilities.NetworkUtils
+import com.example.CyTrack.Utilities.StatusBarUtil
+import com.example.CyTrack.Utilities.UrlHolder
+import com.example.CyTrack.Utilities.User
+import com.example.CyTrack.Utilities.VolleySingleton
+import org.json.JSONException
+import org.json.JSONObject
+
+/**
+ * Activity to add friends.
+ */
+<span class="nc" id="L51">class AddFriends : ComponentActivity() {</span>
+
+    /**
+     * The user whose profile is being displayed.
+     */
+    private lateinit var user: User
+
+    /**
+     * A list of users from search.
+     */
+<span class="nc" id="L61">    private var searchList: MutableList&lt;Friend&gt; = mutableListOf()</span>
+
+    /**
+     * Base URL for friend requests.
+     */
+<span class="nc" id="L66">    private val URL: String = UrlHolder.URL</span>
+
+    /**
+     * Called when the activity is starting.
+     * @param savedInstanceState If the activity is being re-initialized after previously being shut down then this Bundle contains the data it most recently supplied in onSaveInstanceState(Bundle).
+     */
+    override fun onCreate(savedInstanceState: Bundle?) {
+<span class="nc" id="L73">        super.onCreate(savedInstanceState)</span>
+<span class="nc" id="L74">        setContent {</span>
+<span class="nc bnc" id="L75" title="All 6 branches missed.">            val context = LocalContext.current</span>
+<span class="nc" id="L76">            user = intent.getSerializableExtra(&quot;user&quot;) as User</span>
+<span class="nc" id="L77">            searchList = remember { mutableStateListOf() }</span>
+
+<span class="nc" id="L79">            Surface(</span>
+<span class="nc" id="L80">                color = Color(context.resources.getColor(R.color.CyRed)),</span>
+<span class="nc" id="L81">                modifier = Modifier</span>
+<span class="nc" id="L82">                    .fillMaxWidth()</span>
+<span class="nc" id="L83">                    .height(120.dp)</span>
+<span class="nc" id="L84">            ) {</span>
+<span class="nc bnc" id="L85" title="All 6 branches missed.">                Column(</span>
+<span class="nc" id="L86">                    verticalArrangement = Arrangement.Bottom</span>
+                ) {
+<span class="nc" id="L88">                    IconButton(</span>
+<span class="nc" id="L89">                        onClick = {</span>
+<span class="nc" id="L90">                            (context as ComponentActivity).finish()</span>
+<span class="nc" id="L91">                        },</span>
+<span class="nc" id="L92">                        modifier = Modifier.align(Alignment.Start)</span>
+<span class="nc" id="L93">                    ) {</span>
+<span class="nc bnc" id="L94" title="All 8 branches missed.">                        Icon(</span>
+<span class="nc" id="L95">                            imageVector = Icons.Default.ArrowBack,</span>
+<span class="nc" id="L96">                            contentDescription = &quot;Back arrow&quot;,</span>
+<span class="nc" id="L97">                            tint = Color.White,</span>
+<span class="nc" id="L98">                            modifier = Modifier.size(24.dp)</span>
+<span class="nc" id="L99">                        )</span>
+<span class="nc" id="L100">                    }</span>
+
+<span class="nc" id="L102">                    SearchBar(</span>
+<span class="nc" id="L103">                        searchList = mutableListOf(),</span>
+<span class="nc" id="L104">                        modifier = Modifier</span>
+<span class="nc" id="L105">                            .fillMaxWidth()</span>
+<span class="nc" id="L106">                            .heightIn(min = 56.dp)</span>
+<span class="nc" id="L107">                            .align(Alignment.CenterHorizontally),</span>
+<span class="nc" id="L108">                        onClickSearch = {</span>
+<span class="nc" id="L109">                            addUser(it)</span>
+<span class="nc" id="L110">                        }</span>
+                    )
+<span class="nc" id="L112">                }</span>
+<span class="nc" id="L113">            }</span>
+
+<span class="nc bnc" id="L115" title="All 2 branches missed.">            StatusBarUtil.setStatusBarColor(this, R.color.CyRed)</span>
+<span class="nc" id="L116">        }</span>
+<span class="nc" id="L117">    }</span>
+
+    /**
+     * Sends a friend request to the specified user.
+     * @param username The username of the user to add as a friend.
+     */
+    private fun addUser(username: String) {
+<span class="nc bnc" id="L124" title="All 2 branches missed.">        val addURL = &quot;${URL}/${user.id}/request&quot;</span>
+
+<span class="nc" id="L126">        val inputs = JSONObject().apply {</span>
+<span class="nc" id="L127">            put(&quot;friendUsername&quot;, username)</span>
+<span class="nc" id="L128">        }</span>
+
+<span class="nc" id="L130">        Log.d(&quot;AddFriends&quot;, inputs.toString())</span>
+
+<span class="nc" id="L132">        val jsonObjectRequest = JsonObjectRequest(</span>
+<span class="nc" id="L133">            Request.Method.POST,</span>
+<span class="nc" id="L134">            addURL,</span>
+<span class="nc" id="L135">            inputs,</span>
+            { response -&gt;
+                // Handle the response
+<span class="nc" id="L138">                try {</span>
+<span class="nc" id="L139">                    val message = response.getString(&quot;message&quot;)</span>
+<span class="nc" id="L140">                    val data = response.getJSONObject(&quot;data&quot;)</span>
+<span class="nc" id="L141">                    val friendsId = data.getInt(&quot;friendRequestID&quot;)</span>
+<span class="nc" id="L142">                    Toast.makeText(this, message, Toast.LENGTH_SHORT).show()</span>
+<span class="nc" id="L143">                } catch (e: JSONException) {</span>
+<span class="nc" id="L144">                    e.printStackTrace()</span>
+                }
+<span class="nc" id="L146">            },</span>
+            { error -&gt;
+<span class="nc" id="L148">                Toast.makeText(this, NetworkUtils.errorResponse(error), Toast.LENGTH_SHORT).show()</span>
+<span class="nc" id="L149">            }</span>
+        )
+
+<span class="nc" id="L152">        VolleySingleton.getInstance(this).addToRequestQueue(jsonObjectRequest)</span>
+<span class="nc" id="L153">    }</span>
+}
+
+/**
+ * @suppress
+ */
+@Preview
+@Composable
+fun AddFriendsTopCard(
+<span class="nc bnc" id="L162" title="All 2 branches missed.">    onClickSearch: (String) -&gt; Unit = {}</span>
+<span class="nc bnc" id="L163" title="All 12 branches missed.">) {</span>
+<span class="nc" id="L164">    val context = LocalContext.current</span>
+
+<span class="nc bnc" id="L166" title="All 2 branches missed.">    Surface(</span>
+<span class="nc" id="L167">        color = Color(context.resources.getColor(R.color.CyRed)),</span>
+<span class="nc" id="L168">        modifier = Modifier</span>
+<span class="nc" id="L169">            .fillMaxWidth()</span>
+<span class="nc" id="L170">            .height(120.dp)</span>
+<span class="nc" id="L171">    ) {</span>
+<span class="nc bnc" id="L172" title="All 6 branches missed.">        Column(</span>
+<span class="nc" id="L173">            verticalArrangement = Arrangement.Bottom</span>
+        ) {
+<span class="nc" id="L175">            IconButton(</span>
+<span class="nc" id="L176">                onClick = {</span>
+<span class="nc" id="L177">                    (context as ComponentActivity).finish()</span>
+<span class="nc" id="L178">                },</span>
+<span class="nc" id="L179">                modifier = Modifier.align(Alignment.Start)</span>
+<span class="nc" id="L180">            ) {</span>
+<span class="nc bnc" id="L181" title="All 8 branches missed.">                Icon(</span>
+<span class="nc" id="L182">                    imageVector = Icons.Default.ArrowBack,</span>
+<span class="nc" id="L183">                    contentDescription = &quot;Back arrow&quot;,</span>
+<span class="nc" id="L184">                    tint = Color.White,</span>
+<span class="nc" id="L185">                    modifier = Modifier.size(24.dp)</span>
+<span class="nc" id="L186">                )</span>
+<span class="nc" id="L187">            }</span>
+
+<span class="nc" id="L189">            Spacer(modifier = Modifier.height(8.dp))</span>
+
+<span class="nc" id="L191">            SearchBar(</span>
+<span class="nc" id="L192">                searchList = mutableListOf(),</span>
+<span class="nc" id="L193">                modifier = Modifier</span>
+<span class="nc" id="L194">                    .fillMaxWidth()</span>
+<span class="nc" id="L195">                    .heightIn(min = 56.dp)</span>
+<span class="nc" id="L196">                    .align(Alignment.CenterHorizontally),</span>
+<span class="nc" id="L197">                onClickSearch = onClickSearch</span>
+            )
+<span class="nc" id="L199">        }</span>
+<span class="nc" id="L200">    }</span>
+<span class="nc bnc" id="L201" title="All 2 branches missed.">}</span>
+
+/**
+ * Composable function for the search bar.
+ * @param searchList List of friends from the search.
+ * @param modifier Modifier to be applied to the search bar.
+ * @param onClickSearch Callback function to handle search button click.
+ */
+@Composable
+fun SearchBar(
+    searchList: MutableList&lt;Friend&gt;,
+<span class="nc bnc" id="L212" title="All 2 branches missed.">    modifier: Modifier = Modifier,</span>
+<span class="nc bnc" id="L213" title="All 2 branches missed.">    onClickSearch: (String) -&gt; Unit = {}</span>
+<span class="nc bnc" id="L214" title="All 18 branches missed.">) {</span>
+<span class="nc" id="L215">    var message by remember { mutableStateOf(&quot;&quot;) } // Message state</span>
+
+<span class="nc bnc" id="L217" title="All 2 branches missed.">    TextField(</span>
+<span class="nc" id="L218">        value = message,</span>
+<span class="nc" id="L219">        onValueChange = { message = it }, // Update the message value</span>
+<span class="nc" id="L220">        trailingIcon = {</span>
+<span class="nc bnc" id="L221" title="All 8 branches missed.">            IconButton(</span>
+<span class="nc" id="L222">                onClick = {</span>
+<span class="nc" id="L223">                    onClickSearch(message)</span>
+<span class="nc" id="L224">                }</span>
+<span class="nc" id="L225">            ) {</span>
+<span class="nc bnc" id="L226" title="All 8 branches missed.">                Icon(</span>
+<span class="nc" id="L227">                    imageVector = Icons.Default.Add,</span>
+<span class="nc" id="L228">                    contentDescription = null,</span>
+<span class="nc" id="L229">                )</span>
+<span class="nc" id="L230">            }</span>
+<span class="nc" id="L231">        },</span>
+<span class="nc" id="L232">        colors = TextFieldDefaults.colors(</span>
+<span class="nc" id="L233">            unfocusedContainerColor = MaterialTheme.colorScheme.surface,</span>
+<span class="nc" id="L234">            focusedContainerColor = MaterialTheme.colorScheme.surface</span>
+        ),
+<span class="nc" id="L236">        placeholder = {</span>
+<span class="nc bnc" id="L237" title="All 8 branches missed.">            Text(&quot;Search for User&quot;)</span>
+<span class="nc" id="L238">        },</span>
+<span class="nc" id="L239">        modifier = modifier</span>
+<span class="nc" id="L240">            .fillMaxWidth()</span>
+<span class="nc" id="L241">            .heightIn(min = 56.dp)</span>
+    )
+<span class="nc bnc" id="L243" title="All 2 branches missed.">}</span>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span>Generated by the Android Gradle plugin 8.7.1</div></body></html>

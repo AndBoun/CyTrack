@@ -1,0 +1,412 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TimeBoard.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=0;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">debug</a> &gt; <a href="index.source.html" class="el_package">com.example.CyTrack.Leaderboard.TimeEntryBoard</a> &gt; <span class="el_source">TimeBoard.kt</span></div><h1>TimeBoard.kt</h1><pre class="source lang-java linenums">package com.example.CyTrack.Leaderboard.TimeEntryBoard
+
+// &lt;!-- Creating a Layout --!&gt;
+// UI elements are hierarchical. Elements contain other elements.
+// Uses Column
+// A Hierarchy is built as comp functions call other comp functions.
+
+// &lt;!-- Adding Images --!&gt;
+
+// Custom Theme Testing
+// Custom Themes
+
+// Creating Lists
+// Creating Lists End
+
+// Animation Imports
+import android.app.Activity
+import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.example.CyTrack.Leaderboard.Websocket.WebSocketManagerLeaderboard
+import com.example.CyTrack.R
+import com.example.CyTrack.Utilities.ComposeUtils.Companion.getCustomFontFamily
+import com.example.CyTrack.Utilities.UrlHolder
+import com.example.CyTrack.Utilities.User
+import com.example.CyTrack.Utilities.WebSocketListener
+import com.example.compose.AppTheme
+import org.java_websocket.handshake.ServerHandshake
+
+// Animation Imports End
+
+/**
+ * The current user of the application.
+ */
+private lateinit var user: User // Current User
+
+/**
+ * A mutable list to store the leaderboard entries.
+ */
+<span class="nc" id="L77">private var timeboard: MutableList&lt;TimeBoardEntry&gt; = mutableListOf()</span>
+
+/**
+ * The WebSocket URL for the leaderboard.
+ */
+//private val URL = UrlHolder.URL
+<span class="nc" id="L83">private val URL = UrlHolder.wsURL</span>
+//private val URL = &quot;${UrlHolder.wsURL}/leaderboard/2&quot;
+
+/**
+ * Activity to display the leaderboard and handle WebSocket connections.
+ */
+<span class="nc" id="L89">class LeaderboardActivity : ComponentActivity(), WebSocketListener {</span>
+
+    /**
+     * Called when the activity is starting. Initializes the content view and sets up WebSocket connection.
+     *
+     * @param savedInstanceState If the activity is being re-initialized after previously being shut down then this Bundle contains the data it most recently supplied in onSaveInstanceState(Bundle). Otherwise it is null.
+     */
+    override fun onCreate(savedInstanceState: Bundle?) {
+<span class="nc" id="L97">        super.onCreate(savedInstanceState)</span>
+<span class="nc" id="L98">        setContent {</span>
+<span class="nc bnc" id="L99" title="All 6 branches missed.">            user = intent.getSerializableExtra(&quot;user&quot;) as User</span>
+<span class="nc" id="L100">            timeboard = remember { mutableStateListOf() }</span>
+
+            // WEBSOCKET SECTION
+<span class="nc bnc" id="L103" title="All 2 branches missed.">            Log.d(&quot;WebSocketServiceUtil&quot;, &quot;Connecting to ${URL}/leaderboard/${user.id}&quot;)</span>
+<span class="nc" id="L104">            WebSocketManagerLeaderboard.getInstance()</span>
+<span class="nc bnc" id="L105" title="All 2 branches missed.">                .connectWebSocket(&quot;${URL}/leaderboard/${user.id}&quot;)</span>
+<span class="nc" id="L106">            WebSocketManagerLeaderboard.getInstance().setWebSocketListener(this@LeaderboardActivity)</span>
+<span class="nc" id="L107">            Log.d(&quot;List&quot;, &quot;${timeboard}&quot;)</span>
+            // End WebSocket Section
+
+<span class="nc bnc" id="L110" title="All 2 branches missed.">            AppTheme { // Wraps our app in our custom theme</span>
+<span class="nc bnc" id="L111" title="All 8 branches missed.">                Surface(modifier = Modifier.fillMaxSize()) {</span>
+<span class="nc bnc" id="L112" title="All 8 branches missed.">                    LeaderboardScreen(timeboard)</span>
+<span class="nc" id="L113">                }</span>
+<span class="nc" id="L114">            }</span>
+<span class="nc" id="L115">        }</span>
+<span class="nc" id="L116">    }</span>
+
+    /**
+     * Updates the leaderboard with the new entry.
+     *
+     * @param entry The new leaderboard entry as a JSON string.
+     */
+    private fun updateLeaderboard(entry: String) {
+<span class="nc" id="L124">        try {</span>
+<span class="nc" id="L125">            Log.d(&quot;Task&quot;, &quot;Starting Update&quot;)</span>
+<span class="nc" id="L126">            Log.d(&quot;Import&quot;, &quot;${entry}&quot;)</span>
+<span class="nc" id="L127">            TimeboardUtils.getBoard(entry, timeboard)</span>
+<span class="nc" id="L128">            Log.d(&quot;List&quot;, &quot;${timeboard}&quot;)</span>
+<span class="nc" id="L129">        } catch (e: Exception) {</span>
+<span class="nc" id="L130">            Log.d(&quot;ExceptionSendMessage:&quot;, e.message.toString())</span>
+<span class="nc" id="L131">            Toast.makeText(this, &quot;Failed to Update&quot;, Toast.LENGTH_SHORT).show()</span>
+        }
+<span class="nc" id="L133">    }</span>
+
+    /**
+     * Called when the WebSocket connection is opened.
+     *
+     * @param handshakedata The handshake data.
+     */
+<span class="nc" id="L140">    override fun onWebSocketOpen(handshakedata: ServerHandshake) {}</span>
+
+    /**
+     * Called when a message is received from the WebSocket.
+     *
+     * @param leaderboardupdate The leaderboard update message as a JSON string.
+     */
+    override fun onWebSocketMessage(leaderboardupdate: String) {
+<span class="nc" id="L148">        runOnUiThread {</span>
+<span class="nc" id="L149">            Log.d(&quot;Message Success&quot;, &quot;Update Recieved&quot;)</span>
+<span class="nc" id="L150">            try {</span>
+<span class="nc" id="L151">                updateLeaderboard(leaderboardupdate)</span>
+<span class="nc" id="L152">            } catch (e: Exception) {</span>
+<span class="nc" id="L153">                Log.d(&quot;Exception&quot;, e.message.toString())</span>
+            }
+<span class="nc" id="L155">        }</span>
+<span class="nc" id="L156">    }</span>
+
+    /**
+     * Called when the WebSocket connection is closed.
+     *
+     * @param code The closure code.
+     * @param reason The reason for closure.
+     * @param remote Whether the connection was closed by the remote peer.
+     */
+    override fun onWebSocketClose(code: Int, reason: String?, remote: Boolean) {
+<span class="nc bnc" id="L166" title="All 2 branches missed.">        val closedBy = if (remote) &quot;Server&quot; else &quot;Client&quot;</span>
+<span class="nc" id="L167">        Toast.makeText(this, &quot;Connection closed by $closedBy&quot;, Toast.LENGTH_SHORT).show()</span>
+<span class="nc" id="L168">    }</span>
+
+    /**
+     * Called when an error occurs on the WebSocket connection.
+     *
+     * @param ex The exception that occurred.
+     */
+<span class="nc" id="L175">    override fun onWebSocketError(ex: Exception?) {}</span>
+}
+
+/**
+ * Composable function to display a basic profile card to be in a list.
+ *
+ * @param name The name of the user.
+ * @param username The username of the user.
+ * @param streak The streak of the user.
+ * @param img The URL or resource identifier for the user's image.
+ * @param modifier The modifier to be applied to the layout.
+ */
+@Composable
+fun LBProfileCard(
+    name: String,
+    username: String,
+    streak: String,
+    img: String,
+<span class="nc bnc" id="L193" title="All 2 branches missed.">    modifier: Modifier = Modifier</span>
+<span class="nc bnc" id="L194" title="All 24 branches missed.">) {</span>
+    // Composable function to display a card with user information
+<span class="nc bnc" id="L196" title="All 2 branches missed.">    Surface(</span>
+<span class="nc" id="L197">        color = Color.White,</span>
+<span class="nc" id="L198">        shape = RoundedCornerShape(10.dp),</span>
+<span class="nc" id="L199">        border = BorderStroke(1.dp, Color.Black),</span>
+<span class="nc" id="L200">        modifier = modifier</span>
+<span class="nc" id="L201">            .fillMaxWidth()</span>
+<span class="nc" id="L202">            .clickable(onClick = { /*TODO*/ })</span>
+//            .padding(horizontal = 32.dp)
+<span class="nc" id="L204">    ) {</span>
+<span class="nc bnc" id="L205" title="All 6 branches missed.">        Row(</span>
+<span class="nc" id="L206">            verticalAlignment = Alignment.CenterVertically,</span>
+//            horizontalArrangement = Arrangement.SpaceBetween,
+<span class="nc" id="L208">            modifier = Modifier</span>
+<span class="nc" id="L209">                .padding(10.dp)</span>
+        ) {
+<span class="nc" id="L211">            Image(</span>
+<span class="nc" id="L212">                painter = painterResource(id = R.drawable.general_generic_avatar),</span>
+<span class="nc" id="L213">                contentDescription = &quot;Profile Picture&quot;,</span>
+<span class="nc" id="L214">                modifier = Modifier.size(40.dp),</span>
+            )
+
+<span class="nc" id="L217">            Spacer(modifier = Modifier.width(10.dp))</span>
+
+<span class="nc" id="L219">            Column(</span>
+<span class="nc" id="L220">                horizontalAlignment = Alignment.CenterHorizontally</span>
+            ) {
+<span class="nc" id="L222">                Text(</span>
+<span class="nc" id="L223">                    text = name,</span>
+<span class="nc" id="L224">                    color = Color.Black,</span>
+<span class="nc" id="L225">                    fontSize = 16.sp,</span>
+<span class="nc" id="L226">                    fontWeight = FontWeight.Bold,</span>
+<span class="nc" id="L227">                    fontFamily = getCustomFontFamily(&quot;Inter&quot;, FontWeight.Bold, FontStyle.Normal)</span>
+                )
+<span class="nc" id="L229">                Spacer(modifier = Modifier.padding(2.dp))</span>
+
+<span class="nc" id="L231">            }</span>
+
+<span class="nc" id="L233">            Row(</span>
+<span class="nc" id="L234">                horizontalArrangement = Arrangement.End,</span>
+<span class="nc" id="L235">                modifier = Modifier.fillMaxWidth()</span>
+            ) {
+<span class="nc" id="L237">                Text(</span>
+<span class="nc" id="L238">                    text = &quot;Total Time: &quot; + streak</span>
+                )
+<span class="nc" id="L240">            }</span>
+
+
+<span class="nc" id="L243">        }</span>
+<span class="nc" id="L244">    }</span>
+<span class="nc bnc" id="L245" title="All 2 branches missed.">}</span>
+
+// &lt;!-- Adding Images END --!&gt;
+/**
+ * Composable function to display a profile card.
+ *
+ * @param name The name of the user.
+ * @param username The username of the user.
+ * @param streak The streak of the user.
+ * @param img The URL or resource identifier for the user's image.
+ * @param onMessageClick The callback to be invoked when the message button is clicked.
+ * @param modifier The modifier to be applied to the layout.
+ */
+@Composable
+fun ProfileCard(
+    name: String,
+    username: String,
+    streak: String,
+    img: String,
+    onMessageClick: () -&gt; Unit,
+<span class="nc bnc" id="L265" title="All 2 branches missed.">    modifier: Modifier = Modifier</span>
+<span class="nc bnc" id="L266" title="All 36 branches missed.">) {</span>
+<span class="nc" id="L267">    Row {</span>
+<span class="nc" id="L268">        Box {</span>
+<span class="nc" id="L269">            LBProfileCard(name, username, streak, img, modifier)</span>
+<span class="nc" id="L270">            Spacer(modifier = Modifier.height(10.dp))</span>
+<span class="nc" id="L271">        }</span>
+<span class="nc" id="L272">    }</span>
+<span class="nc bnc" id="L273" title="All 2 branches missed.">}</span>
+
+// &lt;!-- LazyColumn Lists --!&gt;
+/**
+ * Composable function to display a list of leaderboard entries.
+ *
+ * @param userlist The list of TimeBoardEntry objects to display.
+ * @param onMessageClick The callback to be invoked when a leaderboard entry is clicked.
+ * @param modifier The modifier to be applied to the layout.
+ */
+@Composable
+fun LBHierarchy(
+    userlist: MutableList&lt;TimeBoardEntry&gt;,
+<span class="nc bnc" id="L286" title="All 2 branches missed.">    onMessageClick: (TimeBoardEntry) -&gt; Unit = {},</span>
+<span class="nc bnc" id="L287" title="All 2 branches missed.">    modifier: Modifier = Modifier</span>
+<span class="nc bnc" id="L288" title="All 18 branches missed.">) {</span>
+<span class="nc bnc" id="L289" title="All 2 branches missed.">    LazyColumn(</span>
+<span class="nc" id="L290">        modifier = Modifier</span>
+<span class="nc" id="L291">            .fillMaxHeight()</span>
+<span class="nc bnc" id="L292" title="All 2 branches missed.">            .padding(horizontal = 32.dp)</span>
+<span class="nc" id="L293">    ) {</span>
+<span class="nc" id="L294">        items(userlist) { user -&gt; // the items() child takes a list as a param</span>
+            ProfileCard(user.name, user.id.toString(), user.time.toString(), &quot;temp&quot;, {
+<span class="nc" id="L296">                onMessageClick(user)</span>
+<span class="nc" id="L297">            })  // Our message is then linked into our card and created</span>
+            Spacer(modifier = Modifier.height(10.dp))
+        }
+<span class="nc" id="L300">    }</span>
+<span class="nc bnc" id="L301" title="All 2 branches missed.">}</span>
+
+// &lt;!-- Top Card --!&gt;
+/**
+ * Composable function to display the top card in the leaderboard screen.
+ *
+ * @param modifier The modifier to be applied to the layout.
+ * @param onClickMyProfile The callback to be invoked when the profile button is clicked.
+ */
+@Composable
+fun LBTopCard(
+<span class="nc bnc" id="L312" title="All 2 branches missed.">    modifier: Modifier = Modifier,</span>
+<span class="nc bnc" id="L313" title="All 2 branches missed.">    onClickMyProfile: () -&gt; Unit = {}</span>
+<span class="nc bnc" id="L314" title="All 12 branches missed.">) {</span>
+<span class="nc" id="L315">    val context = LocalContext.current</span>
+
+<span class="nc bnc" id="L317" title="All 2 branches missed.">    Surface(</span>
+<span class="nc" id="L318">        color = Color(context.resources.getColor(R.color.CyRed)),</span>
+<span class="nc" id="L319">        border = BorderStroke(1.dp, Color.Black),</span>
+<span class="nc" id="L320">        modifier = Modifier</span>
+<span class="nc" id="L321">            .fillMaxWidth()</span>
+<span class="nc" id="L322">            .height(120.dp)</span>
+<span class="nc" id="L323">    ) {</span>
+<span class="nc bnc" id="L324" title="All 6 branches missed.">        Row(</span>
+<span class="nc" id="L325">            verticalAlignment = Alignment.Bottom,</span>
+<span class="nc" id="L326">            horizontalArrangement = Arrangement.SpaceBetween,</span>
+<span class="nc" id="L327">            modifier = Modifier</span>
+<span class="nc" id="L328">                .fillMaxWidth()</span>
+<span class="nc" id="L329">                .offset(y = (-10).dp)</span>
+        ) {
+
+<span class="nc" id="L332">            IconButton(</span>
+<span class="nc" id="L333">                onClick = {</span>
+<span class="nc" id="L334">                    (context as Activity).finish()</span>
+<span class="nc" id="L335">                },</span>
+<span class="nc" id="L336">            ) {</span>
+<span class="nc bnc" id="L337" title="All 8 branches missed.">                Image(</span>
+<span class="nc" id="L338">                    painter = painterResource(id = R.drawable.general_back_arrow_button),</span>
+<span class="nc" id="L339">                    contentDescription = &quot;Back arrow&quot;,</span>
+<span class="nc" id="L340">                    modifier = Modifier.size(24.dp)</span>
+<span class="nc" id="L341">                )</span>
+<span class="nc" id="L342">            }</span>
+
+<span class="nc" id="L344">            Image(</span>
+<span class="nc" id="L345">                painter = painterResource(id = R.drawable.leaderboard_header),</span>
+<span class="nc" id="L346">                contentDescription = &quot;Leaderboard Header&quot;</span>
+            )
+
+<span class="nc" id="L349">            IconButton(</span>
+<span class="nc" id="L350">                onClick = onClickMyProfile</span>
+<span class="nc" id="L351">            ) {</span>
+<span class="nc bnc" id="L352" title="All 8 branches missed.">                Image(</span>
+<span class="nc" id="L353">                    painter = painterResource(id = R.drawable.general_generic_avatar),</span>
+<span class="nc" id="L354">                    contentDescription = &quot;Profile Button&quot;,</span>
+<span class="nc" id="L355">                    modifier = Modifier.size(24.dp)</span>
+<span class="nc" id="L356">                )</span>
+<span class="nc" id="L357">            }</span>
+
+<span class="nc" id="L359">        }</span>
+<span class="nc" id="L360">    }</span>
+<span class="nc bnc" id="L361" title="All 2 branches missed.">}</span>
+
+/**
+ * Composable function to display the leaderboard screen.
+ *
+ * @param UserList The list of TimeBoardEntry objects to display.
+ * @param modifier The modifier to be applied to the layout.
+ */
+@Composable
+fun LeaderboardScreen(
+    UserList: MutableList&lt;TimeBoardEntry&gt;,
+<span class="nc bnc" id="L372" title="All 2 branches missed.">    modifier: Modifier = Modifier</span>
+<span class="nc bnc" id="L373" title="All 12 branches missed.">) {</span>
+<span class="nc" id="L374">    Column {</span>
+<span class="nc" id="L375">        LBTopCard()</span>
+<span class="nc" id="L376">        Spacer(modifier = Modifier.height(20.dp))</span>
+<span class="nc" id="L377">        LBHierarchy(UserList)</span>
+<span class="nc" id="L378">    }</span>
+<span class="nc bnc" id="L379" title="All 2 branches missed.">}</span>
+
+/**
+ * @suppress
+ */
+@Preview
+@Composable
+<span class="nc bnc" id="L386" title="All 6 branches missed.">fun LBLazyListPreview() {</span>
+<span class="nc bnc" id="L387" title="All 2 branches missed.">    Surface {</span>
+//        MyFriendsCardsLazyList(list)
+<span class="nc bnc" id="L389" title="All 6 branches missed.">        //LeaderboardScreen()</span>
+<span class="nc bnc" id="L390" title="All 2 branches missed.">    }</span>
+<span class="nc bnc" id="L391" title="All 2 branches missed.">}</span>
+
+/**
+ * @suppress
+ */
+@Preview
+@Composable
+<span class="nc bnc" id="L398" title="All 6 branches missed.">fun PreviewConversation() {</span>
+<span class="nc bnc" id="L399" title="All 2 branches missed.">    AppTheme {</span>
+<span class="nc bnc" id="L400" title="All 6 branches missed.">        //com.example.CyTrack.Leaderboard.main.LBHierarchy(data)</span>
+<span class="nc bnc" id="L401" title="All 2 branches missed.">    }</span>
+<span class="nc bnc" id="L402" title="All 2 branches missed.">}</span>
+
+/**
+ * @suppress
+ */
+@Preview
+@Composable
+<span class="nc bnc" id="L409" title="All 6 branches missed.">fun LBTopCardPreview() {</span>
+<span class="nc bnc" id="L410" title="All 2 branches missed.">    LBTopCard()</span>
+<span class="nc bnc" id="L411" title="All 2 branches missed.">}</span>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span>Generated by the Android Gradle plugin 8.7.1</div></body></html>
