@@ -13,9 +13,9 @@ public class LoginResponse {
     }
 
     // Constructor for GET response
-    public LoginResponse(String status, Long userID,String username, String firstName, String lastName, int age, String gender, int streak, String message) {
+    public LoginResponse(String status, Long userID,String username, String firstName, String lastName, int age, int height, double weight, String gender, int streak, String message) {
         this.status = status;
-        this.data = new Data(userID, username, firstName, lastName, age, gender, streak);
+        this.data = new Data(userID, username, firstName, lastName, age, height, weight, gender, streak);
         this.message = message;
     }
 
@@ -49,6 +49,8 @@ public class LoginResponse {
         private String firstName;
         private String lastName;
         private int age;
+        private int height;
+        private double weight;
         private String gender;
         private int streak;
 
@@ -58,12 +60,14 @@ public class LoginResponse {
         }
 
         // Constructor for GET response
-        public Data(Long userID,String username, String firstName, String lastName, int age, String gender, int streak) {
+        public Data(Long userID,String username, String firstName, String lastName, int age, int height, double weight, String gender, int streak) {
             this.userID = userID;
             this.username = username;
             this.firstName = firstName;
             this.lastName = lastName;
             this.age = age;
+            this.height = height;
+            this.weight = weight;
             this.gender = gender;
             this.streak = streak;
         }
@@ -76,9 +80,7 @@ public class LoginResponse {
             this.userID = userID;
         }
 
-        public String getUsername() {
-            return username;
-        }
+        public String getUsername() {return username; }
 
         public void setUsername(String username) {
             this.username = username;
@@ -107,6 +109,14 @@ public class LoginResponse {
         public void setAge(int age) {
             this.age = age;
         }
+
+        public int getHeight() {return height; }
+
+        public void setHeight(int height) {this.height = height; }
+
+        public double getWeight() {return weight; }
+
+        public void setWeight(double weight) {this.weight = weight; }
 
         public String getGender() {
             return gender;

@@ -68,9 +68,14 @@ public class User {
     private String password;
     @Schema(description="Age of the user", name="age", required=true, example="21")
     private int age;
+    @Schema(description = "Height of user in inches", name = "height", required=true, example = "69")
+    private int height;
+    @Schema(description = "Weight of user in inches", name = "weight", required=true, example = "150")
+    private double weight;
     private int currentStreak;
     private int highestStreak;
 
+    private String pfpURL;
     private int totalTime;
     private String gender;
 
@@ -138,6 +143,18 @@ public class User {
 
     public void setAge(int age) {
         this.age = age;
+    }
+
+    public int getHeight() {return height; }
+
+    public void setHeight(int height) {this.height = height; }
+
+    public double getWeight() {
+        return weight;
+    }
+
+    public void setWeight(double weight) {
+        this.weight = weight;
     }
 
     public int getCurrentStreak() {
@@ -228,9 +245,11 @@ public class User {
         return totalTime;
     }
 
-    public void setTotalTime(int totalTime) {
-        this.totalTime = totalTime;
-    }
+    public void setTotalTime(int totalTime) {this.totalTime = totalTime;}
+
+    public String getPfpURL() {return pfpURL; }
+
+    public void setPfpURL(String pfpURL) {this.pfpURL = pfpURL; }
 
     public void updateHighestStreak () {
         if (currentStreak > highestStreak) {
