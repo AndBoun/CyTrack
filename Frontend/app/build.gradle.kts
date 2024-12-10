@@ -172,6 +172,7 @@ dependencies {
     implementation(libs.storage)
 
 
+
     // Java UI and Activities
     implementation(libs.appcompat)
     implementation(libs.material)
@@ -210,12 +211,6 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-contrib:3.6.1")
     androidTestImplementation("androidx.test.espresso:espresso-intents:3.6.1")
 
-    // Compose Testing
-    // Test rules and transitive dependencies:
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.7.5")
-    // Needed for createComposeRule(), but not for createAndroidComposeRule<YourActivity>:
-    debugImplementation("androidx.compose.ui:ui-test-manifest:1.7.5")
-
 
     // Compose and UI Dependencies (for declarative UI)
     implementation(platform(libs.compose.bom))
@@ -233,9 +228,5 @@ dependencies {
     implementation("androidx.compose.material3:material3-window-size-class:1.3.1")
     implementation("androidx.compose.material3:material3-adaptive-navigation-suite:1.3.1")
     implementation("androidx.compose.material:material-icons-extended:$1.3.1")
-
-    // Vico Graph Dependencies
-    implementation(libs.vico.compose)
-    implementation(libs.vico.compose.m3)
 }
 
