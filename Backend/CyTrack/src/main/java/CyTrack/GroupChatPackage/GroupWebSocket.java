@@ -4,16 +4,17 @@ import CyTrack.Entities.User;
 import CyTrack.Repositories.UserRepository;
 import CyTrack.Responses.ChatMessageResponse;
 import CyTrack.Services.UserService;
+import CyTrack.Sockets.NotificationsWebSocket;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.websocket.*;
 import jakarta.websocket.server.PathParam;
 import jakarta.websocket.server.ServerEndpoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-
+import CyTrack.Services.NotificationService;
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Controller
 @ServerEndpoint("/groupchat/{groupID}/{userID}")
@@ -22,27 +23,28 @@ public class GroupWebSocket {
     private static GroupChatService groupChatService;
     private static UserService userService;
     private static UserRepository userRepository;
+    private static NotificationService notificationService;
     private static ObjectMapper objectMapper = new ObjectMapper();
 
-    public GroupWebSocket() {
-    }
+    private static Map<Session, Long> sessionUserMap = new ConcurrentHashMap<>();
+    private static Map<Long, List<Session>> userSessionMap = new ConcurrentHashMap<>();
 
     @Autowired
-    public GroupWebSocket(GroupChatService groupChatService, UserService userService, UserRepository userRepository) {
+    public GroupWebSocket(GroupChatService groupChatService, UserService userService, UserRepository userRepository, NotificationService notificationService) {
         GroupWebSocket.groupChatService = groupChatService;
         GroupWebSocket.userService = userService;
         GroupWebSocket.userRepository = userRepository;
+        GroupWebSocket.notificationService = notificationService;
     }
 
-    private static Map<Session, Long> sessionUserMap = new Hashtable<>();
-    private static Map<Long, Session> userSessionMap = new Hashtable<>();
+    public GroupWebSocket() {}
 
     @OnOpen
     public void onOpen(Session session, @PathParam("groupID") Long groupID, @PathParam("userID") Long userID) throws IOException {
         Optional<GroupChat> groupChat = groupChatService.getGroupChatWithMessages(groupID);
         if (groupChat.isPresent() && groupChat.get().getMembers().contains(userRepository.findById(userID).orElse(null))) {
             sessionUserMap.put(session, userID);
-            userSessionMap.put(userID, session);
+            userSessionMap.computeIfAbsent(userID, k -> new ArrayList<>()).add(session);
 
             // Load chat history from the database
             List<GroupMessage> messageHistory = groupChatService.getChatHistory(groupID);
@@ -79,14 +81,24 @@ public class GroupWebSocket {
             String jsonMessage = objectMapper.writeValueAsString(customMessage);
 
             for (User member : groupChat.get().getMembers()) {
-                Session memberSession = userSessionMap.get(member.getUserID());
-                if (memberSession != null && memberSession.isOpen()) {
-                    if (member.getUserID().equals(senderID)) {
-                        memberSession.getBasicRemote().sendText("You: " + messageText);
-                    } else {
-                        memberSession.getBasicRemote().sendText(sender.getUsername() + ": " + messageText);
+                List<Session> memberSessions = userSessionMap.get(member.getUserID());
+                if (memberSessions != null) {
+                    for (Session memberSession : memberSessions) {
+                        if (memberSession.isOpen()) {
+                            if (member.getUserID().equals(senderID)) {
+                                memberSession.getBasicRemote().sendText("You: " + messageText);
+                            } else {
+                                memberSession.getBasicRemote().sendText(sender.getUsername() + ": " + messageText);
+                            }
+                        }
                     }
+                } else {
+                    // Notify offline users
+                    notificationService.notifyUser(member.getUserID(), jsonMessage);
                 }
+
+                // Broadcast update to central WebSocket
+                NotificationsWebSocket.broadcastUpdate(member.getUserID(), jsonMessage);
             }
         } else {
             session.getBasicRemote().sendText("Error: You are not a member of this group");
@@ -97,7 +109,13 @@ public class GroupWebSocket {
     public void onClose(Session session) {
         Long userID = sessionUserMap.remove(session);
         if (userID != null) {
-            userSessionMap.remove(userID);
+            List<Session> sessions = userSessionMap.get(userID);
+            if (sessions != null) {
+                sessions.remove(session);
+                if (sessions.isEmpty()) {
+                    userSessionMap.remove(userID);
+                }
+            }
         }
     }
 
