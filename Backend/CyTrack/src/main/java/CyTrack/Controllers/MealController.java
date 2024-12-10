@@ -72,7 +72,8 @@ public class MealController {
                             meal.getProtein(),
                             meal.getCarbs(),
                             meal.getTime(),
-                            meal.getDate()
+                            meal.getDate(),
+                            meal.getMealCategories()
                     ))
                     .toList();
             MealResponse response = new MealResponse("success", mealDataList, "Meals found");
@@ -122,7 +123,8 @@ public class MealController {
                         foundMeal.getProtein(),
                         foundMeal.getCarbs(),
                         foundMeal.getTime(),
-                        foundMeal.getDate()
+                        foundMeal.getDate(),
+                        foundMeal.getMealCategories()
                 );
                 MealResponse response = new MealResponse("success", List.of(mealData), "Meal found");
                 return ResponseEntity.status(200).body(response);
@@ -170,7 +172,8 @@ public class MealController {
                             meal.getProtein(),
                             meal.getCarbs(),
                             meal.getTime(),
-                            meal.getDate()
+                            meal.getDate(),
+                            meal.getMealCategories()
                     ))
                     .toList();
             MealResponse response = new MealResponse("success", mealDataList, "Meals found for date " + date);

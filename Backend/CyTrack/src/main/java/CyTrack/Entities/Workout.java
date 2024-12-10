@@ -12,6 +12,8 @@ import org.springframework.cglib.core.Local;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Workout {
@@ -26,6 +28,10 @@ public class Workout {
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
     private User user;
+
+    @JsonIgnore
+    @ManyToMany(mappedBy = "workouts", fetch = FetchType.LAZY)
+    private List<WorkoutCategory> workoutCategories = new ArrayList<>();
 
     private String exerciseType;
     private int duration;
@@ -72,6 +78,14 @@ public class Workout {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public List<WorkoutCategory> getWorkoutCategories() {
+        return workoutCategories;
+    }
+
+    public void setWorkoutCategories(List<WorkoutCategory> workoutCategories) {
+        this.workoutCategories = workoutCategories;
     }
 
     public String getExerciseType() {

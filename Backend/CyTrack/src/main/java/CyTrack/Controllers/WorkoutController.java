@@ -259,7 +259,8 @@ public class WorkoutController {
                             workout.getDuration(),
                             workout.getCalories(),
                             workout.getDate(),
-                            workout.getWorkoutID()
+                            workout.getWorkoutID(),
+                            workout.getWorkoutCategories()
                     ))
                     .toList();
             WorkoutResponse response = new WorkoutResponse("success", workoutDataList, "Workouts found");
@@ -295,7 +296,8 @@ public class WorkoutController {
                         foundWorkout.getDuration(),
                         foundWorkout.getCalories(),
                         foundWorkout.getDate(),
-                        foundWorkout.getWorkoutID()
+                        foundWorkout.getWorkoutID(),
+                        foundWorkout.getWorkoutCategories()
                 );
                 WorkoutResponse response = new WorkoutResponse("success", List.of(workoutData), "Workout found");
                 return ResponseEntity.status(200).body(response);
@@ -343,7 +345,8 @@ public class WorkoutController {
                             workout.getDuration(),
                             workout.getCalories(),
                             workout.getDate(),
-                            workout.getWorkoutID()
+                            workout.getWorkoutID(),
+                            workout.getWorkoutCategories()
                     ))
                     .toList();
             WorkoutResponse response = new WorkoutResponse("success", workoutDataList, "Workouts found for " + date);
