@@ -141,6 +141,7 @@ fun LoginScreen(
             InputField(
                 text = password,
                 hint = "Password",
+                isPassword = true,
                 modifier = Modifier.padding(horizontal = 45.dp)
             )
 

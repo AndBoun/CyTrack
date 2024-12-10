@@ -3,18 +3,23 @@ package com.example.CyTrack.Startup.SignUp.Composables
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Contacts
+import androidx.compose.material.icons.filled.UploadFile
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -29,15 +34,46 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.CyTrack.R
+import com.example.CyTrack.Social.ImagePicker
+import com.example.CyTrack.Social.ProfileImage
 import com.example.CyTrack.Utilities.ComposeUtils
 import com.example.compose.CyRedDark
+import com.example.compose.CyRedMain
 import com.example.compose.CyYellow
 import com.example.compose.OffWhite
 import com.example.compose.OnWhiteSecondary
+
+@Composable
+fun ProfileImageUpdate(
+    profileImg: MutableState<String>,
+    modifier: Modifier = Modifier,
+){
+    Box {
+        ProfileImage(
+            imageUrl = profileImg,
+            modifier = modifier
+        )
+
+        Column(
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .offset(x = (-6).dp, y = (-6).dp)
+        ) {
+            ImagePicker(
+                profileImgUri = profileImg,
+                buttonContent = { onClick ->
+                    UploadImageButton(onClick)
+                }
+            )
+        }
+    }
+}
 
 @Composable
 fun LogoIcon(
@@ -90,12 +126,20 @@ fun InputField(
     text: MutableState<String>,
     hint: String,
     keyboardType: KeyboardType = KeyboardType.Text,
+    isPassword: Boolean = false,
     modifier: Modifier = Modifier
 ) {
     TextField(
         value = text.value,
-        onValueChange = { text.value = it },
+        onValueChange = { newValue ->
+            if (keyboardType == KeyboardType.Number) {
+                text.value = newValue.filter { it.isDigit() }
+            } else {
+                text.value = newValue
+            }
+        },
         keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
+        visualTransformation = if (isPassword) PasswordVisualTransformation() else VisualTransformation.None,
         label = {
             Text(
                 text = hint,
@@ -185,5 +229,28 @@ fun UserInstruction(
                 FontWeight.Medium,
                 FontStyle.Normal)
         )
+    }
+}
+
+@Composable
+fun UploadImageButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Surface(
+        color = CyRedMain,
+        shape = RoundedCornerShape(50.dp),
+        modifier = modifier.size(30.dp),
+    ) {
+        IconButton(
+            onClick = onClick,
+            modifier = Modifier.padding(5.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Default.UploadFile,
+                contentDescription = "Upload Image",
+                tint = Color.White
+            )
+        }
     }
 }

@@ -61,6 +61,7 @@ class UserInfoActivity : ComponentActivity() {
                         height.value.toInt(),
                         ""
                     )
+                    navigateToCreatePassword()
                 },
                 onBack = {
                     finish()
