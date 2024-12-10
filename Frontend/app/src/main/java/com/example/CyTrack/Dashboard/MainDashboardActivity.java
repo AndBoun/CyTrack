@@ -13,6 +13,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.CyTrack.Meal.MyMeals;
 import com.example.CyTrack.R;
 import com.example.CyTrack.Social.MyProfile;
 import com.example.CyTrack.Leaderboard.TimeEntryBoard.LeaderboardActivity;
@@ -117,7 +118,7 @@ public class MainDashboardActivity extends AppCompatActivity {
 
         mealTrackingButton.setOnClickListener(v -> {
             // Open Meal Tracking Activity
-            Intent Navigate = new Intent(MainDashboardActivity.this, MealTrackingMain.class);
+            Intent Navigate = new Intent(MainDashboardActivity.this, MyMeals.class);
             startActivity(Navigate);
         });
 

@@ -124,7 +124,7 @@ class MealUtils {
         ) {
             // Inflate the dialog layout
             val inflater = LayoutInflater.from(context)
-            val dialogView: View = inflater.inflate(R.layout.workouts_add_workout_dialog, null)
+            val dialogView: View = inflater.inflate(R.layout.meal_add_popup, null)
 
             // Create the AlertDialog
             val builder = AlertDialog.Builder(context)
@@ -132,13 +132,15 @@ class MealUtils {
                 .setTitle("Add Meal")
                 .setPositiveButton("Add") { dialog: DialogInterface, which: Int ->
                     // Handle the add button click
-                    val inputExerciseType = dialogView.findViewById<EditText>(R.id.inputExerciseType)
-                    val inputWorkoutDuration = dialogView.findViewById<EditText>(R.id.inputWorkoutDuration2)
-                    val inputCalories = dialogView.findViewById<EditText>(R.id.inputCalories)
+                    val inputMealName = dialogView.findViewById<EditText>(R.id.inputMealName)
+                    val inputMealCalories = dialogView.findViewById<EditText>(R.id.inputMealCalories)
+                    val inputMealProtein = dialogView.findViewById<EditText>(R.id.inputMealProtein)
+                    val inputMealCarbs = dialogView.findViewById<EditText>(R.id.inputMealCarbs)
 
-                    if (inputExerciseType.text.toString().isEmpty() ||
-                        inputWorkoutDuration.text.toString().isEmpty() ||
-                        inputCalories.text.toString().isEmpty()
+                    if (inputMealName.text.toString().isEmpty() ||
+                        inputMealCalories.text.toString().isEmpty() ||
+                        inputMealProtein.text.toString().isEmpty() ||
+                        inputMealCarbs.text.toString().isEmpty()
                     ) {
                         Toast.makeText(
                             context,
@@ -149,12 +151,12 @@ class MealUtils {
                     }
 
 
-                    val carbs = inputExerciseType.text.toString()
-                    val protein = inputWorkoutDuration.text.toString()
-                    val calories = inputCalories.text.toString()
+                    val carbs = inputMealCarbs.text.toString()
+                    val protein = inputMealProtein.text.toString()
+                    val calories = inputMealCalories.text.toString()
 
                     val meal = MealEntry("Placeholder", calories.toInt(), carbs.toInt(), protein.toInt(), time, date)
-                    postMeal(user, url, meal, date, context)
+                    postMeal(url, meal, context)
                     dialog.dismiss()
                 }
                 .setNegativeButton(
@@ -163,19 +165,83 @@ class MealUtils {
                 .create()
                 .show()
         }
+
+        fun showModifyMeal(
+            user: User,
+            url: String,
+            time: String,
+            date: String,
+            context: Activity
+        ) {
+            // Inflate the dialog layout
+            val inflater = LayoutInflater.from(context)
+            val dialogView: View = inflater.inflate(R.layout.meal_modify_popup, null)
+
+            // Create the AlertDialog
+            val builder = AlertDialog.Builder(context)
+            builder.setView(dialogView)
+                .setTitle("Edit or Delete Meal")
+                .setNegativeButton("Delete") { dialog: DialogInterface, which: Int ->
+                    // Handle the button click
+                    val inputMealID = dialogView.findViewById<EditText>(R.id.inputMealID)
+                    val MealID = inputMealID.text.toString()
+                    if (inputMealID.text.toString().isEmpty())
+                    {
+                        Toast.makeText(
+                            context,
+                            "Failed: Please enter the Meal ID",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                    deleteMeal("${url}/${MealID}", context)
+                    dialog.dismiss()
+                }
+                .setPositiveButton("Modify") { dialog: DialogInterface, which: Int ->
+                    // Handle the button click
+                    val inputMealID = dialogView.findViewById<EditText>(R.id.inputMealID)
+                    val inputMealName = dialogView.findViewById<EditText>(R.id.inputNewMealName)
+                    val inputMealCalories = dialogView.findViewById<EditText>(R.id.inputNewMealCalories)
+                    val inputMealProtein = dialogView.findViewById<EditText>(R.id.inputNewMealProtein)
+                    val inputMealCarbs = dialogView.findViewById<EditText>(R.id.inputNewMealCarbs)
+
+                    if (inputMealID.text.toString().isEmpty() ||
+                        inputMealName.text.toString().isEmpty() ||
+                        inputMealCalories.text.toString().isEmpty() ||
+                        inputMealProtein.text.toString().isEmpty() ||
+                        inputMealCarbs.text.toString().isEmpty()
+                    ) {
+                        Toast.makeText(
+                            context,
+                            "Failed: Please fill out all fields",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        return@setPositiveButton
+                    }
+                    val name = inputMealName.text.toString()
+                    val carbs = inputMealCarbs.text.toString()
+                    val protein = inputMealProtein.text.toString()
+                    val calories = inputMealCalories.text.toString()
+
+                    val meal = MealEntry(name, calories.toInt(), carbs.toInt(), protein.toInt(), time, date)
+                    postMeal(url, meal, context)
+                    dialog.dismiss()
+                }
+                .setNeutralButton(
+                    "Cancel"
+                ) { dialog: DialogInterface, which: Int -> dialog.dismiss() }
+                .create()
+                .show()
+        }
         /**
-         * Posts a new workout to the server.
+         * Posts a new meal to the server.
          *
-         * @param exerciseType The type of exercise.
-         * @param duration     The duration of the workout.
-         * @param calories     The calories burned during the workout.
-         * @param date         The date of the workout.
+         * @param URL
+         * @param meal
+         * @param context
          */
         fun postMeal(
-            user: User,
             URL: String,
             meal: MealEntry,
-            date: String,
             context: Activity,
         ) {
             val inputs = JSONObject().apply {
@@ -193,12 +259,65 @@ class MealUtils {
                 inputs,
                 { response: JSONObject ->
                     try {
-                        val data = response.getJSONObject("data")
-                        val workoutID = data.getInt("workoutID")
-                        Toast.makeText(context, "Workout added", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "Meal added", Toast.LENGTH_SHORT).show()
                     } catch (e: JSONException) {
                         e.printStackTrace()
                     }
+                },
+                { error: VolleyError? ->
+                    Toast.makeText(
+                        context,
+                        NetworkUtils.errorResponse(error),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                })
+            VolleySingleton.getInstance(context).addToRequestQueue(jsonObjectRequest)
+        }
+        /**
+         * Posts a new meal to the server.
+         *
+         * @param URL
+         * @param context
+         */
+        fun deleteMeal(
+            URL: String,
+            context: Activity
+        ) {
+            val jsonObjectRequest = JsonObjectRequest(
+                Request.Method.DELETE, URL, null,
+                { response: JSONObject? ->
+                    Toast.makeText(context, "Meal deleted", Toast.LENGTH_SHORT).show()
+                },
+                { error: VolleyError? ->
+                    Toast.makeText(
+                        context,
+                        NetworkUtils.errorResponse(error),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                })
+            VolleySingleton.getInstance(context).addToRequestQueue(jsonObjectRequest)
+        }
+
+
+        private fun modifyWorkout(
+            meal: MealEntry,
+            URL: String,
+            context: Activity
+        ) {
+            val modifyURL: String = URL + "/" + meal.id
+            val inputs = JSONObject().apply {
+                put("mealName", meal.name)
+                put("calories", meal.calories)
+                put("protein", meal.protein)
+                put("carbs", meal.carbs)
+                put("time", meal.time)
+                put("date", meal.date)
+            }
+
+            val jsonObjectRequest = JsonObjectRequest(
+                Request.Method.PUT, modifyURL, inputs,
+                { response: JSONObject? ->
+                    Toast.makeText(context, "Meal modified", Toast.LENGTH_SHORT).show()
                 },
                 { error: VolleyError? ->
                     Toast.makeText(

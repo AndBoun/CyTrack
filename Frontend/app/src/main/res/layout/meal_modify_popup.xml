@@ -3,30 +3,37 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:id="@+id/dialog_add_workout"
+    android:id="@+id/dialog_modify_meal"
     android:padding="16dp">
 
     <EditText
-        android:id="@+id/inputExerciseType"
+        android:id="@+id/inputMealID"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Workout Name" />
+        android:hint="Meal ID" />
 
     <EditText
-        android:id="@+id/inputWorkoutDuration2"
+        android:id="@+id/inputNewMealName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:hint="Duration (minutes)"
-        android:inputType="number" />
+        android:hint="Meal Name" />
 
     <EditText
-        android:id="@+id/inputCalories"
+        android:id="@+id/inputNewMealCalories"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:hint="Calories" />
 
-        android:hint="Calories"
-        android:inputType="number" />
+    <EditText
+        android:id="@+id/inputNewMealProtein"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Protein" />
+
+    <EditText
+        android:id="@+id/inputNewMealCarbs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Carbohydrates" />
 
 </LinearLayout>

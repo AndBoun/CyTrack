@@ -28,22 +28,15 @@ import com.example.CyTrack.Workouts.DailyStatisticBox
 
 
 class MyMeals : ComponentActivity(){
-    //    @param ID        the unique identifier for the user
-    //    * @param username  the username of the user
-    //    * @param firstName the first name of the user
-    //    * @param lastName  the last name of the user
-    //    * @param age       the age of the user
-    //    * @param gender    the gender of the user
-    //    * @param streak    the current streak of the user
-//    /**
-//     * The user object representing the current user.
-//     */
-//    private lateinit var user: User
-
     /**
      * The user object representing the current user.
      */
-    private var user = User(23, "Marco", "Darco", "Sparco", 23, "M", 23)
+    private lateinit var user: User
+
+    /**
+     * The user object representing a sample user.
+     */
+    //private var user = User(23, "Marco", "Darco", "Sparco", 23, "M", 23)
 
     /**
      * A mutable list of workout objects.
@@ -161,7 +154,7 @@ class MyMeals : ComponentActivity(){
                 }
 
                 Spacer(modifier = Modifier.height(50.dp))
-                MealsLazyList(MealData.MealSample, user, "${URL}/${user.id}/meal", getTimeAsString(), getDateAsString(), context)
+                MealsLazyList(mealList, user, "${URL}/${user.id}/meal", getTimeAsString(), getDateAsString(), context)
             }
 
             StatusBarUtil.setStatusBarColor(this, R.color.CyRed)

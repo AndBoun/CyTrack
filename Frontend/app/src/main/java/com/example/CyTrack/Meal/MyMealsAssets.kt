@@ -287,7 +287,7 @@ fun MealsLazyList(MealList: List<MealEntry>, user: User, URL: String, time: Stri
             MealCard(
                 MealList[it],
                 onClick = {
-                    MealUtils.showAddMeal(
+                    MealUtils.showModifyMeal(
                         user,
                         "${URL}/${user.id}/meal",
                         time,
