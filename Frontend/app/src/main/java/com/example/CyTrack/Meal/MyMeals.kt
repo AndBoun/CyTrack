@@ -1,66 +1,31 @@
 package com.example.CyTrack.Meal
 
-import android.app.Activity
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.example.CyTrack.Badges.BadgeData
 import com.example.CyTrack.R
-import com.example.CyTrack.Utilities.ComposeUtils.Companion.getCustomFontFamily
 import com.example.CyTrack.Utilities.StatusBarUtil
 import com.example.CyTrack.Utilities.UrlHolder
 import com.example.CyTrack.Utilities.User
-import com.example.CyTrack.Workouts.AddWorkOutButton
 import com.example.CyTrack.Workouts.DailyStatisticBox
-import com.example.CyTrack.Workouts.MyWorkoutsTopCard
-import com.example.CyTrack.Workouts.StartWorkoutButton
-import com.example.CyTrack.Workouts.WorkoutObject
-import com.example.CyTrack.Workouts.WorkoutUtils
-import com.example.CyTrack.Workouts.WorkoutsLazyList
+
 
 class MyMeals : ComponentActivity(){
     //    @param ID        the unique identifier for the user
@@ -143,14 +108,15 @@ class MyMeals : ComponentActivity(){
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        user = intent.getSerializableExtra("user") as User
+        val context = this
+        //user = intent.getSerializableExtra("user") as User
         MealUtils.getListOfMeals(
-            this,
+            context,
             mealList,
             "${URL}/${user.id}/meal",
             "meals"
         )
+        Log.d("Preview", "MealPage Created")
 
         setContent {
             Column(
@@ -189,18 +155,17 @@ class MyMeals : ComponentActivity(){
                 ) {
                     AddMealButton(
                         onClick = {
-    //                        switchToAddMeals()
+                            MealUtils.showAddMeal(user, "${URL}/${user.id}/meal", getTimeAsString(), getDateAsString(), context)
                         }
                     )
                 }
 
                 Spacer(modifier = Modifier.height(50.dp))
-
-//                WorkoutsLazyList(mealList)
-
+                MealsLazyList(MealData.MealSample, user, "${URL}/${user.id}/meal", getTimeAsString(), getDateAsString(), context)
             }
 
             StatusBarUtil.setStatusBarColor(this, R.color.CyRed)
+
         }
     }
 
@@ -308,15 +273,14 @@ class MyMeals : ComponentActivity(){
                 ) {
                     AddMealButton(
                         onClick = {
-  //                          switchToAddMeals()
+                            //MealUtils.showAddMeal(user, "${URL}/${user.id}/meal", getTimeAsString(), getDateAsString(), this)
                         }
                     )
                 }
 
                 Spacer(modifier = Modifier.height(50.dp))
-                MealsLazyList(MealData.MealSample)
-
-
+                //MealsLazyList(MealData.MealSample)
+                Log.d("Preview", "preview started")
 
             }
         }

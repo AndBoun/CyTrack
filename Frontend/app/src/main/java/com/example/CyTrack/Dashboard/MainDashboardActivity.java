@@ -13,14 +13,12 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.example.CyTrack.Meals.MealTrackingMain;
 import com.example.CyTrack.R;
 import com.example.CyTrack.Social.MyProfile;
 import com.example.CyTrack.Leaderboard.TimeEntryBoard.LeaderboardActivity;
 import com.example.CyTrack.Utilities.User;
 import com.example.CyTrack.Utilities.StatusBarUtil;
 import com.example.CyTrack.Workouts.MyWorkouts;
-import com.example.CyTrack.Workouts.WorkoutActivity;
 
 /**
  * MainDashboardActivity is the main screen of the application where users can navigate

@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.CyTrack.R
 import com.example.CyTrack.Utilities.ComposeUtils.Companion.getCustomFontFamily
+import com.example.CyTrack.Utilities.User
 import com.example.CyTrack.Workouts.WorkoutObject
 
 /**
@@ -272,6 +273,7 @@ fun MealCard(
         }
 
     }
+    Spacer(modifier = Modifier.height(20.dp))
 }
 
 /**
@@ -279,12 +281,22 @@ fun MealCard(
  * @param MealList A list of MealEntrys representing the Meals to be displayed.
  */
 @Composable
-fun MealsLazyList(MealList: List<MealEntry>) {
+fun MealsLazyList(MealList: List<MealEntry>, user: User, URL: String, time: String, date: String, context: Activity) {
     LazyColumn {
         items(MealList.size) {
-            MealCard(MealList[it])
-            Spacer(modifier = Modifier.height(20.dp))
-            
+            MealCard(
+                MealList[it],
+                onClick = {
+                    MealUtils.showAddMeal(
+                        user,
+                        "${URL}/${user.id}/meal",
+                        time,
+                        date,
+                        context
+                    )
+                }
+            )
         }
     }
+
 }
