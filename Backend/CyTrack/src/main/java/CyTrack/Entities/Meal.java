@@ -5,6 +5,9 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *@author Eduardo Barboza-Campos
  * Class representing a table for a 'Meal' entity.
@@ -29,6 +32,9 @@ public class Meal {
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
     private User user;
+
+    @ManyToMany(mappedBy = "meals", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<MealCategory> mealCategories = new ArrayList<>();
 
     private String mealName;
     private Integer calories;
@@ -66,6 +72,10 @@ public class Meal {
     public User getUser() {return user; }
 
     public void setUser(User user) {this.user = user; }
+
+    public List<MealCategory> getMealCategories() {return mealCategories; }
+
+    public void setMealCategories(List<MealCategory> mealCategories) {this.mealCategories = mealCategories; }
 
     public String getMealName() {return mealName; }
 
