@@ -44,6 +44,14 @@ public class User implements Serializable {
      */
     private int streak;
 
+
+
+    private int weight;
+
+    private int height;
+
+    private String profileImg;
+
     /**
      * Constructs a new User.
      *
@@ -63,6 +71,48 @@ public class User implements Serializable {
         this.age = age;
         this.gender = gender;
         this.streak = streak;
+    }
+
+    public User(
+            int ID,
+            String username,
+            String firstName,
+            String lastName,
+            int age,
+            String gender,
+            int streak,
+            int weight,
+            int height,
+            String profileImg
+    ){
+        this(ID, username, firstName, lastName, age, gender, streak);
+        this.weight = weight;
+        this.height = height;
+        this.profileImg = profileImg;
+    }
+
+    public int getWeight() {
+        return weight;
+    }
+
+    public void setWeight(int weight) {
+        this.weight = weight;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
+    }
+
+    public String getProfileImg() {
+        return profileImg;
+    }
+
+    public void setProfileImg(String profileImg) {
+        this.profileImg = profileImg;
     }
 
     /**

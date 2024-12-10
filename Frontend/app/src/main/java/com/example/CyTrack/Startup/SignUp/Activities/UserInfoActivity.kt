@@ -1,5 +1,6 @@
 package com.example.CyTrack.Startup.SignUp.Activities
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -16,6 +17,8 @@ import com.example.CyTrack.Utilities.User
 class UserInfoActivity : ComponentActivity() {
     private lateinit var user: User
 
+    private lateinit var oldUser: User
+
     private lateinit var firstName: MutableState<String>
     private lateinit var lastName: MutableState<String>
     private lateinit var weight: MutableState<String>
@@ -27,7 +30,15 @@ class UserInfoActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         StatusBarUtil.setStatusBarColor(this, R.color.white)
+        oldUser = intent.getSerializableExtra("user") as User
         setContent {
+            firstName = remember { mutableStateOf("") }
+            lastName = remember { mutableStateOf("") }
+            weight = remember { mutableStateOf("") }
+            height = remember { mutableStateOf("") }
+            age = remember { mutableStateOf("") }
+            gender = remember { mutableStateOf("") }
+
 
             UserInfoScreen(
                 firstName = firstName,
@@ -38,12 +49,32 @@ class UserInfoActivity : ComponentActivity() {
                 gender = gender,
                 onContinue = {
                     // Continue to the next screen
+                    user = User(
+                        0,
+                        oldUser.username,
+                        firstName.value,
+                        lastName.value,
+                        age.value.toInt(),
+                        gender.value,
+                        0,
+                        weight.value.toInt(),
+                        height.value.toInt(),
+                        ""
+                    )
                 },
                 onBack = {
                     finish()
                 }
             )
         }
+    }
 
+    private fun navigateToCreatePassword(){
+        val intent = Intent(
+            this@UserInfoActivity,
+            CreatePasswordActivity::class.java
+        )
+        intent.putExtra("user", user)
+        startActivity(intent)
     }
 }

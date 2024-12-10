@@ -31,7 +31,7 @@ class UsernameActivity : ComponentActivity() {
                 username = username,
                 onContinue = {
                     // Continue to the next screen
-                    user = User(null, username.value, null, null, null)
+                    user = User(0, username.value, null, null, 0, null, 0)
                     navigateToUserInfo()
                 },
                 onBack = {
@@ -47,7 +47,7 @@ class UsernameActivity : ComponentActivity() {
             this@UsernameActivity,
             UserInfoActivity::class.java
         )
+        intent.putExtra("user", user)
         startActivity(intent)
-        finish()
     }
 }
