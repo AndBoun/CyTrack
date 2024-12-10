@@ -1,5 +1,8 @@
 package CyTrack.Controllers;
 
+import CyTrack.Entities.MealCategory;
+import CyTrack.Responses.MealCategoryResponse;
+
 import java.util.List;
 
 public class MealResponse {
@@ -55,10 +58,11 @@ public class MealResponse {
         private Integer carbs;
         private String time;
         private String date;
+        private List<MealCategory> mealCategories;
 
 
-        public MealData (Long mealID, String mealName, Integer calories,
-                     Integer protein, Integer carbs, String time, String date) {
+        public MealData (Long mealID, String mealName, Integer calories, Integer protein,
+                         Integer carbs, String time, String date, List<MealCategory> categories) {
             this.mealID = mealID;
             this.mealName = mealName;
             this.calories = calories;
@@ -66,7 +70,12 @@ public class MealResponse {
             this.carbs = carbs;
             this.time = time;
             this.date = date;
+            this.mealCategories = categories;
         }
+
+        public Long getMealID() {return mealID; }
+
+        public void setMealID(Long mealID) {this.mealID = mealID; }
 
         public String getMealName() {
             return mealName;
@@ -111,6 +120,39 @@ public class MealResponse {
         public String getDate() {return date; }
 
         public void setDate(String date) {this.date = date; }
+
+        public List<MealCategory> getCategories() {
+            return mealCategories;
+        }
+
+        public void setCategories(List<MealCategory> categories) {
+            this.mealCategories = categories;
+        }
     }
 
+    public static class MealCategoryData {
+        private Long mealCategoryId;
+        private String mealCategoryName;
+
+        public MealCategoryData(Long mealCategoryId, String mealCategoryName) {
+            this.mealCategoryId = mealCategoryId;
+            this.mealCategoryName = mealCategoryName;
+        }
+
+        public Long getMealCategoryId() {
+            return mealCategoryId;
+        }
+
+        public void setMealCategoryId(Long mealCategoryId) {
+            this.mealCategoryId = mealCategoryId;
+        }
+
+        public String getMealCategoryName() {
+            return mealCategoryName;
+        }
+
+        public void setMealCategoryName(String mealCategoryName) {
+            this.mealCategoryName = mealCategoryName;
+        }
+    }
 }
