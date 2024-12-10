@@ -150,12 +150,18 @@ public class WorkoutController {
 
             try {
                 // Notify WebSocket about workout start
-                workoutTrackingSocket.notifyWorkoutStarted(userID);
-            } catch (IOException e) {
-                ErrorResponse response = new ErrorResponse("error", 500, "Internal server error", "Failed to notify workout start");
+                workoutTrackingSocket.startWorkout(userID);
+            } catch (Exception e) {
+                ErrorResponse response = new ErrorResponse(
+                        "error",
+                        500,
+                        "Internal server error",
+                        "Failed to notify workout start: " + e.getMessage()
+                );
                 return ResponseEntity.status(500).body(response);
             }
 
+            //Award eligible badges
             badgeService.awardEligibleBadges(user.get());
 
             WorkoutIDResponse response = new WorkoutIDResponse("success", startedWorkout.getWorkoutID(), "workout created and started");
@@ -178,6 +184,7 @@ public class WorkoutController {
             @Parameter(name = "userID", description = "ID of the user", required = true, example = "1"),
             @Parameter(name = "workoutID", description = "ID of the workout to start", required = true, example = "1")
     })
+    // Start an existing workout
     @PostMapping("/{userID}/workout/{workoutID}/start")
     public ResponseEntity<?> startWorkout(@PathVariable Long userID, @PathVariable Long workoutID) {
         Optional<User> user = userService.findByUserID(userID);
@@ -185,6 +192,20 @@ public class WorkoutController {
             Optional<Workout> workout = workoutService.findByWorkoutID(workoutID);
             if (workout.isPresent()) {
                 Workout startedWorkout = workoutService.startWorkout(workoutID);
+
+                try {
+                    // Notify WebSocket about workout start
+                    WorkoutTrackingSocket.startWorkout(userID);
+                } catch (Exception e) {
+                    ErrorResponse response = new ErrorResponse(
+                            "error",
+                            500,
+                            "Internal server error",
+                            "Failed to notify workout start: " + e.getMessage()
+                    );
+                    return ResponseEntity.status(500).body(response);
+                }
+
                 WorkoutIDResponse response = new WorkoutIDResponse("success", workoutID, "Workout started");
                 return ResponseEntity.status(200).body(response);
             }
@@ -194,7 +215,6 @@ public class WorkoutController {
         ErrorResponse response = new ErrorResponse("error", 404, "User not found", "User not found");
         return ResponseEntity.status(404).body(response);
     }
-
     // End a workout
     @Operation(
             summary = "End a Workout",
@@ -220,12 +240,18 @@ public class WorkoutController {
                 //notify websocket about workout end
                 try {
                     // Notify WebSocket about workout end
-                    workoutTrackingSocket.notifyWorkoutEnded(userID);
-                } catch (IOException e) {
-                    ErrorResponse response = new ErrorResponse("error", 500, "Internal server error", "Failed to notify workout end");
+                    workoutTrackingSocket.endWorkout(userID);
+                } catch (Exception e) {
+                    ErrorResponse response = new ErrorResponse(
+                            "error",
+                            500,
+                            "Internal server error",
+                            "Failed to notify workout end: " + e.getMessage()
+                    );
                     return ResponseEntity.status(500).body(response);
                 }
 
+                // Update leaderboard
                 LeaderBoardSocket.updateLeaderboard(user.get().getUserID());
 
                 WorkoutIDResponse response = new WorkoutIDResponse("success", workoutID, "Workout ended");
