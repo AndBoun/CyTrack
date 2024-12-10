@@ -2,6 +2,7 @@ package CyTrack.GroupChatPackage;
 import CyTrack.Entities.User;
 import CyTrack.Repositories.UserRepository;
 import CyTrack.Services.FriendsService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import CyTrack.GroupChatPackage.GroupChatRepository;
@@ -20,6 +21,9 @@ public class GroupChatService {
 
     @Autowired
     private FriendsService friendsService;
+
+    @Autowired
+    private GroupMessageRepository groupMessageRepository;
 
     public GroupChat createGroupChat(User admin, String groupName) {
         GroupChat groupChat = new GroupChat();
@@ -88,5 +92,26 @@ public class GroupChatService {
             return groupChatRepository.findByMembers(user);
         }
         return new ArrayList<>();
+    }
+
+    public List<GroupMessage> getChatHistory(Long groupChatID) {
+        Optional<GroupChat> groupChatOpt = groupChatRepository.findById(groupChatID);
+        if (groupChatOpt.isPresent()) {
+            GroupChat groupChat = groupChatOpt.get();
+            return groupChat.getMessages(); // Assuming GroupChat has a getMessages() method
+        }
+        return new ArrayList<>();
+    }
+
+    @Transactional
+    public GroupMessage saveMessage(GroupMessage message) {
+        return groupMessageRepository.save(message);
+    }
+
+    @Transactional
+    public Optional<GroupChat> getGroupChatWithMessages(Long groupChatID) {
+        Optional<GroupChat> groupChatOpt = groupChatRepository.findById(groupChatID);
+        groupChatOpt.ifPresent(groupChat -> groupChat.getMessages().size()); // Initialize messages collection
+        return groupChatOpt;
     }
 }

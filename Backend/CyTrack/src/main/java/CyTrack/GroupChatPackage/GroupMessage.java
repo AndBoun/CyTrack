@@ -2,14 +2,16 @@ package CyTrack.GroupChatPackage;
 
 import CyTrack.Entities.User;
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.util.Date;
 
 @Entity
 public class GroupMessage {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long groupID;
+    private Long id;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
@@ -19,24 +21,27 @@ public class GroupMessage {
     @JoinColumn(name = "group_chat_id", nullable = false)
     private GroupChat groupChat;
 
-    private LocalDateTime dateTime;
+    @CreationTimestamp
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date date;
 
     private String message;
 
-    public Long getGroupID() {
-        return groupID;
+    // Getters and setters
+    public Long getId() {
+        return id;
     }
 
-    public void setGroupID(Long groupID) {
-        this.groupID = groupID;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public LocalDateTime getDateTime() {
-        return dateTime;
+    public Date getDate() {
+        return date;
     }
 
-    public void setDateTime(LocalDateTime dateTime) {
-        this.dateTime = dateTime;
+    public void setDate(Date date) {
+        this.date = date;
     }
 
     public String getMessage() {

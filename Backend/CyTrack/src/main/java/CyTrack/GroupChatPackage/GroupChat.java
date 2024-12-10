@@ -2,8 +2,8 @@ package CyTrack.GroupChatPackage;
 
 import CyTrack.Entities.User;
 import jakarta.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class GroupChat {
@@ -16,13 +16,16 @@ public class GroupChat {
     @JoinColumn(name = "admin_id", nullable = false)
     private User admin;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "group_chat_members",
             joinColumns = @JoinColumn(name = "group_chat_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
-    private Set<User> members = new HashSet<>();
+    private List<User> members = new ArrayList<>();
+
+    @OneToMany(mappedBy = "groupChat", fetch = FetchType.EAGER)
+    private List<GroupMessage> messages;
 
     private String groupName;
 
@@ -42,7 +45,7 @@ public class GroupChat {
         this.admin = admin;
     }
 
-    public Set<User> getMembers() {
+    public List<User> getMembers() {
         return members;
     }
 
@@ -62,4 +65,11 @@ public class GroupChat {
         this.groupName = groupName;
     }
 
+    public List<GroupMessage> getMessages() {
+        return messages;
+    }
+
+    public void setMessages(List<GroupMessage> messages) {
+        this.messages = messages;
+    }
 }
