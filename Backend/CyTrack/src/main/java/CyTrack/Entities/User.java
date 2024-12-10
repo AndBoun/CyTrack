@@ -66,8 +66,8 @@ public class User {
     /**
      * Workout Categories
      */
-    //@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    //private List<WorkoutCategory> workoutCategories = new ArrayList<>();
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<WorkoutCategory> workoutCategories = new ArrayList<>();
 
     @Column(nullable = false, unique = true)
     @Schema(description="Username of the user", name="username", required=true, example="user1")
@@ -215,6 +215,14 @@ public class User {
 
     public void setMealCategories(List<MealCategory> mealCategories) {
         this.mealCategories = mealCategories;
+    }
+
+    public List<WorkoutCategory> getWorkoutCategories() {
+        return workoutCategories;
+    }
+
+    public void setWorkoutCategories(List<WorkoutCategory> workoutCategories) {
+        this.workoutCategories = workoutCategories;
     }
 
     public void setFriends(List<Friends> friends) {

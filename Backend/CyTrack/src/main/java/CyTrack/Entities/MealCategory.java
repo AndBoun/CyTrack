@@ -18,7 +18,7 @@ public class MealCategory {
     @JsonIgnore
     private User user;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "meal_category_meal",
             joinColumns = @JoinColumn(name = "meal_category_id"),

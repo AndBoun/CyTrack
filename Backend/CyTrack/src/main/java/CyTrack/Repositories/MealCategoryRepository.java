@@ -13,6 +13,4 @@ public interface MealCategoryRepository extends JpaRepository<MealCategory, Long
     Optional<MealCategory> findByMealCategoryName(String mealCategoryName);
     Optional<MealCategory> findByMealCategoryId(Long mealCategoryId);
     List<MealCategory> findByUser(User user);
-
-
 }

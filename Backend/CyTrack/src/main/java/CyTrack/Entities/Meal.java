@@ -9,11 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *@author Eduardo Barboza-Campos
  * Class representing a table for a 'Meal' entity.
- * For now, we're just working on this table alone and not worrying too much about
- * table relationships.
- * We will worry about this later lmao.
  */
 @Entity
 public class Meal {
@@ -34,7 +30,7 @@ public class Meal {
     private User user;
 
     @JsonIgnore
-    @ManyToMany(mappedBy = "meals", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "meals", fetch = FetchType.LAZY)
     private List<MealCategory> mealCategories = new ArrayList<>();
 
     private String mealName;
