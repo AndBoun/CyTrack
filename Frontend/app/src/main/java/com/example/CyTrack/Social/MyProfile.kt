@@ -58,6 +58,7 @@ import com.example.CyTrack.Social.Messaging.MyMessages
 import com.example.CyTrack.Badges.BadgesActivity
 import com.example.CyTrack.Utilities.NetworkUtils
 import com.example.CyTrack.Utilities.UrlHolder
+import com.example.CyTrack.Utilities.User
 import org.json.JSONException
 import org.json.JSONObject
 
@@ -92,10 +93,9 @@ class MyProfile : ComponentActivity() {
             friendRequests = remember { mutableStateListOf() }
             getFriendRequests()
 
-            val ure = "${URL}/user/1/profileimage"
 
             Column {
-                ProfileScreen(user.firstName, user.username, ure,
+                ProfileScreen(user.firstName, user.username, "",
                     onClickMyFriends = {
                         switchToMyFriends()
                     },
