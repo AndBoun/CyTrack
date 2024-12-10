@@ -28,6 +28,10 @@ import java.io.IOException
  */
 object KtorClientSingleton {
 
+    /**
+     * Singleton instance of HttpClient configured with OkHttp engine.
+     * It installs ContentNegotiation and Logging plugins.
+     */
     private val client = HttpClient(OkHttp) {
         install(ContentNegotiation) {
             json()
@@ -43,58 +47,67 @@ object KtorClientSingleton {
     fun getClient(): HttpClient {
         return client
     }
-}
 
-fun uploadImage(context: Context, url: String, imageUri: Uri) = runBlocking {
-    try {
-        val imageData = convertImageUriToBytes(imageUri, context)
-        val imageName = imageUri.lastPathSegment
+    fun uploadImage(context: Context, url: String, imageUri: Uri) = runBlocking {
+        try {
+            val imageData = convertImageUriToBytes(imageUri, context)
+            val imageName = imageUri.lastPathSegment
 
-        val response: HttpResponse = KtorClientSingleton.getClient().submitFormWithBinaryData(
-            url = url,
-            formData = formData {
-                append("description", "Ktor logo")
-                if (imageData != null) {
-                    Log.d("Image", "Attempting to upload image")
-                    append("image", imageData, Headers.build {
-                        append(HttpHeaders.ContentType, "image/png")
-                        append(HttpHeaders.ContentDisposition, "filename=\"${imageName}.png\"")
-                    })
+            val response: HttpResponse = KtorClientSingleton.getClient().submitFormWithBinaryData(
+                url = url,
+                formData = formData {
+                    append("description", "Ktor logo")
+                    if (imageData != null) {
+                        Log.d("Image", "Attempting to upload image")
+                        append("image", imageData, Headers.build {
+                            append(HttpHeaders.ContentType, "image/png")
+                            append(HttpHeaders.ContentDisposition, "filename=\"${imageName}.png\"")
+                        })
+                    }
                 }
+            )
+
+            if (response.status == HttpStatusCode.OK) {
+                Toast.makeText(context, "Image uploaded successfully", Toast.LENGTH_LONG).show()
+            } else {
+                Toast.makeText(context, "Image upload failed", Toast.LENGTH_LONG).show()
             }
-        )
-
-        if (response.status == HttpStatusCode.OK) {
-            Toast.makeText(context, "Image uploaded successfully", Toast.LENGTH_LONG).show()
-        } else {
-            Toast.makeText(context, "Image upload failed", Toast.LENGTH_LONG).show()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Toast.makeText(context, "An error occurred during image upload", Toast.LENGTH_LONG)
+                .show()
         }
-    } catch (e: Exception) {
-        e.printStackTrace()
-        Toast.makeText(context, "An error occurred during image upload", Toast.LENGTH_LONG).show()
+    }
+
+    /**
+     * Converts an image URI to a byte array.
+     *
+     * @param imageUri The URI of the image to convert.
+     * @param context The context used to access the content resolver.
+     * @return A byte array representing the image, or null if an error occurs.
+     */
+    private fun convertImageUriToBytes(imageUri: Uri, context: Context): ByteArray? {
+        try {
+            val inputStream = context.contentResolver.openInputStream(imageUri)
+            val byteBuffer = ByteArrayOutputStream()
+
+            val bufferSize = 10000
+            val buffer = ByteArray(bufferSize)
+
+            var len: Int
+            while ((inputStream!!.read(buffer).also { len = it }) != -1) {
+                byteBuffer.write(buffer, 0, len)
+            }
+
+            inputStream.close()
+
+            Log.d("Image", "Image converted to bytes")
+            return byteBuffer.toByteArray()
+        } catch (e: IOException) {
+            e.printStackTrace()
+            Toast.makeText(context, "image not supported", Toast.LENGTH_LONG).show()
+        }
+        return null
     }
 }
 
-private fun convertImageUriToBytes(imageUri: Uri, context: Context): ByteArray? {
-    try {
-        val inputStream = context.contentResolver.openInputStream(imageUri)
-        val byteBuffer = ByteArrayOutputStream()
-
-        val bufferSize = 10000
-        val buffer = ByteArray(bufferSize)
-
-        var len: Int
-        while ((inputStream!!.read(buffer).also { len = it }) != -1) {
-            byteBuffer.write(buffer, 0, len)
-        }
-
-        inputStream.close()
-
-        Log.d("Image", "Image converted to bytes")
-        return byteBuffer.toByteArray()
-    } catch (e: IOException) {
-        e.printStackTrace()
-        Toast.makeText(context, "image not supported", Toast.LENGTH_LONG).show()
-    }
-    return null
-}

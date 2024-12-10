@@ -1,22 +1,13 @@
 package com.example.CyTrack.Social
 
-import android.content.Context
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.ui.unit.dp
 
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
@@ -26,15 +17,11 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.ui.tooling.preview.Preview
-import coil3.Uri
 import coil3.compose.AsyncImage
-import coil3.network.NetworkHeaders
-import coil3.network.httpHeaders
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.example.CyTrack.R
 import com.example.CyTrack.Utilities.KtorClientSingleton
-import com.example.CyTrack.Utilities.uploadImage
 
 
 /**
@@ -66,53 +53,53 @@ fun ProfileImage(
     )
 }
 
+/**
+ * A composable function that provides an image picker button.
+ *
+ * @param url The URL to which the selected image will be uploaded.
+ * @param buttonContent A composable function that defines the content of the button.
+ *                      The function receives an onClick lambda to trigger the image picker.
+ */
 @Composable
-fun rememberImagePicker(onImageSelected: (android.net.Uri?) -> Unit): () -> Unit {
-    val pickMedia = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-        if (uri != null) {
-            Log.d("PhotoPicker", "Selected URI: $uri")
-        } else {
-            Log.d("PhotoPicker", "No media selected")
-        }
-        onImageSelected(uri)
-    }
+fun ImagePicker(
+    url: String,
+    buttonContent: @Composable (onClick: () -> Unit) -> Unit,
+) {
+    val context = LocalContext.current
 
-    return {
+    val pickMedia =
+        rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+            if (uri != null) {
+                Log.d("PhotoPicker", "Selected URI: $uri")
+                KtorClientSingleton.uploadImage(context, url, uri)
+            } else {
+                Log.d("PhotoPicker", "No media selected")
+            }
+        }
+
+    buttonContent {
         pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
     }
 }
 
-@Composable
-fun SelectImageButton(
-    url: String,
-    modifier: Modifier = Modifier,
-) {
-    val context = LocalContext.current
-
-    val imagePicker = rememberImagePicker { uri ->
-        if (uri != null) {
-            uploadImage(context, url, uri)
-        }
-    }
-
-    Button(onClick = { imagePicker() }) {
-        Text("Select Image")
-    }
-
-}
-
+/**
+ * @suppress
+ *
+ * This is an example of how to use ImagePicker to select and upload an image.
+ */
 @Preview
 @Composable
-fun SelectImageScreenPreview() {
+private fun SelectImageScreenPreview() {
     Surface {
 
-        SelectImageButton(
-            "",
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp)
+        ImagePicker(
+            url = "",
+            buttonContent = { onClick ->
+                Button(onClick = onClick) {
+                    Text("Select Image")
+                }
+            }
         )
-
     }
 }
 
