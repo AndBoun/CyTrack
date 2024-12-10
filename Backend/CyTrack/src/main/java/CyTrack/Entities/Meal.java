@@ -33,6 +33,7 @@ public class Meal {
     @JsonIgnore
     private User user;
 
+    @JsonIgnore
     @ManyToMany(mappedBy = "meals", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<MealCategory> mealCategories = new ArrayList<>();
 

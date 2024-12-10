@@ -1,5 +1,6 @@
 package CyTrack.Controllers;
 
+import CyTrack.Entities.Meal;
 import CyTrack.Entities.MealCategory;
 import CyTrack.Entities.User;
 import CyTrack.Responses.MealCategoryResponse;
@@ -22,14 +23,16 @@ public class MealCategoryController {
 
     private final MealCategoryService mealCategoryService;
     private final UserService userService;
+    private final MealService mealService;
 
     @Autowired
-    public MealCategoryController(MealCategoryService mealCategoryService, UserService userService) {
+    public MealCategoryController(MealCategoryService mealCategoryService, UserService userService, MealService mealService) {
         this.mealCategoryService = mealCategoryService;
         this.userService = userService;
+        this.mealService = mealService;
     }
 
-    // ============================ Get meal categories for a specific user ============================ //
+    // ============================ Get all meal categories for a specific user ============================ //
     @Operation(
             summary = "Get meal categories for a user",
             description = "Retrieves meal categories for a specific user by user ID.",
@@ -38,7 +41,7 @@ public class MealCategoryController {
                     @ApiResponse(responseCode = "404", description = "User not found")
             }
     )
-    @GetMapping("/{userId}")
+    @GetMapping("/{userId}/mealCategory")
     public ResponseEntity<?> getMealCategoriesByUser(@PathVariable Long userId) {
         Optional<User> userOpt = userService.findByUserID(userId);
 
@@ -64,8 +67,54 @@ public class MealCategoryController {
         return ResponseEntity.ok(response);
     }
 
+    // ============================ Get Meals By Specific User and Category ============================ //
+    @GetMapping("/{userId}/mealCategory/{mealCategoryId}")
+    public ResponseEntity<MealResponse> getMealsByCategoryAndUser(
+            @PathVariable Long userId,
+            @PathVariable Long mealCategoryId) {
+        try {
+            // Validate input
+            if (userId == null || mealCategoryId == null) {
+                return ResponseEntity.badRequest()
+                        .body(new MealResponse("failure", null, "User ID and Meal Category ID must be provided"));
+            }
+
+            // Fetch meals for the given user and category
+            List<Meal> meals = mealService.getMealsByCategoryAndUser(mealCategoryId, userId);
+
+            if (meals.isEmpty()) {
+                return ResponseEntity.ok(new MealResponse("success", List.of(), "No meals found for the specified category and user"));
+            }
+
+            // Map to MealResponse.MealData
+            List<MealResponse.MealData> mealData = meals.stream()
+                    .map(meal -> new MealResponse.MealData(
+                            meal.getMealId(),
+                            meal.getMealName(),
+                            meal.getCalories(),
+                            meal.getProtein(),
+                            meal.getCarbs(),
+                            meal.getTime(),
+                            meal.getDate(),
+                            meal.getMealCategories()))
+                    .toList();
+
+            MealResponse response = new MealResponse("success", mealData, "Meals retrieved successfully");
+            return ResponseEntity.ok(response);
+
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(400)
+                    .body(new MealResponse("failure", null, e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(500)
+                    .body(new MealResponse("failure", null, "An unexpected error occurred: " + e.getMessage()));
+        }
+    }
+
+
+
     // ============================ Add a Meal Category By UserId ============================ //
-    @PostMapping("/user/{userId}")
+    @PostMapping("/{userId}/mealCategory")
     public ResponseEntity<?> addMealCategoryByUserId(@PathVariable Long userId, @RequestBody MealCategory mealCategory) {
         try {
             User user = userService.findByUserID(userId)
@@ -90,8 +139,47 @@ public class MealCategoryController {
         }
     }
 
+    // ============================ Add a Meal to a Meal Category ============================ //
+    @PostMapping("/{mealCategoryId}/addMeal/{mealId}")
+    public ResponseEntity<?> addMealToCategory(@PathVariable Long mealCategoryId, @PathVariable Long mealId) {
+        try {
+            // Add the meal to the category
+            mealCategoryService.addMealToCategory(mealCategoryId, mealId);
+
+            // Fetch the updated category
+            MealCategory updatedCategory = mealCategoryService.getMealCategoryById(mealCategoryId);
+
+            // Map to MealCategoryData
+            MealCategoryResponse.MealCategoryData categoryData = new MealCategoryResponse.MealCategoryData(
+                    updatedCategory.getMealCategoryId(),
+                    updatedCategory.getMealCategoryName()
+            );
+
+            // Wrap in response
+            MealCategoryResponse.Data responseData = new MealCategoryResponse.Data(List.of(categoryData));
+
+            // Return success response
+            return ResponseEntity.ok(new MealCategoryResponse(
+                    "success",
+                    responseData.getMealCategories(),
+                    "Meal added to category successfully"
+            ));
+        } catch (IllegalArgumentException e) {
+            // Construct error response
+            ErrorResponse errorResponse = new ErrorResponse(
+                    "error",
+                    400,
+                    "Bad Request",
+                    e.getMessage()
+            );
+            return ResponseEntity.badRequest().body(errorResponse);
+        }
+    }
+
+
+
     // ============================ Delete a Meal Category By UserId ============================ //
-    @DeleteMapping("/user/{userId}/{mealCategoryId}")
+    @DeleteMapping("/{userId}/mealCategory/{mealCategoryId}")
     public ResponseEntity<?> deleteMealCategoryByUserId(@PathVariable Long userId, @PathVariable Long mealCategoryId) {
         try {
             mealCategoryService.deleteMealCategory(userId, mealCategoryId);
