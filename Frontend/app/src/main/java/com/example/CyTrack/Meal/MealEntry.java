@@ -143,6 +143,38 @@ public class MealEntry implements Serializable {
     }
 
     /**
+     * Returns the time in the meal.
+     *
+     * @return the time in the meal
+     */
+    String getTime() {
+        return time;
+    }
+
+    /**
+     * Sets the time in the meal.
+     *
+     * @param time the new time in the meal
+     */
+    void setTime(String time) { this.time = time; }
+
+    /**
+     * Returns the date in the meal.
+     *
+     * @return the date in the meal
+     */
+    String getDate() {
+        return date;
+    }
+
+    /**
+     * Sets the date in the meal.
+     *
+     * @param date the new date in the meal
+     */
+    void setDate(String date) { this.time = date; }
+
+    /**
      * Returns a string representation of the meal.
      *
      * @return a string representation of the meal

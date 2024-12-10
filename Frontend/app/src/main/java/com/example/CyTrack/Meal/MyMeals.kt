@@ -48,6 +48,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.CyTrack.Badges.BadgeData
 import com.example.CyTrack.R
 import com.example.CyTrack.Utilities.ComposeUtils.Companion.getCustomFontFamily
 import com.example.CyTrack.Utilities.StatusBarUtil
@@ -62,10 +63,22 @@ import com.example.CyTrack.Workouts.WorkoutUtils
 import com.example.CyTrack.Workouts.WorkoutsLazyList
 
 class MyMeals : ComponentActivity(){
+    //    @param ID        the unique identifier for the user
+    //    * @param username  the username of the user
+    //    * @param firstName the first name of the user
+    //    * @param lastName  the last name of the user
+    //    * @param age       the age of the user
+    //    * @param gender    the gender of the user
+    //    * @param streak    the current streak of the user
+//    /**
+//     * The user object representing the current user.
+//     */
+//    private lateinit var user: User
+
     /**
      * The user object representing the current user.
      */
-    private lateinit var user: User
+    private var user = User(23, "Marco", "Darco", "Sparco", 23, "M", 23)
 
     /**
      * A mutable list of workout objects.
@@ -144,7 +157,7 @@ class MyMeals : ComponentActivity(){
                 verticalArrangement = Arrangement.Top,
                 modifier = Modifier.fillMaxSize()
             ) {
-                MyWorkoutsTopCard()
+                MyMealsTopCard()
                 getDateNutrients()
 
                 Spacer(modifier = Modifier.height(20.dp))
@@ -174,44 +187,21 @@ class MyMeals : ComponentActivity(){
                         .fillMaxWidth()
                         .padding(horizontal = 20.dp)
                 ) {
-                    StartWorkoutButton(
+                    AddMealButton(
                         onClick = {
-                            switchToStartWorkouts()
-                        }
-                    )
-                    AddWorkOutButton(
-                        onClick = {
-                            switchToAddWorkouts()
+    //                        switchToAddMeals()
                         }
                     )
                 }
 
                 Spacer(modifier = Modifier.height(50.dp))
 
-                WorkoutsLazyList(workoutList)
+//                WorkoutsLazyList(mealList)
 
             }
 
             StatusBarUtil.setStatusBarColor(this, R.color.CyRed)
         }
-    }
-
-    /**
-     * Returns the current date as a string in the format MM-dd-yyyy.
-     * @return The current date as a string.
-     */
-    private fun getDateAsString(): String {
-        val dateFormat = java.text.SimpleDateFormat("MM-dd-yyyy", java.util.Locale.getDefault())
-        return dateFormat.format(java.util.Date())
-    }
-
-    /**
-     * Returns the current time as a string
-     * @return The current time as a string.
-     */
-    private fun getTimeAsString(): String {
-        val timeFormat = java.time.LocalTime.now()
-        return timeFormat.toString()
     }
 
     /**
@@ -226,5 +216,109 @@ class MyMeals : ComponentActivity(){
             Log.d("NutrientSummary", nutrientsum.toString())
         }
     }
+    /**
+     * Returns the current date as a string in the format MM-dd-yyyy.
+     * @return The current date as a string.
+     */
+    private fun getDateAsString(): String {
+        val dateFormat = java.text.SimpleDateFormat("MM-dd-yyyy", java.util.Locale.getDefault())
+        return dateFormat.format(java.util.Date())
+    }
 
+    /**
+     * Returns the current time as a string
+     * @return The current time as a string.
+     */
+    fun getTimeAsString(): String {
+        val timeFormat = java.time.LocalTime.now()
+        return timeFormat.toString()
+    }
+
+    /**
+     * @suppress
+     */
+    @Preview
+    @Composable
+    fun PreviewMyMealsTopCard() {
+        MyMealsTopCard()
+    }
+
+    /**
+     * @suppress
+     */
+    @Preview
+    @Composable
+    fun PreviewAddMealButton() {
+        Surface {
+            AddMealButton()
+        }
+    }
+
+    /**
+     * @suppress
+     */
+    @Preview
+    @Composable
+    fun PreviewMealCard() {
+        com.example.CyTrack.Meal.MealCard(MealData.MealSample.get(0))
+    }
+
+    /**
+     * @suppress
+     */
+    @Preview
+    @Composable
+    fun PreviewMyMealsPage() {
+        Surface(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            Column(
+                verticalArrangement = Arrangement.Top,
+                modifier = Modifier.fillMaxSize()
+            ) {
+                MyMealsTopCard()
+                //getDateNutrients()
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp)
+                ) {
+                    DailyStatisticBox(
+                        displayText = ns_date + " Caloric Intake",
+                        displayValue = calories,
+                    )
+                    DailyStatisticBox(
+                        displayText = ns_date + "Protein Intake",
+                        displayValue = protein,
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(50.dp))
+
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.Bottom,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp)
+                ) {
+                    AddMealButton(
+                        onClick = {
+  //                          switchToAddMeals()
+                        }
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(50.dp))
+                MealsLazyList(MealData.MealSample)
+
+
+
+            }
+        }
+    }
 }
