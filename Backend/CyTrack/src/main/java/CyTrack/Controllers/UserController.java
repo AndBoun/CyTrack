@@ -354,7 +354,6 @@ public class UserController {
 
     @Value("${upload.path}")
     private String uploadPath;
-
     // Upload user profile image
     @Operation(
             summary = "Update user profile image",
