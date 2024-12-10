@@ -12,8 +12,17 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Optional;
@@ -342,6 +351,47 @@ public class UserController {
             return ResponseEntity.status(404).body(response);
         }
     }
+
+    @Value("${upload.path}")
+    private String uploadPath;
+
+    // Upload user profile image
+    @Operation(
+            summary = "Update user profile image",
+            responses = {
+                    @ApiResponse(
+                            description = "User profile image updated",
+                            responseCode = "200",
+                            content = @Content(schema = @Schema(implementation = LoginResponse.class))
+                    ),
+                    @ApiResponse(
+                            description = "User not found",
+                            responseCode = "404",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+                    )
+            }
+    )
+    @PutMapping("/{userID}/profileImage")
+    public ResponseEntity<String> uploadProfileImage(@PathVariable Long userID, @RequestParam("file") MultipartFile file) {
+        if (file.isEmpty()) {
+            return new ResponseEntity<>("File is empty", HttpStatus.BAD_REQUEST);
+        }
+
+        try {
+            byte[] bytes = file.getBytes();
+            Path path = Paths.get(uploadPath + File.separator + file.getOriginalFilename());
+            Files.write(path, bytes);
+
+            String imageUrl = path.toString();
+            userService.updateUserProfileImage(userID, imageUrl);
+
+            return new ResponseEntity<>(imageUrl, HttpStatus.OK);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>("Failed to upload file", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 
     /*
     // Award a badge to a user -- IN PROGRESS

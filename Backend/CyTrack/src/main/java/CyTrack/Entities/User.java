@@ -76,6 +76,8 @@ public class User {
     private int totalTime;
     private String gender;
 
+    private String profileImageUrl;
+
     // ========================= Constructors ========================= //
 
     public User() {}
@@ -253,5 +255,12 @@ public class User {
         return Objects.hash(userID);
     }
 
+    public String getProfileImageUrl() {
+        return profileImageUrl;
+    }
+
+    public void setProfileImageUrl(String profileImageUrl) {
+        this.profileImageUrl = profileImageUrl;
+    }
 
 }
