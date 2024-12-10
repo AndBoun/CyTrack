@@ -48,7 +48,6 @@ import androidx.compose.ui.unit.sp
 import com.android.volley.toolbox.JsonObjectRequest
 import com.example.CyTrack.R
 import com.example.CyTrack.Utilities.ComposeUtils.Companion.getCustomFontFamily
-import com.example.CyTrack.Utilities.User
 import com.example.CyTrack.Utilities.StatusBarUtil
 import com.example.CyTrack.Utilities.VolleySingleton
 import com.android.volley.Request
@@ -93,8 +92,10 @@ class MyProfile : ComponentActivity() {
             friendRequests = remember { mutableStateListOf() }
             getFriendRequests()
 
+            val ure = "${URL}/user/1/profileimage"
+
             Column {
-                ProfileScreen(user.firstName, user.username, "",
+                ProfileScreen(user.firstName, user.username, ure,
                     onClickMyFriends = {
                         switchToMyFriends()
                     },

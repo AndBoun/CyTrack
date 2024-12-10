@@ -11,7 +11,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.example.CyTrack.Utilities.User
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -23,6 +22,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.CyTrack.R
 import com.example.CyTrack.Social.MainProfileCard
+import com.example.CyTrack.Utilities.User
 
 /**
  * Activity representing a friend's profile.

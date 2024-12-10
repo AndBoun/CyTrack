@@ -8,7 +8,7 @@ public class UrlHolder {
     /**
      * The URL for the server.
      */
-    // public static final String URL = "http://10.90.72.246:8080";
+//     public static final String URL = "http://10.90.72.246:8080";
 
     /**
      * The WebSocket URL for the server.
