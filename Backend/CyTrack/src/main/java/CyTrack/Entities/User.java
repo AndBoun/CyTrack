@@ -70,6 +70,10 @@ public class User {
     private String password;
     @Schema(description="Age of the user", name="age", required=true, example="21")
     private int age;
+    @Schema(description = "Height of user in inches", name = "height", required=true, example = "69")
+    private int height;
+    @Schema(description = "Weight of user in inches", name = "weight", required=true, example = "150")
+    private double weight;
     private int currentStreak;
     private int highestStreak;
 
@@ -143,6 +147,20 @@ public class User {
     public void setAge(int age) {
         this.age = age;
     }
+
+
+    public int getHeight() {return height; }
+
+    public void setHeight(int height) {this.height = height; }
+
+    public double getWeight() {
+        return weight;
+    }
+
+    public void setWeight(double weight) {
+        this.weight = weight;
+    }
+
 
     public int getCurrentStreak() {
         return currentStreak;

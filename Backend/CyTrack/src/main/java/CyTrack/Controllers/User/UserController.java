@@ -181,6 +181,8 @@ public class UserController {
                     foundUser.getFirstName(),
                     foundUser.getLastName(),
                     foundUser.getAge(),
+                    foundUser.getHeight(),
+                    foundUser.getWeight(),
                     foundUser.getGender(),
                     foundUser.getCurrentStreak(),
                     foundUser.getProfileImageUrl(),

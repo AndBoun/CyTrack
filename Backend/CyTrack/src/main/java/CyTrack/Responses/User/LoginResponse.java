@@ -13,9 +13,9 @@ public class LoginResponse {
     }
 
     // Constructor for GET response
-    public LoginResponse(String status, Long userID,String username, String firstName, String lastName, int age, String gender, int streak,String imageurl, String message) {
+    public LoginResponse(String status, Long userID,String username, String firstName, String lastName, int age, int height, double weight, String gender, int streak,String imageurl, String message) {
         this.status = status;
-        this.data = new Data(userID, username, firstName, lastName, age, gender, streak, imageurl);
+        this.data = new Data(userID, username, firstName, lastName, age, height, weight, gender, streak, imageurl);
         this.message = message;
     }
 
@@ -52,6 +52,8 @@ public class LoginResponse {
         private String gender;
         private int streak;
         private String imageUrl;
+        private int height;
+        private double weight;
 
         // Constructor for login response
         public Data(Long userID) {
@@ -59,7 +61,7 @@ public class LoginResponse {
         }
 
         // Constructor for GET response
-        public Data(Long userID,String username, String firstName, String lastName, int age, String gender, int streak, String imageUrl) {
+        public Data(Long userID,String username, String firstName, String lastName, int age, int height, double weight, String gender, int streak, String imageUrl) {
             this.userID = userID;
             this.username = username;
             this.firstName = firstName;
@@ -132,6 +134,22 @@ public class LoginResponse {
 
         public void setImageUrl(String imageUrl) {
             this.imageUrl = imageUrl;
+        }
+
+        public int getHeight() {
+            return height;
+        }
+
+        public void setHeight(int height) {
+            this.height = height;
+        }
+
+        public double getWeight() {
+            return weight;
+        }
+
+        public void setWeight(double weight) {
+            this.weight = weight;
         }
     }
 }
