@@ -11,7 +11,7 @@ public class MealEntry implements Serializable {
     /**
      * The unique identifier for the meal.
      */
-    private final int ID = 0;
+    private int ID;
 
     /**
      * The name of the meal.
@@ -51,13 +51,14 @@ public class MealEntry implements Serializable {
      * @param carbs    the carbohydrates in the meal
      * @param protein  the protein in the meal
      */
-    MealEntry(String name, int calories, int carbs, int protein, String time, String date) {
+    MealEntry(int ID, String name, int calories, int carbs, int protein, String time, String date) {
         this.calories = calories;
         this.carbs = carbs;
         this.name = name;
         this.protein = protein;
         this.time = time;
         this.date = date;
+        this.ID = ID;
     }
 
 

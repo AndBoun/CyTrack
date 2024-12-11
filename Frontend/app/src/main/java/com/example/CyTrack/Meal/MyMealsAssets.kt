@@ -259,7 +259,7 @@ fun MealCard(
             )
 
             Text(
-                text = meal.calories.toString(),
+                text = meal.id.toString(),
                 color = Color.Black,
                 fontFamily = getCustomFontFamily(
                     "Inter",
@@ -281,7 +281,7 @@ fun MealCard(
  * @param MealList A list of MealEntrys representing the Meals to be displayed.
  */
 @Composable
-fun MealsLazyList(MealList: List<MealEntry>, user: User, URL: String, time: String, date: String, context: Activity) {
+fun MealsLazyList(MealList: MutableList<MealEntry>, user: User, URL: String, time: String, date: String, context: Activity) {
     LazyColumn {
         items(MealList.size) {
             MealCard(
@@ -289,11 +289,15 @@ fun MealsLazyList(MealList: List<MealEntry>, user: User, URL: String, time: Stri
                 onClick = {
                     MealUtils.showModifyMeal(
                         user,
-                        "${URL}/${user.id}/meal",
+                        MealList,
+                        "${URL}",
                         time,
                         date,
+                        MealList[it].id,
                         context
                     )
+                    MealUtils.getListOfMeals(context, MealList, "${URL}/meal", "meals")
+                    //nutrientsum = MealUtils.getDailyNutrients(context, URL, time, date)
                 }
             )
         }

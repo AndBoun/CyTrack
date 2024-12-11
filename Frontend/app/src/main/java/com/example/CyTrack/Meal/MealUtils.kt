@@ -41,22 +41,25 @@ class MealUtils {
             url: String,
             arrName: String,
         ) {
+            Log.d("Get Meal List URL Checker", "${url}")
             val jsonObjectRequest = JsonObjectRequest(
                 Request.Method.GET, url, null,
                 { response ->
                     try {
+                        MealList.clear()
                         val message = response.getString("message")
                         val data = response.getJSONObject("data").getJSONArray(arrName)
-
+                        Log.d("Get Meal List URL Checker", "${url}")
+                        Log.d("Get Meal Data Checker", data.toString())
                         for (i in 0 until data.length()) {
                             val meal = data.getJSONObject(i)
-
                             MealList.add(
                                 MealEntry(
+                                    meal.getLong("mealID").toInt(),
                                     meal.getString("mealName"),
                                     meal.getInt("calories"),
-                                    meal.getInt("protein"),
                                     meal.getInt("carbs"),
+                                    meal.getInt("protein"),
                                     meal.getString("time"),
                                     meal.getString("date")
                                 )
@@ -86,28 +89,35 @@ class MealUtils {
         @JvmStatic
         fun getDailyNutrients(
             context: Activity,
-            url: String,
+            urlin: String,
             time: String,
             date: String,
-            onComplete: (Nutrients: NutrientSummary) -> Unit = {}
-        ) {
+            onComplete: (nutrientsum: NutrientSummary) -> Unit = {}
+        ) : NutrientSummary {
+            Log.d("Nutrient Summary URL Checker", "${urlin}")
+            val url = urlin + "/nutrients/${date}"
+            Log.d("Nutrient Summary URL Checker", "${url}")
+            var totalCalories = 0
+            var totalCarbs = 0
+            var totalProtein = 0
             val jsonObjectRequest = JsonObjectRequest(
                 Request.Method.GET, url, null,
                 { response ->
                     val summary = response.getJSONObject("data")
-                    val totalCalories = summary.getInt("totalCalories")
-                    val totalCarbs = summary.getInt("totalCarbs")
-                    val totalProtein = summary.getInt("totalProtein")
-                    val Nutrients = NutrientSummary(totalCalories, totalCarbs, totalProtein, time, date)
-                    onComplete(Nutrients)
+                    Log.d("Nutrient Summary JSON Content Checker", summary.toString())
+                    totalCalories = summary.getInt("totalCalories")
+                    totalCarbs = summary.getInt("totalCarbs")
+                    totalProtein = summary.getInt("totalProtein")
+
                 },
                 { error ->
-                    Log.d("MyWorkouts", "Error: $error")
+                    Log.d("MyMeals", "Error: $error")
                     Toast.makeText(context, NetworkUtils.errorResponse(error), Toast.LENGTH_SHORT)
                         .show()
                 }
             )
             VolleySingleton.getInstance(context).addToRequestQueue(jsonObjectRequest)
+            return NutrientSummary(totalCalories, totalCarbs, totalProtein, time, date)
         }
 
         /**
@@ -118,6 +128,7 @@ class MealUtils {
         fun showAddMeal(
             user: User,
             url: String,
+            mealList: MutableList<MealEntry>,
             time: String,
             date: String,
             context: Activity
@@ -149,14 +160,15 @@ class MealUtils {
                         ).show()
                         return@setPositiveButton
                     }
+                    else {
+                        val name = inputMealName.text.toString()
+                        val carbs = inputMealCarbs.text.toString()
+                        val protein = inputMealProtein.text.toString()
+                        val calories = inputMealCalories.text.toString()
 
-
-                    val carbs = inputMealCarbs.text.toString()
-                    val protein = inputMealProtein.text.toString()
-                    val calories = inputMealCalories.text.toString()
-
-                    val meal = MealEntry("Placeholder", calories.toInt(), carbs.toInt(), protein.toInt(), time, date)
-                    postMeal(url, meal, context)
+                        val meal = MealEntry(0, name, calories.toInt(), carbs.toInt(), protein.toInt(), time, date)
+                        postMeal("${url}/meal", mealList, meal, context)
+                    }
                     dialog.dismiss()
                 }
                 .setNegativeButton(
@@ -168,9 +180,11 @@ class MealUtils {
 
         fun showModifyMeal(
             user: User,
+            mealList: MutableList<MealEntry>,
             url: String,
             time: String,
             date: String,
+            mealId: Int,
             context: Activity
         ) {
             // Inflate the dialog layout
@@ -183,29 +197,19 @@ class MealUtils {
                 .setTitle("Edit or Delete Meal")
                 .setNegativeButton("Delete") { dialog: DialogInterface, which: Int ->
                     // Handle the button click
-                    val inputMealID = dialogView.findViewById<EditText>(R.id.inputMealID)
-                    val MealID = inputMealID.text.toString()
-                    if (inputMealID.text.toString().isEmpty())
-                    {
-                        Toast.makeText(
-                            context,
-                            "Failed: Please enter the Meal ID",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                    deleteMeal("${url}/${MealID}", context)
+                    Log.d("Delete Meal URL Checker", "${url}/meal/${mealId.toString()}")
+                    deleteMeal("${url}/meal/${mealId.toString()}", mealList, context)
+                    getListOfMeals(context, mealList, "${url}/meal", "meals")
                     dialog.dismiss()
                 }
                 .setPositiveButton("Modify") { dialog: DialogInterface, which: Int ->
                     // Handle the button click
-                    val inputMealID = dialogView.findViewById<EditText>(R.id.inputMealID)
                     val inputMealName = dialogView.findViewById<EditText>(R.id.inputNewMealName)
                     val inputMealCalories = dialogView.findViewById<EditText>(R.id.inputNewMealCalories)
                     val inputMealProtein = dialogView.findViewById<EditText>(R.id.inputNewMealProtein)
                     val inputMealCarbs = dialogView.findViewById<EditText>(R.id.inputNewMealCarbs)
 
-                    if (inputMealID.text.toString().isEmpty() ||
-                        inputMealName.text.toString().isEmpty() ||
+                    if (inputMealName.text.toString().isEmpty() ||
                         inputMealCalories.text.toString().isEmpty() ||
                         inputMealProtein.text.toString().isEmpty() ||
                         inputMealCarbs.text.toString().isEmpty()
@@ -217,13 +221,16 @@ class MealUtils {
                         ).show()
                         return@setPositiveButton
                     }
-                    val name = inputMealName.text.toString()
-                    val carbs = inputMealCarbs.text.toString()
-                    val protein = inputMealProtein.text.toString()
-                    val calories = inputMealCalories.text.toString()
+                    else {
+                        val name = inputMealName.text.toString()
+                        val carbs = inputMealCarbs.text.toString()
+                        val protein = inputMealProtein.text.toString()
+                        val calories = inputMealCalories.text.toString()
 
-                    val meal = MealEntry(name, calories.toInt(), carbs.toInt(), protein.toInt(), time, date)
-                    postMeal(url, meal, context)
+                        val meal = MealEntry(mealId, name, calories.toInt(), carbs.toInt(), protein.toInt(), time, date)
+                        modifyMeal(meal, mealList, "${url}/meal", context)
+                        //getListOfMeals(context, mealList, url, "meals")
+                    }
                     dialog.dismiss()
                 }
                 .setNeutralButton(
@@ -241,6 +248,7 @@ class MealUtils {
          */
         fun postMeal(
             URL: String,
+            mealList: MutableList<MealEntry>,
             meal: MealEntry,
             context: Activity,
         ) {
@@ -252,7 +260,8 @@ class MealUtils {
                 put("time", meal.time)
                 put("date", meal.date)
             }
-
+            mealList.add(meal)
+            Log.d("Post Meal URL Checker", "${URL}")
             val jsonObjectRequest = JsonObjectRequest(
                 Request.Method.POST,
                 URL,
@@ -281,6 +290,7 @@ class MealUtils {
          */
         fun deleteMeal(
             URL: String,
+            mealList: MutableList<MealEntry>,
             context: Activity
         ) {
             val jsonObjectRequest = JsonObjectRequest(
@@ -299,12 +309,15 @@ class MealUtils {
         }
 
 
-        private fun modifyWorkout(
+        private fun modifyMeal(
             meal: MealEntry,
+            mealList: MutableList<MealEntry>,
             URL: String,
             context: Activity
         ) {
+            Log.d("Post Meal URL Checker", "${URL}")
             val modifyURL: String = URL + "/" + meal.id
+            Log.d("Post Meal URL Checker", "${modifyURL}")
             val inputs = JSONObject().apply {
                 put("mealName", meal.name)
                 put("calories", meal.calories)

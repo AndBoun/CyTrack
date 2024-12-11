@@ -25,6 +25,7 @@ import com.example.CyTrack.Utilities.StatusBarUtil
 import com.example.CyTrack.Utilities.UrlHolder
 import com.example.CyTrack.Utilities.User
 import com.example.CyTrack.Workouts.DailyStatisticBox
+import androidx.compose.runtime.remember
 
 
 class MyMeals : ComponentActivity(){
@@ -46,14 +47,15 @@ class MyMeals : ComponentActivity(){
     /**
      * Base URL for meal calls
      */
-    private val URL = "${UrlHolder.URL}"
-    // ("/{userID}/meal") getAllMealsByUserID
-    // ("/{mealId}/meal/{mealID}") Get Meal By Id
-    // ("/{userID}/mealsByDate/{date}") getMealsByUserIDAndDate
-    // (/{userID}/nutrients/{date}") getTotalNutrientsForDate
-    // ("/{userID}/meal") createMeal
-    // ("/{userID}/meal/{mealID}") deleteMeal
-    // ("/{userID}/meal/{mealID}") updateMeal
+    //private val URL = UrlHolder.URL
+    // ("meal/{userID}/meal") getAllMealsByUserID
+    // ("meal/{mealId}/meal/{mealID}") Get Meal By Id
+    // ("meal/{userID}/mealsByDate/{date}") getMealsByUserIDAndDate
+    // (meal/{userID}/nutrients/{date}") getTotalNutrientsForDate
+    // ("meal/{userID}/meal") createMeal
+    // ("meal/{userID}/meal/{mealID}") deleteMeal
+    // ("meal/{userID}/meal/{mealID}") updateMeal
+    private val URLBase = "${UrlHolder.URL}/meal"
 
     /**
      * Current day calorie intake
@@ -65,35 +67,7 @@ class MyMeals : ComponentActivity(){
      */
     private var weekCalories = mutableIntStateOf(0)
 
-    /**
-     * Nutrient Summary Intake
-     */
-    private var nutrientsum = NutrientSummary(0, 0, 0, getTimeAsString(), getDateAsString(), )
 
-    /**
-     * Nutrient sum - Calories
-     */
-    private var calories = nutrientsum.calories
-
-    /**
-     * Nutrient sum - Carbs
-     */
-    private var carbs = nutrientsum.carbs
-
-    /**
-     * Nutrient sum - Protein
-     */
-    private var protein = nutrientsum.protein
-
-    /**
-     * Nutrient Summary Time
-     */
-    private var ns_time = nutrientsum.time
-
-    /**
-     * Nutrient Summary Date
-     */
-    private var ns_date = nutrientsum.date
 
     /**
      * Called when the activity is starting. This is where most initialization should go.
@@ -102,22 +76,34 @@ class MyMeals : ComponentActivity(){
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val context = this
-        //user = intent.getSerializableExtra("user") as User
-        MealUtils.getListOfMeals(
-            context,
-            mealList,
-            "${URL}/${user.id}/meal",
-            "meals"
-        )
-        Log.d("Preview", "MealPage Created")
-
         setContent {
+
+            user = intent.getSerializableExtra("user") as User
+            val URL = "${URLBase}/${user.id.toString()}"
+
+            mealList = remember { mutableStateListOf() }
+
+            MealUtils.getListOfMeals(
+                context,
+                mealList,
+                "${URL}/meal",
+                "meals"
+            )
+
+            var nutrientsum = MealUtils.getDailyNutrients(
+                context,
+                URL,
+                getTimeAsString(),
+                getDateAsString(),
+            )
+
+            Log.d("Preview", "MealPage Created")
+            Log.d("Nutrient Sum", nutrientsum.toString())
             Column(
                 verticalArrangement = Arrangement.Top,
                 modifier = Modifier.fillMaxSize()
             ) {
                 MyMealsTopCard()
-                getDateNutrients()
 
                 Spacer(modifier = Modifier.height(20.dp))
 
@@ -128,12 +114,12 @@ class MyMeals : ComponentActivity(){
                         .padding(horizontal = 20.dp)
                 ) {
                     DailyStatisticBox(
-                        displayText = ns_date + " Caloric Intake",
-                        displayValue = calories,
+                        displayText = nutrientsum.date + " Caloric Intake",
+                        displayValue = nutrientsum.calories,
                     )
                     DailyStatisticBox(
-                        displayText = ns_date + "Protein Intake",
-                        displayValue = protein,
+                        displayText = nutrientsum.date + " Protein Intake",
+                        displayValue = nutrientsum.protein,
                     )
                 }
 
@@ -148,32 +134,23 @@ class MyMeals : ComponentActivity(){
                 ) {
                     AddMealButton(
                         onClick = {
-                            MealUtils.showAddMeal(user, "${URL}/${user.id}/meal", getTimeAsString(), getDateAsString(), context)
+                            Log.d("Main Meal URL Checker", "${URL}")
+                            MealUtils.showAddMeal(user, "${URL}", mealList, getTimeAsString(), getDateAsString(), context)
+                            MealUtils.getListOfMeals(context, mealList, "${URL}/meal", "meals")
+                            nutrientsum = MealUtils.getDailyNutrients(context, URL, getTimeAsString(), getDateAsString(),)
                         }
                     )
                 }
 
                 Spacer(modifier = Modifier.height(50.dp))
-                MealsLazyList(mealList, user, "${URL}/${user.id}/meal", getTimeAsString(), getDateAsString(), context)
+                MealsLazyList(mealList, user, "${URL}", getTimeAsString(), getDateAsString(), context)
             }
-
+            Log.d("URL Check", "${URL}")
             StatusBarUtil.setStatusBarColor(this, R.color.CyRed)
 
         }
     }
 
-    /**
-     * Fetches the total nutrients to date
-     */
-    private fun getDateNutrients() {
-        val getURL = "${URL}/${user.id}/nutrients/${getDateAsString()}"
-//        var calories = 0
-
-        MealUtils.getDailyNutrients(this, getURL, getDateAsString(), getTimeAsString()) {
-            nutrientsum = it
-            Log.d("NutrientSummary", nutrientsum.toString())
-        }
-    }
     /**
      * Returns the current date as a string in the format MM-dd-yyyy.
      * @return The current date as a string.
@@ -246,12 +223,12 @@ class MyMeals : ComponentActivity(){
                         .padding(horizontal = 20.dp)
                 ) {
                     DailyStatisticBox(
-                        displayText = ns_date + " Caloric Intake",
-                        displayValue = calories,
+                        displayText = " Caloric Intake",
+                        displayValue = 123,
                     )
                     DailyStatisticBox(
-                        displayText = ns_date + "Protein Intake",
-                        displayValue = protein,
+                        displayText = "Protein Intake",
+                        displayValue = 523,
                     )
                 }
 
