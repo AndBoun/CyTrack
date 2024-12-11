@@ -39,22 +39,13 @@
                 app:srcCompat="@drawable/main_dashboard_meal_tracking_button" />
 
             <ImageButton
-                android:id="@+id/exerciseTrackingButton"
-                android:layout_width="334dp"
-                android:layout_height="85dp"
-                android:layout_gravity="center"
-                android:layout_marginTop="32dp"
-                android:backgroundTint="#00FFFFFF"
-                app:srcCompat="@drawable/main_dashboard_exercise_tracking_button" />
-
-            <ImageButton
                 android:id="@+id/LBbutton"
                 android:layout_width="match_parent"
                 android:layout_height="85dp"
                 android:layout_gravity="center"
                 android:layout_marginTop="32dp"
                 android:backgroundTint="#00FFFFFF"
-                app:srcCompat="@drawable/leaderboard_dashboard__2_" />
+                app:srcCompat="@drawable/leaderboard" />
 
             <ImageButton
                 android:id="@+id/Statsbutton"
@@ -63,7 +54,7 @@
                 android:layout_gravity="center"
                 android:layout_marginTop="32dp"
                 android:backgroundTint="#00FFFFFF"
-                app:srcCompat="@drawable/leaderboard_dashboard__2_" />
+                app:srcCompat="@drawable/stats" />
 
             <ImageView
                 android:id="@+id/imageView3"

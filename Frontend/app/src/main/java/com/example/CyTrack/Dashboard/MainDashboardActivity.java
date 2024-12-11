@@ -50,11 +50,6 @@ public class MainDashboardActivity extends AppCompatActivity {
     private ImageButton workOutTrackingButton;
 
     /**
-     * ImageButton for navigating to Exercise Tracking
-     */
-    private ImageButton exerciseTrackingButton;
-
-    /**
      * ImageButton for navigating to Leaderboard
      */
     private ImageButton leaderboardButton;
@@ -101,7 +96,6 @@ public class MainDashboardActivity extends AppCompatActivity {
         notificationButton = findViewById(R.id.notificationButton);
         mealTrackingButton = findViewById(R.id.mealTrackingButton);
         workOutTrackingButton = findViewById(R.id.workOutTrackingButton);
-        exerciseTrackingButton = findViewById(R.id.exerciseTrackingButton);
         leaderboardButton = findViewById(R.id.LBbutton);
         StatsButton = findViewById(R.id.Statsbutton);
 

@@ -218,8 +218,8 @@ fun MealCard(
     )
     {
         Row(
-            horizontalArrangement = Arrangement.Start,
-            verticalAlignment = Alignment.Top,
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
                 text = meal.name.toString(),
@@ -231,7 +231,20 @@ fun MealCard(
                 ),
                 fontWeight = FontWeight.Bold,
                 fontSize = 16.sp,
-                modifier = Modifier.padding(start = 20.dp)
+                modifier = Modifier.padding(start = 15.dp)
+            )
+
+            Text(
+                text = "(Cals ${meal.calories}) (Protein ${meal.protein}g) (Carbs ${meal.carbs}g)",
+                color = Color.Black,
+                fontFamily = getCustomFontFamily(
+                    "Inter",
+                    FontWeight.Bold,
+                    FontStyle.Normal
+                ),
+                fontWeight = FontWeight.Bold,
+                fontSize = 12.sp,
+                modifier = Modifier.padding(start = 15.dp)
             )
 
             Text(
@@ -244,34 +257,9 @@ fun MealCard(
                 ),
                 fontWeight = FontWeight.Normal,
                 fontSize = 12.sp,
-                modifier = Modifier.padding(start = 20.dp)
+                modifier = Modifier.padding(start = 15.dp)
             )
 
-            Text(
-                text = meal.time,
-                color = Color.Black,
-                fontFamily = getCustomFontFamily(
-                    "Inter",
-                    FontWeight.Bold,
-                    FontStyle.Normal
-                ),
-                fontWeight = FontWeight.Bold,
-                fontSize = 12.sp,
-                modifier = Modifier.padding(start = 20.dp)
-            )
-
-            Text(
-                text = meal.id.toString(),
-                color = Color.Black,
-                fontFamily = getCustomFontFamily(
-                    "Inter",
-                    FontWeight.Bold,
-                    FontStyle.Normal
-                ),
-                fontWeight = FontWeight.Bold,
-                fontSize = 12.sp,
-                modifier = Modifier.padding(start = 20.dp)
-            )
         }
 
     }

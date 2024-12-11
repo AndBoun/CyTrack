@@ -120,7 +120,7 @@ class MyStats : ComponentActivity(){
                     verticalArrangement = Arrangement.Top,
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    MyMealsTopCard()
+                    MyStatsTopCard()
 
                     Spacer(modifier = Modifier.height(20.dp))
 

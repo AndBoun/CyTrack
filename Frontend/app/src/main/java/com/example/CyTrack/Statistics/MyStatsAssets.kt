@@ -42,7 +42,7 @@ import com.example.CyTrack.Utilities.ComposeUtils.Companion.getCustomFontFamily
  * Composable function that displays the top card of the My Workouts screen.
  */
 @Composable
-fun MyMealsTopCard() {
+fun MyStatsTopCard() {
     val context = LocalContext.current
 
     Surface(
@@ -66,7 +66,7 @@ fun MyMealsTopCard() {
             }
 
             Image(
-                painter = painterResource(R.drawable.meals_meal_tracking_text),
+                painter = painterResource(R.drawable.statistics),
                 contentDescription = "Messages",
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
