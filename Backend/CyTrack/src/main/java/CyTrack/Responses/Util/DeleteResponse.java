@@ -1,4 +1,4 @@
-package CyTrack.Controllers;
+package CyTrack.Responses.Util;
 
 public class DeleteResponse {
     private String status;

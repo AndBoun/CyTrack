@@ -1,10 +1,7 @@
-package CyTrack.Services;
+package CyTrack.Services.Social;
 
-import CyTrack.Entities.UserConversations;
 import CyTrack.Entities.Message;
 import CyTrack.Repositories.MessageRepository;
-import CyTrack.Entities.Friends;
-import CyTrack.Entities.User;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

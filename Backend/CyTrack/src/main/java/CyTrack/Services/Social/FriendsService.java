@@ -1,17 +1,14 @@
-package CyTrack.Services;
+package CyTrack.Services.Social;
 
 import CyTrack.Entities.*;
 import CyTrack.Repositories.FriendRequestRepository;
 import CyTrack.Repositories.FriendsRepository;
 import CyTrack.Repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import CyTrack.Repositories.UserConversationsRepository;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class FriendsService {
