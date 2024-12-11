@@ -101,6 +101,10 @@ public class WorkoutTrackingService {
         }
     }
 
-
+    public List<Session> getViewerSessions(Long userID) {
+        return userSessions.values().stream()
+                .filter(session -> session.isOpen())
+                .toList();
+    }
 
 }
