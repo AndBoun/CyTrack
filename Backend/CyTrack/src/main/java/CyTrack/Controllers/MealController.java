@@ -109,7 +109,7 @@ public class MealController {
             @Parameter(name = "userID", description = "ID of the user", required = true, example = "1"),
             @Parameter(name = "mealId", description = "ID of the meal to retrieve", required = true, example = "100")
     })
-    @GetMapping("/{mealId}/meal/{mealID}")
+    @GetMapping("/{userID}/meal/{mealId}")
     public ResponseEntity<?> getMealById(@PathVariable Long userID, @PathVariable Long mealId) {
         Optional<User> user = userService.findByUserID(userID);
         if (user.isPresent()) {
