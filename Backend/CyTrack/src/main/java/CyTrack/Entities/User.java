@@ -215,6 +215,22 @@ public class User {
         return friends;
     }
 
+    public List<MealCategory> getMealCategories() {
+        return mealCategories;
+    }
+
+    public void setMealCategories(List<MealCategory> mealCategories) {
+        this.mealCategories = mealCategories;
+    }
+
+    public List<WorkoutCategory> getWorkoutCategories() {
+        return workoutCategories;
+    }
+
+    public void setWorkoutCategories(List<WorkoutCategory> workoutCategories) {
+        this.workoutCategories = workoutCategories;
+    } 
+
     public void setFriends(List<Friends> friends) {
         this.friends = friends;
     }
