@@ -1,105 +1,68 @@
 package CyTrack.Sockets;
 
+import CyTrack.Entities.User;
+import CyTrack.Entities.Workout;
+import CyTrack.Services.UserService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.websocket.*;
 import jakarta.websocket.server.PathParam;
 import jakarta.websocket.server.ServerEndpoint;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import java.io.IOException;
-import java.util.Hashtable;
-import java.util.Map;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Controller
-@ServerEndpoint("/workout/{userID}")
+@ServerEndpoint("/workoutSocket/{displayerID}/{viewerID}")
 public class WorkoutTrackingSocket {
 
-    private static Map<Session, Long> sessionUserMap = new Hashtable<>();
-    private static Map<Long, Session> userSessionMap = new Hashtable<>();
-    private static Map<Long, TimerTaskData> activeTimers = new Hashtable<>();
+    private static final Map<Session, Long> sessionViewerMap = new ConcurrentHashMap<>();
+    private static final Map<Long, List<Session>> displayerSessionMap = new ConcurrentHashMap<>();
+    private static final Map<Long, String> activeWorkoutMap = new ConcurrentHashMap<>(); // Tracks active workout names by displayer ID
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+    private static UserService userService;
 
-    private class TimerTask implements Runnable {
-        private final Session session;
-        private int seconds = 0, minutes = 0, hours = 0;
-
-        public TimerTask(Session session) {
-            this.session = session;
-        }
-
-        @Override
-        public void run() {
-            try {
-                seconds++;
-                if (seconds == 60) {
-                    seconds = 0;
-                    minutes++;
-                }
-                if (minutes == 60) {
-                    minutes = 0;
-                    hours++;
-                }
-                // Send timer update to user
-                session.getBasicRemote().sendText(String.format("Timer: %02d:%02d:%02d", hours, minutes, seconds));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        public void stop() {
-            Long userID = sessionUserMap.get(session);
-            TimerTaskData timerData = activeTimers.get(userID);
-            if (timerData != null && !timerData.executor.isShutdown()) {
-                timerData.executor.shutdown();
-            }
-        }
+    @Autowired
+    public WorkoutTrackingSocket(UserService userService) {
+        WorkoutTrackingSocket.userService = userService;
     }
 
+    public WorkoutTrackingSocket() {}
+
     @OnOpen
-    public void onOpen(Session session, @PathParam("userID") Long userID) {
-        sessionUserMap.put(session, userID);
-        userSessionMap.put(userID, session);
+    public void onOpen(Session session, @PathParam("displayerID") Long displayerID, @PathParam("viewerID") Long viewerID) throws IOException {
+        Optional<User> displayerUser = userService.findByUserID(displayerID);
+        if (displayerUser.isEmpty()) {
+            session.close(new CloseReason(CloseReason.CloseCodes.CANNOT_ACCEPT, "User not found"));
+            return;
+        }
+
+        sessionViewerMap.put(session, viewerID);
+        displayerSessionMap.computeIfAbsent(displayerID, k -> new ArrayList<>()).add(session);
+        System.out.println("WebSocket opened for displayerID: " + displayerID + ", viewerID: " + viewerID);
+
+        // Send initial workout state to the viewer
+        sendWorkoutStateToViewer(session, displayerID);
     }
 
     @OnMessage
-    public void onMessage(Session session, String message) throws IOException {
-        Long userID = sessionUserMap.get(session);
-
-        if (message.equalsIgnoreCase("start")) {
-            if (!activeTimers.containsKey(userID)) {
-                TimerTask timerTask = new TimerTask(session);
-                ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
-                executor.scheduleAtFixedRate(timerTask, 0, 1, TimeUnit.SECONDS);
-                activeTimers.put(userID, new TimerTaskData(timerTask, executor));
-
-                notifyWorkoutStarted(userID); // Send workout started notification
-            } else {
-                session.getBasicRemote().sendText("Workout is already in progress.");
-            }
-        } else if (message.equalsIgnoreCase("stop")) {
-            TimerTaskData timerData = activeTimers.remove(userID);
-            if (timerData != null) {
-                timerData.timerTask.stop();
-                notifyWorkoutEnded(userID); // Send workout complete notification
-            } else {
-                session.getBasicRemote().sendText("No workout in progress.");
-            }
-        } else {
-            session.getBasicRemote().sendText("Invalid command. Use 'start' to begin and 'stop' to end.");
-        }
+    public void onMessage(Session session, String message) {
+        System.out.println("Message received from viewer: " + message);
+        // Optional: Handle specific viewer messages if needed
     }
 
     @OnClose
     public void onClose(Session session) {
-        Long userID = sessionUserMap.remove(session);
-        if (userID != null) {
-            userSessionMap.remove(userID);
-            TimerTaskData timerData = activeTimers.remove(userID);
-            if (timerData != null) {
-                timerData.timerTask.stop();
+        Long viewerID = sessionViewerMap.remove(session);
+        displayerSessionMap.forEach((displayerID, sessions) -> {
+            sessions.remove(session);
+            if (sessions.isEmpty()) {
+                displayerSessionMap.remove(displayerID);
             }
-        }
+        });
+        System.out.println("WebSocket closed for viewerID: " + viewerID);
     }
 
     @OnError
@@ -107,27 +70,55 @@ public class WorkoutTrackingSocket {
         System.err.println("WebSocket error: " + throwable.getMessage());
     }
 
-    public void notifyWorkoutStarted(Long userID) throws IOException {
-        Session session = userSessionMap.get(userID);
-        if (session != null && session.isOpen()) {
-            session.getBasicRemote().sendText("Workout started!");
+    // Handles starting a workout
+    public static void startWorkout(Long displayerID, String workoutName) {
+        activeWorkoutMap.put(displayerID, workoutName);
+        broadcastWorkoutUpdate(displayerID);
+    }
+
+    // Handles ending a workout
+    public static void endWorkout(Long displayerID) {
+        activeWorkoutMap.remove(displayerID);
+        broadcastWorkoutUpdate(displayerID); // Notify viewers that the workout ended
+    }
+
+    // Broadcasts the workout state to all viewers of a specific displayer
+    private static void broadcastWorkoutUpdate(Long displayerID) {
+        List<Session> sessions = displayerSessionMap.get(displayerID);
+        if (sessions != null) {
+            sessions.forEach(session -> {
+                try {
+                    sendWorkoutStateToViewer(session, displayerID);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
         }
     }
 
-    public void notifyWorkoutEnded(Long userID) throws IOException {
-        Session session = userSessionMap.get(userID);
-        if (session != null && session.isOpen()) {
-            session.getBasicRemote().sendText("Workout complete!");
-        }
+    // Sends the workout state of a displayer to a specific viewer
+    private static void sendWorkoutStateToViewer(Session session, Long displayerID) throws IOException {
+        String workoutName = activeWorkoutMap.get(displayerID);
+        WorkoutState workoutState = new WorkoutState(displayerID, workoutName != null, workoutName);
+        String workoutData = objectMapper.writeValueAsString(workoutState);
+        session.getBasicRemote().sendText(workoutData);
     }
 
-    private static class TimerTaskData {
-        public final TimerTask timerTask;
-        public final ScheduledExecutorService executor;
+    // WorkoutState class to hold the workout state
+    private static class WorkoutState {
+        private final Long displayerID;
+        private final boolean isActive;
+        private final String workoutName;
 
-        public TimerTaskData(TimerTask timerTask, ScheduledExecutorService executor) {
-            this.timerTask = timerTask;
-            this.executor = executor;
+        public WorkoutState(Long displayerID, boolean isActive, String workoutName) {
+            this.displayerID = displayerID;
+            this.isActive = isActive;
+            this.workoutName = workoutName;
         }
+
+        // Getters (for serialization)
+        public Long getDisplayerID() { return displayerID; }
+        public boolean isActive() { return isActive; }
+        public String getWorkoutName() { return workoutName; }
     }
 }

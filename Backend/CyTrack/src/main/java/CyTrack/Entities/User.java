@@ -70,7 +70,7 @@ public class User {
      * Workout Categories
      */
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<WorkoutCategory> workoutCategories = new ArrayList<>();
+    private List<WorkoutCategory> workoutCategories = new ArrayList<>(); //
 
     @Column(nullable = false, unique = true)
     @Schema(description="Username of the user", name="username", required=true, example="user1")
@@ -84,12 +84,13 @@ public class User {
     @Schema(description="Age of the user", name="age", required=true, example="21")
     private int age;
     @Schema(description = "Height of user in inches", name = "height", required=true, example = "69")
-    private int height;
+    private int height; //new
     @Schema(description = "Weight of user in inches", name = "weight", required=true, example = "150")
-    private double weight;
+    private double weight; //new
     private int currentStreak;
     private int highestStreak;
 
+    private String pfpURL; //new
     private int totalTime;
     private String gender;
 
