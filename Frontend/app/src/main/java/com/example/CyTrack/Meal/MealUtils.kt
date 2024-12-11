@@ -93,7 +93,7 @@ class MealUtils {
             time: String,
             date: String,
             onComplete: (nutrientsum: NutrientSummary) -> Unit = {}
-        ) : NutrientSummary {
+        ) {
             Log.d("Nutrient Summary URL Checker", "${urlin}")
             val url = urlin + "/nutrients/${date}"
             Log.d("Nutrient Summary URL Checker", "${url}")
@@ -108,7 +108,7 @@ class MealUtils {
                     totalCalories = summary.getInt("totalCalories")
                     totalCarbs = summary.getInt("totalCarbs")
                     totalProtein = summary.getInt("totalProtein")
-
+                    onComplete(NutrientSummary(totalCalories, totalCarbs, totalProtein, time, date))
                 },
                 { error ->
                     Log.d("MyMeals", "Error: $error")
@@ -117,7 +117,6 @@ class MealUtils {
                 }
             )
             VolleySingleton.getInstance(context).addToRequestQueue(jsonObjectRequest)
-            return NutrientSummary(totalCalories, totalCarbs, totalProtein, time, date)
         }
 
         /**
@@ -199,7 +198,6 @@ class MealUtils {
                     // Handle the button click
                     Log.d("Delete Meal URL Checker", "${url}/meal/${mealId.toString()}")
                     deleteMeal("${url}/meal/${mealId.toString()}", mealList, context)
-                    getListOfMeals(context, mealList, "${url}/meal", "meals")
                     dialog.dismiss()
                 }
                 .setPositiveButton("Modify") { dialog: DialogInterface, which: Int ->
@@ -229,7 +227,6 @@ class MealUtils {
 
                         val meal = MealEntry(mealId, name, calories.toInt(), carbs.toInt(), protein.toInt(), time, date)
                         modifyMeal(meal, mealList, "${url}/meal", context)
-                        //getListOfMeals(context, mealList, url, "meals")
                     }
                     dialog.dismiss()
                 }
@@ -260,7 +257,6 @@ class MealUtils {
                 put("time", meal.time)
                 put("date", meal.date)
             }
-            mealList.add(meal)
             Log.d("Post Meal URL Checker", "${URL}")
             val jsonObjectRequest = JsonObjectRequest(
                 Request.Method.POST,
