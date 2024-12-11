@@ -199,7 +199,6 @@ class MealUtils {
                     // Handle the button click
                     Log.d("Delete Meal URL Checker", "${url}/meal/${mealId.toString()}")
                     deleteMeal("${url}/meal/${mealId.toString()}", mealList, context)
-                    getListOfMeals(context, mealList, "${url}/meal", "meals")
                     dialog.dismiss()
                 }
                 .setPositiveButton("Modify") { dialog: DialogInterface, which: Int ->
@@ -229,7 +228,6 @@ class MealUtils {
 
                         val meal = MealEntry(mealId, name, calories.toInt(), carbs.toInt(), protein.toInt(), time, date)
                         modifyMeal(meal, mealList, "${url}/meal", context)
-                        //getListOfMeals(context, mealList, url, "meals")
                     }
                     dialog.dismiss()
                 }
@@ -260,7 +258,6 @@ class MealUtils {
                 put("time", meal.time)
                 put("date", meal.date)
             }
-            mealList.add(meal)
             Log.d("Post Meal URL Checker", "${URL}")
             val jsonObjectRequest = JsonObjectRequest(
                 Request.Method.POST,

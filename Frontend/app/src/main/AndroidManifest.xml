@@ -54,12 +54,6 @@
             android:exported="false"/>
         <activity android:name=".Startup.SignUpActivity"
             android:exported="false"/>
-        <activity android:name=".Meals.MealLogActivity"
-            android:exported="false"/>
-        <activity android:name=".Meals.MealSubmitActivity"
-            android:exported="false"/>
-        <activity android:name=".Meals.MealTrackingMain"
-            android:exported="false"/>
         <activity
             android:name=".Startup.LoginActivity"
             android:exported="true"

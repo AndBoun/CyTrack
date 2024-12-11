@@ -26,6 +26,8 @@ import com.example.CyTrack.Utilities.UrlHolder
 import com.example.CyTrack.Utilities.User
 import com.example.CyTrack.Workouts.DailyStatisticBox
 import androidx.compose.runtime.remember
+import com.example.compose.AppTheme
+import androidx.compose.foundation.lazy.LazyColumn
 
 
 class MyMeals : ComponentActivity(){
@@ -99,54 +101,69 @@ class MyMeals : ComponentActivity(){
 
             Log.d("Preview", "MealPage Created")
             Log.d("Nutrient Sum", nutrientsum.toString())
-            Column(
-                verticalArrangement = Arrangement.Top,
-                modifier = Modifier.fillMaxSize()
-            ) {
-                MyMealsTopCard()
-
-                Spacer(modifier = Modifier.height(20.dp))
-
-                Row(
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 20.dp)
+            AppTheme {
+                Column(
+                    verticalArrangement = Arrangement.Top,
+                    modifier = Modifier.fillMaxSize()
                 ) {
-                    DailyStatisticBox(
-                        displayText = nutrientsum.date + " Caloric Intake",
-                        displayValue = nutrientsum.calories,
-                    )
-                    DailyStatisticBox(
-                        displayText = nutrientsum.date + " Protein Intake",
-                        displayValue = nutrientsum.protein,
-                    )
-                }
+                    MyMealsTopCard()
 
-                Spacer(modifier = Modifier.height(50.dp))
+                    Spacer(modifier = Modifier.height(20.dp))
 
-                Row(
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.Bottom,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 20.dp)
-                ) {
-                    AddMealButton(
-                        onClick = {
-                            Log.d("Main Meal URL Checker", "${URL}")
-                            MealUtils.showAddMeal(user, "${URL}", mealList, getTimeAsString(), getDateAsString(), context)
-                            MealUtils.getListOfMeals(context, mealList, "${URL}/meal", "meals")
-                            nutrientsum = MealUtils.getDailyNutrients(context, URL, getTimeAsString(), getDateAsString(),)
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 20.dp)
+                    ) {
+                        DailyStatisticBox(
+                            displayText = nutrientsum.date + " Caloric Intake",
+                            displayValue = nutrientsum.calories,
+                        )
+                        DailyStatisticBox(
+                            displayText = nutrientsum.date + " Protein Intake",
+                            displayValue = nutrientsum.protein,
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(50.dp))
+
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.Bottom,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 20.dp)
+                    ) {
+                        AddMealButton(
+                            onClick = {
+                                Log.d("Main Meal URL Checker", "${URL}")
+                                MealUtils.showAddMeal(user, "${URL}", mealList, getTimeAsString(), getDateAsString(), context)
+                                MealUtils.getListOfMeals(context, mealList, "${URL}/meal", "meals")
+                                nutrientsum = MealUtils.getDailyNutrients(context, URL, getTimeAsString(), getDateAsString(),)
+                            }
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(50.dp))
+
+                    LazyColumn {
+                        items(mealList.size) {
+                            MealCard(
+                                mealList[it],
+                                onClick = {
+                                    MealUtils.showModifyMeal(user, mealList, "${URL}", getTimeAsString(), getDateAsString(), mealList[it].id, context)
+                                    MealUtils.getListOfMeals(context, mealList, "${URL}/meal", "meals")
+                                    nutrientsum = MealUtils.getDailyNutrients(context, URL, getTimeAsString(), getDateAsString())
+                                }
+                            )
                         }
-                    )
-                }
+                    }
 
-                Spacer(modifier = Modifier.height(50.dp))
-                MealsLazyList(mealList, user, "${URL}", getTimeAsString(), getDateAsString(), context)
+                }
+                Log.d("URL Check", "${URL}")
+                StatusBarUtil.setStatusBarColor(this, R.color.CyRed)
             }
-            Log.d("URL Check", "${URL}")
-            StatusBarUtil.setStatusBarColor(this, R.color.CyRed)
 
         }
     }
