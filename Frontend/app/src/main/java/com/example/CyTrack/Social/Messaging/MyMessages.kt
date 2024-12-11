@@ -18,7 +18,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Groups
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -38,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.CyTrack.R
 import com.example.CyTrack.Social.Friends.Friend
+import com.example.CyTrack.Social.ProfileImage
 import com.example.CyTrack.Social.SocialUtils
 import com.example.CyTrack.Social.SocialUtils.Companion.processMessageCardData
 import com.example.CyTrack.Social.WebSockets.WebSocketManagerMessages
@@ -98,6 +102,7 @@ class MyMessages : ComponentActivity(), WebSocketListener {
 
         StatusBarUtil.setStatusBarColor(this, R.color.CyRed)
     }
+
 
     /**
      * Switches to the message page for the given friend.
@@ -207,12 +212,9 @@ fun ListMessageCard(
                 .padding(12.dp)
                 .fillMaxWidth()
         ) {
-            Image(
-                painter = painterResource(R.drawable.general_generic_avatar),
-                contentDescription = "Contact profile picture",
-                modifier = Modifier
-                    .size(40.dp)
-                    .clip(CircleShape)
+            ProfileImage(
+                img,
+                modifier = Modifier.size(40.dp)
             )
 
             Spacer(modifier = Modifier.width(8.dp))
@@ -280,6 +282,7 @@ fun MyMessageTopCard(
                 contentDescription = "Messages",
                 modifier = Modifier.align(Alignment.BottomCenter)
             )
+
         }
     }
 }
@@ -298,7 +301,7 @@ fun MessageCardLazyList(
     modifier: Modifier = Modifier
 ) {
     for (message in messages) {
-        ListMessageCard(message.firstname, message.content, "generic_avatar",
+        ListMessageCard(message.firstname, message.content, SocialUtils.getProfileImageUrl(message.userID),
             onMessageClick = {
                 onMessageClick(message)
             })

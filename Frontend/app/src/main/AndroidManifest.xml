@@ -66,6 +66,8 @@
             android:exported="false"/>
         <activity android:name=".Startup.ForgotPassword.Activities.ResetPasswordActivity"
             android:exported="false"/>
+        <activity android:name=".Social.Messaging.Activities.MyGroupChats"
+            android:exported="false"/>
         <activity
             android:name=".Startup.Login.LoginActivity"
             android:exported="true"

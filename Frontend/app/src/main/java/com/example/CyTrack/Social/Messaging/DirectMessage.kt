@@ -120,7 +120,7 @@ class DirectMessage : ComponentActivity(), WebSocketListener {
                     DirectMessageTopCard(
                         recipientUser.firstName,
                         recipientUser.username,
-                        "generic_avatar"
+                        SocialUtils.getProfileImageUrl(recipientUser.userID)
                     )
 
                     ConversationLazyList(messageList, messageAlignment = {

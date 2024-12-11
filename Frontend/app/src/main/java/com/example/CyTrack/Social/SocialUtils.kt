@@ -9,6 +9,7 @@ import com.android.volley.toolbox.JsonObjectRequest
 import com.example.CyTrack.Social.Friends.AddFriends
 import com.example.CyTrack.Social.Friends.Friend
 import com.example.CyTrack.Social.Friends.FriendProfile
+import com.example.CyTrack.Social.Messaging.Activities.MyGroupChats
 import com.example.CyTrack.Social.Messaging.DirectMessage
 import com.example.CyTrack.Social.Messaging.MessageCardData
 import com.example.CyTrack.Utilities.NetworkUtils
@@ -43,6 +44,14 @@ class SocialUtils {
                 putExtra("recipientUser", recipient)
             }
 
+            context.startActivity(intent)
+        }
+
+        @JvmStatic
+        fun switchToMyGroupChats(context: Activity, user: User) {
+            val intent = Intent(context, MyGroupChats::class.java).apply {
+                putExtra("user", user)
+            }
             context.startActivity(intent)
         }
 
