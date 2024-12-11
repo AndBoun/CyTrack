@@ -91,7 +91,7 @@ class GroupChatSettings : ComponentActivity() {
     }
 
     private fun removeMember(userID: Int) {
-        val deleteURL = "${UrlHolder.URL}/${userID}/groupchat/removeMember"
+        val deleteURL = "${UrlHolder.URL}/${user.id}/groupchat/removeMember/${groupChatID}/${userID}"
 
         val jsonObjectRequest = JsonObjectRequest(
             Request.Method.DELETE,
