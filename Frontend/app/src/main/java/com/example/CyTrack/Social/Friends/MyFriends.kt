@@ -54,9 +54,9 @@ import com.example.CyTrack.Social.SocialUtils.Companion.switchToAddFriends
 import com.example.CyTrack.Social.SocialUtils.Companion.switchToFriendProfile
 import com.example.CyTrack.Social.ProfileImage
 import com.example.CyTrack.Utilities.ComposeUtils.Companion.getCustomFontFamily
-import com.example.CyTrack.Utilities.User
 import com.example.CyTrack.Utilities.StatusBarUtil
 import com.example.CyTrack.Utilities.UrlHolder
+import com.example.CyTrack.Utilities.User
 
 /**
  * Activity to display the user's friends and handle friend-related actions.

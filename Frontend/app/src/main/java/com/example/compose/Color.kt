@@ -217,6 +217,15 @@ val surfaceContainerDarkHighContrast = Color(0xFF271D1C)
 val surfaceContainerHighDarkHighContrast = Color(0xFF322826)
 val surfaceContainerHighestDarkHighContrast = Color(0xFF3D3231)
 
+val CyRedMain = Color(0xFFC8102E)
+val CyRedDark = Color(0xFF7C2529)
+val CyYellow = Color(0xFFF1BE48)
+val OffWhite = Color(0xFFF2F2F8)
+val OnWhiteSecondary = Color(0xFF939393)
+val LinkYellow = Color(0xFFFFFC9A)
+val LinkBlue = Color(0xFF9AC3FF)
+
+
 
 
 
