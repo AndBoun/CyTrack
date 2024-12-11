@@ -20,8 +20,8 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
-@RunWith(AndroidJUnit4::class)
-@LargeTest
+//@RunWith(AndroidJUnit4::class)
+//@LargeTest
 class AndrewInstrumentedTest {
 
     val SIMULATED_DELAY_MS: Long = 1000

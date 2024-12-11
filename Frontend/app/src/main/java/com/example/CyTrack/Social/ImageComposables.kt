@@ -16,6 +16,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.material3.Button
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.tooling.preview.Preview
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
@@ -32,6 +34,34 @@ import com.example.CyTrack.Utilities.KtorClientSingleton
  */
 @Composable
 fun ProfileImage(
+    imageUrl: String = "",
+    modifier: Modifier = Modifier,
+) {
+    ProfileImageContent(imageUrl, modifier)
+}
+
+/**
+ * A composable function that displays a profile image.
+ *
+ * @param imageUrl A MutableState containing the URL of the image to be displayed.
+ * @param modifier The modifier to be applied to the image. Defaults to an empty modifier.
+ */
+@Composable
+fun ProfileImage(
+    imageUrl: MutableState<String>,
+    modifier: Modifier = Modifier,
+) {
+    ProfileImageContent(imageUrl.value, modifier)
+}
+
+/**
+ * A composable function that displays a profile image.
+ *
+ * @param imageUrl The URL of the image to be displayed. Defaults to an empty string.
+ * @param modifier The modifier to be applied to the image. Defaults to an empty modifier.
+ */
+@Composable
+private fun ProfileImageContent(
     imageUrl: String = "",
     modifier: Modifier = Modifier,
 ) {
@@ -62,7 +92,8 @@ fun ProfileImage(
  */
 @Composable
 fun ImagePicker(
-    url: String,
+    url: String = "",
+    profileImgUri: MutableState<String> = mutableStateOf(""),
     buttonContent: @Composable (onClick: () -> Unit) -> Unit,
 ) {
     val context = LocalContext.current
@@ -71,7 +102,9 @@ fun ImagePicker(
         rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
             if (uri != null) {
                 Log.d("PhotoPicker", "Selected URI: $uri")
-                KtorClientSingleton.uploadImage(context, url, uri)
+                profileImgUri.value = uri.toString()
+
+                if (url.isNotEmpty()) KtorClientSingleton.uploadImage(context, url, uri)
             } else {
                 Log.d("PhotoPicker", "No media selected")
             }
