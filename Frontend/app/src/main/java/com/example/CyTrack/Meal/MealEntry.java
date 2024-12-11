@@ -1,4 +1,4 @@
-package com.example.CyTrack.Meals;
+package com.example.CyTrack.Meal;
 
 import androidx.annotation.NonNull;
 
@@ -7,11 +7,11 @@ import java.io.Serializable;
 /**
  * Represents a Meal with nutritional information.
  */
-class Meal implements Serializable {
+public class MealEntry implements Serializable {
     /**
      * The unique identifier for the meal.
      */
-    private final int ID = 0;
+    private int ID;
 
     /**
      * The name of the meal.
@@ -21,17 +21,27 @@ class Meal implements Serializable {
     /**
      * The calories in the meal.
      */
-    private String calories;
+    private int calories;
 
     /**
      * The carbohydrates in the meal.
      */
-    private String carbs;
+    private int carbs;
 
     /**
      * The protein in the meal.
      */
-    private String protein;
+    private int protein;
+
+    /**
+     * The time of the meal.
+     */
+    private String time;
+
+    /**
+     * The date of the meal.
+     */
+    private String date;
 
     /**
      * Constructs a new Meal with the specified attributes.
@@ -41,12 +51,16 @@ class Meal implements Serializable {
      * @param carbs    the carbohydrates in the meal
      * @param protein  the protein in the meal
      */
-    Meal(String name, String calories, String carbs, String protein) {
+    MealEntry(int ID, String name, int calories, int carbs, int protein, String time, String date) {
         this.calories = calories;
         this.carbs = carbs;
         this.name = name;
         this.protein = protein;
+        this.time = time;
+        this.date = date;
+        this.ID = ID;
     }
+
 
     /**
      * Returns the ID of the meal.
@@ -80,7 +94,7 @@ class Meal implements Serializable {
      *
      * @return the calories in the meal
      */
-    String getCalories() {
+    int getCalories() {
         return calories;
     }
 
@@ -89,7 +103,7 @@ class Meal implements Serializable {
      *
      * @param calories the new calories in the meal
      */
-    void setCalories(String calories) {
+    void setCalories(int calories) {
         this.calories = calories;
     }
 
@@ -98,7 +112,7 @@ class Meal implements Serializable {
      *
      * @return the carbohydrates in the meal
      */
-    String getCarbs() {
+    int getCarbs() {
         return carbs;
     }
 
@@ -107,7 +121,7 @@ class Meal implements Serializable {
      *
      * @param carbs the new carbohydrates in the meal
      */
-    void setCarbs(String carbs) {
+    void setCarbs(int carbs) {
         this.carbs = carbs;
     }
 
@@ -116,7 +130,7 @@ class Meal implements Serializable {
      *
      * @return the protein in the meal
      */
-    String getProtein() {
+    int getProtein() {
         return protein;
     }
 
@@ -125,9 +139,41 @@ class Meal implements Serializable {
      *
      * @param protein the new protein in the meal
      */
-    void setProtein(String protein) {
+    void setProtein(int protein) {
         this.protein = protein;
     }
+
+    /**
+     * Returns the time in the meal.
+     *
+     * @return the time in the meal
+     */
+    String getTime() {
+        return time;
+    }
+
+    /**
+     * Sets the time in the meal.
+     *
+     * @param time the new time in the meal
+     */
+    void setTime(String time) { this.time = time; }
+
+    /**
+     * Returns the date in the meal.
+     *
+     * @return the date in the meal
+     */
+    String getDate() {
+        return date;
+    }
+
+    /**
+     * Sets the date in the meal.
+     *
+     * @param date the new date in the meal
+     */
+    void setDate(String date) { this.time = date; }
 
     /**
      * Returns a string representation of the meal.
