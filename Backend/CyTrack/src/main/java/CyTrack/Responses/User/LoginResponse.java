@@ -13,7 +13,7 @@ public class LoginResponse {
     }
 
     // Constructor for GET response
-    public LoginResponse(String status, Long userID,String username, String firstName, String lastName, int age, int height, double weight, String gender, int streak,String imageurl, String message) {
+    public LoginResponse(String status, Long userID,String username, String firstName, String lastName, int age, int height, double weight, String gender, int streak, String imageurl, String message) {
         this.status = status;
         this.data = new Data(userID, username, firstName, lastName, age, height, weight, gender, streak, imageurl);
         this.message = message;
@@ -49,11 +49,11 @@ public class LoginResponse {
         private String firstName;
         private String lastName;
         private int age;
-        private String gender;
-        private int streak;
-        private String imageUrl;
         private int height;
         private double weight;
+        private String gender;
+        private int streak;
+        private String imageurl;
 
         // Constructor for login response
         public Data(Long userID) {
@@ -61,15 +61,17 @@ public class LoginResponse {
         }
 
         // Constructor for GET response
-        public Data(Long userID,String username, String firstName, String lastName, int age, int height, double weight, String gender, int streak, String imageUrl) {
+        public Data(Long userID,String username, String firstName, String lastName, int age, int height, double weight, String gender, int streak, String imageurl) {
             this.userID = userID;
             this.username = username;
             this.firstName = firstName;
             this.lastName = lastName;
             this.age = age;
+            this.height = height;
+            this.weight = weight;
             this.gender = gender;
             this.streak = streak;
-            this.imageUrl = imageUrl;
+            this.imageurl = imageurl;
         }
 
         public Long getUserID() {
@@ -80,9 +82,7 @@ public class LoginResponse {
             this.userID = userID;
         }
 
-        public String getUsername() {
-            return username;
-        }
+        public String getUsername() {return username; }
 
         public void setUsername(String username) {
             this.username = username;
@@ -112,6 +112,14 @@ public class LoginResponse {
             this.age = age;
         }
 
+        public int getHeight() {return height; }
+
+        public void setHeight(int height) {this.height = height; }
+
+        public double getWeight() {return weight; }
+
+        public void setWeight(double weight) {this.weight = weight; }
+
         public String getGender() {
             return gender;
         }
@@ -128,28 +136,12 @@ public class LoginResponse {
             this.streak = streak;
         }
 
-        public String getImageUrl() {
-            return imageUrl;
+        public String getImageurl() {
+            return imageurl;
         }
 
-        public void setImageUrl(String imageUrl) {
-            this.imageUrl = imageUrl;
-        }
-
-        public int getHeight() {
-            return height;
-        }
-
-        public void setHeight(int height) {
-            this.height = height;
-        }
-
-        public double getWeight() {
-            return weight;
-        }
-
-        public void setWeight(double weight) {
-            this.weight = weight;
+        public void setImageurl(String imageurl) {
+            this.imageurl = imageurl;
         }
     }
 }
