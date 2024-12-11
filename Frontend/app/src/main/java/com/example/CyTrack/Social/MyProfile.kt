@@ -93,9 +93,10 @@ class MyProfile : ComponentActivity() {
             friendRequests = remember { mutableStateListOf() }
             getFriendRequests()
 
+            val tempUrl = "${URL}/user/1/profileImage"
 
             Column {
-                ProfileScreen(user.firstName, user.username, "",
+                ProfileScreen(user.firstName, user.username, tempUrl,
                     onClickMyFriends = {
                         switchToMyFriends()
                     },

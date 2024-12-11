@@ -71,6 +71,9 @@ public class User implements Serializable {
         this.age = age;
         this.gender = gender;
         this.streak = streak;
+        this.weight = 0;
+        this.height = 0;
+        this.profileImg = "";
     }
 
     public User(

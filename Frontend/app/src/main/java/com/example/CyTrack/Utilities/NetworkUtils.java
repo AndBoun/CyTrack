@@ -121,7 +121,8 @@ public class NetworkUtils {
                         data.getString("lastName"),
                         data.getInt("age"),
                         data.getString("gender"),
-                        data.getInt("streak"));
+                        data.getInt("streak")
+                );
                 callback.onSuccess(user, message);
             } catch (JSONException e) {
                 e.printStackTrace();

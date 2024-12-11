@@ -5,9 +5,18 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.unit.dp
 import com.example.CyTrack.Dashboard.MainDashboardActivity
 import com.example.CyTrack.R
 import com.example.CyTrack.Startup.ForgotPasswordActivity
@@ -18,6 +27,7 @@ import com.example.CyTrack.Utilities.NetworkUtils.postUserAndGetIDCallback
 import com.example.CyTrack.Utilities.StatusBarUtil
 import com.example.CyTrack.Utilities.UrlHolder
 import com.example.CyTrack.Utilities.User
+import com.example.compose.CyRedMain
 
 class LoginActivity : ComponentActivity() {
 
@@ -26,6 +36,8 @@ class LoginActivity : ComponentActivity() {
     private lateinit var username: MutableState<String>
 
     private lateinit var password: MutableState<String>
+
+    private lateinit var loading: MutableState<Boolean>
 
     private val URL_LOGIN = "${UrlHolder.URL}/user/login"
 
@@ -37,20 +49,42 @@ class LoginActivity : ComponentActivity() {
         setContent {
             username = remember { mutableStateOf("") }
             password = remember { mutableStateOf("") }
+            loading = remember { mutableStateOf(false) }
 
-            LoginScreen(
-                username = username,
-                password = password,
-                onLogin = {
-                    login(username.value, password.value)
-                },
-                onForgotPassword = {
-                    navigateToForgotPassword()
-                },
-                onSignUp = {
-                    navigateToSignUp()
+            if (loading.value) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    // Loading screen
+                    CircularProgressIndicator(
+                        color = CyRedMain,
+                        modifier = Modifier.size(50.dp)
+                    )
                 }
-            )
+            }
+
+            Surface(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .then(if (loading.value) Modifier.alpha(0.5f) else Modifier)
+            ) {
+                LoginScreen(
+                    username = username,
+                    password = password,
+                    onLogin = {
+                        login(username.value, password.value)
+                        loading.value = true
+                    },
+                    onForgotPassword = {
+                        navigateToForgotPassword()
+                    },
+                    onSignUp = {
+                        navigateToSignUp()
+                    }
+                )
+            }
+
         }
 
     }
@@ -86,6 +120,7 @@ class LoginActivity : ComponentActivity() {
             override fun onSuccess(user: User, message: String) {
                 this@LoginActivity.user = user
                 Toast.makeText(applicationContext, "Signing In", Toast.LENGTH_LONG).show()
+                loading.value = false
                 navigateToMainDashboard()
             }
 

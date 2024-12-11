@@ -7,9 +7,18 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.unit.dp
 import com.example.CyTrack.R
 import com.example.CyTrack.Startup.Login.LoginActivity
 import com.example.CyTrack.Startup.SignUp.Composables.CompleteSignUpScreen
@@ -18,6 +27,7 @@ import com.example.CyTrack.Utilities.NetworkUtils
 import com.example.CyTrack.Utilities.StatusBarUtil
 import com.example.CyTrack.Utilities.UrlHolder
 import com.example.CyTrack.Utilities.User
+import com.example.compose.CyRedMain
 import kotlin.math.sign
 
 class CompleteSignUpActivity : ComponentActivity() {
@@ -28,11 +38,10 @@ class CompleteSignUpActivity : ComponentActivity() {
 
     private val URL = UrlHolder.URL + "/user"
 
-    // TODO
-    private val IMAGE_URL = UrlHolder.URL
 
 
     lateinit var profileImg: MutableState<String>
+    lateinit var loading: MutableState<Boolean>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,28 +49,49 @@ class CompleteSignUpActivity : ComponentActivity() {
 
         oldUser = intent.getSerializableExtra("user") as User
         password = intent.getStringExtra("password").toString()
-        setContent{
+        setContent {
             profileImg = remember { mutableStateOf("") }
+            loading = remember { mutableStateOf(false) }
 
-            CompleteSignUpScreen(
-                profileImg = profileImg,
-                onContinue = {
-                    signUpUser(
-                        oldUser.username,
-                        password,
-                        oldUser.firstName,
-                        oldUser.lastName,
-                        oldUser.age.toString(),
-                        oldUser.gender,
-                        oldUser.weight.toString(),
-                        oldUser.height.toString(),
-                        profileImg.value
+            if (loading.value) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    // Loading screen
+                    CircularProgressIndicator(
+                        color = CyRedMain,
+                        modifier = Modifier.size(50.dp)
                     )
-                },
-                onBack = {
-                    finish()
                 }
-            )
+            }
+
+            Surface(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .then(if (loading.value) Modifier.alpha(0.5f) else Modifier)
+            ) {
+                CompleteSignUpScreen(
+                    profileImg = profileImg,
+                    onContinue = {
+                        loading.value = true
+                        signUpUser(
+                            oldUser.username,
+                            password,
+                            oldUser.firstName,
+                            oldUser.lastName,
+                            oldUser.age.toString(),
+                            oldUser.gender,
+                            oldUser.weight.toString(),
+                            oldUser.height.toString(),
+                            profileImg.value
+                        )
+                    },
+                    onBack = {
+                        finish()
+                    }
+                )
+            }
 
 
         }
@@ -89,6 +119,11 @@ class CompleteSignUpActivity : ComponentActivity() {
         params["height"] = height
         params["profileImg"] = profileImg
 
+        val imageUrl = "${URL}/${user.id}/profileImage"
+
+        Log.d("CompleteSignUpActivity", "Image URI: $profileImg")
+
+
         NetworkUtils.postData(
             applicationContext,
             URL,
@@ -96,11 +131,17 @@ class CompleteSignUpActivity : ComponentActivity() {
             object : NetworkUtils.callbackMessage {
                 override fun onSuccess(response: String) {
                     Toast.makeText(applicationContext, "Signed Up", Toast.LENGTH_LONG).show()
-                    KtorClientSingleton.uploadImage(applicationContext, IMAGE_URL, Uri.parse(profileImg))
+                    KtorClientSingleton.uploadImage(
+                        applicationContext,
+                        imageUrl,
+                        Uri.parse(profileImg)
+                    )
+                    loading.value = false
                     navigateToLogin()
                 }
 
                 override fun onError(error: String) {
+                    loading.value = false
                     Toast.makeText(applicationContext, error, Toast.LENGTH_LONG).show()
                 }
             })
@@ -108,7 +149,7 @@ class CompleteSignUpActivity : ComponentActivity() {
         Log.d("SignUpActivity", "Request added to queue")
     }
 
-    private fun navigateToLogin(){
+    private fun navigateToLogin() {
         val intent = Intent(
             this@CompleteSignUpActivity,
             LoginActivity::class.java
