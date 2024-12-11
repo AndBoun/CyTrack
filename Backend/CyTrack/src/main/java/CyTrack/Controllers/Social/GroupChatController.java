@@ -97,9 +97,9 @@ public class GroupChatController {
         return ResponseEntity.status(404).body(response);
     }
 
-    @GetMapping("/getMembers")
-    public ResponseEntity<?> getMembers(@RequestBody Map<String, Long> requestBody) {
-        Long groupChatID = requestBody.get("groupChatID");
+    @GetMapping("/getMembers/{groupChatID}")
+    public ResponseEntity<?> getMembers(@PathVariable Long userID, @PathVariable Long groupChatID) {
+        Long memberID = userID;
         Optional<GroupChat> groupChatOpt = groupChatService.getGroupChat(groupChatID);
         if (groupChatOpt.isPresent()) {
             GroupChat groupChat = groupChatOpt.get();

@@ -228,11 +228,9 @@ public class GroupSystemTests {
         // Get the group chat to verify the member was added
         response = RestAssured.given()
                 .header("Content-Type", "application/json")
-                .body("{\n" +
-                        "    \"groupChatID\": " + groupChatID + "\n" +
-                        "}")
+
                 .when()
-                .get(userID + "/groupchat/getMembers");
+                .get(userID + "/groupchat/getMembers/" + groupChatID);
 
         statusCode = response.getStatusCode();
         assertEquals(200, statusCode);
@@ -397,11 +395,8 @@ public class GroupSystemTests {
         // Get the group chat to verify the member was added
         response = RestAssured.given()
                 .header("Content-Type", "application/json")
-                .body("{\n" +
-                        "    \"groupChatID\": " + groupChatID + "\n" +
-                        "}")
                 .when()
-                .get(userID + "/groupchat/getMembers");
+                .get(userID + "/groupchat/getMembers/" + groupChatID);
 
         statusCode = response.getStatusCode();
         assertEquals(200, statusCode);
@@ -588,11 +583,8 @@ public class GroupSystemTests {
         // Get the group chat to verify the member was added
         response = RestAssured.given()
                 .header("Content-Type", "application/json")
-                .body("{\n" +
-                        "    \"groupChatID\": " + groupChatID + "\n" +
-                        "}")
                 .when()
-                .get(userID + "/groupchat/getMembers");
+                .get(userID + "/groupchat/getMembers/" + groupChatID);
 
         statusCode = response.getStatusCode();
         assertEquals(200, statusCode);
@@ -778,11 +770,8 @@ public class GroupSystemTests {
         // Get the group chat to verify the member was added
         response = RestAssured.given()
                 .header("Content-Type", "application/json")
-                .body("{\n" +
-                        "    \"groupChatID\": " + groupChatID + "\n" +
-                        "}")
                 .when()
-                .get(userID + "/groupchat/getMembers");
+                .get(userID + "/groupchat/getMembers/"+ groupChatID);
 
         statusCode = response.getStatusCode();
         assertEquals(200, statusCode);

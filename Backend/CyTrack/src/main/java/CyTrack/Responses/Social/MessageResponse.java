@@ -48,7 +48,6 @@ public class MessageResponse {
         private String time;
         private Long groupOrReceiverID;
         private Long userID;
-        private LocalDateTime timeStamp;
 
         public Data(String chatType, String senderUsername, String receiverUsername, String groupName, String content, String time, Long id, Long userID) {
             this.chatType = chatType;
@@ -59,7 +58,7 @@ public class MessageResponse {
             this.time = time;
             this.groupOrReceiverID = id;
             this.userID = userID;
-            this.timeStamp = timeStamp;
+
         }
 
         public String getChatType() {
