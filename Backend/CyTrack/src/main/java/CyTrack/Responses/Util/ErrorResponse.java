@@ -1,4 +1,4 @@
-package CyTrack.Controllers;
+package CyTrack.Responses.Util;
 
 public class ErrorResponse {
     private String status;

@@ -1,4 +1,4 @@
-package CyTrack.Controllers;
+package CyTrack.Responses.User;
 
 public class LoginResponse {
     private String status;
@@ -13,9 +13,9 @@ public class LoginResponse {
     }
 
     // Constructor for GET response
-    public LoginResponse(String status, Long userID,String username, String firstName, String lastName, int age, String gender, int streak, String message) {
+    public LoginResponse(String status, Long userID,String username, String firstName, String lastName, int age, String gender, int streak,String imageurl, String message) {
         this.status = status;
-        this.data = new Data(userID, username, firstName, lastName, age, gender, streak);
+        this.data = new Data(userID, username, firstName, lastName, age, gender, streak, imageurl);
         this.message = message;
     }
 
@@ -51,6 +51,7 @@ public class LoginResponse {
         private int age;
         private String gender;
         private int streak;
+        private String imageUrl;
 
         // Constructor for login response
         public Data(Long userID) {
@@ -58,7 +59,7 @@ public class LoginResponse {
         }
 
         // Constructor for GET response
-        public Data(Long userID,String username, String firstName, String lastName, int age, String gender, int streak) {
+        public Data(Long userID,String username, String firstName, String lastName, int age, String gender, int streak, String imageUrl) {
             this.userID = userID;
             this.username = username;
             this.firstName = firstName;
@@ -66,6 +67,7 @@ public class LoginResponse {
             this.age = age;
             this.gender = gender;
             this.streak = streak;
+            this.imageUrl = imageUrl;
         }
 
         public Long getUserID() {
@@ -122,6 +124,14 @@ public class LoginResponse {
 
         public void setStreak(int streak) {
             this.streak = streak;
+        }
+
+        public String getImageUrl() {
+            return imageUrl;
+        }
+
+        public void setImageUrl(String imageUrl) {
+            this.imageUrl = imageUrl;
         }
     }
 }

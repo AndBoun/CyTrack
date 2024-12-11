@@ -1,8 +1,11 @@
-package CyTrack.Controllers;
+package CyTrack.Controllers.Social;
 
+import CyTrack.Responses.Util.ErrorResponse;
+import CyTrack.Responses.Social.FriendRequestIDResponse;
+import CyTrack.Responses.Social.FriendRequestResponse;
 import CyTrack.Entities.FriendRequest;
 import CyTrack.Entities.User;
-import CyTrack.Services.FriendsService;
+import CyTrack.Services.Social.FriendsService;
 import CyTrack.Services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

@@ -1,10 +1,13 @@
-package CyTrack.GroupChatPackage;
+package CyTrack.Controllers.Social;
 
+import CyTrack.Entities.GroupChat;
 import CyTrack.Entities.User;
 import CyTrack.Repositories.UserRepository;
-import CyTrack.Services.FriendsService;
-import CyTrack.GroupChatPackage.GroupChat;
-import CyTrack.GroupChatPackage.GroupChatService;
+import CyTrack.Responses.Social.GroupChatListResponse;
+import CyTrack.Responses.Social.GroupChatMemberResponse;
+import CyTrack.Responses.Social.GroupChatResponse;
+import CyTrack.Services.Social.FriendsService;
+import CyTrack.Services.Social.GroupChatService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

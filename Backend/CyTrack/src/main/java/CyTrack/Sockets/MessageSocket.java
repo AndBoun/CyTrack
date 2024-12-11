@@ -2,7 +2,7 @@ package CyTrack.Sockets;
 
 import CyTrack.Entities.Message;
 import CyTrack.Repositories.MessageRepository;
-import CyTrack.Services.FriendsService;
+import CyTrack.Services.Social.FriendsService;
 import CyTrack.Services.NotificationService;
 import CyTrack.Services.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;

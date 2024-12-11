@@ -1,6 +1,10 @@
-package CyTrack.Controllers;
+package CyTrack.Controllers.User;
 
 import CyTrack.Entities.User;
+import CyTrack.Responses.User.LoginResponse;
+import CyTrack.Responses.User.passwordResponse;
+import CyTrack.Responses.Util.DeleteResponse;
+import CyTrack.Responses.Util.ErrorResponse;
 import CyTrack.Services.BadgeService;
 import CyTrack.Services.UserService;
 import CyTrack.Sockets.LeaderBoardSocket;
@@ -14,6 +18,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -178,6 +183,7 @@ public class UserController {
                     foundUser.getAge(),
                     foundUser.getGender(),
                     foundUser.getCurrentStreak(),
+                    foundUser.getProfileImageUrl(),
                     "Resources sent successfully"
             );
             return ResponseEntity.status(201).body(response);
@@ -354,6 +360,29 @@ public class UserController {
 
     @Value("${upload.path}")
     private String uploadPath;
+
+    @GetMapping(value = "/{userID}/profileImage")
+    public ResponseEntity<byte[]> getProfileImage(@PathVariable Long userID) throws IOException {
+        Optional<User> user = userService.findByUserID(userID);
+        if (user.isPresent()) {
+            String imagePath = user.get().getProfileImageUrl();
+            File imageFile = new File(imagePath);
+            byte[] imageBytes = Files.readAllBytes(imageFile.toPath());
+
+            String contentType = Files.probeContentType(imageFile.toPath());
+            if (contentType == null) {
+                contentType = "application/octet-stream";
+            }
+
+            return ResponseEntity.ok()
+                    .contentType(MediaType.parseMediaType(contentType))
+                    .body(imageBytes);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
+
+
     // Upload user profile image
     @Operation(
             summary = "Update user profile image",

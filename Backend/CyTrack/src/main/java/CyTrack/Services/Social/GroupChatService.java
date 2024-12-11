@@ -1,11 +1,13 @@
-package CyTrack.GroupChatPackage;
+package CyTrack.Services.Social;
+import CyTrack.Entities.GroupChat;
 import CyTrack.Entities.User;
+import CyTrack.Repositories.Social.GroupChatRepository;
+import CyTrack.Entities.GroupMessage;
+import CyTrack.Repositories.Social.GroupMessageRepository;
 import CyTrack.Repositories.UserRepository;
-import CyTrack.Services.FriendsService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import CyTrack.GroupChatPackage.GroupChatRepository;
 
 import java.util.ArrayList;
 import java.util.List;

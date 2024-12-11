@@ -1,6 +1,5 @@
-package CyTrack.GroupChatPackage;
+package CyTrack.Entities;
 
-import CyTrack.Entities.User;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 

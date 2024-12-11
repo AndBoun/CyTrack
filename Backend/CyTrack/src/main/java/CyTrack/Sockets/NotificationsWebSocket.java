@@ -1,7 +1,7 @@
 package CyTrack.Sockets;
 
 import CyTrack.Entities.User;
-import CyTrack.Services.FriendsService;
+import CyTrack.Services.Social.FriendsService;
 import CyTrack.Services.UserService;
 import CyTrack.Repositories.MessageRepository;
 import jakarta.websocket.*;

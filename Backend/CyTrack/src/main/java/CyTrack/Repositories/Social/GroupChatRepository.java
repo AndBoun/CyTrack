@@ -1,5 +1,6 @@
-package CyTrack.GroupChatPackage;
+package CyTrack.Repositories.Social;
 
+import CyTrack.Entities.GroupChat;
 import CyTrack.Entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 

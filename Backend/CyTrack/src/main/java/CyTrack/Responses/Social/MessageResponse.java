@@ -1,4 +1,4 @@
-package CyTrack.Responses;
+package CyTrack.Responses.Social;
 
 public class MessageResponse {
     private String status;

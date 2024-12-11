@@ -1,4 +1,4 @@
-package CyTrack.GroupChatPackage;
+package CyTrack.Responses.Social;
 
 public class GroupChatResponse {
     private String status;
