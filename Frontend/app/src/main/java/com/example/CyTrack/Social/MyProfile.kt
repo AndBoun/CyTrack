@@ -48,7 +48,6 @@ import androidx.compose.ui.unit.sp
 import com.android.volley.toolbox.JsonObjectRequest
 import com.example.CyTrack.R
 import com.example.CyTrack.Utilities.ComposeUtils.Companion.getCustomFontFamily
-import com.example.CyTrack.Utilities.User
 import com.example.CyTrack.Utilities.StatusBarUtil
 import com.example.CyTrack.Utilities.VolleySingleton
 import com.android.volley.Request
@@ -57,8 +56,10 @@ import com.example.CyTrack.Social.Friends.ListProfileCard
 import com.example.CyTrack.Social.Friends.MyFriends
 import com.example.CyTrack.Social.Messaging.MyMessages
 import com.example.CyTrack.Badges.BadgesActivity
+import com.example.CyTrack.Utilities.ComposeUtils
 import com.example.CyTrack.Utilities.NetworkUtils
 import com.example.CyTrack.Utilities.UrlHolder
+import com.example.CyTrack.Utilities.User
 import org.json.JSONException
 import org.json.JSONObject
 
@@ -89,12 +90,13 @@ class MyProfile : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         user = intent.getSerializableExtra("user") as User
+
         setContent {
             friendRequests = remember { mutableStateListOf() }
             getFriendRequests()
 
             Column {
-                ProfileScreen(user.firstName, user.username, "",
+                ProfileScreen(user.firstName, user.username, SocialUtils.getProfileImageUrl(user.id),
                     onClickMyFriends = {
                         switchToMyFriends()
                     },
@@ -245,7 +247,7 @@ fun MainProfileCard(
                 imageUrl,
                 modifier = Modifier
                     .size(120.dp)
-                    .border(10.dp, Color.Black, CircleShape)
+//                    .border(10.dp, Color.Black, CircleShape)
             )
         }
 
