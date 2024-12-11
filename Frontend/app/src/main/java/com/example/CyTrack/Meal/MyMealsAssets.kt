@@ -27,6 +27,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableIntState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -137,7 +138,7 @@ fun AddMealButton(
  * @param modifier The modifier to be applied to the box.
  */
 @Composable
-fun DailyStatisticBox(
+fun DailyMealStatisticBox(
     displayText: String,
     displayValue: Int,
     modifier: Modifier = Modifier
@@ -274,33 +275,4 @@ fun MealCard(
 
     }
     Spacer(modifier = Modifier.height(20.dp))
-}
-
-/**
- * Composable function that displays a list of Meals using a LazyColumn.
- * @param MealList A list of MealEntrys representing the Meals to be displayed.
- */
-@Composable
-fun MealsLazyList(MealList: MutableList<MealEntry>, user: User, URL: String, time: String, date: String, context: Activity) {
-    LazyColumn {
-        items(MealList.size) {
-            MealCard(
-                MealList[it],
-                onClick = {
-                    MealUtils.showModifyMeal(
-                        user,
-                        MealList,
-                        "${URL}",
-                        time,
-                        date,
-                        MealList[it].id,
-                        context
-                    )
-                    MealUtils.getListOfMeals(context, MealList, "${URL}/meal", "meals")
-                    //nutrientsum = MealUtils.getDailyNutrients(context, URL, time, date)
-                }
-            )
-        }
-    }
-
 }
