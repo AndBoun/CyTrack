@@ -126,76 +126,11 @@ fun AddMealButton(
 }
 
 /**
- * Composable function that displays a box with daily statistics.
- * @param displayText The text to display.
- * @param displayValue The value to display.
- * @param modifier The modifier to be applied to the box.
- */
-@Composable
-fun DailyMealStatisticBox(
-    displayText: String,
-    displayValue: Int,
-    modifier: Modifier = Modifier
-) {
-    val context = LocalContext.current
-    Surface(
-        shape = RoundedCornerShape(20.dp),
-        border = BorderStroke(
-            width = 2.dp,
-            brush = Brush.linearGradient(
-                colors = listOf(
-                    Color(context.resources.getColor(R.color.CyRed)),
-                    Color(context.resources.getColor(R.color.CyYellow))
-                )
-            )
-        ),
-        modifier = modifier.size(160.dp)
-    ) {
-        Column(
-            verticalArrangement = Arrangement.SpaceBetween,
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = modifier
-                .padding(10.dp)
-                .fillMaxWidth()
-        ) {
-            Text(
-                text = displayValue.toString(),
-                color = Color(context.resources.getColor(R.color.CyRed)),
-                fontFamily = getCustomFontFamily(
-                    "Inter",
-                    FontWeight.Bold,
-                    FontStyle.Normal
-                ),
-                fontWeight = FontWeight.Bold,
-                fontSize = 48.sp,
-                modifier = Modifier.padding(top = 20.dp)
-            )
-
-            Spacer(modifier = Modifier.height(10.dp))
-
-            Text(
-                text = displayText,
-                color = Color.Black,
-                fontFamily = getCustomFontFamily(
-                    "Inter",
-                    FontWeight.Bold,
-                    FontStyle.Normal
-                ),
-                fontWeight = FontWeight.Bold,
-                fontSize = 16.sp,
-                modifier = modifier.padding(bottom = 4.dp)
-            )
-        }
-    }
-}
-
-/**
  * Composable function that displays a workout card.
  * @param workout A WorkoutObject representing the workout details to be displayed.
  */
 @Composable
-fun GraphCard(
-    meal: MealEntry,
+fun MealCalsGraphCard(
     onClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
@@ -208,6 +143,7 @@ fun GraphCard(
         modifier = modifier
             .fillMaxWidth()
             .height(60.dp)
+            .padding(horizontal = 20.dp)
     )
     {
         Row(
@@ -215,20 +151,7 @@ fun GraphCard(
             verticalAlignment = Alignment.Top,
         ) {
             Text(
-                text = meal.name.toString(),
-                color = Color.Black,
-                fontFamily = getCustomFontFamily(
-                    "Inter",
-                    FontWeight.Bold,
-                    FontStyle.Normal
-                ),
-                fontWeight = FontWeight.Bold,
-                fontSize = 16.sp,
-                modifier = Modifier.padding(start = 20.dp)
-            )
-
-            Text(
-                text = meal.date,
+                text = "",
                 color = Color.Black,
                 fontFamily = getCustomFontFamily(
                     "Inter",
@@ -241,7 +164,7 @@ fun GraphCard(
             )
 
             Text(
-                text = meal.time,
+                text = "Meal Calorie Statistics",
                 color = Color.Black,
                 fontFamily = getCustomFontFamily(
                     "Inter",
@@ -249,12 +172,12 @@ fun GraphCard(
                     FontStyle.Normal
                 ),
                 fontWeight = FontWeight.Bold,
-                fontSize = 12.sp,
+                fontSize = 16.sp,
                 modifier = Modifier.padding(start = 20.dp)
             )
 
             Text(
-                text = meal.id.toString(),
+                text = "",
                 color = Color.Black,
                 fontFamily = getCustomFontFamily(
                     "Inter",
@@ -266,7 +189,75 @@ fun GraphCard(
                 modifier = Modifier.padding(start = 20.dp)
             )
         }
-
+        Spacer(modifier = Modifier.height(20.dp))
     }
-    Spacer(modifier = Modifier.height(20.dp))
+}
+
+/**
+ * Composable function that displays a workout card.
+ * @param workout A WorkoutObject representing the workout details to be displayed.
+ */
+@Composable
+fun MealCalsBurnedGraphCard(
+    onClick: () -> Unit = {},
+    modifier: Modifier = Modifier
+) {
+    Button(
+        onClick = onClick,
+        shape = RoundedCornerShape(15.dp),
+        contentPadding = PaddingValues(0.dp),
+        colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+        border = BorderStroke(2.dp, Color(0xFFF1BE48)),
+        modifier = modifier
+            .fillMaxWidth()
+            .height(60.dp)
+            .padding(horizontal = 20.dp)
+    )
+    {
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.Top,
+        ) {
+            Text(
+                text = "",
+                color = Color.Black,
+                fontFamily = getCustomFontFamily(
+                    "Inter",
+                    FontWeight.Normal,
+                    FontStyle.Normal
+                ),
+                fontWeight = FontWeight.Normal,
+                fontSize = 12.sp,
+                modifier = Modifier.padding(start = 20.dp)
+            )
+
+            Text(
+                text = "Workout Calories Burned Statistics",
+                color = Color.Black,
+                fontFamily = getCustomFontFamily(
+                    "Inter",
+                    FontWeight.Bold,
+                    FontStyle.Normal
+                ),
+                fontWeight = FontWeight.Bold,
+                fontSize = 16.sp,
+                modifier = Modifier.padding(start = 20.dp)
+            )
+
+            Text(
+                text = "",
+                color = Color.Black,
+                fontFamily = getCustomFontFamily(
+                    "Inter",
+                    FontWeight.Bold,
+                    FontStyle.Normal
+                ),
+                fontWeight = FontWeight.Bold,
+                fontSize = 12.sp,
+                modifier = Modifier.padding(start = 20.dp)
+            )
+
+        }
+        Spacer(modifier = Modifier.height(20.dp))
+    }
 }

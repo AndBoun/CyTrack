@@ -32,6 +32,8 @@ import com.example.CyTrack.Meal.AddMealButton
 import com.example.CyTrack.Meal.DailyMealStatisticBox
 import com.example.CyTrack.Meal.MealCard
 import com.example.CyTrack.Meal.MyMealsTopCard
+import com.example.CyTrack.Workouts.WorkoutObject
+import com.example.CyTrack.Workouts.WorkoutUtils
 
 
 class MyStats : ComponentActivity(){
@@ -50,6 +52,8 @@ class MyStats : ComponentActivity(){
      */
     private var mealList = mutableStateListOf<MealEntry>()
 
+    private var workoutList = mutableStateListOf<WorkoutObject>()
+
     private var nutrients = mutableStateListOf<Int>()
     /**
      * Base URL for meal calls
@@ -62,7 +66,12 @@ class MyStats : ComponentActivity(){
     // ("meal/{userID}/meal") createMeal
     // ("meal/{userID}/meal/{mealID}") deleteMeal
     // ("meal/{userID}/meal/{mealID}") updateMeal
-    private val URLBase = "${UrlHolder.URL}/meal"
+    private val urlml= "${UrlHolder.URL}/meal"
+
+    /**
+     * The base URL for workout-related API calls.
+     */
+    private val urlwk = "${UrlHolder.URL}/workout"
 
     /**
      * Current day calorie intake
@@ -85,8 +94,8 @@ class MyStats : ComponentActivity(){
         val context = this
         setContent {
             user = intent.getSerializableExtra("user") as User
-            val URL = "${URLBase}/${user.id.toString()}"
-
+            val URL = "${urlml}/${user.id.toString()}"
+            val URLwk = "${urlwk}/${user.id.toString()}"
             mealList = remember { mutableStateListOf() }
             nutrients = remember { mutableStateListOf() }
 
@@ -97,14 +106,13 @@ class MyStats : ComponentActivity(){
                 "meals"
             )
 
-            Log.d("Initial Meal List", mealList.toString())
-
-            MealUtils.getDailyNutrients(
+            WorkoutUtils.getWorkouts(
                 context,
-                URL,
-                getTimeAsString(),
-                getDateAsString(),
+                "${URLwk}/workout",
+                workoutList,
             )
+
+            Log.d("Initial Meal List", mealList.toString())
             Log.d("Preview Nutrients", nutrients.toString())
             Log.d("Preview", "MealPage Created")
             AppTheme {
@@ -116,49 +124,17 @@ class MyStats : ComponentActivity(){
 
                     Spacer(modifier = Modifier.height(20.dp))
 
-                    Row(
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 20.dp)
-                    ) {
-                        DailyMealStatisticBox(
-                            displayText = getDateAsString() + " Caloric Intake",
-                            displayValue = dailyCalories.intValue
-                        )
-                        DailyMealStatisticBox(
-                            displayText = getDateAsString() + " Protein Intake",
-                            displayValue = dailyProtein.intValue
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(50.dp))
-
-                    Row(
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.Bottom,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 20.dp)
-                    ) {
-                        AddMealButton(
-                            onClick = {
-                                GraphViews.showCaloriesGraph(mealList, context)
-                                Log.d("Main Meal URL Checker", "${URL}")
-                                Log.d("Nutrients Update", "${dailyCalories.intValue} ${dailyProtein.intValue}")
-                            }
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(50.dp))
-
                     LazyColumn {
-                        items(mealList.size) {
-                            MealCard(
-                                mealList[it],
+                        items(1){
+                            MealCalsGraphCard(
                                 onClick = {
-                                    MealUtils.showModifyMeal(user, mealList, "${URL}", getTimeAsString(), getDateAsString(), 32, context)
-                                    MealUtils.getListOfMeals(context, mealList, "${URL}/meal", "meals")
+                                    GraphViews.showCaloriesGraph(mealList, context)
+                                }
+                            )
+                            Spacer(modifier = Modifier.height(20.dp))
+                            MealCalsBurnedGraphCard(
+                                onClick = {
+                                    GraphViews.showCaloriesBurnedGraph(workoutList, context)
                                 }
                             )
                         }

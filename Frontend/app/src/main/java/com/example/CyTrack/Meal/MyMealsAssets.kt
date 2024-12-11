@@ -214,6 +214,7 @@ fun MealCard(
         modifier = modifier
             .fillMaxWidth()
             .height(60.dp)
+            .padding(horizontal = 20.dp)
     )
     {
         Row(
