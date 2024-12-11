@@ -219,7 +219,7 @@ public class WorkoutController {
                 Workout endedWorkout = workoutService.endWorkout(workoutID);
 
                 try {
-                    workoutTrackingSocket.notifyWorkoutEnded(userID, workoutID);
+                    workoutTrackingSocket.notifyWorkoutEnded(userID);
                 } catch (IOException e) {
                     return ResponseEntity.status(500).body(new ErrorResponse("error", 500, "Internal server error", "Failed to notify workout end"));
                 }
