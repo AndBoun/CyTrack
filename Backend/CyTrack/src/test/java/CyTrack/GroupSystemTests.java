@@ -415,12 +415,8 @@ public class GroupSystemTests {
 
         response = RestAssured.given()
                 .header("Content-Type", "application/json")
-                .body("{\n" +
-                        "    \"groupChatID\": " + groupChatID + ",\n" +
-                        "    \"userID\": " + memberID + "\n" +
-                        "}")
                 .when()
-                .delete("/" + userID + "/groupchat/removeMember");
+                .delete("/" + userID + "/groupchat/removeMember/" + groupChatID + "/" + memberID);
 
         statusCode = response.getStatusCode();
         assertEquals(200, statusCode);
@@ -603,12 +599,8 @@ public class GroupSystemTests {
 
         response = RestAssured.given()
                 .header("Content-Type", "application/json")
-                .body("{\n" +
-                        "    \"groupChatID\": " + groupChatID + ",\n" +
-                        "    \"userID\": " + userID + "\n" +
-                        "}")
                 .when()
-                .delete("/" + memberID + "/groupchat/removeMember");
+                .delete("/" + memberID + "/groupchat/removeMember/" + groupChatID + "/" + userID);
 
         statusCode = response.getStatusCode();
         assertEquals(403, statusCode);
@@ -790,12 +782,8 @@ public class GroupSystemTests {
 
         response = RestAssured.given()
                 .header("Content-Type", "application/json")
-                .body("{\n" +
-                        "    \"groupChatID\": " + 1000000000 + ",\n" +
-                        "    \"userID\": " + memberID + "\n" +
-                        "}")
                 .when()
-                .delete("/" + userID + "/groupchat/removeMember");
+                .delete("/" + userID + "/groupchat/removeMember/" + 999999999 + "/" + memberID);
 
         statusCode = response.getStatusCode();
         assertEquals(404, statusCode);
