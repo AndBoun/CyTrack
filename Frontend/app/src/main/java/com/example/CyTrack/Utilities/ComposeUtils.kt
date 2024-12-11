@@ -34,8 +34,8 @@ class ComposeUtils {
          */
         fun getCustomFontFamily(
             fontName: String,
-            fontWeight: FontWeight,
-            fontStyle: FontStyle
+            fontWeight: FontWeight = FontWeight.Normal,
+            fontStyle: FontStyle = FontStyle.Normal
         ): FontFamily {
             val provider = GoogleFont.Provider(
                 providerAuthority = "com.google.android.gms.fonts",

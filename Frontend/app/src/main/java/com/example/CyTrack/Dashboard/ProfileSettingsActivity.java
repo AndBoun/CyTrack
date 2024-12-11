@@ -13,7 +13,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.CyTrack.R;
-import com.example.CyTrack.Startup.LoginActivity;
+import com.example.CyTrack.Startup.Login.LoginActivity;
 import com.example.CyTrack.Utilities.UrlHolder;
 import com.example.CyTrack.Utilities.User;
 import com.example.CyTrack.Utilities.NetworkUtils;
