@@ -44,6 +44,10 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                 .setAllowedOriginPatterns("*")
                 .withSockJS();
 
+        registry.addEndpoint("/groupchat/{groupID}/{userID}")
+                .setAllowedOriginPatterns("*")
+                .withSockJS();
+
     }
 
     @Bean
