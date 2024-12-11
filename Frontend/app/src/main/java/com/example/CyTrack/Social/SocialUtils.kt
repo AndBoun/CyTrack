@@ -4,6 +4,8 @@ import android.app.Activity
 import android.content.Intent
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.runtime.MutableIntState
+import androidx.compose.runtime.MutableState
 import com.android.volley.Request
 import com.android.volley.toolbox.JsonObjectRequest
 import com.example.CyTrack.Social.Friends.AddFriends
@@ -346,6 +348,7 @@ class SocialUtils {
             context: Activity,
             url: String,
             groupList: MutableList<Members>,
+            adminID: MutableIntState
         ) {
             val jsonObjectRequest = JsonObjectRequest(
                 Request.Method.GET,
@@ -354,6 +357,9 @@ class SocialUtils {
                 { response ->
                     try {
                         val data = response.getJSONObject("data").getJSONArray("members")
+
+                        adminID.intValue = response.getJSONObject("data").getInt("userID")
+
 
                         for (i in 0 until data.length()) {
                             val member = data.getJSONObject(i)

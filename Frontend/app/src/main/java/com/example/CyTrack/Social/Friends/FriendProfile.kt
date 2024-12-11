@@ -22,6 +22,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.CyTrack.R
 import com.example.CyTrack.Social.MainProfileCard
+import com.example.CyTrack.Social.SocialUtils
 import com.example.CyTrack.Utilities.User
 
 /**
@@ -48,9 +49,10 @@ class FriendProfile : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             user = intent.getSerializableExtra("user") as User
+            friend = intent.getSerializableExtra("friend") as Friend
 
             Column {
-                FriendProfileTopCard(user.firstName, user.username, "generic_avatar")
+                FriendProfileTopCard(friend.firstName, friend.username, SocialUtils.getProfileImageUrl(friend.userID))
             }
 
         }
