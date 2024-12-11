@@ -59,6 +59,19 @@ public class User {
     @JsonIgnoreProperties("receiver")
     private List<FriendRequest> receivedRequests = new ArrayList<>();
 
+
+    /**
+     * Meal Categories
+     */
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MealCategory> mealCategories = new ArrayList<>();
+
+    /**
+     * Workout Categories
+     */
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<WorkoutCategory> workoutCategories = new ArrayList<>();
+
     @Column(nullable = false, unique = true)
     @Schema(description="Username of the user", name="username", required=true, example="user1")
     private String username;
@@ -79,6 +92,7 @@ public class User {
 
     private int totalTime;
     private String gender;
+
 
     private String profileImageUrl;
 
@@ -160,7 +174,6 @@ public class User {
     public void setWeight(double weight) {
         this.weight = weight;
     }
-
 
     public int getCurrentStreak() {
         return currentStreak;
