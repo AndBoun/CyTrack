@@ -8,4 +8,6 @@ import java.util.List;
 
 public interface GroupChatRepository extends JpaRepository<GroupChat, Long> {
     List<GroupChat> findByMembers(User user);
+
+    List<GroupChat> findByMembersContaining(User user);
 }
