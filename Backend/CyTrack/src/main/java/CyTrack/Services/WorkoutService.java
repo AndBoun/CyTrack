@@ -44,40 +44,6 @@ public class WorkoutService {
 
     }
 
-    // Method to update the user's streak
-
-    /*
-    private void updateStreak(User user) {
-        // Sort workouts by date in ascending order
-        List<Workout> sortedWorkouts = user.getWorkouts().stream()
-                .sorted(Comparator.comparing(Workout::getDate))
-                .collect(Collectors.toList());
-
-        int currentStreak = 1;
-        int highestStreak = 1;
-
-        for (int i = 1; i < sortedWorkouts.size(); i++) {
-            LocalDate previousDate = LocalDate.parse(sortedWorkouts.get(i - 1).getDate());
-            LocalDate currentDate = LocalDate.parse(sortedWorkouts.get(i).getDate());
-
-            // Check if current date is the next consecutive day after the previous one
-            if (currentDate.isEqual(previousDate.plusDays(1))) {
-                currentStreak++;
-            } else {
-                currentStreak = 1; // reset streak
-            }
-
-            // Update highest streak if needed
-            if (currentStreak > highestStreak) {
-                highestStreak = currentStreak;
-            }
-        }
-
-// Update the user's streak values
-        user.setCurrentStreak(currentStreak);
-    }
-    */
-
     //find workout by ID
     public Optional<Workout> findByWorkoutID(Long workoutID) {
         return workoutRepository.findByWorkoutID(workoutID);
