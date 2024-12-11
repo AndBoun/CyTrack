@@ -46,6 +46,7 @@ class MyMeals : ComponentActivity(){
      */
     private var mealList = mutableStateListOf<MealEntry>()
 
+    private var nutrients = mutableStateListOf<Int>()
     /**
      * Base URL for meal calls
      */
@@ -67,7 +68,7 @@ class MyMeals : ComponentActivity(){
     /**
      * Current week calorie intake
      */
-    private var weekCalories = mutableIntStateOf(0)
+    private var dailyProtein = mutableIntStateOf(0)
 
 
 
@@ -84,6 +85,7 @@ class MyMeals : ComponentActivity(){
             val URL = "${URLBase}/${user.id.toString()}"
 
             mealList = remember { mutableStateListOf() }
+            nutrients = remember { mutableStateListOf() }
 
             MealUtils.getListOfMeals(
                 context,
@@ -92,15 +94,16 @@ class MyMeals : ComponentActivity(){
                 "meals"
             )
 
-            var nutrientsum = MealUtils.getDailyNutrients(
+            Log.d("Initial Meal List", mealList.toString())
+
+            MealUtils.getDailyNutrients(
                 context,
                 URL,
                 getTimeAsString(),
                 getDateAsString(),
             )
-
+            Log.d("Preview Nutrients", nutrients.toString())
             Log.d("Preview", "MealPage Created")
-            Log.d("Nutrient Sum", nutrientsum.toString())
             AppTheme {
                 Column(
                     verticalArrangement = Arrangement.Top,
@@ -116,13 +119,13 @@ class MyMeals : ComponentActivity(){
                             .fillMaxWidth()
                             .padding(horizontal = 20.dp)
                     ) {
-                        DailyStatisticBox(
-                            displayText = nutrientsum.date + " Caloric Intake",
-                            displayValue = nutrientsum.calories,
+                        DailyMealStatisticBox(
+                            displayText = getDateAsString() + " Caloric Intake",
+                            displayValue = dailyCalories.intValue
                         )
-                        DailyStatisticBox(
-                            displayText = nutrientsum.date + " Protein Intake",
-                            displayValue = nutrientsum.protein,
+                        DailyMealStatisticBox(
+                            displayText = getDateAsString() + " Protein Intake",
+                            displayValue = dailyProtein.intValue
                         )
                     }
 
@@ -140,7 +143,12 @@ class MyMeals : ComponentActivity(){
                                 Log.d("Main Meal URL Checker", "${URL}")
                                 MealUtils.showAddMeal(user, "${URL}", mealList, getTimeAsString(), getDateAsString(), context)
                                 MealUtils.getListOfMeals(context, mealList, "${URL}/meal", "meals")
-                                nutrientsum = MealUtils.getDailyNutrients(context, URL, getTimeAsString(), getDateAsString(),)
+                                MealUtils.getDailyNutrients(context, URL, getTimeAsString(), getDateAsString()) {
+                                    Log.d("Nutrients Update", "${it.calories} ${it.protein}")
+                                    dailyCalories.intValue = it.calories
+                                    dailyProtein.intValue = it.protein
+                                }
+                                Log.d("Nutrients Update", "${dailyCalories.intValue} ${dailyProtein.intValue}")
                             }
                         )
                     }
@@ -154,7 +162,10 @@ class MyMeals : ComponentActivity(){
                                 onClick = {
                                     MealUtils.showModifyMeal(user, mealList, "${URL}", getTimeAsString(), getDateAsString(), mealList[it].id, context)
                                     MealUtils.getListOfMeals(context, mealList, "${URL}/meal", "meals")
-                                    nutrientsum = MealUtils.getDailyNutrients(context, URL, getTimeAsString(), getDateAsString())
+                                    MealUtils.getDailyNutrients(context, URL, getTimeAsString(), getDateAsString()) {
+                                        dailyCalories.intValue = it.calories
+                                        dailyProtein.intValue = it.protein
+                                    }
                                 }
                             )
                         }

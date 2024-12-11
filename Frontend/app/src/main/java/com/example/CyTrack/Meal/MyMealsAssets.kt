@@ -27,6 +27,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableIntState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -137,7 +138,7 @@ fun AddMealButton(
  * @param modifier The modifier to be applied to the box.
  */
 @Composable
-fun DailyStatisticBox(
+fun DailyMealStatisticBox(
     displayText: String,
     displayValue: Int,
     modifier: Modifier = Modifier

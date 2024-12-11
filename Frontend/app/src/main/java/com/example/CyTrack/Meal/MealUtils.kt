@@ -93,7 +93,7 @@ class MealUtils {
             time: String,
             date: String,
             onComplete: (nutrientsum: NutrientSummary) -> Unit = {}
-        ) : NutrientSummary {
+        ) {
             Log.d("Nutrient Summary URL Checker", "${urlin}")
             val url = urlin + "/nutrients/${date}"
             Log.d("Nutrient Summary URL Checker", "${url}")
@@ -108,7 +108,7 @@ class MealUtils {
                     totalCalories = summary.getInt("totalCalories")
                     totalCarbs = summary.getInt("totalCarbs")
                     totalProtein = summary.getInt("totalProtein")
-
+                    onComplete(NutrientSummary(totalCalories, totalCarbs, totalProtein, time, date))
                 },
                 { error ->
                     Log.d("MyMeals", "Error: $error")
@@ -117,7 +117,6 @@ class MealUtils {
                 }
             )
             VolleySingleton.getInstance(context).addToRequestQueue(jsonObjectRequest)
-            return NutrientSummary(totalCalories, totalCarbs, totalProtein, time, date)
         }
 
         /**
