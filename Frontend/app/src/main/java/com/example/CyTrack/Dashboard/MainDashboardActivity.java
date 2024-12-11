@@ -17,6 +17,7 @@ import com.example.CyTrack.Meal.MyMeals;
 import com.example.CyTrack.R;
 import com.example.CyTrack.Social.MyProfile;
 import com.example.CyTrack.Leaderboard.TimeEntryBoard.LeaderboardActivity;
+import com.example.CyTrack.Statistics.MyStats;
 import com.example.CyTrack.Utilities.User;
 import com.example.CyTrack.Utilities.StatusBarUtil;
 import com.example.CyTrack.Workouts.MyWorkouts;
@@ -59,6 +60,10 @@ public class MainDashboardActivity extends AppCompatActivity {
     private ImageButton leaderboardButton;
 
     /**
+     * ImageButton for navigating to Stats
+     */
+    private ImageButton StatsButton;
+    /**
      * TextView to display the user's name
      */
     private TextView userNameTextView;
@@ -98,6 +103,7 @@ public class MainDashboardActivity extends AppCompatActivity {
         workOutTrackingButton = findViewById(R.id.workOutTrackingButton);
         exerciseTrackingButton = findViewById(R.id.exerciseTrackingButton);
         leaderboardButton = findViewById(R.id.LBbutton);
+        StatsButton = findViewById(R.id.Statsbutton);
 
         userNameTextView = findViewById(R.id.helloTextView);
         userStreakTextView = findViewById(R.id.streakTextView);
@@ -132,6 +138,12 @@ public class MainDashboardActivity extends AppCompatActivity {
 
         leaderboardButton.setOnClickListener(v -> {
             Intent intent = new Intent(this, LeaderboardActivity.class);
+            intent.putExtra("user", user);
+            startActivity(intent);
+        });
+
+        StatsButton.setOnClickListener(v -> {
+            Intent intent = new Intent(this, MyStats.class);
             intent.putExtra("user", user);
             startActivity(intent);
         });
