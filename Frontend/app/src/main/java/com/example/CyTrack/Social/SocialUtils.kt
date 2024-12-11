@@ -232,6 +232,8 @@ class SocialUtils {
                     data.getInt("userID")
                 )
 
+                Log.d("MessageListData", "Recieved: "+ tempData.userID.toString() + " " + "Avoid: "+ avoidUserID)
+
                 // Remove any existing entry with the same chatType, groupOrReceiverID, and userID
                 messageList.removeAll {
                     (it.chatType == tempData.chatType &&
@@ -241,7 +243,7 @@ class SocialUtils {
                 }
 
                 // Add the new entry at the beginning of the list
-                messageList.add(0, tempData)
+                if  (tempData.userID != avoidUserID) messageList.add(0, tempData)
 
                 message =
                     DirectMessage.Msg(tempData.content, tempData.userID, tempData.senderUsername)

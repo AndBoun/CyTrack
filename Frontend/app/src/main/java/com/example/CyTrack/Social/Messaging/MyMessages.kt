@@ -148,7 +148,7 @@ class MyMessages : ComponentActivity(), WebSocketListener {
     override fun onWebSocketMessage(message: String) {
         runOnUiThread(Runnable {
             Log.d("Mymessages", "Message: $message")
-            processMessageListData(message, messageList)
+            processMessageListData(message, messageList, user.id)
         })
     }
 
