@@ -1,17 +1,15 @@
-package CyTrack.Controllers;
-
-import CyTrack.Entities.FriendRequest;
+package CyTrack.Responses.Social;
 
 import java.util.List;
 
-public class FriendRequestResponse {
+public class FriendResponse {
     private String status;
     private Data data;
     private String message;
 
-    public FriendRequestResponse(String status, List<FriendRequestData> friendRequest, String message) {
+    public FriendResponse(String status, List<FriendsData> friends, String message) {
         this.status = status;
-        this.data = new Data(friendRequest);
+        this.data = new Data(friends);
         this.message = message;
     }
 
@@ -40,28 +38,28 @@ public class FriendRequestResponse {
     }
 
     public static class Data {
-        private List<FriendRequestData> friendRequests;
+        private List<FriendsData> friends;
 
-        public Data(List<FriendRequestData> friendRequests) {
-            this.friendRequests = friendRequests;
+        public Data(List<FriendsData> friends) {
+            this.friends = friends;
         }
 
-        public List<FriendRequestData> getFriendRequests() {
-            return friendRequests;
+        public List<FriendsData> getFriends() {
+            return friends;
         }
 
-        public void setFriendRequests(List<FriendRequestData> friendRequests) {
-            this.friendRequests = friendRequests;
+        public void setFriends(List<FriendsData> friends) {
+            this.friends = friends;
         }
     }
 
-    public static class FriendRequestData {
+    public static class FriendsData {
+        private Long userID;
         private String username;
         private String firstname;
-        private Long userID;
         private Long friendID;
 
-        public FriendRequestData(String username, String firstname,Long userID, Long friendID) {
+        public FriendsData(String firstname, String username, Long userID, Long friendID) {
             this.username = username;
             this.firstname = firstname;
             this.userID = userID;
@@ -92,16 +90,14 @@ public class FriendRequestResponse {
             this.userID = userID;
         }
 
-
         public Long getFriendID() {
             return friendID;
         }
 
-        public void setfriendID(Long friendID) {
+        public void setFriendID(Long friendID) {
             this.friendID = friendID;
         }
 
 
     }
-
 }

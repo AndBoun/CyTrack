@@ -1,4 +1,4 @@
-package CyTrack.Controllers;
+package CyTrack.Responses.User;
 
 public class LoginResponse {
     private String status;
