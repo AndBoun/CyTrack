@@ -11,6 +11,7 @@ import com.example.CyTrack.Social.Friends.Friend
 import com.example.CyTrack.Social.Friends.FriendProfile
 import com.example.CyTrack.Social.Messaging.Activities.GroupChat
 import com.example.CyTrack.Social.Messaging.DirectMessage
+import com.example.CyTrack.Social.Messaging.Members
 import com.example.CyTrack.Social.Messaging.MessageCardData
 import com.example.CyTrack.Social.Messaging.MessageListData
 import com.example.CyTrack.Utilities.NetworkUtils
@@ -207,13 +208,16 @@ class SocialUtils {
             return DirectMessage.Msg("", 0)
         }
 
-        fun processMessageListData(msg: String, messageList: MutableList<MessageListData> =  mutableListOf()) : DirectMessage.Msg {
-            var message : DirectMessage.Msg = DirectMessage.Msg("", 0)
+        fun processMessageListData(
+            msg: String,
+            messageList: MutableList<MessageListData> = mutableListOf(),
+            avoidUserID: Int = 0
+        ): DirectMessage.Msg {
+            var message: DirectMessage.Msg = DirectMessage.Msg("", 0)
             try {
                 val tempMsg = msg.removePrefix("Received message: ")
                 val jsonObject = JSONObject(tempMsg)
                 val data = jsonObject.getJSONObject("data")
-
 
                 val tempData = MessageListData(
                     data.getString("chatType"),
@@ -226,8 +230,19 @@ class SocialUtils {
                     data.getInt("userID")
                 )
 
-                messageList.add(tempData)
-                message = DirectMessage.Msg(tempData.content, tempData.userID, tempData.senderUsername)
+                // Remove any existing entry with the same chatType, groupOrReceiverID, and userID
+                messageList.removeAll {
+                    (it.chatType == tempData.chatType &&
+                            it.groupOrReceiverID == tempData.groupOrReceiverID &&
+                            it.userID == tempData.userID) ||
+                            it.userID == avoidUserID
+                }
+
+                // Add the new entry at the beginning of the list
+                messageList.add(0, tempData)
+
+                message =
+                    DirectMessage.Msg(tempData.content, tempData.userID, tempData.senderUsername)
 
             } catch (e: JSONException) {
                 e.printStackTrace()
@@ -325,6 +340,42 @@ class SocialUtils {
 
         fun getProfileImageUrl(userID: Int): String {
             return "${UrlHolder.URL}/user/${userID}/profileImage"
+        }
+
+        fun getGroupMembers(
+            context: Activity,
+            url: String,
+            groupList: MutableList<Members>,
+        ) {
+            val jsonObjectRequest = JsonObjectRequest(
+                Request.Method.GET,
+                url,
+                null,
+                { response ->
+                    try {
+                        val data = response.getJSONObject("data").getJSONArray("members")
+
+                        for (i in 0 until data.length()) {
+                            val member = data.getJSONObject(i)
+                            groupList.add(
+                                Members(
+                                    member.getInt("userID"),
+                                    member.getString("username")
+                                )
+                            )
+                        }
+                    } catch (e: JSONException) {
+                        e.printStackTrace()
+                    }
+                },
+                { error ->
+                    Toast.makeText(context, NetworkUtils.errorResponse(error), Toast.LENGTH_LONG)
+                        .show()
+                }
+
+            )
+
+            VolleySingleton.getInstance(context).addToRequestQueue(jsonObjectRequest)
         }
     }
 }

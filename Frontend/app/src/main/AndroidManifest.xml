@@ -68,6 +68,8 @@
             android:exported="false"/>
         <activity android:name=".Social.Messaging.Activities.GroupChat"
             android:exported="false"/>
+        <activity android:name=".Social.Messaging.Activities.GroupChatSettings"
+            android:exported="false"/>
         <activity
             android:name=".Startup.Login.LoginActivity"
             android:exported="true"

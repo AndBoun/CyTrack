@@ -6,6 +6,7 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -29,6 +30,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Send
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -201,7 +203,7 @@ class DirectMessage : ComponentActivity(), WebSocketListener {
                     )
                 } else {
                     // Handle message received
-                    val tempMsg = SocialUtils.processMessageListData(message)
+                    val tempMsg = SocialUtils.processMessageListData(message, avoidUserID = user.id)
                     messageList.add(tempMsg)
                 }
             } catch (e: Exception) {
@@ -366,6 +368,8 @@ fun DirectMessageTopCard(
     name: String,
     username: String,
     img: String,
+    isGroupChat: Boolean = false,
+    onGroupSettings: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -420,6 +424,27 @@ fun DirectMessageTopCard(
                     color = Color(0xFFF1BE48),
                     fontSize = 12.sp
                 )
+            }
+
+            if (isGroupChat){
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End,
+                    verticalAlignment = Alignment.CenterVertically
+                ){
+                    IconButton(
+                        onClick = {
+                            onGroupSettings()
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Settings,
+                            contentDescription = "Group settings",
+                            tint = Color.White,
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
+                }
             }
         }
     }
@@ -479,7 +504,7 @@ fun ConversationMessageCardPreview() {
 @Preview
 @Composable
 fun DirectMessageTopCardPreview() {
-    DirectMessageTopCard("John Doe", "johndoe", "generic_avatar")
+    DirectMessageTopCard("John Doe", "johndoe", "generic_avatar", isGroupChat = true)
 }
 
 /**

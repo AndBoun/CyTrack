@@ -17,6 +17,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Groups
@@ -317,31 +319,33 @@ fun MessageCardLazyList(
     onMessageClick: (MessageListData) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-    for (message in messages) {
+    LazyColumn(
+        modifier = modifier
+    ) {
+        items(messages) { message ->
+            if (message.chatType == "direct") {
+                ListMessageCard(
+                    message.senderUsername,
+                    message.content,
+                    SocialUtils.getProfileImageUrl(message.userID),
+                    onMessageClick = {
+                        onMessageClick(message)
+                    }
+                )
+            } else {
+                ListMessageCard(
+                    message.groupName,
+                    message.content,
+                    "https://cdn-icons-png.flaticon.com/512/5677/5677749.png",
+                    onMessageClick = {
+                        onMessageClick(message)
+                    }
+                )
+            }
 
-        if (message.chatType == "direct"){
-            ListMessageCard(
-                message.senderUsername,
-                message.content,
-                SocialUtils.getProfileImageUrl(message.userID),
-                onMessageClick = {
-                    onMessageClick(message)
-                })
-        } else {
-            ListMessageCard(
-                message.groupName,
-                message.content,
-                "https://cdn-icons-png.flaticon.com/512/5677/5677749.png",
-                onMessageClick = {
-                    onMessageClick(message)
-                })
+            Log.d("MessageCardLazyList", message.userID.toString())
+            HorizontalDivider(thickness = 1.dp, color = Color.Gray)
         }
-
-
-
-
-        Log.d("MessageCardLazyList", message.userID.toString())
-        HorizontalDivider(thickness = 1.dp, color = Color.Gray)
     }
 }
 

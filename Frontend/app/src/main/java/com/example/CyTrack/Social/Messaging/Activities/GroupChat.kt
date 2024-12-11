@@ -1,5 +1,6 @@
 package com.example.CyTrack.Social.Messaging.Activities
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -62,7 +63,11 @@ class GroupChat : ComponentActivity(), WebSocketListener {
                     DirectMessageTopCard(
                         recipientUser.firstName,
                         "Group Chat",
-                        "https://cdn-icons-png.flaticon.com/512/5677/5677749.png"
+                        isGroupChat = true,
+                        img = "https://cdn-icons-png.flaticon.com/512/5677/5677749.png",
+                        onGroupSettings = {
+                            navigateToGroupChatSettings()
+                        }
                     )
 
                     ConversationLazyList(
@@ -84,6 +89,15 @@ class GroupChat : ComponentActivity(), WebSocketListener {
                 )
             }
         }
+    }
+
+    private fun navigateToGroupChatSettings() {
+        val intent = Intent(this, GroupChatSettings::class.java).apply {
+            putExtra("user", user)
+            putExtra("groupChatID", recipientUser.userID.toString())
+            putExtra("groupName", recipientUser.firstName)
+        }
+        startActivity(intent)
     }
 
 
@@ -123,7 +137,7 @@ class GroupChat : ComponentActivity(), WebSocketListener {
                     )
                 } else {
                     // Handle message received
-                    val tempMsg = SocialUtils.processMessageListData(message)
+                    val tempMsg = SocialUtils.processMessageListData(message, avoidUserID = user.id)
                     messageList.add(tempMsg)
                 }
             } catch (e: Exception) {
