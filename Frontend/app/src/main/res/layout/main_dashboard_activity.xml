@@ -56,6 +56,15 @@
                 android:backgroundTint="#00FFFFFF"
                 app:srcCompat="@drawable/leaderboard_dashboard__2_" />
 
+            <ImageButton
+                android:id="@+id/Statsbutton"
+                android:layout_width="match_parent"
+                android:layout_height="85dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="32dp"
+                android:backgroundTint="#00FFFFFF"
+                app:srcCompat="@drawable/leaderboard_dashboard__2_" />
+
             <ImageView
                 android:id="@+id/imageView3"
                 android:layout_width="wrap_content"

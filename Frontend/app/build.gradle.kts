@@ -237,5 +237,8 @@ dependencies {
     // Vico Graph Dependencies
     implementation(libs.vico.compose)
     implementation(libs.vico.compose.m3)
+
+    // Graph
+    implementation ("com.jjoe64:graphview:4.2.2")
 }
 
