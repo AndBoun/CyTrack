@@ -94,7 +94,7 @@ class GroupChat : ComponentActivity(), WebSocketListener {
     private fun navigateToGroupChatSettings() {
         val intent = Intent(this, GroupChatSettings::class.java).apply {
             putExtra("user", user)
-            putExtra("groupChatID", recipientUser.userID.toString())
+            putExtra("groupChatID", recipientUser.userID)
             putExtra("groupName", recipientUser.firstName)
         }
         startActivity(intent)
