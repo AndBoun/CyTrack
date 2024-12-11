@@ -67,11 +67,8 @@ public class GroupChatController {
         return ResponseEntity.status(404).body(response);
     }
 
-    @DeleteMapping("/removeMember")
-    public ResponseEntity<?> removeMember(@PathVariable Long userID, @RequestBody Map<String, Long> requestBody) {
-        Long groupChatID = requestBody.get("groupChatID");
-        Long memberID = requestBody.get("userID");
-
+    @DeleteMapping("/removeMember/{groupChatID}/{memberID}")
+    public ResponseEntity<?> removeMember(@PathVariable Long userID, @PathVariable Long groupChatID, @PathVariable Long memberID) {
         Optional<GroupChat> groupChatOpt = groupChatService.getGroupChat(groupChatID);
         if (groupChatOpt.isPresent()) {
             GroupChat groupChat = groupChatOpt.get();
