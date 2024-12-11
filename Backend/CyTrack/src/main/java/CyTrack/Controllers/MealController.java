@@ -356,7 +356,7 @@ public class MealController {
                     updatedMeal.setDate(newMeal.getDate());
                 }
                 mealService.createMeal(updatedMeal);
-                MealIDResponse response = new MealIDResponse("success", mealID, "Meal created");
+                MealIDResponse response = new MealIDResponse("success", mealID, "Meal updated");
                 return ResponseEntity.status(200).body(response);
             }
             ErrorResponse response = new ErrorResponse("error", 404, "Meal not found", "could not find meal with given mealID");

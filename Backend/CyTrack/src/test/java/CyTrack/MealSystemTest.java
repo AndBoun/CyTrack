@@ -280,7 +280,7 @@ public class MealSystemTest {
             JSONObject updateJson = new JSONObject(updateResponse.getBody().asString());
             assertEquals("success", updateJson.getString("status"));
             assertEquals(createdMealID, updateJson.getLong("mealId"));
-            assertEquals("Meal created", updateJson.getString("message"));
+            assertEquals("Meal updated", updateJson.getString("message"));
         } catch (JSONException e) {
             e.printStackTrace();
         }
