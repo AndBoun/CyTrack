@@ -15,6 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @RunWith(SpringRunner.class)
@@ -738,4 +739,336 @@ public class FriendsSystemTest {
         }
     }
 
+    @Test
+    public void alreadyFriends() {
+        //Generate a unique username
+        String uniqueUsername = "testUser_" + UUID.randomUUID().toString().substring(0, 5);
+        String uniqueUsername2 = "testUser_" + UUID.randomUUID().toString().substring(0, 5);
+
+        //Register the user
+        Response response = RestAssured.given()
+                .header("Content-Type", "application/json")
+                .body("{\n" +
+                        "    \"username\": \"" + uniqueUsername + "\",\n" +
+                        "    \"password\": \"password\"\n" +
+                        "}")
+                .when()
+                .post("/user");
+        Long user1ID = null;
+        int statusCode = response.getStatusCode();
+        assertEquals(201, statusCode);
+        String returnString = response.getBody().asString();
+        try {
+            JSONObject returnObj = new JSONObject(returnString);
+            JSONObject data = returnObj.getJSONObject("data");
+            assertEquals("success", returnObj.getString("status"));
+            assertEquals("User registered", returnObj.getString("message"));
+            user1ID = data.getLong("userID");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        //Register the user
+        response = RestAssured.given()
+                .header("Content-Type", "application/json")
+                .body("{\n" +
+                        "    \"username\": \"" + uniqueUsername2 + "\",\n" +
+                        "    \"password\": \"password\"\n" +
+                        "}")
+                .when()
+                .post("/user");
+
+        Long user2ID = null;
+        statusCode = response.getStatusCode();
+        assertEquals(201, statusCode);
+        String returnString2 = response.getBody().asString();
+        try {
+            JSONObject returnObj = new JSONObject(returnString2);
+            JSONObject data = returnObj.getJSONObject("data");
+            assertEquals("success", returnObj.getString("status"));
+            assertEquals("User registered", returnObj.getString("message"));
+            user2ID = data.getLong("userID");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        //Send friend request
+        response = RestAssured.given()
+                .header("Content-Type", "application/json")
+                .body("{\n" +
+                        "    \"friendUsername\": \"" + uniqueUsername2 + "\"\n" +
+                        "}")
+                .when()
+                .post("/" + user1ID + "/request");
+
+        statusCode = response.getStatusCode();
+        assertEquals(201, statusCode);
+        Long friendRequestID = null;
+        String friendString = response.getBody().asString();
+        try {
+            JSONObject friendObj = new JSONObject(friendString);
+            assertEquals("success", friendObj.getString("status"));
+            assertEquals("Friend request sent", friendObj.getString("message"));
+            JSONObject data = friendObj.getJSONObject("data");
+            friendRequestID = data.getLong("friendRequestID");
+        } catch (JSONException e) {
+            e.printStackTrace();
+
+        }
+        //Accept friend request
+        response = RestAssured.given()
+                .header("Content-Type", "application/json")
+                .body(
+                        "{\n" +
+                                "    \"friendRequestID\": \"" + friendRequestID + "\"\n" +
+                                "}")
+                .when()
+                .put("/" + user2ID + "/request");
+
+        statusCode = response.getStatusCode();
+        assertEquals(200, statusCode);
+
+        String friendString2 = response.getBody().asString();
+        try {
+            JSONObject friendObj = new JSONObject(friendString2);
+            assertEquals("success", friendObj.getString("status"));
+            assertEquals("Friend request accepted", friendObj.getString("message"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        //Send friend request
+        response = RestAssured.given()
+                .header("Content-Type", "application/json")
+                .body("{\n" +
+                        "    \"friendUsername\": \"" + uniqueUsername2 + "\"\n" +
+                        "}")
+                .when()
+                .post("/" + user1ID + "/request");
+
+        statusCode = response.getStatusCode();
+        assertEquals(400, statusCode);
+        friendRequestID = null;
+        friendString = response.getBody().asString();
+        try {
+            JSONObject friendObj = new JSONObject(friendString);
+            assertEquals("error", friendObj.getString("status"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void userDoesNotExist(){
+        //Generate a unique username
+        String uniqueUsername = "testUser_" + UUID.randomUUID().toString().substring(0, 5);
+        String uniqueUsername2 = "testUser_" + UUID.randomUUID().toString().substring(0, 5);
+
+        //Register the user
+        Response response = RestAssured.given()
+                .header("Content-Type", "application/json")
+                .body("{\n" +
+                        "    \"username\": \"" + uniqueUsername + "\",\n" +
+                        "    \"password\": \"password\"\n" +
+                        "}")
+                .when()
+                .post("/user");
+        Long user1ID = null;
+        int statusCode = response.getStatusCode();
+        assertEquals(201, statusCode);
+        String returnString = response.getBody().asString();
+        try {
+            JSONObject returnObj = new JSONObject(returnString);
+            JSONObject data = returnObj.getJSONObject("data");
+            assertEquals("success", returnObj.getString("status"));
+            assertEquals("User registered", returnObj.getString("message"));
+            user1ID = data.getLong("userID");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        //Register the user
+        response = RestAssured.given()
+                .header("Content-Type", "application/json")
+                .body("{\n" +
+                        "    \"username\": \"" + uniqueUsername2 + "\",\n" +
+                        "    \"password\": \"password\"\n" +
+                        "}")
+                .when()
+                .post("/user");
+
+        Long user2ID = null;
+        statusCode = response.getStatusCode();
+        assertEquals(201, statusCode);
+        String returnString2 = response.getBody().asString();
+        try {
+            JSONObject returnObj = new JSONObject(returnString2);
+            JSONObject data = returnObj.getJSONObject("data");
+            assertEquals("success", returnObj.getString("status"));
+            assertEquals("User registered", returnObj.getString("message"));
+            user2ID = data.getLong("userID");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        //Send friend request
+        response = RestAssured.given()
+                .header("Content-Type", "application/json")
+                .body("{\n" +
+                        "    \"friendUsername\": \"" + "SWAGINGTON" + "\"\n" +
+                        "}")
+                .when()
+                .post("/" + user1ID + "/request");
+
+        statusCode = response.getStatusCode();
+        assertEquals(404, statusCode);
+        Long friendRequestID = null;
+        String friendString = response.getBody().asString();
+        try {
+            JSONObject friendObj = new JSONObject(friendString);
+            assertEquals("error", friendObj.getString("status"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+
+        }
+    }
+    @Test
+    public void sendRequestAlready() {
+        //Generate a unique username
+        String uniqueUsername = "testUser_" + UUID.randomUUID().toString().substring(0, 5);
+        String uniqueUsername2 = "testUser_" + UUID.randomUUID().toString().substring(0, 5);
+
+        //Register the user
+        Response response = RestAssured.given()
+                .header("Content-Type", "application/json")
+                .body("{\n" +
+                        "    \"username\": \"" + uniqueUsername + "\",\n" +
+                        "    \"password\": \"password\"\n" +
+                        "}")
+                .when()
+                .post("/user");
+        Long user1ID = null;
+        int statusCode = response.getStatusCode();
+        assertEquals(201, statusCode);
+        String returnString = response.getBody().asString();
+        try {
+            JSONObject returnObj = new JSONObject(returnString);
+            JSONObject data = returnObj.getJSONObject("data");
+            assertEquals("success", returnObj.getString("status"));
+            assertEquals("User registered", returnObj.getString("message"));
+            user1ID = data.getLong("userID");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        //Register the user
+        response = RestAssured.given()
+                .header("Content-Type", "application/json")
+                .body("{\n" +
+                        "    \"username\": \"" + uniqueUsername2 + "\",\n" +
+                        "    \"password\": \"password\"\n" +
+                        "}")
+                .when()
+                .post("/user");
+
+        Long user2ID = null;
+        statusCode = response.getStatusCode();
+        assertEquals(201, statusCode);
+        String returnString2 = response.getBody().asString();
+        try {
+            JSONObject returnObj = new JSONObject(returnString2);
+            JSONObject data = returnObj.getJSONObject("data");
+            assertEquals("success", returnObj.getString("status"));
+            assertEquals("User registered", returnObj.getString("message"));
+            user2ID = data.getLong("userID");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        //Send friend request
+        response = RestAssured.given()
+                .header("Content-Type", "application/json")
+                .body("{\n" +
+                        "    \"friendUsername\": \"" + uniqueUsername2 + "\"\n" +
+                        "}")
+                .when()
+                .post("/" + user1ID + "/request");
+
+        statusCode = response.getStatusCode();
+        assertEquals(201, statusCode);
+        Long friendRequestID = null;
+        String friendString = response.getBody().asString();
+        try {
+            JSONObject friendObj = new JSONObject(friendString);
+            assertEquals("success", friendObj.getString("status"));
+            assertEquals("Friend request sent", friendObj.getString("message"));
+            JSONObject data = friendObj.getJSONObject("data");
+            friendRequestID = data.getLong("friendRequestID");
+        } catch (JSONException e) {
+            e.printStackTrace();
+
+        }
+
+        //Send friend request
+        response = RestAssured.given()
+                .header("Content-Type", "application/json")
+                .body("{\n" +
+                        "    \"friendUsername\": \"" + uniqueUsername + "\"\n" +
+                        "}")
+                .when()
+                .post("/" + user2ID + "/request");
+
+        statusCode = response.getStatusCode();
+        assertEquals(400, statusCode);
+
+        friendString = response.getBody().asString();
+        try {
+            JSONObject friendObj = new JSONObject(friendString);
+            assertEquals("error", friendObj.getString("status"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+
+        }
+    }
+    @Test
+    public void testGetFriends() {
+        // Register the user
+        String uniqueUsername = "testUser_" + UUID.randomUUID().toString().substring(0, 5);
+        Response response = RestAssured.given()
+                .header("Content-Type", "application/json")
+                .body("{\n" +
+                        "    \"username\": \"" + uniqueUsername + "\",\n" +
+                        "    \"password\": \"password\"\n" +
+                        "}")
+                .when()
+                .post("/user");
+
+        int statusCode = response.getStatusCode();
+        assertEquals(201, statusCode);
+        Long userID = null;
+        String returnString = response.getBody().asString();
+        try {
+            JSONObject returnObj = new JSONObject(returnString);
+            JSONObject data = returnObj.getJSONObject("data");
+            assertEquals("success", returnObj.getString("status"));
+            assertEquals("User registered", returnObj.getString("message"));
+            userID = data.getLong("userID");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        // Get the user's friends
+        response = RestAssured.given()
+                .header("Content-Type", "application/json")
+                .when()
+                .get("/" + userID + "/friends");
+
+        statusCode = response.getStatusCode();
+        assertEquals(200, statusCode);
+
+        String friendString = response.getBody().asString();
+        try {
+            JSONObject friendObj = new JSONObject(friendString);
+            assertEquals("success", friendObj.getString("status"));
+            assertEquals("Friends found", friendObj.getString("message"));
+            JSONObject data = friendObj.getJSONObject("data");
+            assertNotNull(data.getJSONArray("friends"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 }
