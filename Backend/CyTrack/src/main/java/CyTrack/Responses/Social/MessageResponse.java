@@ -50,7 +50,7 @@ public class MessageResponse {
         private Long userID;
         private LocalDateTime timeStamp;
 
-        public Data(String chatType, String senderUsername, String receiverUsername, String groupName, String content, String time, Long id, Long userID, LocalDateTime timeStamp) {
+        public Data(String chatType, String senderUsername, String receiverUsername, String groupName, String content, String time, Long id, Long userID) {
             this.chatType = chatType;
             this.senderUsername = senderUsername;
             this.receiverUsername = receiverUsername;
@@ -126,12 +126,5 @@ public class MessageResponse {
             this.userID = userID;
         }
 
-        public LocalDateTime getTimeStamp() {
-            return timeStamp;
-        }
-
-        public void setTimeStamp(LocalDateTime timeStamp) {
-            this.timeStamp = timeStamp;
-        }
     }
 }

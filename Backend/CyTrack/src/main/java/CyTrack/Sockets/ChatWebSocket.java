@@ -67,7 +67,7 @@ public class ChatWebSocket {
                     LocalDateTime timestamp = message.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
                     MessageResponse response = new MessageResponse(
                             "success",
-                            new MessageResponse.Data("group", message.getUser().getUsername(), null, groupName, message.getMessage(), time, chatID, message.getUser().getUserID(), timestamp),
+                            new MessageResponse.Data("group", message.getUser().getUsername(), null, groupName, message.getMessage(), time, chatID, message.getUser().getUserID()),
                             "Chat history loaded"
                     );
                     String jsonResponse = objectMapper.writeValueAsString(response);
@@ -85,10 +85,9 @@ public class ChatWebSocket {
                 List<Message> messageHistory = msgRepo.findBySenderIDAndReceiverIDOrReceiverIDAndSenderIDOrderByDateAsc(userID, receiverID);
                 for (Message message : messageHistory) {
                     String time = new SimpleDateFormat("HH:mm:ss").format(message.getDate());
-                    LocalDateTime timestamp = message.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
                     MessageResponse response = new MessageResponse(
                             "success",
-                            new MessageResponse.Data("direct", message.getSender().getUsername(), message.getReceiver().getUsername(), null, message.getContent(), time, chatID, message.getSender().getUserID(), timestamp),
+                            new MessageResponse.Data("direct", message.getSender().getUsername(), message.getReceiver().getUsername(), null, message.getContent(), time, chatID, message.getSender().getUserID()),
                             "Chat history loaded"
                     );
                     String jsonResponse = objectMapper.writeValueAsString(response);
@@ -114,10 +113,15 @@ public class ChatWebSocket {
                 groupMessage.setGroupChat(groupChat.get());
                 groupMessage.setMessage(messageText);
                 groupChatService.saveMessage(groupMessage);
+
+                String senderUsername = sender.getUsername();
                 String groupName = groupChat.get().getGroupName();
                 String time = new SimpleDateFormat("HH:mm:ss").format(groupMessage.getDate());
-                LocalDateTime timestamp = groupMessage.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
-                MessageResponse messageResponse = new MessageResponse("success", new MessageResponse.Data("group", sender.getUsername(), null, groupName, messageText, time, chatID, senderID, timestamp), "New message received");
+                MessageResponse messageResponse = new MessageResponse(
+                        "success",
+                        new MessageResponse.Data("group", senderUsername, null, groupName, messageText, time, chatID, senderID),
+                        "New message received"
+                );
                 String jsonMessage = objectMapper.writeValueAsString(messageResponse);
 
                 for (User member : groupChat.get().getMembers()) {
@@ -126,9 +130,11 @@ public class ChatWebSocket {
                         for (Session memberSession : memberSessions) {
                             if (memberSession.isOpen()) {
                                 if (member.getUserID().equals(senderID)) {
+                                    // Sender sees their message as "You: {message}"
                                     memberSession.getBasicRemote().sendText("You: " + messageText);
                                 } else {
-                                    memberSession.getBasicRemote().sendText(jsonMessage);
+                                    // Other members see "username: {message}"
+                                    memberSession.getBasicRemote().sendText(senderUsername + ": " + messageText);
                                 }
                             }
                         }
@@ -153,8 +159,11 @@ public class ChatWebSocket {
                 msgRepo.save(message);
 
                 String time = new SimpleDateFormat("HH:mm:ss").format(message.getDate());
-                LocalDateTime timestamp = message.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
-                MessageResponse messageResponse = new MessageResponse("success", new MessageResponse.Data("direct", senderUsername, receiverUsername, null, messageText, time, chatID, senderID, timestamp), "New message received");
+                MessageResponse messageResponse = new MessageResponse(
+                        "success",
+                        new MessageResponse.Data("direct", senderUsername, receiverUsername, null, messageText, time, chatID, senderID),
+                        "New message received"
+                );
                 String jsonMessage = objectMapper.writeValueAsString(messageResponse);
 
                 // Send full message to receiver
@@ -162,7 +171,8 @@ public class ChatWebSocket {
                 if (receiverSessions != null) {
                     for (Session receiverSession : receiverSessions) {
                         if (receiverSession.isOpen()) {
-                            receiverSession.getBasicRemote().sendText(jsonMessage);
+                            // Receiver sees "username: {message}"
+                            receiverSession.getBasicRemote().sendText(senderUsername + ": " + messageText);
                         }
                     }
                 } else {
@@ -180,6 +190,7 @@ public class ChatWebSocket {
             }
         }
     }
+
 
     @OnClose
     public void onClose(Session session) {
