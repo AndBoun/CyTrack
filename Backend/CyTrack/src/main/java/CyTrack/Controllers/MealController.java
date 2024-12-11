@@ -3,6 +3,7 @@ package CyTrack.Controllers;
 import CyTrack.Entities.Meal;
 import CyTrack.Entities.User;
 
+import CyTrack.Responses.Util.ErrorResponse;
 import CyTrack.Services.MealService;
 import CyTrack.Services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -11,7 +12,6 @@ import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 

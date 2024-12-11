@@ -1,4 +1,4 @@
-package CyTrack.Controllers;
+package CyTrack.Responses.Social;
 
 // Friend request response specifically for friend request ID due to JSON formatting issues with friend request response
 public class FriendRequestIDResponse {

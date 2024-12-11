@@ -2,6 +2,7 @@ package CyTrack.Controllers;
 
 import CyTrack.Entities.Badge;
 import CyTrack.Entities.User;
+import CyTrack.Responses.Util.ErrorResponse;
 import CyTrack.Services.BadgeService;
 import CyTrack.Services.UserService;
 import io.swagger.v3.oas.annotations.Operation;

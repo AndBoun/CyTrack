@@ -1,15 +1,15 @@
-package CyTrack.Controllers;
+package CyTrack.Responses.Social;
 
 import java.util.List;
 
-public class FriendResponse {
+public class FriendRequestResponse {
     private String status;
     private Data data;
     private String message;
 
-    public FriendResponse(String status, List<FriendsData> friends, String message) {
+    public FriendRequestResponse(String status, List<FriendRequestData> friendRequest, String message) {
         this.status = status;
-        this.data = new Data(friends);
+        this.data = new Data(friendRequest);
         this.message = message;
     }
 
@@ -38,28 +38,28 @@ public class FriendResponse {
     }
 
     public static class Data {
-        private List<FriendsData> friends;
+        private List<FriendRequestData> friendRequests;
 
-        public Data(List<FriendsData> friends) {
-            this.friends = friends;
+        public Data(List<FriendRequestData> friendRequests) {
+            this.friendRequests = friendRequests;
         }
 
-        public List<FriendsData> getFriends() {
-            return friends;
+        public List<FriendRequestData> getFriendRequests() {
+            return friendRequests;
         }
 
-        public void setFriends(List<FriendsData> friends) {
-            this.friends = friends;
+        public void setFriendRequests(List<FriendRequestData> friendRequests) {
+            this.friendRequests = friendRequests;
         }
     }
 
-    public static class FriendsData {
-        private Long userID;
+    public static class FriendRequestData {
         private String username;
         private String firstname;
+        private Long userID;
         private Long friendID;
 
-        public FriendsData(String firstname, String username, Long userID, Long friendID) {
+        public FriendRequestData(String username, String firstname,Long userID, Long friendID) {
             this.username = username;
             this.firstname = firstname;
             this.userID = userID;
@@ -90,14 +90,16 @@ public class FriendResponse {
             this.userID = userID;
         }
 
+
         public Long getFriendID() {
             return friendID;
         }
 
-        public void setFriendID(Long friendID) {
+        public void setfriendID(Long friendID) {
             this.friendID = friendID;
         }
 
 
     }
+
 }
