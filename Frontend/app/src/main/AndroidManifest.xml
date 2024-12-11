@@ -66,6 +66,10 @@
             android:exported="false"/>
         <activity android:name=".Startup.SignUp.Activities.CompleteSignUpActivity"
             android:exported="false"/>
+        <activity android:name=".Startup.ForgotPassword.Activities.CheckUsernameActivity"
+            android:exported="false"/>
+        <activity android:name=".Startup.ForgotPassword.Activities.ResetPasswordActivity"
+            android:exported="false"/>
         <activity
             android:name=".Startup.Login.LoginActivity"
             android:exported="true"

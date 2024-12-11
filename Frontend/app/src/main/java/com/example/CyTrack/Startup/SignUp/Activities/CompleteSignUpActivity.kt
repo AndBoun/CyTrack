@@ -21,9 +21,11 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.unit.dp
 import com.example.CyTrack.R
 import com.example.CyTrack.Startup.Login.LoginActivity
+import com.example.CyTrack.Startup.SignUp.Composables.BasicRedCircularLoadingScreen
 import com.example.CyTrack.Startup.SignUp.Composables.CompleteSignUpScreen
 import com.example.CyTrack.Utilities.KtorClientSingleton
 import com.example.CyTrack.Utilities.NetworkUtils
+import com.example.CyTrack.Utilities.NetworkUtils.postUserAndGetIDCallback
 import com.example.CyTrack.Utilities.StatusBarUtil
 import com.example.CyTrack.Utilities.UrlHolder
 import com.example.CyTrack.Utilities.User
@@ -33,14 +35,17 @@ import kotlin.math.sign
 class CompleteSignUpActivity : ComponentActivity() {
 
     lateinit var user: User
-    lateinit var oldUser: User
+
+    private lateinit var oldUser: User
+
     lateinit var password: String
 
     private val URL = UrlHolder.URL + "/user"
 
+    private val URL_LOGIN = "${UrlHolder.URL}/user/login"
 
+    private lateinit var profileImg: MutableState<String>
 
-    lateinit var profileImg: MutableState<String>
     lateinit var loading: MutableState<Boolean>
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,21 +54,13 @@ class CompleteSignUpActivity : ComponentActivity() {
 
         oldUser = intent.getSerializableExtra("user") as User
         password = intent.getStringExtra("password").toString()
+
         setContent {
             profileImg = remember { mutableStateOf("") }
             loading = remember { mutableStateOf(false) }
 
             if (loading.value) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    // Loading screen
-                    CircularProgressIndicator(
-                        color = CyRedMain,
-                        modifier = Modifier.size(50.dp)
-                    )
-                }
+                BasicRedCircularLoadingScreen(loading)
             }
 
             Surface(
@@ -117,12 +114,10 @@ class CompleteSignUpActivity : ComponentActivity() {
         params["gender"] = gender
         params["weight"] = weight
         params["height"] = height
-        params["profileImg"] = profileImg
+        params["imageUrl"] = profileImg
 
-        val imageUrl = "${URL}/${user.id}/profileImage"
 
         Log.d("CompleteSignUpActivity", "Image URI: $profileImg")
-
 
         NetworkUtils.postData(
             applicationContext,
@@ -131,9 +126,34 @@ class CompleteSignUpActivity : ComponentActivity() {
             object : NetworkUtils.callbackMessage {
                 override fun onSuccess(response: String) {
                     Toast.makeText(applicationContext, "Signed Up", Toast.LENGTH_LONG).show()
+
+                    getUserID(username, password, profileImg)
+
+                }
+
+                override fun onError(error: String) {
+                    loading.value = false
+                    Toast.makeText(applicationContext, error, Toast.LENGTH_LONG).show()
+                }
+            })
+
+        Log.d("SignUpActivity", "Request added to queue")
+    }
+
+    private fun getUserID(username: String, password: String, profileImg: String) {
+        val params: MutableMap<String, String> = HashMap()
+        params["username"] = username
+        params["password"] = password
+
+        NetworkUtils.postUserAndGetID(
+            applicationContext,
+            URL_LOGIN,
+            params,
+            object : postUserAndGetIDCallback {
+                override fun onSuccess(id: Int, message: String) {
                     KtorClientSingleton.uploadImage(
                         applicationContext,
-                        imageUrl,
+                        "${URL}/${id}/profileImage",
                         Uri.parse(profileImg)
                     )
                     loading.value = false
@@ -145,8 +165,6 @@ class CompleteSignUpActivity : ComponentActivity() {
                     Toast.makeText(applicationContext, error, Toast.LENGTH_LONG).show()
                 }
             })
-
-        Log.d("SignUpActivity", "Request added to queue")
     }
 
     private fun navigateToLogin() {

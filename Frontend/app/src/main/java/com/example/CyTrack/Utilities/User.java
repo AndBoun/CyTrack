@@ -46,7 +46,7 @@ public class User implements Serializable {
 
 
 
-    private int weight;
+    private double weight;
 
     private int height;
 
@@ -84,7 +84,7 @@ public class User implements Serializable {
             int age,
             String gender,
             int streak,
-            int weight,
+            double weight,
             int height,
             String profileImg
     ){
@@ -94,11 +94,11 @@ public class User implements Serializable {
         this.profileImg = profileImg;
     }
 
-    public int getWeight() {
+    public double getWeight() {
         return weight;
     }
 
-    public void setWeight(int weight) {
+    public void setWeight(double weight) {
         this.weight = weight;
     }
 

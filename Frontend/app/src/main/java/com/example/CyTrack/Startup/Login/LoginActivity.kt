@@ -19,8 +19,10 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.unit.dp
 import com.example.CyTrack.Dashboard.MainDashboardActivity
 import com.example.CyTrack.R
+import com.example.CyTrack.Startup.ForgotPassword.Activities.CheckUsernameActivity
 import com.example.CyTrack.Startup.ForgotPasswordActivity
 import com.example.CyTrack.Startup.SignUp.Activities.UsernameActivity
+import com.example.CyTrack.Startup.SignUp.Composables.BasicRedCircularLoadingScreen
 import com.example.CyTrack.Utilities.NetworkUtils
 import com.example.CyTrack.Utilities.NetworkUtils.fetchUserDataCallback
 import com.example.CyTrack.Utilities.NetworkUtils.postUserAndGetIDCallback
@@ -52,16 +54,7 @@ class LoginActivity : ComponentActivity() {
             loading = remember { mutableStateOf(false) }
 
             if (loading.value) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    // Loading screen
-                    CircularProgressIndicator(
-                        color = CyRedMain,
-                        modifier = Modifier.size(50.dp)
-                    )
-                }
+                BasicRedCircularLoadingScreen(loading)
             }
 
             Surface(
@@ -110,6 +103,7 @@ class LoginActivity : ComponentActivity() {
                 }
 
                 override fun onError(error: String) {
+                    loading.value = false
                     Toast.makeText(applicationContext, error, Toast.LENGTH_LONG).show()
                 }
             })
@@ -125,6 +119,7 @@ class LoginActivity : ComponentActivity() {
             }
 
             override fun onError(error: String) {
+                loading.value = false
                 Toast.makeText(applicationContext, error, Toast.LENGTH_LONG).show()
             }
         })
@@ -143,7 +138,7 @@ class LoginActivity : ComponentActivity() {
     private fun navigateToForgotPassword() {
         val intent = Intent(
             this@LoginActivity,
-            ForgotPasswordActivity::class.java
+            CheckUsernameActivity::class.java
         )
         startActivity(intent)
     }

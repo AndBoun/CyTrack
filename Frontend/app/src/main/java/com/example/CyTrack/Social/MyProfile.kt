@@ -56,6 +56,7 @@ import com.example.CyTrack.Social.Friends.ListProfileCard
 import com.example.CyTrack.Social.Friends.MyFriends
 import com.example.CyTrack.Social.Messaging.MyMessages
 import com.example.CyTrack.Badges.BadgesActivity
+import com.example.CyTrack.Utilities.ComposeUtils
 import com.example.CyTrack.Utilities.NetworkUtils
 import com.example.CyTrack.Utilities.UrlHolder
 import com.example.CyTrack.Utilities.User
@@ -89,14 +90,13 @@ class MyProfile : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         user = intent.getSerializableExtra("user") as User
+
         setContent {
             friendRequests = remember { mutableStateListOf() }
             getFriendRequests()
 
-            val tempUrl = "${URL}/user/1/profileImage"
-
             Column {
-                ProfileScreen(user.firstName, user.username, tempUrl,
+                ProfileScreen(user.firstName, user.username, SocialUtils.getProfileImageUrl(user.id),
                     onClickMyFriends = {
                         switchToMyFriends()
                     },
@@ -247,7 +247,7 @@ fun MainProfileCard(
                 imageUrl,
                 modifier = Modifier
                     .size(120.dp)
-                    .border(10.dp, Color.Black, CircleShape)
+//                    .border(10.dp, Color.Black, CircleShape)
             )
         }
 

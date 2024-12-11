@@ -121,7 +121,10 @@ public class NetworkUtils {
                         data.getString("lastName"),
                         data.getInt("age"),
                         data.getString("gender"),
-                        data.getInt("streak")
+                        data.getInt("streak"),
+                        data.getDouble("weight"),
+                        data.getInt("height"),
+                        data.getString("imageurl")
                 );
                 callback.onSuccess(user, message);
             } catch (JSONException e) {

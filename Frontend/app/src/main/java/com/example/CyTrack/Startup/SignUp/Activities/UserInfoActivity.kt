@@ -57,7 +57,7 @@ class UserInfoActivity : ComponentActivity() {
                         age.value.toInt(),
                         gender.value,
                         0,
-                        weight.value.toInt(),
+                        weight.value.toDouble(),
                         height.value.toInt(),
                         ""
                     )

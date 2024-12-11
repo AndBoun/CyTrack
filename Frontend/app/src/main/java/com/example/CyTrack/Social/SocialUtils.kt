@@ -12,6 +12,7 @@ import com.example.CyTrack.Social.Friends.FriendProfile
 import com.example.CyTrack.Social.Messaging.DirectMessage
 import com.example.CyTrack.Social.Messaging.MessageCardData
 import com.example.CyTrack.Utilities.NetworkUtils
+import com.example.CyTrack.Utilities.UrlHolder
 import com.example.CyTrack.Utilities.User
 import com.example.CyTrack.Utilities.VolleySingleton
 import org.json.JSONException
@@ -280,5 +281,9 @@ class SocialUtils {
             }
         }
 
+
+        fun getProfileImageUrl(userID: Int) : String{
+            return "${UrlHolder.URL}/user/${userID}/profileImage"
+        }
     }
 }

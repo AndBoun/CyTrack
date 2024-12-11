@@ -50,36 +50,6 @@ object KtorClientSingleton {
         return client
     }
 
-//    fun uploadImage(context: Context, url: String, imageUri: Uri) = runBlocking {
-//        try {
-//            val imageData = convertImageUriToBytes(imageUri, context)
-//            val imageName = imageUri.lastPathSegment
-//
-//            val response: HttpResponse = getClient().submitFormWithBinaryData(
-//                url = url,
-//                formData = formData {
-//                    append("description", "Profile Image")
-//                    if (imageData != null) {
-//                        Log.d("Image", "Attempting to upload image")
-//                        append("image", imageData, Headers.build {
-//                            append(HttpHeaders.ContentType, "image/png")
-//                            append(HttpHeaders.ContentDisposition, "filename=\"${imageName}.png\"")
-//                        })
-//                    }
-//                }
-//            )
-//
-//            if (response.status == HttpStatusCode.OK) {
-//                Toast.makeText(context, "Image uploaded successfully", Toast.LENGTH_LONG).show()
-//            } else {
-//                Toast.makeText(context, "Image upload failed", Toast.LENGTH_LONG).show()
-//            }
-//        } catch (e: Exception) {
-//            e.printStackTrace()
-//            Toast.makeText(context, "An error occurred during image upload", Toast.LENGTH_LONG)
-//                .show()
-//        }
-//    }
 
     fun uploadImage(context: Context, url: String, imageUri: Uri) = runBlocking {
         try {

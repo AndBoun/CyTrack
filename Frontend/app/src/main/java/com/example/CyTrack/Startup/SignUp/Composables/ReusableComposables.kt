@@ -258,3 +258,21 @@ fun UploadImageButton(
         }
     }
 }
+
+@Composable
+fun BasicRedCircularLoadingScreen(
+    loading: MutableState<Boolean>,
+) {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        if (loading.value){
+            // Loading screen
+            CircularProgressIndicator(
+                color = CyRedMain,
+                modifier = Modifier.size(50.dp)
+            )
+        }
+    }
+}
