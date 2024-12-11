@@ -1,4 +1,4 @@
-package CyTrack.Controllers;
+package CyTrack.Responses.User;
 
 public class LoginResponse {
     private String status;
@@ -13,9 +13,9 @@ public class LoginResponse {
     }
 
     // Constructor for GET response
-    public LoginResponse(String status, Long userID,String username, String firstName, String lastName, int age, int height, double weight, String gender, int streak, String message) {
+    public LoginResponse(String status, Long userID,String username, String firstName, String lastName, int age, int height, double weight, String gender, int streak, String imageurl, String message) {
         this.status = status;
-        this.data = new Data(userID, username, firstName, lastName, age, height, weight, gender, streak);
+        this.data = new Data(userID, username, firstName, lastName, age, height, weight, gender, streak, imageurl);
         this.message = message;
     }
 
@@ -53,6 +53,7 @@ public class LoginResponse {
         private double weight;
         private String gender;
         private int streak;
+        private String imageurl;
 
         // Constructor for login response
         public Data(Long userID) {
@@ -60,7 +61,7 @@ public class LoginResponse {
         }
 
         // Constructor for GET response
-        public Data(Long userID,String username, String firstName, String lastName, int age, int height, double weight, String gender, int streak) {
+        public Data(Long userID,String username, String firstName, String lastName, int age, int height, double weight, String gender, int streak, String imageurl) {
             this.userID = userID;
             this.username = username;
             this.firstName = firstName;
@@ -70,6 +71,7 @@ public class LoginResponse {
             this.weight = weight;
             this.gender = gender;
             this.streak = streak;
+            this.imageurl = imageurl;
         }
 
         public Long getUserID() {
@@ -132,6 +134,14 @@ public class LoginResponse {
 
         public void setStreak(int streak) {
             this.streak = streak;
+        }
+
+        public String getImageurl() {
+            return imageurl;
+        }
+
+        public void setImageurl(String imageurl) {
+            this.imageurl = imageurl;
         }
     }
 }
