@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @RunWith(SpringRunner.class)
-public class MealCategorySystemTest {
+public class WorkoutCategorySystemTest {
 
     @LocalServerPort
     int port;
@@ -30,7 +30,7 @@ public class MealCategorySystemTest {
     }
 
     @Test
-    public void tesAddMealCategoryByUserID() throws JSONException {
+    public void tesAddWorkoutCategoryByUserID() throws JSONException {
         // Step 1: Create a test user
         String uniqueUsername = "testUser_" + UUID.randomUUID().toString().substring(0, 5);
         Response userResponse = RestAssured.given()
@@ -43,30 +43,30 @@ public class MealCategorySystemTest {
 
         Long userID = userResponse.jsonPath().getLong("data.userID");
 
-        // Step 2: Create a mealCategory for the user
-        Response mealCategoryResponse = RestAssured.given()
+        // Step 2: Create a workoutCategory for the user
+        Response workoutCategoryResponse = RestAssured.given()
                 .header("Content-Type", "application/json")
                 .body("{\n" +
-                        "    \"mealCategoryName\": \"Test Category\"\n" +
+                        "    \"workoutCategoryName\": \"Test Category\"\n" +
                         "}")
                 .when()
-                .post("/mealCategory/" + userID + "/mealCategory");
+                .post("/workoutCategory/" + userID + "/workoutCategory");
 
         // Step 3: Validate the response
-        assertEquals(200, mealCategoryResponse.getStatusCode());
-        String responseBody = mealCategoryResponse.getBody().asString();
+        assertEquals(200, workoutCategoryResponse.getStatusCode());
+        String responseBody = workoutCategoryResponse.getBody().asString();
 
         try {
             JSONObject jsonResponse = new JSONObject(responseBody);
             assertEquals("success", jsonResponse.getString("status"));
-            assertEquals("Meal category added successfully", jsonResponse.getString("message"));
+            assertEquals("Workout category added successfully", jsonResponse.getString("message"));
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
     @Test
-    public void testAddMealToMealCategoryByUserID() throws JSONException {
+    public void testAddWorkoutToWorkoutCategoryByUserID() throws JSONException {
         // Step 1: Create a test user
         String uniqueUsername = "testUser_" + UUID.randomUUID().toString().substring(0, 5);
         Response userResponse = RestAssured.given()
@@ -79,56 +79,55 @@ public class MealCategorySystemTest {
 
         Long userID = userResponse.jsonPath().getLong("data.userID");
 
-        // Step 2: Create a mealCategory for the user
-        Response mealCategoryResponse = RestAssured.given()
+        // Step 2: Create a workoutCategory for the user
+        Response workoutCategoryResponse = RestAssured.given()
                 .header("Content-Type", "application/json")
                 .body("{\n" +
-                        "    \"mealCategoryName\": \"Test Category\"\n" +
+                        "    \"workoutCategoryName\": \"Test Category\"\n" +
                         "}")
                 .when()
-                .post("/mealCategory/" + userID + "/mealCategory");
+                .post("/workoutCategory/" + userID + "/workoutCategory");
 
-        System.out.println("Meal Category Response: " + mealCategoryResponse.getBody().asString());
-        assertEquals(200, mealCategoryResponse.getStatusCode());
+        System.out.println("Workout Category Response: " + workoutCategoryResponse.getBody().asString());
+        assertEquals(200, workoutCategoryResponse.getStatusCode());
 
         // Corrected JSON path
-        Long mealCategoryId = mealCategoryResponse.jsonPath().getLong("data.mealCategories[0].mealCategoryID");
-        System.out.println("Meal Category ID: " + mealCategoryId);
+        Long workoutCategoryId = workoutCategoryResponse.jsonPath().getLong("data.workoutCategories[0].workoutCategoryID");
+        System.out.println("Workout Category ID: " + workoutCategoryId);
 
-        // Step 3: Create a meal for the user
-        Response mealResponse = RestAssured.given()
+        // Step 3: Create a workout for the user
+        Response workoutResponse = RestAssured.given()
                 .header("Content-Type", "application/json")
                 .body("{\n" +
-                        "    \"mealType\": \"Lunch\",\n" +
-                        "    \"calories\": 600,\n" +
-                        "    \"date\": \"" + LocalDate.now() + "\"\n" +
+                        "    \"exerciseType\": \"Running\",\n" +
+                        "    \"calories\": 500\n" +
                         "}")
                 .when()
-                .post("/meal/" + userID + "/meal");
+                .post("/workout/" + userID + "/workout");
 
-        assertEquals(201, mealResponse.getStatusCode());
-        Long mealId = mealResponse.jsonPath().getLong("data.mealID");
+        assertEquals(201, workoutResponse.getStatusCode());
+        Long workoutId = workoutResponse.jsonPath().getLong("data.workoutID");
 
-        // Step 4: Add the meal to the meal category
-        Response addMealResponse = RestAssured.given()
+        // Step 4: Add the workout to the workout category
+        Response addWorkoutResponse = RestAssured.given()
                 .header("Content-Type", "application/json")
                 .when()
-                .post("/mealCategory/" + mealCategoryId + "/addMeal/" + mealId);
+                .post("/workoutCategory/" + workoutCategoryId + "/addWorkout/" + workoutId);
 
-        assertEquals(200, addMealResponse.getStatusCode());
+        assertEquals(200, addWorkoutResponse.getStatusCode());
 
-        String addMealResponseBody = addMealResponse.getBody().asString();
+        String addWorkoutResponseBody = addWorkoutResponse.getBody().asString();
         try {
-            JSONObject jsonResponse = new JSONObject(addMealResponseBody);
+            JSONObject jsonResponse = new JSONObject(addWorkoutResponseBody);
             assertEquals("success", jsonResponse.getString("status"));
-            assertEquals("Meal added to category successfully", jsonResponse.getString("message"));
+            assertEquals("Workout added to category successfully", jsonResponse.getString("message"));
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
     @Test
-    public void testGetmealCategoriesByUser() throws JSONException {
+    public void testGetworkoutCategoriesByUser() throws JSONException {
         // Step 1: Create a test user
         String uniqueUsername = "testUser_" + UUID.randomUUID().toString().substring(0, 5);
         Response userResponse = RestAssured.given()
@@ -141,23 +140,23 @@ public class MealCategorySystemTest {
 
         Long userID = userResponse.jsonPath().getLong("data.userID");
 
-        // Step 2: Create a mealCategory for the user
-        Response mealCategoryResponse = RestAssured.given()
+        // Step 2: Create a workoutCategory for the user
+        Response workoutCategoryResponse = RestAssured.given()
                 .header("Content-Type", "application/json")
                 .body("{\n" +
-                        "    \"mealCategoryName\": \"Test Category\"\n" +
+                        "    \"workoutCategoryName\": \"Test Category\"\n" +
                         "}")
                 .when()
-                .post("/mealCategory/" + userID + "/mealCategory");
+                .post("/workoutCategory/" + userID + "/workoutCategory");
 
         // Step 3: Validate the response
-        assertEquals(200, mealCategoryResponse.getStatusCode());
-        String responseBody = mealCategoryResponse.getBody().asString();
+        assertEquals(200, workoutCategoryResponse.getStatusCode());
+        String responseBody = workoutCategoryResponse.getBody().asString();
 
         try {
             JSONObject jsonResponse = new JSONObject(responseBody);
             assertEquals("success", jsonResponse.getString("status"));
-            assertEquals("Meal category added successfully", jsonResponse.getString("message"));
+            assertEquals("Workout category added successfully", jsonResponse.getString("message"));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -166,7 +165,7 @@ public class MealCategorySystemTest {
     }
 
     @Test
-    public void testGetmealsByMealCategory() throws JSONException {
+    public void testGetworkoutsByWorkoutCategory() throws JSONException {
         // Step 1: Create a test user
         String uniqueUsername = "testUser_" + UUID.randomUUID().toString().substring(0, 5);
         Response userResponse = RestAssured.given()
@@ -179,75 +178,74 @@ public class MealCategorySystemTest {
 
         Long userID = userResponse.jsonPath().getLong("data.userID");
 
-        // Step 2: Create a mealCategory for the user
-        Response mealCategoryResponse = RestAssured.given()
+        // Step 2: Create a workoutCategory for the user
+        Response workoutCategoryResponse = RestAssured.given()
                 .header("Content-Type", "application/json")
                 .body("{\n" +
-                        "    \"mealCategoryName\": \"Test Category\"\n" +
+                        "    \"workoutCategoryName\": \"Test Category\"\n" +
                         "}")
                 .when()
-                .post("/mealCategory/" + userID + "/mealCategory");
+                .post("/workoutCategory/" + userID + "/workoutCategory");
 
-        System.out.println("Meal Category Response: " + mealCategoryResponse.getBody().asString());
-        assertEquals(200, mealCategoryResponse.getStatusCode());
+        System.out.println("Workout Category Response: " + workoutCategoryResponse.getBody().asString());
+        assertEquals(200, workoutCategoryResponse.getStatusCode());
 
         // Corrected JSON path
-        Long mealCategoryId = mealCategoryResponse.jsonPath().getLong("data.mealCategories[0].mealCategoryID");
-        System.out.println("Meal Category ID: " + mealCategoryId);
+        Long workoutCategoryId = workoutCategoryResponse.jsonPath().getLong("data.workoutCategories[0].workoutCategoryID");
+        System.out.println("Workout Category ID: " + workoutCategoryId);
 
-        // Step 3: Create a meal for the user
-        Response mealResponse = RestAssured.given()
+        // Step 3: Create a workout for the user
+        Response workoutResponse = RestAssured.given()
                 .header("Content-Type", "application/json")
                 .body("{\n" +
-                        "    \"mealType\": \"Lunch\",\n" +
-                        "    \"calories\": 600,\n" +
-                        "    \"date\": \"" + LocalDate.now() + "\"\n" +
+                        "    \"exerciseType\": \"Running\",\n" +
+                        "    \"calories\": 500\n" +
                         "}")
                 .when()
-                .post("/meal/" + userID + "/meal");
+                .post("/workout/" + userID + "/workout");
 
-        assertEquals(201, mealResponse.getStatusCode());
-        Long mealId = mealResponse.jsonPath().getLong("data.mealID");
+        assertEquals(201, workoutResponse.getStatusCode());
+        Long workoutId = workoutResponse.jsonPath().getLong("data.workoutID");
 
-        // Step 4: Add the meal to the meal category
-        Response addMealResponse = RestAssured.given()
+        // Step 4: Add the workout to the workout category
+        Response addWorkoutResponse = RestAssured.given()
                 .header("Content-Type", "application/json")
                 .when()
-                .post("/mealCategory/" + mealCategoryId + "/addMeal/" + mealId);
+                .post("/workoutCategory/" + workoutCategoryId + "/addWorkout/" + workoutId);
 
-        assertEquals(200, addMealResponse.getStatusCode());
+        assertEquals(200, addWorkoutResponse.getStatusCode());
 
-        String addMealResponseBody = addMealResponse.getBody().asString();
+        String addWorkoutResponseBody = addWorkoutResponse.getBody().asString();
         try {
-            JSONObject jsonResponse = new JSONObject(addMealResponseBody);
+            JSONObject jsonResponse = new JSONObject(addWorkoutResponseBody);
             assertEquals("success", jsonResponse.getString("status"));
-            assertEquals("Meal added to category successfully", jsonResponse.getString("message"));
+            assertEquals("Workout added to category successfully", jsonResponse.getString("message"));
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        //Step 5: Get meal by meal category
-        Response getMealsResponse = RestAssured.given()
+        //Step 5: Get workout by workout category
+        Response getWorkoutsResponse = RestAssured.given()
                 .header("Content-Type", "application/json")
                 .when()
-                .get("/mealCategory/" + userID + "/mealCategory/" + mealCategoryId);
+                .get("/workoutCategory/" + userID + "/workoutCategory/" + workoutCategoryId);
 
-        assertEquals(200, getMealsResponse.getStatusCode());
+        assertEquals(200, getWorkoutsResponse.getStatusCode());
 
-        String getMealsResponseBody = getMealsResponse.getBody().asString();
-        System.out.println("Get Meals Response: " + getMealsResponseBody);
+        String getWorkoutsResponseBody = getWorkoutsResponse.getBody().asString();
+        System.out.println("Get Workouts Response: " + getWorkoutsResponseBody);
 
         try {
-            JSONObject jsonResponse = new JSONObject(getMealsResponseBody);
+            JSONObject jsonResponse = new JSONObject(getWorkoutsResponseBody);
             assertEquals("success", jsonResponse.getString("status"));
-            assertEquals("Meals retrieved successfully", jsonResponse.getString("message"));
+            assertEquals("Workouts retrieved successfully", jsonResponse.getString("message"));
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
     @Test
-    public void testDeleteMealCategory() throws JSONException {
+    public void testDeleteWorkoutCategory() throws JSONException {
         // Step 1: Create a test user
         String uniqueUsername = "testUser_" + UUID.randomUUID().toString().substring(0, 5);
         Response userResponse = RestAssured.given()
@@ -260,27 +258,27 @@ public class MealCategorySystemTest {
 
         Long userID = userResponse.jsonPath().getLong("data.userID");
 
-        // Step 2: Create a mealCategory for the user
-        Response mealCategoryResponse = RestAssured.given()
+        // Step 2: Create a workoutCategory for the user
+        Response workoutCategoryResponse = RestAssured.given()
                 .header("Content-Type", "application/json")
                 .body("{\n" +
-                        "    \"mealCategoryName\": \"Test Category\"\n" +
+                        "    \"workoutCategoryName\": \"Test Category\"\n" +
                         "}")
                 .when()
-                .post("/mealCategory/" + userID + "/mealCategory");
+                .post("/workoutCategory/" + userID + "/workoutCategory");
 
-        System.out.println("Meal Category Response: " + mealCategoryResponse.getBody().asString());
-        assertEquals(200, mealCategoryResponse.getStatusCode());
+        System.out.println("Workout Category Response: " + workoutCategoryResponse.getBody().asString());
+        assertEquals(200, workoutCategoryResponse.getStatusCode());
 
         // Corrected JSON path
-        Long mealCategoryId = mealCategoryResponse.jsonPath().getLong("data.mealCategories[0].mealCategoryID");
-        System.out.println("Meal Category ID: " + mealCategoryId);
+        Long workoutCategoryId = workoutCategoryResponse.jsonPath().getLong("data.workoutCategories[0].workoutCategoryID");
+        System.out.println("Workout Category ID: " + workoutCategoryId);
 
-        // Step 3: Delete mealCategory for the user
+        // Step 3: Delete workoutCategory for the user
         Response deleteResponse = RestAssured.given()
                 .header("Content-Type", "application/json")
                 .when()
-                .delete("/mealCategory/" + userID + "/mealCategory/" + mealCategoryId);
+                .delete("/workoutCategory/" + userID + "/workoutCategory/" + workoutCategoryId);
 
         assertEquals(200, deleteResponse.getStatusCode());
 
@@ -290,7 +288,7 @@ public class MealCategorySystemTest {
         try {
             JSONObject jsonResponse = new JSONObject(deleteResponseBody);
             assertEquals("success", jsonResponse.getString("status"));
-            assertEquals("Meal category deleted successfully", jsonResponse.getString("message"));
+            assertEquals("Workout category deleted successfully", jsonResponse.getString("message"));
         } catch (JSONException e) {
             e.printStackTrace();
         }
