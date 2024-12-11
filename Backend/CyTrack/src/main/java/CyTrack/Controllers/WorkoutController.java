@@ -142,34 +142,23 @@ public class WorkoutController {
         if (user.isPresent()) {
             workout.setUser(user.get());
 
-            //create workout
             Workout newWorkout = workoutService.createWorkout(workout);
-
-            //start workout and initialize timer (simple)
             Workout startedWorkout = workoutService.startWorkout(newWorkout.getWorkoutID());
 
             try {
-                // Notify WebSocket about workout start
-                workoutTrackingSocket.startWorkout(userID);
-            } catch (Exception e) {
-                ErrorResponse response = new ErrorResponse(
-                        "error",
-                        500,
-                        "Internal server error",
-                        "Failed to notify workout start: " + e.getMessage()
-                );
+                workoutTrackingSocket.notifyWorkoutStarted(userID, startedWorkout.getWorkoutID());
+            } catch (IOException e) {
+                ErrorResponse response = new ErrorResponse("error", 500, "Internal server error", "Failed to notify workout start");
                 return ResponseEntity.status(500).body(response);
             }
 
-            //Award eligible badges
             badgeService.awardEligibleBadges(user.get());
-
-            WorkoutIDResponse response = new WorkoutIDResponse("success", startedWorkout.getWorkoutID(), "workout created and started");
+            WorkoutIDResponse response = new WorkoutIDResponse("success", startedWorkout.getWorkoutID(), "Workout created and started");
             return ResponseEntity.status(201).body(response);
         }
-        ErrorResponse response = new ErrorResponse("error", 404, "User not found", "User not found");
-        return ResponseEntity.status(404).body(response);
+        return ResponseEntity.status(404).body(new ErrorResponse("error", 404, "User not found", "User not found"));
     }
+
 
     // Start a workout
     @Operation(
@@ -184,7 +173,6 @@ public class WorkoutController {
             @Parameter(name = "userID", description = "ID of the user", required = true, example = "1"),
             @Parameter(name = "workoutID", description = "ID of the workout to start", required = true, example = "1")
     })
-    // Start an existing workout
     @PostMapping("/{userID}/workout/{workoutID}/start")
     public ResponseEntity<?> startWorkout(@PathVariable Long userID, @PathVariable Long workoutID) {
         Optional<User> user = userService.findByUserID(userID);
@@ -194,27 +182,20 @@ public class WorkoutController {
                 Workout startedWorkout = workoutService.startWorkout(workoutID);
 
                 try {
-                    // Notify WebSocket about workout start
-                    WorkoutTrackingSocket.startWorkout(userID);
-                } catch (Exception e) {
-                    ErrorResponse response = new ErrorResponse(
-                            "error",
-                            500,
-                            "Internal server error",
-                            "Failed to notify workout start: " + e.getMessage()
-                    );
-                    return ResponseEntity.status(500).body(response);
+                    workoutTrackingSocket.notifyWorkoutStarted(userID, workoutID);
+                } catch (IOException e) {
+                    return ResponseEntity.status(500).body(new ErrorResponse("error", 500, "Internal server error", "Failed to notify workout start"));
                 }
 
-                WorkoutIDResponse response = new WorkoutIDResponse("success", workoutID, "Workout started");
-                return ResponseEntity.status(200).body(response);
+                badgeService.awardEligibleBadges(user.get());
+                return ResponseEntity.status(200).body(new WorkoutIDResponse("success", workoutID, "Workout started"));
             }
-            ErrorResponse response = new ErrorResponse("error", 404, "Workout not found", "Workout not found");
-            return ResponseEntity.status(404).body(response);
+            return ResponseEntity.status(404).body(new ErrorResponse("error", 404, "Workout not found", "Workout not found"));
         }
-        ErrorResponse response = new ErrorResponse("error", 404, "User not found", "User not found");
-        return ResponseEntity.status(404).body(response);
+        return ResponseEntity.status(404).body(new ErrorResponse("error", 404, "User not found", "User not found"));
     }
+
+
     // End a workout
     @Operation(
             summary = "End a Workout",
@@ -237,32 +218,20 @@ public class WorkoutController {
             if (workout.isPresent()) {
                 Workout endedWorkout = workoutService.endWorkout(workoutID);
 
-                //notify websocket about workout end
                 try {
-                    // Notify WebSocket about workout end
-                    workoutTrackingSocket.endWorkout(userID);
-                } catch (Exception e) {
-                    ErrorResponse response = new ErrorResponse(
-                            "error",
-                            500,
-                            "Internal server error",
-                            "Failed to notify workout end: " + e.getMessage()
-                    );
-                    return ResponseEntity.status(500).body(response);
+                    workoutTrackingSocket.notifyWorkoutEnded(userID, workoutID);
+                } catch (IOException e) {
+                    return ResponseEntity.status(500).body(new ErrorResponse("error", 500, "Internal server error", "Failed to notify workout end"));
                 }
 
-                // Update leaderboard
                 LeaderBoardSocket.updateLeaderboard(user.get().getUserID());
-
-                WorkoutIDResponse response = new WorkoutIDResponse("success", workoutID, "Workout ended");
-                return ResponseEntity.status(200).body(response);
+                return ResponseEntity.status(200).body(new WorkoutIDResponse("success", workoutID, "Workout ended"));
             }
-            ErrorResponse response = new ErrorResponse("error", 404, "Workout not found", "Workout not found");
-            return ResponseEntity.status(404).body(response);
+            return ResponseEntity.status(404).body(new ErrorResponse("error", 404, "Workout not found", "Workout not found"));
         }
-        ErrorResponse response = new ErrorResponse("error", 404, "User not found", "User not found");
-        return ResponseEntity.status(404).body(response);
+        return ResponseEntity.status(404).body(new ErrorResponse("error", 404, "User not found", "User not found"));
     }
+
 
     //List workouts by user ID
     @Operation(

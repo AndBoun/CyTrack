@@ -1,130 +1,98 @@
 package CyTrack.Sockets;
 
-import CyTrack.Entities.User;
-import CyTrack.Services.UserService;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import CyTrack.Entities.Workout;
+import CyTrack.Services.WorkoutTrackingService;
 import jakarta.websocket.*;
 import jakarta.websocket.server.PathParam;
 import jakarta.websocket.server.ServerEndpoint;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import java.io.IOException;
-import java.time.Instant;
-import java.util.*;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
-@Controller
 @ServerEndpoint("/workoutSocket/{displayerID}/{viewerID}")
+@Controller
 public class WorkoutTrackingSocket {
 
-    private static final Map<Session, Long> sessionViewerMap = new ConcurrentHashMap<>();
-    private static final Map<Long, List<Session>> displayerSessionMap = new ConcurrentHashMap<>();
-    private static final Map<Long, Instant> workoutStartTimeMap = new ConcurrentHashMap<>(); // Tracks displayer workout start times
-    private static final ObjectMapper objectMapper = new ObjectMapper();
-    private static UserService userService;
+    private static WorkoutTrackingService workoutTrackingService;
 
-    @Autowired
-    public WorkoutTrackingSocket(UserService userService) {
-        WorkoutTrackingSocket.userService = userService;
+    private static final ConcurrentHashMap<Long, Session> userSessions = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<Long, List<Session>> viewerSessions = new ConcurrentHashMap<>();
+
+    public static void setWorkoutTrackingService(WorkoutTrackingService service) {
+        workoutTrackingService = service;
     }
-
-    public WorkoutTrackingSocket() {}
 
     @OnOpen
-    public void onOpen(Session session, @PathParam("displayerID") Long displayerID, @PathParam("viewerID") Long viewerID) throws IOException {
-        Optional<User> displayerUser = userService.findByUserID(displayerID);
-        if (displayerUser.isEmpty()) {
-            session.close(new CloseReason(CloseReason.CloseCodes.CANNOT_ACCEPT, "User not found"));
-            return;
+    public void onOpen(Session session, @PathParam("displayerID") Long displayerID, @PathParam("viewerID") Long viewerID) {
+        if (viewerID != null) {
+            viewerSessions.computeIfAbsent(displayerID, k -> new CopyOnWriteArrayList<>()).add(session);
+        } else {
+            userSessions.put(displayerID, session);
         }
-
-        sessionViewerMap.put(session, viewerID);
-        displayerSessionMap.computeIfAbsent(displayerID, k -> new ArrayList<>()).add(session);
-        System.out.println("WebSocket opened for displayerID: " + displayerID + ", viewerID: " + viewerID);
-
-        // Send initial timer state to the viewer
-        sendTimerToViewer(session, displayerID);
-    }
-
-    @OnMessage
-    public void onMessage(Session session, String message) {
-        System.out.println("Message received from viewer: " + message);
-        // Optional: Handle specific viewer messages if needed
+        workoutTrackingService.handleOpen(session, displayerID, viewerID);
     }
 
     @OnClose
-    public void onClose(Session session) {
-        Long viewerID = sessionViewerMap.remove(session);
-        displayerSessionMap.forEach((displayerID, sessions) -> {
-            sessions.remove(session);
-            if (sessions.isEmpty()) {
-                displayerSessionMap.remove(displayerID);
-            }
-        });
-        System.out.println("WebSocket closed for viewerID: " + viewerID);
+    public void onClose(Session session, @PathParam("displayerID") Long displayerID) {
+        userSessions.remove(displayerID);
+        viewerSessions.remove(displayerID);
+        workoutTrackingService.handleClose(session, displayerID);
     }
 
     @OnError
     public void onError(Session session, Throwable throwable) {
-        System.err.println("WebSocket error: " + throwable.getMessage());
+        workoutTrackingService.handleError(session, throwable);
     }
 
-    // Handles starting the workout timer
-    public static void startWorkout(Long displayerID) {
-        workoutStartTimeMap.put(displayerID, Instant.now());
-        broadcastTimerUpdate(displayerID);
+    @OnMessage
+    public void onMessage(String message, Session session) {
+        workoutTrackingService.handleMessage(message, session);
     }
 
-    // Handles stopping the workout timer
-    public static void endWorkout(Long displayerID) {
-        workoutStartTimeMap.remove(displayerID);
-        broadcastTimerUpdate(displayerID); // Notify viewers that the workout ended
-    }
-
-    // Broadcasts the timer state to all viewers of a specific displayer
-    private static void broadcastTimerUpdate(Long displayerID) {
-        List<Session> sessions = displayerSessionMap.get(displayerID);
-        if (sessions != null) {
-            sessions.forEach(session -> {
-                try {
-                    sendTimerToViewer(session, displayerID);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            });
+    public void notifyWorkoutStarted(Long userID, Long workoutID) throws IOException {
+        Workout workout = workoutTrackingService.findWorkoutByID(workoutID); // Updated
+        if (workout != null) {
+            String message = createWorkoutNotification(workout, "started");
+            broadcastToUserAndViewers(userID, message);
         }
     }
 
-    // Sends the timer state of a displayer to a specific viewer
-    private static void sendTimerToViewer(Session session, Long displayerID) throws IOException {
-        Instant startTime = workoutStartTimeMap.get(displayerID);
-        TimerState timerState = new TimerState(displayerID, startTime != null, calculateElapsedTime(startTime));
-        String timerData = objectMapper.writeValueAsString(timerState);
-        session.getBasicRemote().sendText(timerData);
+    public void notifyWorkoutEnded(Long userID, Long workoutID) throws IOException {
+        Workout workout = workoutTrackingService.findWorkoutByID(workoutID); // Updated
+        if (workout != null) {
+            String message = createWorkoutNotification(workout, "ended");
+            broadcastToUserAndViewers(userID, message);
+        }
     }
 
-    // Calculates elapsed time in seconds
-    private static long calculateElapsedTime(Instant startTime) {
-        if (startTime == null) return 0;
-        return Instant.now().getEpochSecond() - startTime.getEpochSecond();
+    private String createWorkoutNotification(Workout workout, String status) {
+        long elapsedTime = Duration.between(workout.getStartTime(), workout.getEndTime() != null ? workout.getEndTime() : LocalDateTime.now()).getSeconds();
+        return String.format("{\"userID\":%d,\"workoutID\":%d,\"status\":\"%s\",\"elapsedTime\":%d}",
+                workout.getUser().getUserID(), workout.getWorkoutID(), status, elapsedTime);
     }
 
-    // TimerState class to hold the timer state
-    private static class TimerState {
-        private final Long displayerID;
-        private final boolean isActive;
-        private final long elapsedSeconds;
-
-        public TimerState(Long displayerID, boolean isActive, long elapsedSeconds) {
-            this.displayerID = displayerID;
-            this.isActive = isActive;
-            this.elapsedSeconds = elapsedSeconds;
+    private void broadcastToUserAndViewers(Long userID, String message) throws IOException {
+        // Notify the user
+        Session userSession = userSessions.get(userID);
+        if (userSession != null && userSession.isOpen()) {
+            userSession.getBasicRemote().sendText(message);
         }
 
-        // Getters (for serialization)
-        public Long getDisplayerID() { return displayerID; }
-        public boolean isActive() { return isActive; }
-        public long getElapsedSeconds() { return elapsedSeconds; }
+        // Notify viewers
+        List<Session> viewerSessions = getViewerSessions(userID);
+        for (Session session : viewerSessions) {
+            if (session.isOpen()) {
+                session.getBasicRemote().sendText(message);
+            }
+        }
+    }
+
+    private List<Session> getViewerSessions(Long userID) {
+        return viewerSessions.getOrDefault(userID, List.of());
     }
 }
