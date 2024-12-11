@@ -79,7 +79,7 @@ public class WorkoutSystemTest {
 
 
     @Test
-    public void testWorkoutGET() throws JSONException {
+    public void testGETWorkout() throws JSONException {
         // Step 1: Create a test user
         String uniqueUsername = "testUser_" + UUID.randomUUID().toString().substring(0, 5);
         Response userResponse = RestAssured.given()
@@ -222,7 +222,7 @@ public class WorkoutSystemTest {
     }
 
     @Test
-    public void testUpdateWorkout_Success() throws JSONException {
+    public void testUPDATEWorkout_Success() throws JSONException {
         // Step 1: Create a test user
         String uniqueUsername = "testUser_" + UUID.randomUUID().toString().substring(0, 5);
         Response userResponse = RestAssured.given()
@@ -305,5 +305,64 @@ public class WorkoutSystemTest {
         }
     }
 
+    @Test
+    public void testDELETEWorkout() throws JSONException {
+        // Step 1: Create a test user
+        String uniqueUsername = "testUser_" + UUID.randomUUID().toString().substring(0, 5);
+        Response userResponse = RestAssured.given()
+                .header("Content-Type", "application/json")
+                .body("{ \"username\": \"" + uniqueUsername + "\", \"password\": \"password\" }")
+                .when()
+                .post("/user");
+
+        assertEquals(201, userResponse.getStatusCode());
+
+        Long userID = userResponse.jsonPath().getLong("data.userID");
+
+        // Step 2: Create a workout for the user
+        Response workoutResponse = RestAssured.given()
+                .header("Content-Type", "application/json")
+                .body("{\n" +
+                        "    \"exerciseType\": \"Running\",\n" +
+                        "    \"duration\": 45,\n" +
+                        "    \"calories\": 400,\n" +
+                        "    \"date\": \"12-04-2024\"\n" +
+                        "}")
+                .when()
+                .post("/workout/" + userID + "/workout");
+
+        Long createdWorkoutID = workoutResponse.jsonPath().getLong("data.workoutID");
+
+        // Step 3: Validate the response
+        assertEquals(201, workoutResponse.getStatusCode());
+        String responseBody = workoutResponse.getBody().asString();
+
+        try {
+            JSONObject jsonResponse = new JSONObject(responseBody);
+            assertEquals("success", jsonResponse.getString("status"));
+            assertEquals("Workout created", jsonResponse.getString("message"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        // Step 4: Delete the meal
+        Response deleteResponse = RestAssured.given()
+                .when()
+                .delete("/workout/" + userID + "/workout/" + createdWorkoutID);
+
+        // Validate the delete response
+        assertEquals(200, deleteResponse.getStatusCode());
+        String deleteResponseBody = deleteResponse.getBody().asString();
+
+        try {
+            JSONObject deleteJsonResponse = new JSONObject(deleteResponseBody);
+            assertEquals("success", deleteJsonResponse.getString("status"));
+            assertEquals(createdWorkoutID, deleteJsonResponse.getLong("data"));
+            assertEquals("Workout deleted", deleteJsonResponse.getString("message"));
+
+        }catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 
 }
