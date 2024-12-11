@@ -27,6 +27,11 @@
         <activity android:name=".Meal.MyMeals"
             android:exported="true"/>
 
+        <activity android:name=".Statistics.GraphSample"
+            android:exported="true"/>
+        <activity android:name=".Statistics.MyStats"
+            android:exported="true"/>
+
         <activity android:name=".Workouts.StartWorkout"
             android:exported="false"/>
         <activity android:name=".Workouts.MyWorkouts"
