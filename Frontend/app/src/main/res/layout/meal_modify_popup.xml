@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:id="@+id/dialog_modify_meal"
+    android:padding="16dp">
+
+    <EditText
+        android:id="@+id/inputNewMealName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Meal Name" />
+
+    <EditText
+        android:id="@+id/inputNewMealCalories"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Calories" />
+
+    <EditText
+        android:id="@+id/inputNewMealProtein"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Protein" />
+
+    <EditText
+        android:id="@+id/inputNewMealCarbs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Carbohydrates" />
+
+</LinearLayout>
