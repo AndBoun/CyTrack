@@ -57,6 +57,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.CyTrack.R
 import com.example.CyTrack.Social.Friends.Friend
+import com.example.CyTrack.Social.Messaging.Composables.GroupChatMessageCard
+import com.example.CyTrack.Social.ProfileImage
 import com.example.CyTrack.Social.SocialUtils
 import com.example.CyTrack.Social.WebSockets.WebSocketManagerMessages
 import com.example.CyTrack.Utilities.ComposeUtils.Companion.getCustomFontFamily
@@ -106,7 +108,7 @@ class DirectMessage : ComponentActivity(), WebSocketListener {
             recipientUser = intent.getSerializableExtra("recipientUser") as Friend
             conversationKey = "${user.id}_DM_${recipientUser.userID}"
 
-            val serverUrl = "${UrlHolder.wsURL}/chat/${user.id}/${recipientUser.userID}"
+            val serverUrl = "${UrlHolder.wsURL}/chat/direct/${recipientUser.userID}/${user.id}"
             Log.d("WebSocketServiceUtil", "Connecting to $serverUrl")
             WebSocketManagerMessages.getInstance().connectWebSocket(serverUrl)
             WebSocketManagerMessages.getInstance().setWebSocketListener(this@DirectMessage)
@@ -150,7 +152,8 @@ class DirectMessage : ComponentActivity(), WebSocketListener {
      */
     data class Msg(
         val message: String,
-        val senderID: Int
+        val senderID: Int,
+        val senderUsername: String = ""
     )
 
     /**
@@ -192,12 +195,13 @@ class DirectMessage : ComponentActivity(), WebSocketListener {
                     messageList.add(
                         Msg(
                             message.substring(recipientUser.username.length + 1).trim(),
-                            recipientUser.userID
+                            recipientUser.userID,
+                            recipientUser.username
                         )
                     )
                 } else {
                     // Handle message received
-                    val tempMsg = SocialUtils.processMessage(message)
+                    val tempMsg = SocialUtils.processMessageListData(message)
                     messageList.add(tempMsg)
                 }
             } catch (e: Exception) {
@@ -311,6 +315,7 @@ fun ConversationMessageCard(
 fun ConversationLazyList(
     msg: List<DirectMessage.Msg>,
     modifier: Modifier = Modifier,
+    isGroupChat: Boolean = false,
     messageAlignment: (DirectMessage.Msg) -> Boolean = { false }
 ) {
     LazyColumn(
@@ -322,10 +327,22 @@ fun ConversationLazyList(
                     .fillMaxWidth()
             ) {
                 if (messageAlignment(message)) { // Check if message is sent by the user
-                    ConversationMessageCard(
-                        msg = message.message,
-                        modifier = Modifier.align(Alignment.TopStart)
-                    )
+                    if (isGroupChat) {
+                        GroupChatMessageCard(
+                            isFirst = true,
+                            profileImg = SocialUtils.getProfileImageUrl(message.senderID),
+                            message = message.message,
+                            name = message.senderUsername,
+                            modifier = Modifier
+                                .padding(start = 15.dp, top = 15.dp)
+                                .align(Alignment.TopStart)
+                        )
+                    } else {
+                        ConversationMessageCard(
+                            msg = message.message,
+                            modifier = Modifier.align(Alignment.TopStart)
+                        )
+                    }
                 } else {
                     ConversationMessageCard(
                         msg = message.message,
@@ -380,11 +397,9 @@ fun DirectMessageTopCard(
 
             Spacer(modifier = Modifier.width(20.dp))
 
-            Image(
-                painter = painterResource(R.drawable.general_generic_avatar),
-                contentDescription = "Contact profile picture",
-                modifier = Modifier
-                    .size(50.dp)
+            ProfileImage(
+                imageUrl = img,
+                modifier = Modifier.size(50.dp)
             )
 
             Spacer(modifier = Modifier.width(20.dp))

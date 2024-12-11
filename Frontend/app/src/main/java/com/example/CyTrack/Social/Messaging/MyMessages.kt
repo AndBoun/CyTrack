@@ -44,6 +44,7 @@ import com.example.CyTrack.Social.Friends.Friend
 import com.example.CyTrack.Social.ProfileImage
 import com.example.CyTrack.Social.SocialUtils
 import com.example.CyTrack.Social.SocialUtils.Companion.processMessageCardData
+import com.example.CyTrack.Social.SocialUtils.Companion.processMessageListData
 import com.example.CyTrack.Social.WebSockets.WebSocketManagerMessages
 import com.example.CyTrack.Utilities.ComposeUtils.Companion.getCustomFontFamily
 import com.example.CyTrack.Utilities.StatusBarUtil
@@ -70,7 +71,9 @@ class MyMessages : ComponentActivity(), WebSocketListener {
     /**
      * A mutable list to hold message card data.
      */
-    private var messageCards: MutableList<MessageCardData> = mutableListOf()
+    private var messageCards: MutableList<MessageListData> = mutableListOf()
+
+    private var messageList: MutableList<MessageListData> = mutableListOf()
 
     /**
      * Called when the activity is first created.
@@ -78,11 +81,13 @@ class MyMessages : ComponentActivity(), WebSocketListener {
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent {
-            user = intent.getSerializableExtra("user") as User
-            messageCards = remember { mutableStateListOf() }
+        user = intent.getSerializableExtra("user") as User
 
-            val serverUrl = "${UrlHolder.wsURL}/conversations/${user.id}"
+        setContent {
+            messageCards = remember { mutableStateListOf() }
+            messageList = remember { mutableStateListOf() }
+
+            val serverUrl = "${UrlHolder.wsURL}/notifications/${user.id}"
             Log.d("WebSocketServiceUtil", "Connecting to $serverUrl")
             WebSocketManagerMessages.getInstance().connectWebSocket(serverUrl)
             WebSocketManagerMessages.getInstance().setWebSocketListener(this@MyMessages)
@@ -91,10 +96,17 @@ class MyMessages : ComponentActivity(), WebSocketListener {
                 MyMessageTopCard()
                 Spacer(modifier = Modifier.height(20.dp))
                 MessageCardLazyList(
-                    messageCards,
+                    messageList,
                     onMessageClick = {
-                        val friend = Friend(it.firstname, it.username, it.userID, it.friendEntityID)
-                        switchToMessagePage(friend)
+
+
+                        if(it.chatType == "direct"){
+                            val friend = Friend(it.senderUsername, it.senderUsername, it.userID, 0)
+                            switchToMessagePage(friend)
+                        } else {
+                            val friend = Friend(it.groupName, it.groupName, it.groupOrReceiverID, 0)
+                            switchToGroupChatPage(friend)
+                        }
                     }
                 )
             }
@@ -113,6 +125,11 @@ class MyMessages : ComponentActivity(), WebSocketListener {
         SocialUtils.messageUserScreen(user, friend, this)
     }
 
+    private fun switchToGroupChatPage(friend: Friend) {
+        SocialUtils.messageGroupScreen(user, friend, this)
+    }
+
+
     /**
      * Called when the WebSocket connection is opened.
      *
@@ -129,7 +146,7 @@ class MyMessages : ComponentActivity(), WebSocketListener {
     override fun onWebSocketMessage(message: String) {
         runOnUiThread(Runnable {
             Log.d("Mymessages", "Message: $message")
-            processMessageCardData(message, messageCards)
+            processMessageListData(message, messageList)
         })
     }
 
@@ -296,15 +313,33 @@ fun MyMessageTopCard(
  */
 @Composable
 fun MessageCardLazyList(
-    messages: List<MessageCardData>,
-    onMessageClick: (MessageCardData) -> Unit = {},
+    messages: List<MessageListData>,
+    onMessageClick: (MessageListData) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     for (message in messages) {
-        ListMessageCard(message.firstname, message.content, SocialUtils.getProfileImageUrl(message.userID),
-            onMessageClick = {
-                onMessageClick(message)
-            })
+
+        if (message.chatType == "direct"){
+            ListMessageCard(
+                message.senderUsername,
+                message.content,
+                SocialUtils.getProfileImageUrl(message.userID),
+                onMessageClick = {
+                    onMessageClick(message)
+                })
+        } else {
+            ListMessageCard(
+                message.groupName,
+                message.content,
+                "https://cdn-icons-png.flaticon.com/512/5677/5677749.png",
+                onMessageClick = {
+                    onMessageClick(message)
+                })
+        }
+
+
+
+
         Log.d("MessageCardLazyList", message.userID.toString())
         HorizontalDivider(thickness = 1.dp, color = Color.Gray)
     }
@@ -328,10 +363,11 @@ fun PreviewMessageCardLazyList() {
     Surface {
         MessageCardLazyList(
             listOf(
-                MessageCardData("john", "John Doe", "Hello", "12/1/12", 1, 2, 1),
-                MessageCardData("jane", "Jane Doe", "Hi", "12/1/12", 1, 2, 1),
-                MessageCardData("john", "John Doe", "Hello", "12/1/12", 1, 2, 1),
-            )
+                MessageListData("john", "John Doe", "Jane Doe", "Group", "Hello", "12/1/12", 1, 2),
+                MessageListData("john", "John Doe", "Jane Doe", "Group", "Hello", "12/1/12", 1, 2),
+                MessageListData("john", "John Doe", "Jane Doe", "Group", "Hello", "12/1/12", 1, 2),
+
+                )
         )
     }
 }
@@ -348,9 +384,36 @@ fun PreviewMyMessagesScreen() {
             Spacer(modifier = Modifier.height(20.dp))
             MessageCardLazyList(
                 listOf(
-                    MessageCardData("john", "John Doe", "Hello", "12/1/12", 1, 2, 1),
-                    MessageCardData("jane", "Jane Doe", "Hi", "12/1/12", 1, 2, 1),
-                    MessageCardData("john", "John Doe", "Hello", "12/1/12", 1, 2, 1),
+                    MessageListData(
+                        "john",
+                        "John Doe",
+                        "Jane Doe",
+                        "Group",
+                        "Hello",
+                        "12/1/12",
+                        1,
+                        2
+                    ),
+                    MessageListData(
+                        "john",
+                        "John Doe",
+                        "Jane Doe",
+                        "Group",
+                        "Hello",
+                        "12/1/12",
+                        1,
+                        2
+                    ),
+                    MessageListData(
+                        "john",
+                        "John Doe",
+                        "Jane Doe",
+                        "Group",
+                        "Hello",
+                        "12/1/12",
+                        1,
+                        2
+                    ),
                 ),
             )
         }

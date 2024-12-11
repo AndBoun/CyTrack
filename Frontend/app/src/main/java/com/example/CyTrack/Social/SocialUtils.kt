@@ -9,9 +9,10 @@ import com.android.volley.toolbox.JsonObjectRequest
 import com.example.CyTrack.Social.Friends.AddFriends
 import com.example.CyTrack.Social.Friends.Friend
 import com.example.CyTrack.Social.Friends.FriendProfile
-import com.example.CyTrack.Social.Messaging.Activities.MyGroupChats
+import com.example.CyTrack.Social.Messaging.Activities.GroupChat
 import com.example.CyTrack.Social.Messaging.DirectMessage
 import com.example.CyTrack.Social.Messaging.MessageCardData
+import com.example.CyTrack.Social.Messaging.MessageListData
 import com.example.CyTrack.Utilities.NetworkUtils
 import com.example.CyTrack.Utilities.UrlHolder
 import com.example.CyTrack.Utilities.User
@@ -48,10 +49,12 @@ class SocialUtils {
         }
 
         @JvmStatic
-        fun switchToMyGroupChats(context: Activity, user: User) {
-            val intent = Intent(context, MyGroupChats::class.java).apply {
+        fun messageGroupScreen(user: User, recipient: Friend, context: Activity) {
+            val intent = Intent(context, GroupChat::class.java).apply {
                 putExtra("user", user)
+                putExtra("recipientUser", recipient)
             }
+
             context.startActivity(intent)
         }
 
@@ -204,6 +207,35 @@ class SocialUtils {
             return DirectMessage.Msg("", 0)
         }
 
+        fun processMessageListData(msg: String, messageList: MutableList<MessageListData> =  mutableListOf()) : DirectMessage.Msg {
+            var message : DirectMessage.Msg = DirectMessage.Msg("", 0)
+            try {
+                val tempMsg = msg.removePrefix("Received message: ")
+                val jsonObject = JSONObject(tempMsg)
+                val data = jsonObject.getJSONObject("data")
+
+
+                val tempData = MessageListData(
+                    data.getString("chatType"),
+                    data.getString("senderUsername"),
+                    data.getString("receiverUsername"),
+                    data.getString("groupName"),
+                    data.getString("content"),
+                    data.getString("time"),
+                    data.getInt("groupOrReceiverID"),
+                    data.getInt("userID")
+                )
+
+                messageList.add(tempData)
+                message = DirectMessage.Msg(tempData.content, tempData.userID, tempData.senderUsername)
+
+            } catch (e: JSONException) {
+                e.printStackTrace()
+            }
+
+            return message
+        }
+
 
         /**
          * Fetches a list of conversations from the server and updates the provided cardList.
@@ -291,7 +323,7 @@ class SocialUtils {
         }
 
 
-        fun getProfileImageUrl(userID: Int) : String{
+        fun getProfileImageUrl(userID: Int): String {
             return "${UrlHolder.URL}/user/${userID}/profileImage"
         }
     }
