@@ -1,11 +1,11 @@
 package CyTrack.Services;
 
-import CyTrack.Entities.User;
+import CyTrack.Entities.*;
 import CyTrack.Repositories.UserRepository;
+import CyTrack.Repositories.WorkoutCategoryRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import CyTrack.Entities.Workout;
 import CyTrack.Repositories.WorkoutRepository;
 
 import java.time.LocalDate;
@@ -20,13 +20,15 @@ import java.util.stream.Collectors;
 public class WorkoutService {
 
     private final WorkoutRepository workoutRepository;
+    private final WorkoutCategoryRepository workoutCategoryRepository;
     private final UserRepository userRepository;
     private final BadgeService badgeService;
 
     @Autowired
-    public WorkoutService(WorkoutRepository workoutRepository, UserRepository userRepository,
+    public WorkoutService(WorkoutRepository workoutRepository, WorkoutCategoryRepository workoutCategoryRepository, UserRepository userRepository,
                           BadgeService badgeService) {
         this.workoutRepository = workoutRepository;
+        this.workoutCategoryRepository = workoutCategoryRepository;
         this.userRepository = userRepository;
         this.badgeService = badgeService;
     }
@@ -41,40 +43,6 @@ public class WorkoutService {
         return workoutRepository.save(workout);
 
     }
-
-    // Method to update the user's streak
-
-    /*
-    private void updateStreak(User user) {
-        // Sort workouts by date in ascending order
-        List<Workout> sortedWorkouts = user.getWorkouts().stream()
-                .sorted(Comparator.comparing(Workout::getDate))
-                .collect(Collectors.toList());
-
-        int currentStreak = 1;
-        int highestStreak = 1;
-
-        for (int i = 1; i < sortedWorkouts.size(); i++) {
-            LocalDate previousDate = LocalDate.parse(sortedWorkouts.get(i - 1).getDate());
-            LocalDate currentDate = LocalDate.parse(sortedWorkouts.get(i).getDate());
-
-            // Check if current date is the next consecutive day after the previous one
-            if (currentDate.isEqual(previousDate.plusDays(1))) {
-                currentStreak++;
-            } else {
-                currentStreak = 1; // reset streak
-            }
-
-            // Update highest streak if needed
-            if (currentStreak > highestStreak) {
-                highestStreak = currentStreak;
-            }
-        }
-
-// Update the user's streak values
-        user.setCurrentStreak(currentStreak);
-    }
-    */
 
     //find workout by ID
     public Optional<Workout> findByWorkoutID(Long workoutID) {
@@ -94,6 +62,52 @@ public class WorkoutService {
     //get all workouts for a given userID AND date
     public List<Workout> getWorkoutsByUserIDAndDate(Long userID, LocalDate date) {
         return workoutRepository.findByUser_UserIDAndDate(userID, date);
+    }
+
+    // Add a workout to a category
+    public void addWorkoutToCategory(Long workoutId, Long categoryId) {
+        WorkoutCategory category = workoutCategoryRepository.findById(categoryId)
+                .orElseThrow(() -> new IllegalArgumentException("Category not found"));
+        Workout workout = workoutRepository.findByWorkoutID(workoutId)
+                .orElseThrow(() -> new IllegalArgumentException("Workout not found"));
+
+        category.getWorkouts().add(workout);
+        workout.getWorkoutCategories().add(category);
+
+        workoutCategoryRepository.save(category); // Save changes to the category
+    }
+
+    // Get all workouts in a category
+    public List<Workout> getWorkoutsByCategory(Long categoryId) {
+        WorkoutCategory category = workoutCategoryRepository.findById(categoryId)
+                .orElseThrow(() -> new IllegalArgumentException("Category not found"));
+        return category.getWorkouts();
+    }
+
+    // Remove a workout from a category
+    public void removeWorkoutFromCategory(Long workoutId, Long categoryId) {
+        WorkoutCategory category = workoutCategoryRepository.findById(categoryId)
+                .orElseThrow(() -> new IllegalArgumentException("Category not found"));
+        Workout workout = workoutRepository.findByWorkoutID(workoutId)
+                .orElseThrow(() -> new IllegalArgumentException("Workout not found"));
+
+        category.getWorkouts().remove(workout);
+        workout.getWorkoutCategories().remove(category);
+
+        workoutCategoryRepository.save(category); // Save changes to the category
+    }
+
+    public List<Workout> getWorkoutsByCategoryAndUser(Long workoutCategoryId, Long userId) {
+        WorkoutCategory workoutCategory = workoutCategoryRepository.findById(workoutCategoryId)
+                .orElseThrow(() -> new IllegalArgumentException("WorkoutCategory with ID " + workoutCategoryId + " does not exist."));
+
+        User user = userRepository.findByUserID(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User with ID " + userId + " does not exist."));
+
+        // Filter workouts by user and category
+        return workoutCategory.getWorkouts().stream()
+                .filter(workout -> workout.getUser().getUserID().equals(userId))
+                .toList();
     }
 
     // Start a workout by setting the start time

@@ -2,6 +2,7 @@ package CyTrack.Controllers;
 
 import CyTrack.Entities.User;
 import CyTrack.Entities.Workout;
+import CyTrack.Responses.Util.ErrorResponse;
 import CyTrack.Services.BadgeService;
 import CyTrack.Services.UserService;
 import CyTrack.Services.WorkoutService;
@@ -54,11 +55,11 @@ public class WorkoutController {
             summary = "Create a Workout",
             description = "Create a new Workout without 'starting' the particular workout. Useful for testing.",
             responses = {
-                   @ApiResponse (
-                           responseCode = "201",
-                           description = "Workout created",
-                           content = @Content(schema = @Schema(implementation = WorkoutIDResponse.class))
-                   ),
+                    @ApiResponse (
+                            responseCode = "201",
+                            description = "Workout created",
+                            content = @Content(schema = @Schema(implementation = WorkoutIDResponse.class))
+                    ),
                     @ApiResponse (
                             responseCode = "404",
                             description = "User not found",
@@ -142,27 +143,40 @@ public class WorkoutController {
         if (user.isPresent()) {
             workout.setUser(user.get());
 
-            //create workout
+            // Create workout
             Workout newWorkout = workoutService.createWorkout(workout);
 
-            //start workout and initialize timer (simple)
+            // Start workout
             Workout startedWorkout = workoutService.startWorkout(newWorkout.getWorkoutID());
 
             try {
-                // Notify WebSocket about workout start
-                workoutTrackingSocket.notifyWorkoutStarted(userID);
-            } catch (IOException e) {
-                ErrorResponse response = new ErrorResponse("error", 500, "Internal server error", "Failed to notify workout start");
-                return ResponseEntity.status(500).body(response);
+                // Notify WebSocket about workout start with workout name
+                workoutTrackingSocket.startWorkout(userID, startedWorkout.getExerciseType());
+            } catch (Exception e) {
+                return ResponseEntity.status(500).body(new ErrorResponse(
+                        "error",
+                        500,
+                        "WebSocket notification failed",
+                        "Could not notify workout start: " + e.getMessage()
+                ));
             }
 
+            // Award eligible badges
             badgeService.awardEligibleBadges(user.get());
 
-            WorkoutIDResponse response = new WorkoutIDResponse("success", startedWorkout.getWorkoutID(), "workout created and started");
-            return ResponseEntity.status(201).body(response);
+            return ResponseEntity.status(201).body(new WorkoutIDResponse(
+                    "success",
+                    startedWorkout.getWorkoutID(),
+                    "Workout created and started"
+            ));
         }
-        ErrorResponse response = new ErrorResponse("error", 404, "User not found", "User not found");
-        return ResponseEntity.status(404).body(response);
+
+        return ResponseEntity.status(404).body(new ErrorResponse(
+                "error",
+                404,
+                "User not found",
+                "User with ID " + userID + " does not exist"
+        ));
     }
 
     // Start a workout
@@ -185,14 +199,40 @@ public class WorkoutController {
             Optional<Workout> workout = workoutService.findByWorkoutID(workoutID);
             if (workout.isPresent()) {
                 Workout startedWorkout = workoutService.startWorkout(workoutID);
-                WorkoutIDResponse response = new WorkoutIDResponse("success", workoutID, "Workout started");
-                return ResponseEntity.status(200).body(response);
+
+                try {
+                    // Notify WebSocket about workout start with workout name
+                    WorkoutTrackingSocket.startWorkout(userID, startedWorkout.getExerciseType());
+                } catch (Exception e) {
+                    return ResponseEntity.status(500).body(new ErrorResponse(
+                            "error",
+                            500,
+                            "WebSocket notification failed",
+                            "Could not notify workout start: " + e.getMessage()
+                    ));
+                }
+
+                return ResponseEntity.status(200).body(new WorkoutIDResponse(
+                        "success",
+                        workoutID,
+                        "Workout started"
+                ));
             }
-            ErrorResponse response = new ErrorResponse("error", 404, "Workout not found", "Workout not found");
-            return ResponseEntity.status(404).body(response);
+
+            return ResponseEntity.status(404).body(new ErrorResponse(
+                    "error",
+                    404,
+                    "Workout not found",
+                    "Workout with ID " + workoutID + " does not exist"
+            ));
         }
-        ErrorResponse response = new ErrorResponse("error", 404, "User not found", "User not found");
-        return ResponseEntity.status(404).body(response);
+
+        return ResponseEntity.status(404).body(new ErrorResponse(
+                "error",
+                404,
+                "User not found",
+                "User with ID " + userID + " does not exist"
+        ));
     }
 
     // End a workout
@@ -220,12 +260,18 @@ public class WorkoutController {
                 //notify websocket about workout end
                 try {
                     // Notify WebSocket about workout end
-                    workoutTrackingSocket.notifyWorkoutEnded(userID);
-                } catch (IOException e) {
-                    ErrorResponse response = new ErrorResponse("error", 500, "Internal server error", "Failed to notify workout end");
+                    workoutTrackingSocket.endWorkout(userID);
+                } catch (Exception e) {
+                    ErrorResponse response = new ErrorResponse(
+                            "error",
+                            500,
+                            "Internal server error",
+                            "Failed to notify workout end: " + e.getMessage()
+                    );
                     return ResponseEntity.status(500).body(response);
                 }
 
+                // Update leaderboard
                 LeaderBoardSocket.updateLeaderboard(user.get().getUserID());
 
                 WorkoutIDResponse response = new WorkoutIDResponse("success", workoutID, "Workout ended");
@@ -259,7 +305,8 @@ public class WorkoutController {
                             workout.getDuration(),
                             workout.getCalories(),
                             workout.getDate(),
-                            workout.getWorkoutID()
+                            workout.getWorkoutID(),
+                            workout.getWorkoutCategories()
                     ))
                     .toList();
             WorkoutResponse response = new WorkoutResponse("success", workoutDataList, "Workouts found");
@@ -295,7 +342,8 @@ public class WorkoutController {
                         foundWorkout.getDuration(),
                         foundWorkout.getCalories(),
                         foundWorkout.getDate(),
-                        foundWorkout.getWorkoutID()
+                        foundWorkout.getWorkoutID(),
+                        foundWorkout.getWorkoutCategories()
                 );
                 WorkoutResponse response = new WorkoutResponse("success", List.of(workoutData), "Workout found");
                 return ResponseEntity.status(200).body(response);
@@ -343,7 +391,8 @@ public class WorkoutController {
                             workout.getDuration(),
                             workout.getCalories(),
                             workout.getDate(),
-                            workout.getWorkoutID()
+                            workout.getWorkoutID(),
+                            workout.getWorkoutCategories()
                     ))
                     .toList();
             WorkoutResponse response = new WorkoutResponse("success", workoutDataList, "Workouts found for " + date);

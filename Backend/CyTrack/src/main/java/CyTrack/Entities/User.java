@@ -6,6 +6,8 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Entity
@@ -57,6 +59,19 @@ public class User {
     @JsonIgnoreProperties("receiver")
     private List<FriendRequest> receivedRequests = new ArrayList<>();
 
+
+    /**
+     * Meal Categories
+     */
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MealCategory> mealCategories = new ArrayList<>();
+
+    /**
+     * Workout Categories
+     */
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<WorkoutCategory> workoutCategories = new ArrayList<>(); //
+
     @Column(nullable = false, unique = true)
     @Schema(description="Username of the user", name="username", required=true, example="user1")
     private String username;
@@ -69,15 +84,18 @@ public class User {
     @Schema(description="Age of the user", name="age", required=true, example="21")
     private int age;
     @Schema(description = "Height of user in inches", name = "height", required=true, example = "69")
-    private int height;
+    private int height; //new
     @Schema(description = "Weight of user in inches", name = "weight", required=true, example = "150")
-    private double weight;
+    private double weight; //new
     private int currentStreak;
     private int highestStreak;
 
-    private String pfpURL;
+    private String pfpURL; //new
     private int totalTime;
     private String gender;
+
+
+    private String profileImageUrl;
 
     // ========================= Constructors ========================= //
 
@@ -145,6 +163,7 @@ public class User {
         this.age = age;
     }
 
+
     public int getHeight() {return height; }
 
     public void setHeight(int height) {this.height = height; }
@@ -197,6 +216,22 @@ public class User {
         return friends;
     }
 
+    public List<MealCategory> getMealCategories() {
+        return mealCategories;
+    }
+
+    public void setMealCategories(List<MealCategory> mealCategories) {
+        this.mealCategories = mealCategories;
+    }
+
+    public List<WorkoutCategory> getWorkoutCategories() {
+        return workoutCategories;
+    }
+
+    public void setWorkoutCategories(List<WorkoutCategory> workoutCategories) {
+        this.workoutCategories = workoutCategories;
+    } 
+
     public void setFriends(List<Friends> friends) {
         this.friends = friends;
     }
@@ -245,11 +280,9 @@ public class User {
         return totalTime;
     }
 
-    public void setTotalTime(int totalTime) {this.totalTime = totalTime;}
-
-    public String getPfpURL() {return pfpURL; }
-
-    public void setPfpURL(String pfpURL) {this.pfpURL = pfpURL; }
+    public void setTotalTime(int totalTime) {
+        this.totalTime = totalTime;
+    }
 
     public void updateHighestStreak () {
         if (currentStreak > highestStreak) {
@@ -257,5 +290,25 @@ public class User {
         }
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return Objects.equals(userID, user.userID);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(userID);
+    }
+
+    public String getProfileImageUrl() {
+        return profileImageUrl;
+    }
+
+    public void setProfileImageUrl(String profileImageUrl) {
+        this.profileImageUrl = profileImageUrl;
+    }
 
 }

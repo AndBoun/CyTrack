@@ -3,6 +3,7 @@ package CyTrack.Controllers;
 import CyTrack.Entities.Meal;
 import CyTrack.Entities.User;
 
+import CyTrack.Responses.Util.ErrorResponse;
 import CyTrack.Services.MealService;
 import CyTrack.Services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -11,7 +12,6 @@ import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -72,7 +72,8 @@ public class MealController {
                             meal.getProtein(),
                             meal.getCarbs(),
                             meal.getTime(),
-                            meal.getDate()
+                            meal.getDate(),
+                            meal.getMealCategories()
                     ))
                     .toList();
             MealResponse response = new MealResponse("success", mealDataList, "Meals found");
@@ -122,7 +123,8 @@ public class MealController {
                         foundMeal.getProtein(),
                         foundMeal.getCarbs(),
                         foundMeal.getTime(),
-                        foundMeal.getDate()
+                        foundMeal.getDate(),
+                        foundMeal.getMealCategories()
                 );
                 MealResponse response = new MealResponse("success", List.of(mealData), "Meal found");
                 return ResponseEntity.status(200).body(response);
@@ -170,7 +172,8 @@ public class MealController {
                             meal.getProtein(),
                             meal.getCarbs(),
                             meal.getTime(),
-                            meal.getDate()
+                            meal.getDate(),
+                            meal.getMealCategories()
                     ))
                     .toList();
             MealResponse response = new MealResponse("success", mealDataList, "Meals found for date " + date);

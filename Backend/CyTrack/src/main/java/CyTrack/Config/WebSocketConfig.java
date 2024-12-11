@@ -35,7 +35,16 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         registry.addEndpoint("/userSocket/{userID}")
                 .setAllowedOriginPatterns("*")
                 .withSockJS();
+
         registry.addEndpoint("/badgeSocket/{displayerID}/{viewerID}")
+                .setAllowedOriginPatterns("*")
+                .withSockJS();
+
+        registry.addEndpoint("/workoutSocket/{displayerID}/{viewerID}")
+                .setAllowedOriginPatterns("*")
+                .withSockJS();
+
+        registry.addEndpoint("/groupchat/{groupID}/{userID}")
                 .setAllowedOriginPatterns("*")
                 .withSockJS();
 

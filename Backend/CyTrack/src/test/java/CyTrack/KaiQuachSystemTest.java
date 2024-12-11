@@ -2,13 +2,11 @@ package CyTrack;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 import java.util.UUID;
 import io.restassured.RestAssured;
@@ -18,8 +16,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import org.springframework.boot.test.web.server.LocalServerPort;
 
-import CyTrack.Entities.User;
-import CyTrack.Controllers.LoginResponse;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @RunWith(SpringRunner.class)
 public class KaiQuachSystemTest {

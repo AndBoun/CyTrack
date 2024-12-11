@@ -24,6 +24,8 @@
         <activity android:name=".Leaderboard.TimeEntryBoard.LeaderboardActivity"
             android:exported="true"/>
 
+        <activity android:name=".Meal.MyMeals"
+            android:exported="true"/>
 
         <activity android:name=".Workouts.StartWorkout"
             android:exported="false"/>

@@ -1,5 +1,7 @@
 package CyTrack.Controllers;
 
+import CyTrack.Entities.WorkoutCategory;
+
 import java.time.LocalDate;
 import java.util.List;
 //Response for Workout
@@ -60,22 +62,25 @@ public class WorkoutResponse {
     }
 
     public static class WorkoutData {
+        private Long workoutID;
         private String exerciseType;
         private int duration;
         private int calories;
         private LocalDate date;
-        private Long workoutID;
+        private List<WorkoutCategory> workoutCategories;
 
         //default/no-arg constructor
         public WorkoutData() {
         }
 
-        public WorkoutData(String exerciseType, int duration, int calories, LocalDate date, Long workoutID) {
+        public WorkoutData(String exerciseType, int duration, int calories,
+                           LocalDate date, Long workoutID, List<WorkoutCategory> workoutCategories) {
             this.exerciseType = exerciseType;
             this.duration = duration;
             this.calories = calories;
             this.date = date;
             this.workoutID = workoutID;
+            this.workoutCategories = workoutCategories;
         }
 
         public String getExerciseType() {
@@ -116,6 +121,40 @@ public class WorkoutResponse {
 
         public void setWorkoutID(Long workoutID) {
             this.workoutID = workoutID;
+        }
+
+        public List<WorkoutCategory> getWorkoutCategories() {
+            return workoutCategories;
+        }
+
+        public void setWorkoutCategories(List<WorkoutCategory> workoutCategories) {
+            this.workoutCategories = workoutCategories;
+        }
+    }
+
+    public static class WorkoutCategoryData {
+        private Long workoutCategoryId;
+        private String workoutCategoryName;
+
+        public WorkoutCategoryData(Long workoutCategoryId, String workoutCategoryName) {
+            this.workoutCategoryId = workoutCategoryId;
+            this.workoutCategoryName = workoutCategoryName;
+        }
+
+        public Long getWorkoutCategoryId() {
+            return workoutCategoryId;
+        }
+
+        public void setWorkoutCategoryId(Long workoutCategoryId) {
+            this.workoutCategoryId = workoutCategoryId;
+        }
+
+        public String getWorkoutCategoryName() {
+            return workoutCategoryName;
+        }
+
+        public void setWorkoutCategoryName(String workoutCategoryName) {
+            this.workoutCategoryName = workoutCategoryName;
         }
     }
 }
