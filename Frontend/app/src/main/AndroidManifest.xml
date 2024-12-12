@@ -16,14 +16,13 @@
         android:theme="@style/Theme.FirstScreen"
         android:usesCleartextTraffic="true"
         tools:targetApi="31" >
-        <activity
-            android:name=".Meal.MyMealsTest"
-            android:exported="false"
-            android:label="@string/title_activity_my_meals_test"
-            android:theme="@style/Theme.FirstScreen" />
-
         <service android:name=".Utilities.WebSocketServiceUtil" />
-
+        <activity
+            android:name=".Social.Messaging.Activities.GroupChat"
+            android:exported="false" />
+        <activity
+            android:name=".Social.Messaging.Activities.GroupChatSettings"
+            android:exported="false" />
         <activity
             android:name=".Badges.BadgesActivity"
             android:exported="true" />
@@ -34,7 +33,7 @@
             android:name=".Meal.MyMeals"
             android:exported="true" />
         <activity
-            android:name=".Statistics.GraphSample"
+            android:name=".Statistics.GraphViews"
             android:exported="true" />
         <activity
             android:name=".Statistics.MyStats"

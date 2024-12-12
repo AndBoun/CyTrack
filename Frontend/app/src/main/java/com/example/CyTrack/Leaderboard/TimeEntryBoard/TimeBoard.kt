@@ -22,6 +22,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -38,6 +39,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
@@ -57,6 +59,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.CyTrack.Leaderboard.Websocket.WebSocketManagerLeaderboard
 import com.example.CyTrack.R
+import com.example.CyTrack.Social.ProfileImage
+import com.example.CyTrack.Social.SocialUtils
 import com.example.CyTrack.Utilities.ComposeUtils.Companion.getCustomFontFamily
 import com.example.CyTrack.Utilities.UrlHolder
 import com.example.CyTrack.Utilities.User
@@ -208,10 +212,11 @@ fun LBProfileCard(
             modifier = Modifier
                 .padding(10.dp)
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.general_generic_avatar),
-                contentDescription = "Profile Picture",
-                modifier = Modifier.size(40.dp),
+            ProfileImage(
+                imageUrl = SocialUtils.getProfileImageUrl(username.toInt()),
+                modifier = Modifier
+                    .size(40.dp)
+                    .border(3.dp, Color.Black, CircleShape)
             )
 
             Spacer(modifier = Modifier.width(10.dp))

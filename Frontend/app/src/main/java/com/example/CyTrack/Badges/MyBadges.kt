@@ -55,6 +55,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.CyTrack.R
 import com.example.CyTrack.Social.ProfileImage
+import com.example.CyTrack.Social.SocialUtils
 import com.example.CyTrack.Utilities.ComposeUtils.Companion.getCustomFontFamily
 import com.example.CyTrack.Utilities.UrlHolder
 import com.example.CyTrack.Utilities.User
@@ -115,7 +116,7 @@ class BadgesActivity : ComponentActivity() {
                 Column {
                     BGTopCard()
                     Spacer(modifier = Modifier.height(10.dp))
-                    BGScreen(AllBadges)
+                    BGScreen(AllBadges, user)
                 }
             }
         }
@@ -135,7 +136,8 @@ fun BGProfileCard(
     name: String,
     desc: String,
     img: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    user: Int,
 ) {
     Surface(
         color = Color.White,
@@ -148,7 +150,7 @@ fun BGProfileCard(
             modifier = Modifier.padding(10.dp)
         ) {
             ProfileImage(
-                imageUrl = img,
+                imageUrl = SocialUtils.getProfileImageUrl(user),
                 modifier = Modifier
                     .size(40.dp)
                     .border(3.dp, Color.Black, CircleShape)
@@ -192,12 +194,13 @@ fun BGProfileCard(
 fun BGCard(
     name: String,
     desc: String,
+    user: User = User(0, "Proto", "Proto", "Proto", 32, "M", 32),
     onMessageClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row {
         Box {
-            BGProfileCard(name, desc, "temp", modifier)
+            BGProfileCard(name,desc, "temp", modifier, user.id)
             Spacer(modifier = Modifier.height(10.dp))
         }
     }
@@ -213,6 +216,7 @@ fun BGCard(
 @Composable
 fun BGHierarchy(
     BadgeList: List<BadgeObject>,
+    user: User = User(0, "Proto", "Proto", "Proto", 32, "M", 32),
     onMessageClick: (BadgeObject) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
@@ -222,7 +226,7 @@ fun BGHierarchy(
             .padding(horizontal = 32.dp)
     ) {
         items(BadgeList) { Badge -> // the items() child takes a list as a param
-            BGCard(Badge.name, Badge.desc, {
+            BGCard(Badge.name, Badge.desc, user, {
                 onMessageClick(Badge)
             })  // Our message is then linked into our card and created
             Spacer(modifier = Modifier.height(10.dp))
@@ -288,10 +292,11 @@ fun BGTopCard(
 @Composable
 fun BGScreen(
     BGList: List<BadgeObject>,
+    user: User = User(0, "Proto", "Proto", "Proto", 32, "M", 32),
     modifier: Modifier = Modifier
 ) {
     Column {
-        BGHierarchy(BGList)
+        BGHierarchy(BGList, user)
     }
 }
 
