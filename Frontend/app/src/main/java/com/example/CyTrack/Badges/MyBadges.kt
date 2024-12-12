@@ -153,7 +153,6 @@ fun BGProfileCard(
                 imageUrl = SocialUtils.getProfileImageUrl(user),
                 modifier = Modifier
                     .size(40.dp)
-                    .border(3.dp, Color.Black, CircleShape)
             )
 
             Spacer(modifier = Modifier.width(10.dp))

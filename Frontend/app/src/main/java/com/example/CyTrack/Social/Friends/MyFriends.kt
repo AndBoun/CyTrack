@@ -171,8 +171,6 @@ fun ListProfileCard(
             ProfileImage(
                 imageUrl,
                 modifier = Modifier.size(40.dp)
-                    .border(4.dp, Color.Black, CircleShape)
-                    .clickable(onClick = onProfileClick)
             )
 
             Spacer(modifier = Modifier.width(10.dp))
@@ -322,7 +320,7 @@ fun MyFriendsCardsLazyList(
             .padding(horizontal = 32.dp)
     ) {
         for (friend in friendsList) {
-            FriendsListProfileCard(friend.firstName, friend.username, "temp", {
+            FriendsListProfileCard(friend.firstName, friend.username, SocialUtils.getProfileImageUrl(friend.userID), {
                 onMessageClick(friend)
             }, {
                 onProfileClick(friend)
