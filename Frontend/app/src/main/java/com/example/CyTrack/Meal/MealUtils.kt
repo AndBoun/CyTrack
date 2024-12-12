@@ -123,7 +123,6 @@ class MealUtils {
          * Shows a dialog to add a new workout.
          */
         @JvmStatic
-
         fun showAddMeal(
             user: User,
             url: String,
