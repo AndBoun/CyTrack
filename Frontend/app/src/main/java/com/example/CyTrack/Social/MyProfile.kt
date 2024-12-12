@@ -567,7 +567,7 @@ private fun FriendRequestCardLazyList(
             .padding(horizontal = 32.dp)
     ) {
         for (friend in friendRequests) {
-            FriendRequestCard(friend.firstName, friend.username, "", {
+            FriendRequestCard(friend.firstName, friend.username, SocialUtils.getProfileImageUrl(friend.userID), {
                 onAccept(friend)
             }, {
                 onDecline(friend)
