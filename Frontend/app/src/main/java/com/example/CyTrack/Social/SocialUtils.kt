@@ -4,13 +4,18 @@ import android.app.Activity
 import android.content.Intent
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.runtime.MutableIntState
+import androidx.compose.runtime.MutableState
 import com.android.volley.Request
 import com.android.volley.toolbox.JsonObjectRequest
 import com.example.CyTrack.Social.Friends.AddFriends
 import com.example.CyTrack.Social.Friends.Friend
 import com.example.CyTrack.Social.Friends.FriendProfile
+import com.example.CyTrack.Social.Messaging.Activities.GroupChat
 import com.example.CyTrack.Social.Messaging.DirectMessage
+import com.example.CyTrack.Social.Messaging.Members
 import com.example.CyTrack.Social.Messaging.MessageCardData
+import com.example.CyTrack.Social.Messaging.MessageListData
 import com.example.CyTrack.Utilities.NetworkUtils
 import com.example.CyTrack.Utilities.UrlHolder
 import com.example.CyTrack.Utilities.User
@@ -39,6 +44,16 @@ class SocialUtils {
         @JvmStatic
         fun messageUserScreen(user: User, recipient: Friend, context: Activity) {
             val intent = Intent(context, DirectMessage::class.java).apply {
+                putExtra("user", user)
+                putExtra("recipientUser", recipient)
+            }
+
+            context.startActivity(intent)
+        }
+
+        @JvmStatic
+        fun messageGroupScreen(user: User, recipient: Friend, context: Activity) {
+            val intent = Intent(context, GroupChat::class.java).apply {
                 putExtra("user", user)
                 putExtra("recipientUser", recipient)
             }
@@ -195,6 +210,51 @@ class SocialUtils {
             return DirectMessage.Msg("", 0)
         }
 
+        fun processMessageListData(
+            msg: String,
+            messageList: MutableList<MessageListData> = mutableListOf(),
+            avoidUserID: Int = 0
+        ): DirectMessage.Msg {
+            var message: DirectMessage.Msg = DirectMessage.Msg("", 0)
+            try {
+                val tempMsg = msg.removePrefix("Received message: ")
+                val jsonObject = JSONObject(tempMsg)
+                val data = jsonObject.getJSONObject("data")
+
+                val tempData = MessageListData(
+                    data.getString("chatType"),
+                    data.getString("senderUsername"),
+                    data.getString("receiverUsername"),
+                    data.getString("groupName"),
+                    data.getString("content"),
+                    data.getString("time"),
+                    data.getInt("groupOrReceiverID"),
+                    data.getInt("userID")
+                )
+
+                Log.d("MessageListData", "Recieved: "+ tempData.userID.toString() + " " + "Avoid: "+ avoidUserID)
+
+                // Remove any existing entry with the same chatType, groupOrReceiverID, and userID
+                messageList.removeAll {
+                    (it.chatType == tempData.chatType &&
+                            it.groupOrReceiverID == tempData.groupOrReceiverID &&
+                            it.userID == tempData.userID) ||
+                            it.userID == avoidUserID
+                }
+
+                // Add the new entry at the beginning of the list
+                if  (tempData.userID != avoidUserID) messageList.add(0, tempData)
+
+                message =
+                    DirectMessage.Msg(tempData.content, tempData.userID, tempData.senderUsername)
+
+            } catch (e: JSONException) {
+                e.printStackTrace()
+            }
+
+            return message
+        }
+
 
         /**
          * Fetches a list of conversations from the server and updates the provided cardList.
@@ -282,8 +342,48 @@ class SocialUtils {
         }
 
 
-        fun getProfileImageUrl(userID: Int) : String{
+        fun getProfileImageUrl(userID: Int): String {
             return "${UrlHolder.URL}/user/${userID}/profileImage"
+        }
+
+        fun getGroupMembers(
+            context: Activity,
+            url: String,
+            groupList: MutableList<Members>,
+            adminID: MutableIntState,
+        ) {
+            val jsonObjectRequest = JsonObjectRequest(
+                Request.Method.GET,
+                url,
+                null,
+                { response ->
+                    try {
+                        val data = response.getJSONObject("data").getJSONArray("members")
+
+                        adminID.intValue = response.getJSONObject("data").getInt("userID")
+
+
+                        for (i in 0 until data.length()) {
+                            val member = data.getJSONObject(i)
+                            groupList.add(
+                                Members(
+                                    member.getInt("userID"),
+                                    member.getString("username")
+                                )
+                            )
+                        }
+                    } catch (e: JSONException) {
+                        e.printStackTrace()
+                    }
+                },
+                { error ->
+                    Toast.makeText(context, NetworkUtils.errorResponse(error), Toast.LENGTH_LONG)
+                        .show()
+                }
+
+            )
+
+            VolleySingleton.getInstance(context).addToRequestQueue(jsonObjectRequest)
         }
     }
 }
