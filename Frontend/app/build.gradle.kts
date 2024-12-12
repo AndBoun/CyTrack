@@ -195,6 +195,10 @@ dependencies {
     // Coil Dependencies for KMP Image Loading
     implementation(libs.coil.compose)
     implementation(libs.coil.network.ktor3)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.ui.graphics)
+    implementation(libs.androidx.ui.tooling.preview)
+    androidTestImplementation(platform(libs.compose.bom))
 
 
     // Dokka Plugin for Java
@@ -237,5 +241,8 @@ dependencies {
     // Vico Graph Dependencies
     implementation(libs.vico.compose)
     implementation(libs.vico.compose.m3)
+
+    // Graph
+    implementation ("com.jjoe64:graphview:4.2.2")
 }
 
