@@ -20,9 +20,11 @@ import org.springframework.stereotype.Controller;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-
+import java.time.ZoneId;
 @Controller
 @ServerEndpoint("/chat/{chatType}/{chatID}/{userID}")
 public class ChatWebSocket {
@@ -58,14 +60,14 @@ public class ChatWebSocket {
                 sessionUserMap.put(session, userID);
                 userSessionMap.computeIfAbsent(userID, k -> new ArrayList<>()).add(session);
 
-                // Load chat history from the database
                 List<GroupMessage> messageHistory = groupChatService.getChatHistory(chatID);
-
+                String groupName = groupChat.get().getGroupName();
                 for (GroupMessage message : messageHistory) {
                     String time = new SimpleDateFormat("HH:mm:ss").format(message.getDate());
+                    LocalDateTime timestamp = message.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
                     MessageResponse response = new MessageResponse(
                             "success",
-                            new MessageResponse.Data("group", message.getUser().getUsername(), null, message.getMessage(), time, chatID),
+                            new MessageResponse.Data("group", message.getUser().getUsername(), null, groupName, message.getMessage(), time, chatID, message.getUser().getUserID()),
                             "Chat history loaded"
                     );
                     String jsonResponse = objectMapper.writeValueAsString(response);
@@ -75,20 +77,17 @@ public class ChatWebSocket {
                 session.close(new CloseReason(CloseReason.CloseCodes.VIOLATED_POLICY, "You are not a member of this group"));
             }
         } else if ("direct".equals(chatType)) {
-            // Handle direct messaging
-            Long receiverID = chatID; // Assuming chatID is the receiverID for direct messages
+            Long receiverID = chatID;
             if (friendsService.checkIfFriends(userID, receiverID)) {
                 sessionUserMap.put(session, userID);
                 userSessionMap.computeIfAbsent(userID, k -> new ArrayList<>()).add(session);
 
-                // Load chat history from the database
                 List<Message> messageHistory = msgRepo.findBySenderIDAndReceiverIDOrReceiverIDAndSenderIDOrderByDateAsc(userID, receiverID);
-
                 for (Message message : messageHistory) {
                     String time = new SimpleDateFormat("HH:mm:ss").format(message.getDate());
                     MessageResponse response = new MessageResponse(
                             "success",
-                            new MessageResponse.Data("direct", message.getSender().getUsername(), message.getReceiver().getUsername(), message.getContent(), time, chatID),
+                            new MessageResponse.Data("direct", message.getSender().getUsername(), message.getReceiver().getUsername(), null, message.getContent(), time, chatID, message.getSender().getUserID()),
                             "Chat history loaded"
                     );
                     String jsonResponse = objectMapper.writeValueAsString(response);
@@ -115,8 +114,14 @@ public class ChatWebSocket {
                 groupMessage.setMessage(messageText);
                 groupChatService.saveMessage(groupMessage);
 
+                String senderUsername = sender.getUsername();
+                String groupName = groupChat.get().getGroupName();
                 String time = new SimpleDateFormat("HH:mm:ss").format(groupMessage.getDate());
-                MessageResponse messageResponse = new MessageResponse("success", new MessageResponse.Data("group", sender.getUsername(), null, messageText, time, chatID), "New message received");
+                MessageResponse messageResponse = new MessageResponse(
+                        "success",
+                        new MessageResponse.Data("group", senderUsername, null, groupName, messageText, time, chatID, senderID),
+                        "New message received"
+                );
                 String jsonMessage = objectMapper.writeValueAsString(messageResponse);
 
                 for (User member : groupChat.get().getMembers()) {
@@ -125,9 +130,11 @@ public class ChatWebSocket {
                         for (Session memberSession : memberSessions) {
                             if (memberSession.isOpen()) {
                                 if (member.getUserID().equals(senderID)) {
+                                    // Sender sees their message as "You: {message}"
                                     memberSession.getBasicRemote().sendText("You: " + messageText);
                                 } else {
-                                    memberSession.getBasicRemote().sendText(jsonMessage);
+                                    // Other members see "username: {message}"
+                                    memberSession.getBasicRemote().sendText(senderUsername + ": " + messageText);
                                 }
                             }
                         }
@@ -152,7 +159,11 @@ public class ChatWebSocket {
                 msgRepo.save(message);
 
                 String time = new SimpleDateFormat("HH:mm:ss").format(message.getDate());
-                MessageResponse messageResponse = new MessageResponse("success", new MessageResponse.Data("direct", senderUsername, receiverUsername, messageText, time, chatID), "New message received");
+                MessageResponse messageResponse = new MessageResponse(
+                        "success",
+                        new MessageResponse.Data("direct", senderUsername, receiverUsername, null, messageText, time, chatID, senderID),
+                        "New message received"
+                );
                 String jsonMessage = objectMapper.writeValueAsString(messageResponse);
 
                 // Send full message to receiver
@@ -160,7 +171,8 @@ public class ChatWebSocket {
                 if (receiverSessions != null) {
                     for (Session receiverSession : receiverSessions) {
                         if (receiverSession.isOpen()) {
-                            receiverSession.getBasicRemote().sendText(jsonMessage);
+                            // Receiver sees "username: {message}"
+                            receiverSession.getBasicRemote().sendText(senderUsername + ": " + messageText);
                         }
                     }
                 } else {
@@ -178,6 +190,7 @@ public class ChatWebSocket {
             }
         }
     }
+
 
     @OnClose
     public void onClose(Session session) {

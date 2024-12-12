@@ -109,7 +109,7 @@ public class MealController {
             @Parameter(name = "userID", description = "ID of the user", required = true, example = "1"),
             @Parameter(name = "mealId", description = "ID of the meal to retrieve", required = true, example = "100")
     })
-    @GetMapping("/{mealId}/meal/{mealID}")
+    @GetMapping("/{userID}/meal/{mealId}")
     public ResponseEntity<?> getMealById(@PathVariable Long userID, @PathVariable Long mealId) {
         Optional<User> user = userService.findByUserID(userID);
         if (user.isPresent()) {
@@ -356,7 +356,7 @@ public class MealController {
                     updatedMeal.setDate(newMeal.getDate());
                 }
                 mealService.createMeal(updatedMeal);
-                MealIDResponse response = new MealIDResponse("success", mealID, "Meal created");
+                MealIDResponse response = new MealIDResponse("success", mealID, "Meal updated");
                 return ResponseEntity.status(200).body(response);
             }
             ErrorResponse response = new ErrorResponse("error", 404, "Meal not found", "could not find meal with given mealID");

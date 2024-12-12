@@ -54,6 +54,10 @@ public class GroupChatService {
         }
         return null;
     }
+    public GroupMessage getMostRecentMessage(Long groupChatID) {
+        return groupMessageRepository.findTopByGroupChat_GroupChatIDOrderByDateDesc(groupChatID);
+    }
+
 
 
     public GroupChat removeMember(Long groupChatID, Long userID) {

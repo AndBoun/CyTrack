@@ -170,7 +170,7 @@ public class EduardoBarbozaSystemTest {
 
         Long workoutID = workoutResponse.jsonPath().getLong("data.workoutID");
 
-        // Step 3: Delete the workout
+        // Step 4: Delete the workout
         Response deleteResponse = RestAssured.given()
                 .when()
                 .delete("/workout/" + userID + "/workout/" + workoutID);
@@ -190,7 +190,7 @@ public class EduardoBarbozaSystemTest {
         }
 
 
-        // Step 4: Verify the workout no longer exists
+        // Step 5: Verify the workout no longer exists
         Response verifyResponse = RestAssured.given()
                 .when()
                 .get("/workout/" + userID + "/workout/" + workoutID);

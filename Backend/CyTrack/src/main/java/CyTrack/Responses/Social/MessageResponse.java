@@ -1,4 +1,8 @@
+// src/main/java/CyTrack/Responses/Social/MessageResponse.java
+
 package CyTrack.Responses.Social;
+
+import java.time.LocalDateTime;
 
 public class MessageResponse {
     private String status;
@@ -36,20 +40,25 @@ public class MessageResponse {
     }
 
     public static class Data {
-        private String chatType; // "group" or "direct"
+        private String chatType;
         private String senderUsername;
         private String receiverUsername;
+        private String groupName;
         private String content;
         private String time;
-        private Long id;
+        private Long groupOrReceiverID;
+        private Long userID;
 
-        public Data(String chatType, String senderUsername, String receiverUsername, String content, String time, Long id) {
+        public Data(String chatType, String senderUsername, String receiverUsername, String groupName, String content, String time, Long id, Long userID) {
             this.chatType = chatType;
             this.senderUsername = senderUsername;
             this.receiverUsername = receiverUsername;
+            this.groupName = groupName;
             this.content = content;
             this.time = time;
-            this.id = id;
+            this.groupOrReceiverID = id;
+            this.userID = userID;
+
         }
 
         public String getChatType() {
@@ -76,6 +85,14 @@ public class MessageResponse {
             this.receiverUsername = receiverUsername;
         }
 
+        public String getGroupName() {
+            return groupName;
+        }
+
+        public void setGroupName(String groupName) {
+            this.groupName = groupName;
+        }
+
         public String getContent() {
             return content;
         }
@@ -92,12 +109,21 @@ public class MessageResponse {
             this.time = time;
         }
 
-        public Long getId() {
-            return id;
+        public Long getGroupOrReceiverID() {
+            return groupOrReceiverID;
         }
 
-        public void setId(Long id) {
-            this.id = id;
+        public void setGroupOrReceiverID(Long groupOrReceiverID) {
+            this.groupOrReceiverID = groupOrReceiverID;
         }
+
+        public Long getUserID() {
+            return userID;
+        }
+
+        public void setUserID(Long userID) {
+            this.userID = userID;
+        }
+
     }
 }

@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">CyTrack</string>
+    <string name="title_activity_my_meals_test">MyMealsTest</string>
 </resources>
