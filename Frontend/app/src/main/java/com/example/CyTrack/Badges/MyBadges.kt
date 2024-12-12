@@ -193,11 +193,12 @@ fun BGCard(
     name: String,
     desc: String,
     onMessageClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    url: String = ""
 ) {
     Row {
         Box {
-            BGProfileCard(name, desc, "temp", modifier)
+            BGProfileCard(name, desc, url, modifier)
             Spacer(modifier = Modifier.height(10.dp))
         }
     }

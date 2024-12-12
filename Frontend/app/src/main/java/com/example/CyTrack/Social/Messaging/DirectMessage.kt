@@ -103,17 +103,17 @@ class DirectMessage : ComponentActivity(), WebSocketListener {
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        user = intent.getSerializableExtra("user") as User
+        recipientUser = intent.getSerializableExtra("recipientUser") as Friend
+        conversationKey = "${user.id}_DM_${recipientUser.userID}"
+
+        val serverUrl = "${UrlHolder.wsURL}/chat/direct/${recipientUser.userID}/${user.id}"
+        Log.d("WebSocketServiceUtil", "Connecting to $serverUrl")
+        WebSocketManagerMessages.getInstance().connectWebSocket(serverUrl)
+        WebSocketManagerMessages.getInstance().setWebSocketListener(this@DirectMessage)
+
         setContent {
             messageList = remember { mutableStateListOf() }
-
-            user = intent.getSerializableExtra("user") as User
-            recipientUser = intent.getSerializableExtra("recipientUser") as Friend
-            conversationKey = "${user.id}_DM_${recipientUser.userID}"
-
-            val serverUrl = "${UrlHolder.wsURL}/chat/direct/${recipientUser.userID}/${user.id}"
-            Log.d("WebSocketServiceUtil", "Connecting to $serverUrl")
-            WebSocketManagerMessages.getInstance().connectWebSocket(serverUrl)
-            WebSocketManagerMessages.getInstance().setWebSocketListener(this@DirectMessage)
 
             Box(
                 modifier = Modifier.fillMaxSize()
@@ -185,26 +185,25 @@ class DirectMessage : ComponentActivity(), WebSocketListener {
      */
     override fun onWebSocketMessage(message: String) {
         runOnUiThread(Runnable {
-            Log.d("MessageReceived", message)
             try {
-                if (message.substring(0, 4) == "You:") {
-                    Log.d("MessageReceived", "You: $message")
-                } else if (message.substring(
-                        0,
-                        recipientUser.username.length + 1
-                    ) == "${recipientUser.username}:"
-                ) {
-                    messageList.add(
-                        Msg(
-                            message.substring(recipientUser.username.length + 1).trim(),
-                            recipientUser.userID,
-                            recipientUser.username
-                        )
-                    )
+                if (message.substring(0, 4) == "You:" || !message.startsWith("{\"status\":")) {
+//                } else if (message.substring(
+//                        0,
+//                        recipientUser.username.length + 1
+//                    ) == "${recipientUser.username}:"
+//                ) {
+//                    messageList.add(
+//                        Msg(
+//                            message.substring(recipientUser.username.length + 1).trim(),
+//                            recipientUser.userID,
+//                            recipientUser.username
+//                        )
+//                    )
                 } else {
                     // Handle message received
+                    Log.d("MessageReceivedFromOther", message)
                     val tempMsg = SocialUtils.processMessageListData(message, avoidUserID = user.id)
-                    messageList.add(tempMsg)
+                    if (tempMsg.message.isNotEmpty()) messageList.add(tempMsg)
                 }
             } catch (e: Exception) {
                 Log.d("Exception", e.message.toString())

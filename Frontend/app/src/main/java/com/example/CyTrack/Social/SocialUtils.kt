@@ -216,9 +216,11 @@ class SocialUtils {
             avoidUserID: Int = 0
         ): DirectMessage.Msg {
             var message: DirectMessage.Msg = DirectMessage.Msg("", 0)
+            var isHistory = false
             try {
                 val tempMsg = msg.removePrefix("Received message: ")
                 val jsonObject = JSONObject(tempMsg)
+                isHistory = jsonObject.getString("message") == "Chat history loaded"
                 val data = jsonObject.getJSONObject("data")
 
                 val tempData = MessageListData(
@@ -252,6 +254,9 @@ class SocialUtils {
                 e.printStackTrace()
             }
 
+            if (!isHistory && message.senderID == avoidUserID) {
+                return DirectMessage.Msg("", 0)
+            }
             return message
         }
 
