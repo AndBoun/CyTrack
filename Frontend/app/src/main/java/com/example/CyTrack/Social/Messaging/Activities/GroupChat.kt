@@ -120,25 +120,24 @@ class GroupChat : ComponentActivity(), WebSocketListener {
 
     override fun onWebSocketMessage(message: String) {
         runOnUiThread(Runnable {
-            Log.d("MessageReceived", message)
             try {
-                if (message.substring(0, 4) == "You:") {
-                    Log.d("MessageReceived", "You: $message")
-                } else if (message.substring(
-                        0,
-                        recipientUser.username.length + 1
-                    ) == "${recipientUser.username}:"
-                ) {
-                    messageList.add(
-                        Msg(
-                            message.substring(recipientUser.username.length + 1).trim(),
-                            recipientUser.userID
-                        )
-                    )
+                if (message.substring(0, 4) == "You:" || !message.startsWith("{\"status\":")) {
+//                } else if (message.substring(
+//                        0,
+//                        recipientUser.username.length + 1
+//                    ) == "${recipientUser.username}:"
+//                ) {
+//                    messageList.add(
+//                        Msg(
+//                            message.substring(recipientUser.username.length + 1).trim(),
+//                            recipientUser.userID
+//                        )
+//                    )
                 } else {
                     // Handle message received
+                    Log.d("MessageReceivedFromOther", message)
                     val tempMsg = SocialUtils.processMessageListData(message, avoidUserID = user.id)
-                    messageList.add(tempMsg)
+                    if (tempMsg.message.isNotEmpty()) messageList.add(tempMsg)
                 }
             } catch (e: Exception) {
                 Log.d("Exception", e.message.toString())
