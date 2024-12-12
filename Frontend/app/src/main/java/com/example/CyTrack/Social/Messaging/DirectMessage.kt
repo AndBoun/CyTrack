@@ -6,6 +6,7 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -29,6 +30,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Send
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -57,6 +59,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.CyTrack.R
 import com.example.CyTrack.Social.Friends.Friend
+import com.example.CyTrack.Social.Messaging.Composables.GroupChatMessageCard
+import com.example.CyTrack.Social.ProfileImage
 import com.example.CyTrack.Social.SocialUtils
 import com.example.CyTrack.Social.WebSockets.WebSocketManagerMessages
 import com.example.CyTrack.Utilities.ComposeUtils.Companion.getCustomFontFamily
@@ -106,7 +110,7 @@ class DirectMessage : ComponentActivity(), WebSocketListener {
             recipientUser = intent.getSerializableExtra("recipientUser") as Friend
             conversationKey = "${user.id}_DM_${recipientUser.userID}"
 
-            val serverUrl = "${UrlHolder.wsURL}/chat/${user.id}/${recipientUser.userID}"
+            val serverUrl = "${UrlHolder.wsURL}/chat/direct/${recipientUser.userID}/${user.id}"
             Log.d("WebSocketServiceUtil", "Connecting to $serverUrl")
             WebSocketManagerMessages.getInstance().connectWebSocket(serverUrl)
             WebSocketManagerMessages.getInstance().setWebSocketListener(this@DirectMessage)
@@ -120,7 +124,7 @@ class DirectMessage : ComponentActivity(), WebSocketListener {
                     DirectMessageTopCard(
                         recipientUser.firstName,
                         recipientUser.username,
-                        "generic_avatar"
+                        SocialUtils.getProfileImageUrl(recipientUser.userID)
                     )
 
                     ConversationLazyList(messageList, messageAlignment = {
@@ -150,7 +154,8 @@ class DirectMessage : ComponentActivity(), WebSocketListener {
      */
     data class Msg(
         val message: String,
-        val senderID: Int
+        val senderID: Int,
+        val senderUsername: String = ""
     )
 
     /**
@@ -192,12 +197,13 @@ class DirectMessage : ComponentActivity(), WebSocketListener {
                     messageList.add(
                         Msg(
                             message.substring(recipientUser.username.length + 1).trim(),
-                            recipientUser.userID
+                            recipientUser.userID,
+                            recipientUser.username
                         )
                     )
                 } else {
                     // Handle message received
-                    val tempMsg = SocialUtils.processMessage(message)
+                    val tempMsg = SocialUtils.processMessageListData(message, avoidUserID = user.id)
                     messageList.add(tempMsg)
                 }
             } catch (e: Exception) {
@@ -311,6 +317,7 @@ fun ConversationMessageCard(
 fun ConversationLazyList(
     msg: List<DirectMessage.Msg>,
     modifier: Modifier = Modifier,
+    isGroupChat: Boolean = false,
     messageAlignment: (DirectMessage.Msg) -> Boolean = { false }
 ) {
     LazyColumn(
@@ -322,10 +329,22 @@ fun ConversationLazyList(
                     .fillMaxWidth()
             ) {
                 if (messageAlignment(message)) { // Check if message is sent by the user
-                    ConversationMessageCard(
-                        msg = message.message,
-                        modifier = Modifier.align(Alignment.TopStart)
-                    )
+                    if (isGroupChat) {
+                        GroupChatMessageCard(
+                            isFirst = true,
+                            profileImg = SocialUtils.getProfileImageUrl(message.senderID),
+                            message = message.message,
+                            name = message.senderUsername,
+                            modifier = Modifier
+                                .padding(start = 15.dp, top = 15.dp)
+                                .align(Alignment.TopStart)
+                        )
+                    } else {
+                        ConversationMessageCard(
+                            msg = message.message,
+                            modifier = Modifier.align(Alignment.TopStart)
+                        )
+                    }
                 } else {
                     ConversationMessageCard(
                         msg = message.message,
@@ -349,6 +368,8 @@ fun DirectMessageTopCard(
     name: String,
     username: String,
     img: String,
+    isGroupChat: Boolean = false,
+    onGroupSettings: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -380,11 +401,9 @@ fun DirectMessageTopCard(
 
             Spacer(modifier = Modifier.width(20.dp))
 
-            Image(
-                painter = painterResource(R.drawable.general_generic_avatar),
-                contentDescription = "Contact profile picture",
-                modifier = Modifier
-                    .size(50.dp)
+            ProfileImage(
+                imageUrl = img,
+                modifier = Modifier.size(50.dp)
             )
 
             Spacer(modifier = Modifier.width(20.dp))
@@ -405,6 +424,27 @@ fun DirectMessageTopCard(
                     color = Color(0xFFF1BE48),
                     fontSize = 12.sp
                 )
+            }
+
+            if (isGroupChat){
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End,
+                    verticalAlignment = Alignment.CenterVertically
+                ){
+                    IconButton(
+                        onClick = {
+                            onGroupSettings()
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Settings,
+                            contentDescription = "Group settings",
+                            tint = Color.White,
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
+                }
             }
         }
     }
@@ -464,7 +504,7 @@ fun ConversationMessageCardPreview() {
 @Preview
 @Composable
 fun DirectMessageTopCardPreview() {
-    DirectMessageTopCard("John Doe", "johndoe", "generic_avatar")
+    DirectMessageTopCard("John Doe", "johndoe", "generic_avatar", isGroupChat = true)
 }
 
 /**
